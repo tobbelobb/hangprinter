@@ -4,9 +4,12 @@ nema17_cube_width=42.43;
 nema17_cube_height=39.36;
 nema17_shaft_height=63.65;
 nema17_screw_hole_width = 43.74;
+nema17_screw_hole_diameter = 5.92;
+nema17_screw_hole_depth = 2.25;
 
 M3_diameter = 3;
-M3_head_diameter = 5.4;
+M3_head_diameter = 6;
+M3_head_height = 2.5;
 
 bottom_plate_thickness = 7;
 radius_needed_to_fit_pen = 15;
@@ -25,10 +28,14 @@ module eq_tri(s, h){
 }
 //eq_tri(10,10);
 
-module Nema17_screw_holes(d, h){
+module Nema17_screw_translate(){
   for (i=[0:90:359]){
-    rotate([0,0,i+45]) translate([nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
+    rotate([0,0,i+45]) translate([nema17_screw_hole_width/2,0,0]) child(0);
   }
+}
+
+module Nema17_screw_holes(d, h){
+  Nema17_screw_translate() cylinder(r=d/2, h=h);
 }
 //Nema17_screw_holes(M3_diameter, 15);
 
@@ -67,15 +74,18 @@ module Nema17 (){
 
 module motor_base(th=5){
   cw = nema17_cube_width;
-  h=2*th;
+  big=20;
   translate([cw/2,cw/2,0])
     difference(){
       union(){
         translate([-cw/2,-cw/2,0]) cube([cw,cw,th]);
-        Nema17_screw_holes(d=5.94,h=th+2);
+      translate([0,0,th-1])
+        Nema17_screw_holes(nema17_screw_hole_diameter, nema17_screw_hole_depth+1);
       }
-      translate([0,0,-1]) Nema17_screw_holes(d=M3_diameter, h=h);
-      translate([0,0,-h+th+2-0.6]) Nema17_screw_holes(d=M3_head_diameter+0.25, h=h);
+      translate([0,0,-0.1])
+        Nema17_screw_translate()
+          cylinder(r1=(M3_head_diameter+0.05)/2,r2=(M3_diameter+0.5)/2, h=M3_head_height+0.1);
+      Nema17_screw_holes(M3_diameter,big);
   }
 }
 //motor_base(7);
