@@ -1,7 +1,16 @@
-use <screw_poly.scad>
+// Everything with units mm gets a name here
+// (Exeptions are stuff that won't be printed)
 nema17_cube_width=42.43;
+nema17_cube_height=39.36;
+nema17_shaft_height=63.65;
+nema17_screw_hole_width = 43.74;
+
 M3_diameter = 3;
 M3_head_diameter = 5.4;
+
+bottom_plate_thickness = 7;
+radius_needed_to_fit_pen = 15;
+mid_cylinder_diameter = 53; // Rest of mode bottom_plate adjusts according to this
 
 // util...
 module eq_tri(s, h){
@@ -12,17 +21,19 @@ module eq_tri(s, h){
   linear_extrude(height=h, slices=1)
     polygon(points = [[s/2,-a/sqrt3],[0,s/sqrt3],[-s/2,-a/sqrt3]], paths=[[0,1,2]]);
 }
+//eq_tri(10,10);
 
 module Nema17_screw_holes(d, h){
   for (i=[0:90:359]){
-    rotate([0,0,i+45]) translate([43.74/2,0,0]) cylinder(r=d/2, h=h);
+    rotate([0,0,i+45]) translate([nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
   }
 }
+//Nema17_screw_holes(M3_diameter, 15);
 
 module Nema17 (){
   cw = nema17_cube_width;
-  ch = 39.36; // cube height
-  sh = 63.65; // shaft height
+  ch = nema17_cube_height;
+  sh = nema17_shaft_height;
   union(){
     color("black")
     difference(){
@@ -50,12 +61,7 @@ module Nema17 (){
       cylinder(r=5/2, h=sh);
   }
 }
-
-module wind_screw (h = 35,
-                   pitch = 2){
-linear_extrude(height=h, twist=360*h/pitch, slices = h/0.1)
-  screw_polygon_easy();
-}
+//Nema17();
 
 module motor_base(th=5){
   cw = nema17_cube_width;
@@ -70,6 +76,7 @@ module motor_base(th=5){
       translate([0,0,-h+th+2-0.6]) Nema17_screw_holes(d=M3_head_diameter+0.25, h=h);
   }
 }
+//motor_base(7);
 
 module motor_base_frame(th=5,width=8){
   difference(){
@@ -77,23 +84,26 @@ module motor_base_frame(th=5,width=8){
     translate([width,width,-1])cube(nema17_cube_width-2*width);
   }
 }
+//motor_base_frame(7,8);
 
 module point_cube(v, ang){
   translate([v[0]/2,0,0])
   difference(){
     translate([-v[0]/2,0,0]) cube(v);
-    rotate([0,-ang/2,0]) translate([-2*v[0],1.5-v[1],-v[2]]) cube(2*v);
-    mirror([1,0,0]) rotate([0,-ang/2,0]) translate([-2*v[0],1.5-v[1],-v[2]]) cube(2*v);
+    rotate([0,-ang/2,0]) translate([-2*v[0],1.5-v[1],-v[2]]) cube([2*v[0],2*v[1],3*v[2]]);
+    mirror([1,0,0]) rotate([0,-ang/2,0]) translate([-2*v[0],1.5-v[1],-v[2]])
+      cube([2*v[0],2*v[1],3*v[2]]);
   }
 }
+//point_cube([10,11,12],60);
 
-module bottom_plate(){
+module bottom_plate(thickness=7){
   sqrt3=sqrt(3);
   cw = nema17_cube_width;
-  th = 7; 
-  mho = 53;  // Middle hole outer. Adjust compactness.
-  mhi = 15; // ca-radius needed to fit a pen
-  full_tri_side=(sqrt3+1.5)*cw+sqrt3*mho/2; //176.107
+  th = thickness; 
+  mho = mid_cylinder_diameter;  // Adjust compactness, perserve overall shape
+  mhi = radius_needed_to_fit_pen;
+  full_tri_side=(sqrt3+1.5)*cw+sqrt3*mho/2;
   tri_side=full_tri_side-2*cw;
   difference(){
     union(){
@@ -129,7 +139,8 @@ module bottom_plate(){
           }
         }
       // Insert a ramps-plate here
-
+      rotate([0,0,120]) color("red") translate([-50.5,-16.8-176.107/(2*sqrt(3)),5]) 
+        Ramps();
     }
     // Place for pen
     translate([0,0,-1]) cylinder(r=mhi/2,h=th+2);
@@ -143,14 +154,9 @@ module bottom_plate(){
       point_cube([5.5,2.4,th],120);
   }
 }
+bottom_plate(bottom_plate_thickness);
 
 module Ramps(){
   cube([101.7,16.8,60]);
 }
-
-
-//bottom_plate();
-//motor_base_frame();
-//Nema17();
-//rotate([0,0,120]) color("red") translate([-50.5,-16.8-176.107/(2*sqrt(3)),5]) cube([101,16.8,60]);
-//rotate([0,0,120]) color("red") translate([-50.5,-16.8-176.107/(2*sqrt(3)),5]) 
+//Ramps();
