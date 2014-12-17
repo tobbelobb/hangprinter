@@ -11,6 +11,8 @@ M3_head_diameter = 5.4;
 bottom_plate_thickness = 7;
 radius_needed_to_fit_pen = 15;
 mid_cylinder_diameter = 53; // Rest of mode bottom_plate adjusts according to this
+Ramps_screw_z=7.4;
+Ramps_screw_from_right_edge=15;
 
 // util...
 module eq_tri(s, h){
@@ -105,6 +107,7 @@ module bottom_plate(thickness=7){
   mhi = radius_needed_to_fit_pen;
   full_tri_side=(sqrt3+1.5)*cw+sqrt3*mho/2;
   tri_side=full_tri_side-2*cw;
+  big=300;
   difference(){
     union(){
       for (i=[0:120:359]){
@@ -152,6 +155,11 @@ module bottom_plate(thickness=7){
     // Nut trap for pen-lock screw
     translate([-5.5/2,-mhi,M3_diameter/2+(th-M3_diameter)/2-3.1]) 
       point_cube([5.5,2.4,th],120);
+    // Screw hole for securing Ramps
+    translate([0,0,Ramps_screw_z])rotate([0,90,30])
+      translate([0,tri_side/2-Ramps_screw_from_right_edge,full_tri_side/(2*sqrt3)])
+        cylinder(r=M3_diameter/2,h=big);
+
   }
 }
 bottom_plate(bottom_plate_thickness);
