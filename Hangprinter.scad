@@ -20,11 +20,17 @@ Ramps_depth                = 60;
 Bearing_607_width          = 6;
 Bearing_607_bore_diameter  = 7;
 Bearing_607_outer_diameter = 19;
+Bearing_608_width          = 7;
+Bearing_608_bore_diameter  = 8;
+Bearing_608_outer_diameter = 22;
 
 //////////// Design decision numbers //////////////
+// Do we want 607 or 608 bearings?
 Lock_height            = 2;
 Bottom_plate_thickness = 4.5;
+Bottom_plate_radius    = 75;
 Sandwich_height        = Bearing_607_width + Lock_height;
+four_point_five_point_radius = 50; // Must likely be enlargened to fit head
 
 //////////// Utility numbers //////////////
 Big   = 300;
@@ -60,6 +66,10 @@ function involute_intersect_angle(base_radius, radius) = sqrt(pow(radius/base_ra
 
 
 //////////// Utility modules //////////////
+module filament(){
+  color("white") cylinder(r=1.75/2, h = Big, center=true);
+}
+
 module eq_tri(s, h){
   linear_extrude(height=h, slices=1)
     polygon(points = [[s/2,-s/(2*Sqrt3)],[0,s/Sqrt3],[-s/2,-s/(2*Sqrt3)]],
@@ -95,6 +105,21 @@ module Nema17_screw_holes(d, h){
 }
 //Nema17_screw_holes(M3_diameter, 15);
 
+module Flerpar_screw_holes(d, h){
+  translate([Nema17_cube_width/2-11,0,-3])
+    rotate([90,0,0])
+      cylinder(r=d/2, h=h);
+  translate([-Nema17_cube_width/2+11,0,-3])
+    rotate([90,0,0])
+      cylinder(r=d/2, h=h);
+  translate([Nema17_cube_width/2-11,0,Nema17_cube_height+3])
+    rotate([90,0,0])
+      cylinder(r=d/2, h=h);
+  translate([-Nema17_cube_width/2+11,0,Nema17_cube_height+3])
+    rotate([90,0,0])
+      cylinder(r=d/2, h=h);
+}
+
 module Nema17 (){
   cw = Nema17_cube_width;
   ch = Nema17_cube_height;
@@ -127,6 +152,8 @@ module Nema17 (){
   }
 }
 //Nema17();
+
+//module 
 
 module Ramps(){
   cube([Ramps_length, Ramps_width, Ramps_depth]);
@@ -302,7 +329,7 @@ module sandwich(teeth = 33){
   meltlength      = 0.1;
 	gear_height     = Sandwich_height*4/7;
   cylinder_height = Sandwich_height*3/7;
-  radius          = 34.25; // Adapt snelle raduis to gear circ-pitch and teeth
+  radius          = 34.25; // Adapt snelle radius to gear circ-pitch and teeth
 
   difference(){
     union(){
@@ -358,6 +385,7 @@ module bottom_plate(){
   /////// Global variables renamed short //////
   cw  = Nema17_cube_width;
   th  = Bottom_plate_thickness; 
+  bpr = Bottom_plate_radius;
   bd  = Bearing_607_bore_diameter; 
   bw  = Bearing_607_width;
   swh = Sandwich_height;
@@ -392,7 +420,8 @@ module bottom_plate(){
         rotate([0, 0, 90])
           cube([1.3, Big, Big], center = true);
       }
-      cylinder(r=86, h = th);
+      // Circular bottom plate
+      cylinder(r=bpr, h = th);
     }
     // Dig out filament hole in sandwich stick and base.
     // When physical build is done, fill this hole for stiffness
@@ -409,38 +438,95 @@ module bottom_plate_and_sandwich(){
 
   bottom_plate();
   // Place sandwich slices
-  translate([0, 0, th + lh/4 + gap/2]) sandwich();
-  translate([0, 0, th + lh/4 + gap/2 + gap + lh + bw]) sandwich();
-  translate([0, 0, th + lh/4 + gap/2 + 2*(gap + lh + bw)]) sandwich();
-  translate([0, 0, th + lh/4 + gap/2 + 3*(gap + lh + bw)]) sandwich();
+  //translate([0, 0, th + lh/4 + gap/2]) sandwich();
+  //translate([0, 0, th + lh/4 + gap/2 + gap + lh + bw]) sandwich();
+  //translate([0, 0, th + lh/4 + gap/2 + 2*(gap + lh + bw)]) sandwich();
+  //translate([0, 0, th + lh/4 + gap/2 + 3*(gap + lh + bw)]) sandwich();
 }
 //bottom_plate_and_sandwich();
 
 // Assumes child(0) is centered in xy-plane
-module five_point_translate(){
-  radius = 60;
+
+module four_point_translate(){
+  // TODO: This radius is adjusted to sandwich gear raduis manually
   base_rotation = 90;
+  radius = four_point_five_point_radius;
+  // XY and Z motors
   for(i=[72:72:359]){
     rotate([0,0,base_rotation + i]) translate([radius,0,0]) child(0);
   }
-  //rotate([0,0,base_rotation])
-  //  translate([radius, 0, 0]) rotate([0,0,0]) child(0);
-  //rotate([0,0,base_rotation + 72])
-  //  translate([radius, 0, 0]) rotate([0,0,29]) child(0);
 }
 
-module bottom_plate_and_sandwich_and_nema17(){
+module extruder_motor_translate(){
+  extruder_twist = 6;
+  radius = four_point_five_point_radius;
+  translate([0,radius,-Nema17_cube_width/2 - 1])
+    rotate([0,0,extruder_twist])
+      translate([0, -Nema17_cube_height,0])
+        rotate([90,0,0])
+          translate([0,0,-Nema17_cube_height/2]) child(0);
+}
+
+module flerpar(){
+  melt = 0.2;
+  flerp_th = 6;
+  flerp_h = 10;
   difference(){
-    bottom_plate_and_sandwich();
-    translate([0, 0, -1])
-      five_point_translate()
-        Nema17_screw_holes(M3_diameter, Big);
-    translate([0, 0, -1])
-      five_point_translate()
-        cylinder(r = 8, h = Big);
+    translate([-Nema17_cube_width/2,
+                Nema17_cube_width/2-flerp_h,
+                Nema17_cube_height]){
+      // Uppflärp
+      cube([Nema17_cube_width, flerp_h + melt, flerp_th]);
+      translate([0,0,-flerp_th-Nema17_cube_height])
+      // Nerflärp
+        cube([Nema17_cube_width, flerp_h + melt, flerp_th]);
+    }
+    translate([0,0,-Big/2]) Nema17_screw_holes(M3_diameter, Big);
   }
-  five_point_translate()
+}
+
+// Skriv ut flerpar før sig...
+module flerpad_Nema17(){
+  flerpar();
+  Nema17();
+}
+//flerpad_Nema17();
+
+module bottom_plate_and_sandwich_and_nema17(){
+  melt = 0.2;
+  flerp_th = 3;
+  flerp_h = 10;
+  difference(){
+    union(){
+      bottom_plate_and_sandwich();
+      extruder_motor_translate()
+        translate([0,0,-Nema17_cube_height - 2])
+      flerpar();
+    }
+    translate([0, 0, -1])
+      four_point_translate()
+        // Screw holes for XY Nema
+        translate([0,0,-Big/2]) Nema17_screw_holes(M3_diameter, Big);
+    translate([0, 0, -1])
+      four_point_translate()
+        // Middle hole for Nema
+        cylinder(r = 8, h = Big);
+        // Rectangular hole for extruder motor
+        //translate([0,four_point_five_point_radius+2.5,0])
+        //  cube([Nema17_cube_width+2,
+        //        Nema17_cube_height+2, Big], center=true);
+    // vertical holes in flerpar
+    translate([0,0,Big/2])
+      extruder_motor_translate()
+        translate([0,0,-Nema17_cube_height - 2])
+          Flerpar_screw_holes(M3_diameter, Big);
+  }
+  four_point_translate()
     translate([0,0,-Nema17_cube_height - 2])
-    Nema17();
+      Nema17();
+  extruder_motor_translate()
+    translate([0,0,-Nema17_cube_height - 2])
+      Nema17();
+  filament();
 }
 bottom_plate_and_sandwich_and_nema17();
