@@ -1,7 +1,12 @@
 // Thanks to GregFrost for this: http://www.thingiverse.com/thing:3575
+// Thanks also to Reprappro: https://github.com/reprappro/Extruder-drive
+include <measured_numbers.scad>
+include <design_numbers.scad>
 
 //////////// Utility numbers //////////////
-Big   = 300;
+// When numbers get larger than Big, models start to look funny
+// (parametrization breaks down).
+Big   = 300; 
 Sqrt3 = sqrt(3);
 pi    = 3.1415926535897932384626433832795;
 
@@ -185,3 +190,76 @@ module my_gear(teeth, height){
 			 hub_thickness   = height,
 			 hub_diameter    = 15);
 }
+
+module large_gear(height=Large_gear_height){
+  difference(){
+    cylinder(r=28,h=height,$fn=128);
+    translate([0,0,-0.1]) gear(
+        number_of_teeth=61,
+        circular_pitch=150, diametral_pitch=false,  // Changed from 150 - AB
+        pressure_angle=28,
+        clearance = 0.2,
+        gear_thickness=0.01,
+        rim_thickness=height-3,
+        rim_width=3,
+        hub_thickness=0,
+        hub_diameter=4,
+        bore_diameter=1,
+        circles=0,
+        backlash=0,
+        twist=0,
+        involute_facets=0);
+
+    difference(){
+      cylinder(r=22.5,h=Big,center=true,$fn=128); 
+      for(i=[0:5])
+        rotate([0,0,i*360/5])
+          translate([0,15,height - 1.5])
+            cube([6,30,3],center=true);
+      difference(){
+        translate([0,0,height - 5.5]) cylinder(r=5.5,h=4.5,$fn=64);
+        translate([0,0,0]) cylinder(h=height-3, r=5.4/sqrt(3),$fn=6);
+      }
+    }
+    cylinder(r=2.95/sqrt(3),h=Big,center=true,$fn=6);
+  }
+}
+//large_gear(12);
+
+module small_gear(height=Small_gear_height){
+	difference(){
+		union(){
+      translate([0,0,0.1])
+			gear(
+				number_of_teeth=13,
+				circular_pitch=150,
+        diametral_pitch=false, // Changed from 150 - AB
+				pressure_angle=28,
+				clearance = 0.2,
+				gear_thickness=5,
+				rim_thickness=height - 0.1,
+				rim_width=6,
+				hub_thickness=4,
+				hub_diameter=13,
+				bore_diameter=Nema17_motor_shaft,
+				circles=0,
+				backlash=0,
+				twist=0,
+				involute_facets=0
+			);
+			
+			translate([Shaft_flat + 0.75,0,height/2])
+				cube([1.5,5,height],center=true);
+			//base
+			difference(){
+				cylinder(r=6.3,h=1.0,$fn=64);			
+				cylinder(r=Nema17_motor_shaft/2,h=1.001,$fn=64);
+			}
+		}
+		//lead in
+		translate([0,0,-0.01])
+			cylinder(r1=Nema17_motor_shaft/2+0.25,
+               r2=Nema17_motor_shaft/2-2,h=4,$fn=64);
+	}
+}
+//small_gear(6);

@@ -79,3 +79,10 @@ module Bearing_608(){
   }
 }
 //Bearing_608();
+
+module M3_screw(h){
+  color("grey"){
+    cylinder(r=M3_diameter/2, h=h);
+    cylinder(r=M3_head_diameter/2, h=M3_head_height);
+  }
+}
