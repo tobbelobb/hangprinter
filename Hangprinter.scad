@@ -5,12 +5,12 @@ include <Nema17_and_Ramps_and_bearings.scad>
 include <Gears.scad>
 
 // TODO:
-//  - Place motor gears and see that sizes fit
-//  - Place gat ears
+//  - Finis fairleads
+//  - Give fairleads bottom plate holes
 //  - Place Ramps/Due
 //  - Change 607 to 608 everywhere
-//  - Place extruder
-//  - All holes should be made in bottom_plate module
+//  - Place hot end
+//  - All holes should be made in bottom_plate module?
 // Style:
 //  - Spaces separate arguments and long words only
 //  - Global parameters starts with capital letter, others don't
@@ -137,6 +137,19 @@ module lock(r, height){
   cylinder(r=r, h=height);
 }
 
+module extruder_screw_holes(rotation=Extruder_motor_twist){
+  ry = Hobbed_insert_height+5;
+  rx = Bearing_623_outer_diameter-3.5;
+  z_down = 6;
+  rotate([0,0,rotation])
+    // Adjust manually to get right, should be close to zero
+  translate([-1.7,-1,0]) 
+  for(v=[[rx,ry,-z_down],[rx,-ry,-z_down],[-rx,ry,-z_down],[-rx,-ry,-z_down]])
+    translate(v)
+      M3_screw(z_down + Bottom_plate_thickness + 4, updown=true);
+}
+//extruder_screw_holes();
+
 module bottom_plate(){
   /////// Global variables renamed short //////
   cw  = Nema17_cube_width;
@@ -196,6 +209,8 @@ module bottom_plate(){
     translate([0, 0, -1])
       four_point_translate()
         cylinder(r = 8, h = Big);
+    
+    extruder_screw_holes(); // For support around middle
   }
 }
 //bottom_plate();
@@ -294,7 +309,7 @@ module hobbed_insert(){
 }
 //hobbed_insert()
 
-module translated_insert_tower(rotation){
+module translated_insert_tower(){
   bearing_base_translation = 8.3;
   hobbed_insert_placement = bearing_base_translation +
                             Bearing_623_width + 0.2;
@@ -312,13 +327,15 @@ module translated_insert_tower(rotation){
 }
 
 // TODO: make support bearing right
-module support_bearing_translate(){
+module support_bearing_translate(rotation){
   translate([(Hobbed_insert_diameter + 
-              Bearing_623_outer_diameter)/2 + 1.5,-Pitch_difference_extruder,15]) child(0);
+              Bearing_623_outer_diameter)/2 + 1.5
+              + sin(rotation)*Pitch_difference_extruder,
+              - cos(rotation)*Pitch_difference_extruder,15]) child(0);
 }
 
-module support_bearing(){
-  support_bearing_translate()
+module support_bearing(rotation){
+  support_bearing_translate(rotation)
     Bearing_623();
 }
 
@@ -334,7 +351,7 @@ module drive(rotation=0){
     small_gear();
     translate([0,-Pitch_difference_extruder,1.5])
       large_gear(); // default large_gear height is Large_gear_height
-    translated_insert_tower(rotation);
+    translated_insert_tower();
   } // end rotate
 
   difference(){
@@ -346,25 +363,34 @@ module drive(rotation=0){
         union(){
         for(k = [0,Hobbed_insert_height + 1.1*Bearing_623_width])
           translate([0,0, k])
-            cube([Bearing_623_outer_diameter + 11,
+            cube([Bearing_623_outer_diameter + 14,
                   height,
                   Bearing_623_width]);
         // Flerps to screw onto bottom_plate. Make screw holes there
+        //color("green")
         for(k = [-Hobbed_insert_height - 1*Bearing_623_width,
                   Hobbed_insert_height + 1.1*Bearing_623_width])
           translate([0,height,k])
-            cube([Bearing_623_outer_diameter + 11,
+            cube([Bearing_623_outer_diameter + 14,
                   3,
                   Hobbed_insert_height + 2*Bearing_623_width]);
         }
       }
     // Space for tower in bearing supports
     rotate([0,0,rotation])
-      translated_insert_tower(rotation);
+      translated_insert_tower();
+    // Hole through support bearing (antimateria)
+    translate([0,0,-5.5])
+    support_bearing_translate(rotation)
+      M3_screw(Big);
   }
-  support_bearing();
+  support_bearing(rotation);
+  // M3 through support bearing (materia)
+  translate([0,0,-5.5])
+  support_bearing_translate(rotation)
+    M3_screw(19);
 }
-//drive(rotation=0);
+//drive(rotation=336);
 
 module flerpad_Nema17_with_drive(rotation=0){
   flerpar();
@@ -376,27 +402,88 @@ module flerpad_Nema17_with_drive(rotation=0){
 
 module translated_extruder_motor_and_drive(extruder_motor_twist = 12,
                                             large_gear_rotation = 0){
-  extruder_motor_translate(extruder_motor_twist)
-    translate([0,0,-Nema17_cube_height - 2])
-      flerpad_Nema17_with_drive(large_gear_rotation);
+  difference(){
+    extruder_motor_translate(extruder_motor_twist)
+      translate([0,0,-Nema17_cube_height - 2])
+        flerpad_Nema17_with_drive(large_gear_rotation);
+    // Screw holes for extruder motor
+    translate([0,0,Big/2])
+      extruder_motor_translate(Extruder_motor_twist)
+        translate([0,0,-Nema17_cube_height - 2])
+          Flerpar_screw_holes(M3_diameter, Big);
+
+    extruder_screw_holes();
+  }
 }
 //translated_extruder_motor_and_drive(44, -26);
 
-module extruder_blocks(twin_block_height = 44){
-  difference(){
-    translate([0,0,-twin_block_height/2])
-      rotate([0,0,Extruder_motor_twist]) 
-        translate([-4.5,(Bearing_623_width + 1)/2 + 1.5, 0])
-          single_twin_block(twin_block_height);
-  }
-}
-//extruder_blocks();
-
 module bottom_plate_and_sandwich_and_nema17_and_extruder(){
   bottom_plate_and_sandwich_and_nema17();
-  extruder_blocks();
   translated_extruder_motor_and_drive(
     extruder_motor_twist = Extruder_motor_twist,
     large_gear_rotation  = Large_gear_rotation);
 }
 //bottom_plate_and_sandwich_and_nema17_and_extruder();
+
+module fairlead_XY(h=10, roller_width=25){
+  bd = Bearing_623_outer_diameter;
+  rd = Bearing_623_outer_diameter + 1; // roller diameter
+  bw = Bearing_623_width;
+  translate([0,0,h]) Bearing_623();
+  difference(){
+    cylinder(r=bd/2-1.3, h=h);
+    translate([0,0,-1])
+      cylinder(r=M3_diameter/2, h=Big);
+  }
+  // Large roller
+  color("purple")
+  translate([rd/2 + bd/2 - 1, roller_width/2 - bd/2, h - rd/2 + bw/2])
+    rotate([90,0,0])
+      cylinder(h=roller_width, r=rd/2);
+  // Top lock
+  translate([-2,-12,0])
+    cube([4,3,h + Bearing_623_width + 1]);
+  translate([-2,-12,h + Bearing_623_width])
+    cube([4,15,3]);
+}
+//fairlead_XY();
+
+module fairlead_XY_pair(h=10,sep=60,dist=49){
+  translate([0,0,Bottom_plate_thickness])
+  rotate([0,0,30]){
+    translate([dist,-sep,0])
+    fairlead_XY(h);
+    translate([dist,sep,0])
+    mirror([0,1,0])
+      fairlead_XY(h);
+  }
+}
+//fairlead_XY_pair();
+
+module fairlead_Z(roller_width=25){
+  lift = 1; // Z-fearleads pulls most wheight, so downmost sandwich
+  bd = Bearing_623_outer_diameter;
+  rd = Bearing_623_outer_diameter + 1;
+  bw = Bearing_623_width;
+  translate([bd/2+0.2,0,1+lift]) Bearing_623();
+  translate([-(bd/2+0.2),0,1+lift]) Bearing_623();
+  color("purple")
+  rotate([0,90,0])
+    translate([-rd/2-bw/2 - lift,10,-roller_width/2]) 
+      cylinder(h=roller_width, r=rd/2);
+}
+//fairlead_Z();
+
+module bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers(){
+  bottom_plate_and_sandwich_and_nema17();
+  translated_extruder_motor_and_drive(
+    extruder_motor_twist = Extruder_motor_twist,
+    large_gear_rotation  = Large_gear_rotation);
+  for(i=[0,120,240])
+    rotate([0,0,i]){
+      fairlead_XY_pair(3+ (Bearing_607_width + 1)*(1 + (i/120)));
+      translate([0,100,4])
+        fairlead_Z();
+  }
+}
+bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers();
