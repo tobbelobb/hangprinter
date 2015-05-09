@@ -85,7 +85,6 @@ module sandwich(teeth = Sandwich_gear_teeth){
   meltlength      = 0.1;
 	gear_height     = Sandwich_height*4/7;
   cylinder_height = Sandwich_height*3/7;
-  radius          = 34.25; // Adapt snelle radius to gear circ-pitch and teeth
 
   difference(){
     union(){
@@ -94,7 +93,7 @@ module sandwich(teeth = Sandwich_gear_teeth){
         my_gear(teeth, gear_height);
       // Snelle
       //color("green")
-      snelle(r1 = radius + 0.8, r2 = radius, h = cylinder_height, $fn = 150);
+      snelle(r1 = Snelle_radius + 0.8, r2 = Snelle_radius, h = cylinder_height, $fn = 150);
     }
     // Dig out the right holes
     translate([0, 0, -1.2])
@@ -215,6 +214,37 @@ module bottom_plate(){
 }
 //bottom_plate();
 
+module line(){
+  snellekant = 0.8;
+  radius = 0.8;
+  color("green")
+    translate([radius + Snelle_radius,0,radius + snellekant + 0.3])
+      rotate([90,0,0])
+        cylinder(r=radius, h = 250);
+}
+//line();
+
+module lines(){
+  th  = Bottom_plate_thickness; 
+  gap = 0.2;
+  lh  = Lock_height;
+  bw  = Bearing_607_width;
+  i = 0;
+  middlerot = 35;
+  splitrot = 14;
+  for(i=[0,120,240])
+    rotate([0,0,i]){
+      translate([0,0, th+lh/4+gap/2 + (1 + i/120)*(gap + lh + bw)]){
+        rotate([0, 0, middlerot - splitrot]) line();
+        rotate([0, 0, middlerot + splitrot]) line();
+      }
+      translate([0, 0, th+lh/4+gap/2])
+        rotate([0, 0, middlerot])
+          line();
+    }
+}
+//lines();
+
 module bottom_plate_and_sandwich(){
   th  = Bottom_plate_thickness; 
   gap = 0.2;
@@ -228,6 +258,7 @@ module bottom_plate_and_sandwich(){
     translate([0,0, th + lh/4 + gap/2 + gap + lh + bw]) sandwich();
     translate([0,0, th + lh/4 + gap/2 + 2*(gap + lh + bw)]) sandwich();
     translate([0,0, th + lh/4 + gap/2 + 3*(gap + lh + bw)]) sandwich();
+    lines();
   }
 }
 //bottom_plate_and_sandwich();
@@ -292,11 +323,11 @@ module bottom_plate_and_sandwich_and_nema17(){
       translate([0,Four_point_five_point_radius, 6+Motor_gear_height])
         mirror([0,0,1])
           motor_gear();
-    rotate([0,0,2*72])
-    translate([0,Four_point_five_point_radius, 21]) motor_gear();
-    rotate([0,0,3*72])
-    translate([0,Four_point_five_point_radius, 14]) motor_gear();
     rotate([0,0,4*72])
+    translate([0,Four_point_five_point_radius, 21]) motor_gear();
+    rotate([0,0,2*72])
+    translate([0,Four_point_five_point_radius, 13]) motor_gear();
+    rotate([0,0,3*72])
     translate([0,Four_point_five_point_radius, 7]) motor_gear();
   }
   filament();
@@ -326,7 +357,6 @@ module translated_insert_tower(){
   }
 }
 
-// TODO: make support bearing right
 module support_bearing_translate(rotation){
   translate([(Hobbed_insert_diameter + 
               Bearing_623_outer_diameter)/2 + 1.5
@@ -486,4 +516,66 @@ module bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers(){
         fairlead_Z();
   }
 }
-bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers();
+//bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers();
+
+module Bearing_623_vgroove(){
+  bd = Bearing_623_vgroove_big_diameter;   // Big diameter
+  sd = Bearing_623_vgroove_small_diameter; // Small diameter
+  h1 = Bearing_623_width;                  // Totoal height
+  h2 = Bearing_623_vgroove_width;
+  h_edge = (h1-h2)/2;
+  difference(){
+    for(k = [0,1]){
+      translate([0,0,h1*k]){
+        mirror([0,0,k]){
+          // Edge
+          cylinder(r=bd/2, h=h_edge);
+          // Half the groove
+          translate([0,0,h_edge])
+            cylinder(r1=bd/2, r2=sd/2, h=h2/2);
+        }
+      }
+    }
+    // Bore
+    translate([0,0,-1])
+      cylinder(r=Bearing_623_bore_diameter/2, h=Big);
+  }
+}
+//color("purple")
+//Bearing_623_vgroove();
+
+// height is the height of the line
+module gatt(height=25){
+  bd = Bearing_623_vgroove_big_diameter;   // Big diameter
+  sd = Bearing_623_vgroove_small_diameter; // Small diameter
+  h1 = Bearing_623_width;                  // Totoal height
+  h2 = Bearing_623_vgroove_width;
+
+  // Support
+  difference(){
+    translate([-h1 - bd/2 -0.5, -bd/2, 0])
+      cube([h1, bd, height + bd]);
+    // Hole for arm-cylinder
+    translate([0,0,height])
+      rotate([0,-90,0])
+        cylinder(r=Bearing_623_bore_diameter/2, h=30);
+  }
+  translate([-h1-0.5,0,height])
+    rotate([0,-90,0])
+      cylinder(r=Bearing_623_bore_diameter/2, h=h1+3);
+  // Arm TODO: This cube
+  translate([0,0,0]) cube([h1, 3, sd]);
+
+
+  // The bearings
+  rotate([90,0,0])
+    translate([0,height - sd/2,-h1/2])
+      color("purple")
+        Bearing_623_vgroove();
+  translate([-bd/2,0,height])
+    rotate([0,-90,0])
+      Bearing_623();
+
+}
+gatt();
+

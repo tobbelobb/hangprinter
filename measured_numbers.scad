@@ -21,4 +21,7 @@ Bearing_607_outer_diameter = 19;
 Bearing_608_width          = 7;
 Bearing_608_bore_diameter  = 8;
 Bearing_608_outer_diameter = 22;
+Bearing_623_vgroove_big_diameter = 12;
+Bearing_623_vgroove_small_diameter = 12 - 1.7;
+Bearing_623_vgroove_width = 3;
 Hobbed_insert_diameter     = 8.8;
