@@ -5,7 +5,6 @@ include <Nema17_and_Ramps_and_bearings.scad>
 include <Gears.scad>
 
 // TODO:
-//  - Finis fairleads
 //  - Give fairleads bottom plate holes
 //  - Place Ramps/Due
 //  - Change 607 to 608 everywhere
@@ -24,6 +23,8 @@ pi    = 3.1415926535897932384626433832795;
 render_sandwich = true;
 //render_xy_motors = false;
 render_xy_motors = true;
+//render_extruder = false;
+render_extruder = true;
 
 //////////// Utility modules //////////////
 module filament(){
@@ -109,12 +110,14 @@ module sandwich(teeth = Sandwich_gear_teeth){
 // Making the motor gear a little shorter might let us use same on all
 module motor_gear(height = Motor_gear_height){
   swh  = Sandwich_height;
+  r_swh = swh - 1; // reduced sandwich height
+  e_swh = swh + 1; // extended sandwich height
   melt = 0.1;
   teeth = Motor_gear_teeth;
   difference(){
     union(){
-      translate([0,0,height - swh - melt]) my_gear(teeth, swh + melt);
-      cylinder(r = 10, h = height - swh); 
+      translate([0,0,height - e_swh - melt]) my_gear(teeth, r_swh + melt);
+      cylinder(r = 10, h = height - e_swh); 
     }
     translate([0, 0, -1])
       cylinder(r = 5/2, h = height + 2);
@@ -160,13 +163,12 @@ module bottom_plate(){
   lh  = Lock_height;
   /////// Local variables                //////
   lock_radius = bd/2 + 0.35;
-  full_tri_side = 200*1.035; //Rotate eq_tri compared to heatbed, gain length
   gap = 0.2;
 
   difference(){
     union(){
       // Largest possible triangular plate
-      eq_tri(full_tri_side, th);
+      eq_tri(Full_tri_side, th);
       // Flexible sandwich stick
       difference(){
         union(){
@@ -230,20 +232,36 @@ module lines(){
   lh  = Lock_height;
   bw  = Bearing_607_width;
   i = 0;
-  middlerot = 35;
-  splitrot = 14;
   for(i=[0,120,240])
     rotate([0,0,i]){
       translate([0,0, th+lh/4+gap/2 + (1 + i/120)*(gap + lh + bw)]){
-        rotate([0, 0, middlerot - splitrot]) line();
-        rotate([0, 0, middlerot + splitrot]) line();
+        rotate([0, 0, Splitrot_1]) line();
+        rotate([0, 0, Splitrot_2]) line();
       }
       translate([0, 0, th+lh/4+gap/2])
-        rotate([0, 0, middlerot])
+        rotate([0, 0, Middlerot])
           line();
     }
 }
 //lines();
+
+module z_gatt_translate(back = 0){
+  for(i=[0,120,240])
+    rotate([0,0,i])
+      translate([0,Full_tri_side/Sqrt3 - back,0])
+        child(0);
+}
+
+module xy_gatt_translate_1(back = 0, sidestep = 3){
+  translate([sidestep,Full_tri_side/Sqrt3 - back,0])
+    child(0);
+}
+
+module xy_gatt_translate_2(back = 0, sidestep = 3){
+  rotate([0,0,-120])
+  translate([-sidestep,Full_tri_side/Sqrt3 - back,0])
+    child(0);
+}
 
 module bottom_plate_and_sandwich(){
   th  = Bottom_plate_thickness; 
@@ -325,9 +343,9 @@ module bottom_plate_and_sandwich_and_nema17(){
           motor_gear();
     rotate([0,0,4*72])
     translate([0,Four_point_five_point_radius, 21]) motor_gear();
-    rotate([0,0,2*72])
-    translate([0,Four_point_five_point_radius, 13]) motor_gear();
     rotate([0,0,3*72])
+    translate([0,Four_point_five_point_radius, 15]) motor_gear();
+    rotate([0,0,2*72])
     translate([0,Four_point_five_point_radius, 7]) motor_gear();
   }
   filament();
@@ -511,71 +529,156 @@ module bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers(){
     large_gear_rotation  = Large_gear_rotation);
   for(i=[0,120,240])
     rotate([0,0,i]){
-      fairlead_XY_pair(3+ (Bearing_607_width + 1)*(1 + (i/120)));
+      fairlead_XY_pair(3+(Bearing_607_width + 1)*(1 + (i/120)));
       translate([0,100,4])
         fairlead_Z();
   }
 }
 //bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers();
 
-module Bearing_623_vgroove(){
-  bd = Bearing_623_vgroove_big_diameter;   // Big diameter
-  sd = Bearing_623_vgroove_small_diameter; // Small diameter
-  h1 = Bearing_623_width;                  // Totoal height
-  h2 = Bearing_623_vgroove_width;
-  h_edge = (h1-h2)/2;
+module arm(r, xsz, ysz, th, xdiff, ydiff){
   difference(){
-    for(k = [0,1]){
-      translate([0,0,h1*k]){
-        mirror([0,0,k]){
-          // Edge
-          cylinder(r=bd/2, h=h_edge);
-          // Half the groove
-          translate([0,0,h_edge])
-            cylinder(r1=bd/2, r2=sd/2, h=h2/2);
-        }
-      }
+    hull(){
+      translate([-xsz - xdiff, ydiff, 0])
+        cube([xsz,ysz,th]);
+      cylinder(r=r, h=th);
     }
-    // Bore
-    translate([0,0,-1])
-      cylinder(r=Bearing_623_bore_diameter/2, h=Big);
+    translate([0,0,-1]) cylinder(r=M3_diameter/2, h=Big);
   }
 }
-//color("purple")
-//Bearing_623_vgroove();
+//arm(3, 4, 1.8, 2, 2);
 
 // height is the height of the line
 module gatt(height=25){
   bd = Bearing_623_vgroove_big_diameter;   // Big diameter
   sd = Bearing_623_vgroove_small_diameter; // Small diameter
-  h1 = Bearing_623_width;                  // Totoal height
+  h1 = Bearing_623_width;
   h2 = Bearing_623_vgroove_width;
 
-  // Support
+  bod = Bearing_608_outer_diameter;   // Big outer diameter
+  bid = Bearing_608_bore_diameter;    // Big inner diemater
+  h12 = Bearing_608_width + 2;        // Thikness of support
+
+  // Support walls
   difference(){
-    translate([-h1 - bd/2 -0.5, -bd/2, 0])
-      cube([h1, bd, height + bd]);
+    translate([-h12/2 - bd/2 - 1, -(bod+4)/2, 0]){
+      translate([0.2,0,0])
+      cube([h12/2-0.2, bod+4, height + (bod+4)/2]);
+      translate([-h12/2, 0, 0])
+        cube([h12/2-0.2, bod+4, height + (bod+4)/2]);
+    }
     // Hole for arm-cylinder
     translate([0,0,height])
       rotate([0,-90,0])
-        cylinder(r=Bearing_623_bore_diameter/2, h=30);
+        cylinder(r=bid/2+2.2, h=30);
+    // Hole for 608 bearing itself
+    translate([-bd/2 - 2,0,height])
+      rotate([0,-90,0])
+        cylinder(r=bod/2, h=h12-2);
+
+    // Screw holes in support walls
+    for(k=[0,1]){
+      mirror([0,k,0]){
+        translate([0,bod/2-2,4])
+          rotate([0,-90,0])
+            cylinder(r=M3_diameter/2, h=Big);
+        translate([0,bod/2-2,height + (bod+4)/2 - 4])
+          rotate([0,-90,0])
+            cylinder(r=M3_diameter/2, h=Big);
+      }
+    }
   }
-  translate([-h1-0.5,0,height])
-    rotate([0,-90,0])
-      cylinder(r=Bearing_623_bore_diameter/2, h=h1+3);
-  // Arm TODO: This cube
-  translate([0,0,0]) cube([h1, 3, sd]);
-
-
+  // Arm
+  difference(){
+    union(){
+      // Cylinder through 608 center
+      translate([-bd/2,0,height])
+        rotate([0,-90,0])
+          cylinder(r=Bearing_608_bore_diameter/2, h=h12+2);
+      // Plate, tightly pushed to 608 bore
+      translate([-2 - bd/2, -(h1+4)/2, height - (h1+4)/2])
+        cube([2,h1+4,h1+4]);
+      // Actual arms connecting 608 and 623
+      for(k=[0,1]){
+        mirror([0,k,0]){
+          translate([0,-(h1/2) - 0.2,height - sd/2])
+            rotate([90,0,0])
+              arm(3, h1-1, h1+4, 1.8, (bd/2 + 0.01) - (h1-1), 1.2);
+        }
+      }
+    }
+    // Hole for line
+    translate([0,0,height])
+      rotate([0,-90,0])
+        cylinder(r=0.7, h=30);
+  }
   // The bearings
   rotate([90,0,0])
     translate([0,height - sd/2,-h1/2])
       color("purple")
         Bearing_623_vgroove();
-  translate([-bd/2,0,height])
+  translate([-bd/2 - 1.5,0,height])
     rotate([0,-90,0])
-      Bearing_623();
+      Bearing_608();
 
 }
-gatt();
+//gatt(13);
 
+
+// These are adjusted by visually comparing to lines().
+// All hard coded numbers should be parameterized
+module gatts(){
+  th  = Bottom_plate_thickness; 
+  gap = 0.2;
+  lh  = Lock_height;
+  bw  = Bearing_607_width;
+  z_back = 10;
+  z_rotate = 19;
+  z_height = th+lh/4+gap/2+2;
+  xy_height_1 = z_height + gap+lh+bw;
+  xy_height_2 = xy_height_1 + gap+lh+bw;
+  xy_height_3 = xy_height_2 + gap+lh+bw;
+  // xy_back and xy_sidestep is adjusted manually to fit
+  // Splitrot_1 and Splitrot_2
+  xy_back = 31;
+  xy_sidestep = 25;
+  gatt_1_rotate = -90+Splitrot_1;
+  gatt_2_rotate = -90+Splitrot_2 + 120;
+
+  // Z-gatts
+  z_gatt_translate(z_back)
+    rotate([0,0,-90+Middlerot+120])
+      gatt(z_height);
+  // Lowest xy-gatts
+  xy_gatt_translate_1(xy_back, xy_sidestep)
+    rotate([0,0,gatt_1_rotate]) gatt(xy_height_1);
+  xy_gatt_translate_2(xy_back, xy_sidestep)
+    rotate([0,0,gatt_2_rotate]) gatt(xy_height_1);
+  // Middle xy-gatts
+  rotate([0,0,120]){
+    xy_gatt_translate_1(xy_back, xy_sidestep)
+      rotate([0,0,gatt_1_rotate]) gatt(xy_height_2);
+    xy_gatt_translate_2(xy_back, xy_sidestep)
+      rotate([0,0,gatt_2_rotate]) gatt(xy_height_2);
+  }
+  // Highest gatts 
+  rotate([0,0,240]){
+    xy_gatt_translate_1(xy_back, xy_sidestep)
+      rotate([0,0,gatt_1_rotate]) gatt(xy_height_3);
+    xy_gatt_translate_2(xy_back, xy_sidestep)
+      rotate([0,0,gatt_2_rotate]) gatt(xy_height_3);
+  }
+}
+//gatts();
+
+module bottom_plate_and_sandwich_and_nema17_and_extruder_and_gatts(){
+  bottom_plate_and_sandwich_and_nema17();
+  if(render_extruder){
+  translated_extruder_motor_and_drive(
+    extruder_motor_twist = Extruder_motor_twist,
+    large_gear_rotation  = Large_gear_rotation);
+  }
+  gatts();
+}
+bottom_plate_and_sandwich_and_nema17_and_extruder_and_gatts();
+lines();

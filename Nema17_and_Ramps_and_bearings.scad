@@ -80,6 +80,32 @@ module Bearing_608(){
 }
 //Bearing_608();
 
+module Bearing_623_vgroove(){
+  bd = Bearing_623_vgroove_big_diameter;   // Big diameter
+  sd = Bearing_623_vgroove_small_diameter; // Small diameter
+  h1 = Bearing_623_width;                  // Totoal height
+  h2 = Bearing_623_vgroove_width;
+  h_edge = (h1-h2)/2;
+  difference(){
+    for(k = [0,1]){
+      translate([0,0,h1*k]){
+        mirror([0,0,k]){
+          // Edge
+          cylinder(r=bd/2, h=h_edge);
+          // Half the groove
+          translate([0,0,h_edge])
+            cylinder(r1=bd/2, r2=sd/2, h=h2/2);
+        }
+      }
+    }
+    // Bore
+    translate([0,0,-1])
+      cylinder(r=Bearing_623_bore_diameter/2, h=Big);
+  }
+}
+//color("purple")
+//Bearing_623_vgroove();
+
 module M3_screw(h, updown=false){
   color("grey"){
     cylinder(r=M3_diameter/2, h=h);
