@@ -5,11 +5,8 @@ include <Nema17_and_Ramps_and_bearings.scad>
 include <Gears.scad>
 
 // TODO:
-//  - Give fairleads bottom plate holes
-//  - Place Ramps/Due
-//  - Change 607 to 608 everywhere
-//  - Place hot end
-//  - All holes should be made in bottom_plate module?
+//  - Place gatts reliably with screw holes or similar
+//  - Place hot end reliably
 // Style:
 //  - Spaces separate arguments and long words only
 //  - Global parameters starts with capital letter, others don't
@@ -79,13 +76,14 @@ module snelle(r1, r2, h){
 }
 //snelle(r1 = 10, r2 = 5, h = 3);
 
-// Sandwich height follows exactly 607 bearing thickness
+// Sandwich height follows exactly 608 bearing thickness
 module sandwich(teeth = Sandwich_gear_teeth){
-  od              = Bearing_607_outer_diameter;
-  bw              = Bearing_607_width;
+  od              = Bearing_608_outer_diameter;
+  bw              = Bearing_608_width;
   meltlength      = 0.1;
-	gear_height     = Sandwich_height*4/7;
-  cylinder_height = Sandwich_height*3/7;
+  sandwich_height = Bearing_608_width + Lock_height;
+	gear_height     = sandwich_height*4/7;
+  cylinder_height = sandwich_height*3/7;
 
   difference(){
     union(){
@@ -103,13 +101,14 @@ module sandwich(teeth = Sandwich_gear_teeth){
     translate([0, 0, -8.7])
       cylinder(r = 20, h = 10);
   }
+  Bearing_608();
 }
 //sandwich();
 
 // 17.79 will be the protruding shaftlength up from bottom plate
 // Making the motor gear a little shorter might let us use same on all
 module motor_gear(height = Motor_gear_height){
-  swh  = Sandwich_height;
+  swh  = Bearing_608_width + Lock_height;
   r_swh = swh - 1; // reduced sandwich height
   e_swh = swh + 1; // extended sandwich height
   melt = 0.1;
@@ -157,9 +156,9 @@ module bottom_plate(){
   cw  = Nema17_cube_width;
   th  = Bottom_plate_thickness; 
   bpr = Bottom_plate_radius;
-  bd  = Bearing_607_bore_diameter; 
-  bw  = Bearing_607_width;
-  swh = Sandwich_height;
+  bd  = Bearing_608_bore_diameter; 
+  bw  = Bearing_608_width;
+  swh = Bearing_608_width + Lock_height;
   lh  = Lock_height;
   /////// Local variables                //////
   lock_radius = bd/2 + 0.35;
@@ -239,7 +238,7 @@ module lines(){
   th  = Bottom_plate_thickness; 
   gap = 0.2;
   lh  = Lock_height;
-  bw  = Bearing_607_width;
+  bw  = Bearing_608_width;
   bt  = 1.9; // line radius, edge of snelle and some space
   i = 0;
   for(i=[0,120,240])
@@ -277,7 +276,7 @@ module bottom_plate_and_sandwich(){
   th  = Bottom_plate_thickness; 
   gap = 0.2;
   lh  = Lock_height;
-  bw  = Bearing_607_width;
+  bw  = Bearing_608_width;
 
   bottom_plate();
   // Place sandwich slices
@@ -289,7 +288,7 @@ module bottom_plate_and_sandwich(){
     lines();
   }
 }
-//bottom_plate_and_sandwich();
+bottom_plate_and_sandwich();
 
 // Assumes child(0) is centered in xy-plane
 
@@ -483,69 +482,6 @@ module bottom_plate_and_sandwich_and_nema17_and_extruder(){
 }
 //bottom_plate_and_sandwich_and_nema17_and_extruder();
 
-module fairlead_XY(h=10, roller_width=25){
-  bd = Bearing_623_outer_diameter;
-  rd = Bearing_623_outer_diameter + 1; // roller diameter
-  bw = Bearing_623_width;
-  translate([0,0,h]) Bearing_623();
-  difference(){
-    cylinder(r=bd/2-1.3, h=h);
-    translate([0,0,-1])
-      cylinder(r=M3_diameter/2, h=Big);
-  }
-  // Large roller
-  color("purple")
-  translate([rd/2 + bd/2 - 1, roller_width/2 - bd/2, h - rd/2 + bw/2])
-    rotate([90,0,0])
-      cylinder(h=roller_width, r=rd/2);
-  // Top lock
-  translate([-2,-12,0])
-    cube([4,3,h + Bearing_623_width + 1]);
-  translate([-2,-12,h + Bearing_623_width])
-    cube([4,15,3]);
-}
-//fairlead_XY();
-
-module fairlead_XY_pair(h=10,sep=60,dist=49){
-  translate([0,0,Bottom_plate_thickness])
-  rotate([0,0,30]){
-    translate([dist,-sep,0])
-    fairlead_XY(h);
-    translate([dist,sep,0])
-    mirror([0,1,0])
-      fairlead_XY(h);
-  }
-}
-//fairlead_XY_pair();
-
-module fairlead_Z(roller_width=25){
-  lift = 1; // Z-fearleads pulls most wheight, so downmost sandwich
-  bd = Bearing_623_outer_diameter;
-  rd = Bearing_623_outer_diameter + 1;
-  bw = Bearing_623_width;
-  translate([bd/2+0.2,0,1+lift]) Bearing_623();
-  translate([-(bd/2+0.2),0,1+lift]) Bearing_623();
-  color("purple")
-  rotate([0,90,0])
-    translate([-rd/2-bw/2 - lift,10,-roller_width/2]) 
-      cylinder(h=roller_width, r=rd/2);
-}
-//fairlead_Z();
-
-module bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers(){
-  bottom_plate_and_sandwich_and_nema17();
-  translated_extruder_motor_and_drive(
-    extruder_motor_twist = Extruder_motor_twist,
-    large_gear_rotation  = Large_gear_rotation);
-  for(i=[0,120,240])
-    rotate([0,0,i]){
-      fairlead_XY_pair(3+(Bearing_607_width + 1)*(1 + (i/120)));
-      translate([0,100,4])
-        fairlead_Z();
-  }
-}
-//bottom_plate_and_sandwich_and_nema17_and_extruder_and_rollers();
-
 module arm(r, xsz, ysz, th, xdiff, ydiff){
   difference(){
     hull(){
@@ -648,7 +584,7 @@ module gatts(){
   th  = Bottom_plate_thickness; 
   gap = 0.2;
   lh  = Lock_height;
-  bw  = Bearing_607_width;
+  bw  = Bearing_608_width;
   z_back = 10;
   z_rotate = 19;
   z_height = th+lh/4+gap/2+2;

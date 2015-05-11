@@ -3,7 +3,6 @@ Full_tri_side          = 200*1.035; //Rotate eq_tri compared to heatbed, gain le
 Lock_height            = 2;
 Bottom_plate_thickness = 4.5;
 Bottom_plate_radius    = 82;
-Sandwich_height        = Bearing_607_width + Lock_height;
 // Based on pitch radii of sandwich and motor_gear
 Four_point_five_point_radius = 41.11 + 13.33 + 0.1; // Must likely be enlargened to fit head
 Snelle_radius = 34.25;
