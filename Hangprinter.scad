@@ -28,7 +28,7 @@ render_extruder = true;
 
 //////////// Utility modules //////////////
 module filament(){
-  color("white") cylinder(r=1.75/2, h = Big, center=true);
+  color("white") translate([0,0,-50]) cylinder(r=1.75/2, h = Big);
 }
 
 module eq_tri(s, h){
@@ -216,31 +216,41 @@ module bottom_plate(){
 }
 //bottom_plate();
 
-module line(){
+module line(length=70, angle_1=0, angle_2=0){
   snellekant = 0.8;
   radius = 0.8;
-  color("green")
-    translate([radius + Snelle_radius,0,radius + snellekant + 0.3])
+  dia = Bearing_623_vgroove_small_diameter;
+  color("green"){
+    translate([radius + Snelle_radius,0,0])
       rotate([90,0,0])
-        cylinder(r=radius, h = 250);
+        cylinder(r=radius, h=length);
+    translate([radius + Snelle_radius,
+               -length+(dia/2)*(cos(angle_1)-1)*(1-sin(angle_2)),
+               0])
+    rotate([angle_1,angle_2,0])
+      translate([0,-dia/2,0])
+        rotate([90,0,0])
+          cylinder(r=radius, h=Big);
+    }
 }
-//line();
+//line(angle_1=-45, angle_2=-60);
 
 module lines(){
   th  = Bottom_plate_thickness; 
   gap = 0.2;
   lh  = Lock_height;
   bw  = Bearing_607_width;
+  bt  = 1.9; // line radius, edge of snelle and some space
   i = 0;
   for(i=[0,120,240])
     rotate([0,0,i]){
-      translate([0,0, th+lh/4+gap/2 + (1 + i/120)*(gap + lh + bw)]){
-        rotate([0, 0, Splitrot_1]) line();
-        rotate([0, 0, Splitrot_2]) line();
+      translate([0,0, bt+th+lh/4+gap/2 + (1 + i/120)*(gap + lh + bw)]){
+        rotate([0, 0, Splitrot_1]) line(87,45,30);
+        rotate([0, 0, Splitrot_2]) line(84,59,-46);
       }
-      translate([0, 0, th+lh/4+gap/2])
+      translate([0, 0, bt+th+lh/4+gap/2])
         rotate([0, 0, Middlerot])
-          line();
+          line(105,-90,0);
     }
 }
 //lines();
@@ -549,7 +559,7 @@ module arm(r, xsz, ysz, th, xdiff, ydiff){
 //arm(3, 4, 1.8, 2, 2);
 
 // height is the height of the line
-module gatt(height=25){
+module gatt(height=25, arm_rotation=0){
   bd = Bearing_623_vgroove_big_diameter;   // Big diameter
   sd = Bearing_623_vgroove_small_diameter; // Small diameter
   h1 = Bearing_623_width;
@@ -595,17 +605,21 @@ module gatt(height=25){
       translate([-bd/2,0,height])
         rotate([0,-90,0])
           cylinder(r=Bearing_608_bore_diameter/2, h=h12+2);
-      // Plate, tightly pushed to 608 bore
-      translate([-2 - bd/2, -(h1+4)/2, height - (h1+4)/2])
-        cube([2,h1+4,h1+4]);
-      // Actual arms connecting 608 and 623
-      for(k=[0,1]){
-        mirror([0,k,0]){
-          translate([0,-(h1/2) - 0.2,height - sd/2])
-            rotate([90,0,0])
-              arm(3, h1-1, h1+4, 1.8, (bd/2 + 0.01) - (h1-1), 1.2);
-        }
-      }
+      translate([0,0,height])
+        rotate([arm_rotation,0,0])
+          translate([0,0,-height]){
+            // Plate, tightly pushed to 608 bore
+            translate([-2 - bd/2, -(h1+4)/2, height - (h1+4)/2])
+              cube([2,h1+4,h1+4]);
+            // Actual arms connecting 608 and 623
+            for(k=[0,1]){
+              mirror([0,k,0]){
+                translate([0,-(h1/2) - 0.2,height - sd/2])
+                  rotate([90,0,0])
+                    #arm(3,h1-1,h1+4,1.8,(bd/2+0.01)-(h1-1),1.2);
+              }
+            }
+          }
     }
     // Hole for line
     translate([0,0,height])
@@ -613,16 +627,19 @@ module gatt(height=25){
         cylinder(r=0.7, h=30);
   }
   // The bearings
-  rotate([90,0,0])
-    translate([0,height - sd/2,-h1/2])
-      color("purple")
-        Bearing_623_vgroove();
+  translate([0,0,height])
+    rotate([arm_rotation,0,0])
+      translate([0,0,-height])
+        rotate([90,0,0])
+          translate([0,height - sd/2,-h1/2])
+            color("purple")
+              Bearing_623_vgroove();
   translate([-bd/2 - 1.5,0,height])
     rotate([0,-90,0])
       Bearing_608();
 
 }
-//gatt(13);
+//gatt(13, 45);
 
 
 // These are adjusted by visually comparing to lines().
@@ -648,25 +665,25 @@ module gatts(){
   // Z-gatts
   z_gatt_translate(z_back)
     rotate([0,0,-90+Middlerot+120])
-      gatt(z_height);
+      gatt(z_height, 180);
   // Lowest xy-gatts
   xy_gatt_translate_1(xy_back, xy_sidestep)
-    rotate([0,0,gatt_1_rotate]) gatt(xy_height_1);
+    rotate([0,0,gatt_1_rotate]) gatt(xy_height_1,-30);
   xy_gatt_translate_2(xy_back, xy_sidestep)
-    rotate([0,0,gatt_2_rotate]) gatt(xy_height_1);
+    rotate([0,0,gatt_2_rotate]) gatt(xy_height_1,46);
   // Middle xy-gatts
   rotate([0,0,120]){
     xy_gatt_translate_1(xy_back, xy_sidestep)
-      rotate([0,0,gatt_1_rotate]) gatt(xy_height_2);
+      rotate([0,0,gatt_1_rotate]) gatt(xy_height_2,-30);
     xy_gatt_translate_2(xy_back, xy_sidestep)
-      rotate([0,0,gatt_2_rotate]) gatt(xy_height_2);
+      rotate([0,0,gatt_2_rotate]) gatt(xy_height_2,46);
   }
   // Highest gatts 
   rotate([0,0,240]){
     xy_gatt_translate_1(xy_back, xy_sidestep)
-      rotate([0,0,gatt_1_rotate]) gatt(xy_height_3);
+      rotate([0,0,gatt_1_rotate]) gatt(xy_height_3,-30);
     xy_gatt_translate_2(xy_back, xy_sidestep)
-      rotate([0,0,gatt_2_rotate]) gatt(xy_height_3);
+      rotate([0,0,gatt_2_rotate]) gatt(xy_height_3,46);
   }
 }
 //gatts();
@@ -680,5 +697,68 @@ module bottom_plate_and_sandwich_and_nema17_and_extruder_and_gatts(){
   }
   gatts();
 }
-bottom_plate_and_sandwich_and_nema17_and_extruder_and_gatts();
-lines();
+//bottom_plate_and_sandwich_and_nema17_and_extruder_and_gatts();
+
+module cooler_rib(){
+  th = 1.8;
+  cube([2,40,40]);
+  for(i=[0:(40-th)/6:40-th]){
+    translate([0,0,i])
+      cube([12,40,th]);
+  }
+}
+//cooler_rib();
+
+module fan(){
+  difference(){
+    cube([40,40,11]);
+    translate([20,20,-1])
+      cylinder(r=18,h=Big);
+  }
+}
+//fan();
+
+module reprappro_hotend(){
+  // Pen
+  color("FireBrick"){
+  cylinder(r1=0.7, r2=2.7, h=2);
+  translate([0,0,2])
+    cylinder(r=2.7, h = 30);
+  }
+  // Heater block
+  color("red")
+  translate([-8, -13, 4])
+    cube([17, 21, 7.5]);
+  // Cooler block
+  color("RoyalBlue")
+  translate([-20, -4, 21])
+    cube([40, 8, 8]);
+  color("lightblue")
+  // Cooler rib
+  rotate([0,0,-90]) translate([4,-40/2,21]) cooler_rib();
+  color("black")
+  // Fan
+  translate([-20,-16,21]) rotate([90,0,0]) fan();
+}
+//reprappro_hotend();
+
+module placed_hotend(){
+  translate([0,0,-81])
+    rotate([0,0,Extruder_motor_twist])
+      reprappro_hotend();
+}
+
+module placed_ramps(){
+  rotate([0,0,2*90+Extruder_motor_twist])
+  translate([-60,-18,-Nema17_cube_height - Ramps_width - 2])
+    rotate([90,0,0])
+      %Ramps();
+}
+
+module full_render(){
+  bottom_plate_and_sandwich_and_nema17_and_extruder_and_gatts();
+  lines();
+  placed_hotend();
+  placed_ramps();
+}
+full_render();
