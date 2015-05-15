@@ -7,6 +7,7 @@ include <Gears.scad>
 // TODO:
 //  - Place gatts reliably with screw holes or similar
 //  - Place hot end reliably
+//  - Protect lines from motor gears with disks
 // Style:
 //  - Spaces separate arguments and long words only
 //  - Global parameters starts with capital letter, others don't
@@ -16,10 +17,10 @@ include <Gears.scad>
 Big   = 300;
 Sqrt3 = sqrt(3);
 pi    = 3.1415926535897932384626433832795;
-//render_sandwich = false;
-render_sandwich = true;
-//render_xy_motors = false;
-render_xy_motors = true;
+render_sandwich = false;
+//render_sandwich = true;
+render_xy_motors = false;
+//render_xy_motors = true;
 //render_extruder = false;
 render_extruder = true;
 
@@ -107,6 +108,7 @@ module sandwich(teeth = Sandwich_gear_teeth){
 
 // 17.79 will be the protruding shaftlength up from bottom plate
 // Making the motor gear a little shorter might let us use same on all
+// TODO: put gears within disks that protects lines.
 module motor_gear(height = Motor_gear_height){
   swh  = Bearing_608_width + Lock_height;
   r_swh = swh - 1; // reduced sandwich height
@@ -288,7 +290,7 @@ module bottom_plate_and_sandwich(){
     lines();
   }
 }
-bottom_plate_and_sandwich();
+//bottom_plate_and_sandwich();
 
 // Assumes child(0) is centered in xy-plane
 
@@ -351,11 +353,11 @@ module bottom_plate_and_sandwich_and_nema17(){
         mirror([0,0,1])
           motor_gear();
     rotate([0,0,4*72])
-    translate([0,Four_point_five_point_radius, 21]) motor_gear();
+    translate([0,Four_point_five_point_radius, 27]) motor_gear();
     rotate([0,0,3*72])
-    translate([0,Four_point_five_point_radius, 15]) motor_gear();
+    translate([0,Four_point_five_point_radius, 17]) motor_gear();
     rotate([0,0,2*72])
-    translate([0,Four_point_five_point_radius, 7]) motor_gear();
+    translate([0,Four_point_five_point_radius, 9]) motor_gear();
   }
   filament();
 }
@@ -552,7 +554,7 @@ module gatt(height=25, arm_rotation=0){
               mirror([0,k,0]){
                 translate([0,-(h1/2) - 0.2,height - sd/2])
                   rotate([90,0,0])
-                    #arm(3,h1-1,h1+4,1.8,(bd/2+0.01)-(h1-1),1.2);
+                    arm(3,h1-1,h1+4,1.8,(bd/2+0.01)-(h1-1),1.2);
               }
             }
           }
@@ -585,7 +587,7 @@ module gatts(){
   gap = 0.2;
   lh  = Lock_height;
   bw  = Bearing_608_width;
-  z_back = 10;
+  z_back = Z_gatt_back;
   z_rotate = 19;
   z_height = th+lh/4+gap/2+2;
   xy_height_1 = z_height + gap+lh+bw;
@@ -698,3 +700,23 @@ module full_render(){
   placed_ramps();
 }
 full_render();
+
+module hook(){
+  
+}
+
+module top_plate(){
+  th = Top_plate_thickness;
+  // Base plate
+  eq_tri(Full_tri_side, th);
+  // Place hooks precisely where gatts lets lines out (in xy-plane)
+  // That is gatts entry points + radius
+  //gatts();
+  // This movement is synced with movement in module gatts
+  z_gatt_translate(Z_gatt_back)
+    rotate([0,0,-90+Middlerot+120])
+      translate([Bearing_623_vgroove_small_diameter/2,0,0])
+        // We want out hooks to be exactly here
+        cylinder(r=0.8,h=40);
+}
+//top_plate();

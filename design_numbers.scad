@@ -2,6 +2,7 @@
 Full_tri_side          = 200*1.035; //Rotate eq_tri compared to heatbed, gain length
 Lock_height            = 2;
 Bottom_plate_thickness = 4.5;
+Top_plate_thickness    = Bottom_plate_thickness;
 Bottom_plate_radius    = 82;
 // Based on pitch radii of sandwich and motor_gear
 Four_point_five_point_radius = 41.11 + 13.33 + 0.1; // Must likely be enlargened to fit head
@@ -21,3 +22,4 @@ Motor_gear_height = 17;
 Middlerot = 41.3;
 Splitrot_1 = 142;
 Splitrot_2 = 53.2;
+Z_gatt_back = 10;
