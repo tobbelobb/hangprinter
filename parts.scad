@@ -248,16 +248,63 @@ module punched_cube(v){
 //punched_cube(Drive_support_v);
 
 // height of the tower depends on big extruder gear rotation
-module drive_support(){
-  cube([Bearing_623_outer_diameter + 14,
-        Drive_support_height,
-        Bearing_623_width]);
+module drive_support(flag){
+  Hobb_from_edge=12;
+  th = Bearing_623_width+0.5;
   difference(){
-    translate([0,Drive_support_height,-Hobbed_insert_height - 1*Bearing_623_width])
+    cube([Bearing_623_outer_diameter + 14,
+        Drive_support_height,
+        th]);
+    // Hole for bearings supporting hobbed insert screw
+    translate([Bearing_623_outer_diameter-1.5,Hobb_from_edge,-Big/2])
+      M3_screw(Big);
+    translate([Bearing_623_outer_diameter-1.5,Hobb_from_edge,-1.5])
+      Bearing_623();
+    // Hole for support bearing M3
+    translate([Hobbed_insert_diameter+Bearing_623_outer_diameter,
+        Hobb_from_edge,-1])
+      M3_screw(Big);
+    // Tightening mechanism
+    translate([1.7 + (Bearing_623_outer_diameter + 14)/2,
+        -Big + 30, // Depth of skåra
+        -1])
+      cube([2,Big,th+2]);
+    translate([17.6,0,-1])
+    rotate([0,0,15+90]) 
+      special_tri(13,13);
+    if(flag == 0){
+      translate([-10,3,th/2])
+      rotate([0,90,0])
+      M3_screw(h=Big);
+    }
+  }
+  if(flag != 0){
+    difference(){
+      translate([-3 + 1.7 + (Bearing_623_outer_diameter + 14)/2,
+          0,
+          -7]){
+        cube([3,7,th+7]);
+        translate([5,0,0])
+          cube([2.7,7,th+7]);
+      }
+      translate([9.5,3.5,-3.2])
+        rotate([0,90,0])
+        M3_screw(h=Big);
+    }
+  }
+
+  // Foot to screw on to bottom_plate
+  difference(){
+    translate([0,Drive_support_height,
+                 -Drive_support_v[2]+th])
       punched_cube(Drive_support_v);
   }
 }
-//drive_support();
+//translate([-(Bearing_623_outer_diameter + 6)/2
+// + sin(Big_extruder_gear_rotation)*Pitch_difference_extruder,
+// -cos(Big_extruder_gear_rotation)*Pitch_difference_extruder - 10,
+// Big_extruder_gear_height + 1.5 + 0.7])
+drive_support(0);
 
 //** Plates start **//
 

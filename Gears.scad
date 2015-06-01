@@ -189,17 +189,16 @@ module my_gear(teeth, height){
 			 hub_diameter    = 15);
 }
 
-module large_extruder_gear(height){
+module big_extruder_gear(height=Big_extruder_gear_height){
   difference(){
-    cylinder(r=28,h=height,$fn=128);
-    translate([0,0,-0.1]) gear(
+    gear(
         number_of_teeth=Big_extruder_gear_teeth,
         circular_pitch=Circular_pitch_extruder_gears,
         diametral_pitch=false,
         pressure_angle=28,
         clearance = 0.2,
-        gear_thickness=0.01,
-        rim_thickness=height-3,
+        gear_thickness=height,
+        rim_thickness=height,
         rim_width=3,
         hub_thickness=0,
         hub_diameter=4,
@@ -208,24 +207,19 @@ module large_extruder_gear(height){
         backlash=0,
         twist=0,
         involute_facets=0);
-
-    difference(){
-      cylinder(r=22.5,h=Big,center=true,$fn=128); 
-      for(i=[0:5])
-        rotate([0,0,i*360/5])
-          translate([0,15,height - 1.5])
-            cube([6,30,3],center=true);
-      difference(){
-        translate([0,0,height - 5.5]) cylinder(r=5.5,h=4.5,$fn=64);
-        translate([0,0,0]) cylinder(h=height-3, r=5.4/sqrt(3),$fn=6);
-      }
-    }
+    for(i=[0:60:359])
+      rotate([0,0,i])
+        translate([Big_extruder_gear_pitch/2+2,0,-1])
+        cylinder(r=5.7,h=Big);
+    // Hex head
+    translate([0,0,-0.01]) cylinder(h=height/2, r=5.4/sqrt(3),$fn=6);
+    // Screw hole
     cylinder(r=2.95/sqrt(3),h=Big,center=true,$fn=6);
   }
 }
-//large_extruder_gear(12);
+//big_extruder_gear();
 
-module small_extruder_gear(height){
+module small_extruder_gear(height=Small_extruder_gear_height){
 	difference(){
 		union(){
       translate([0,0,0.1])
@@ -250,10 +244,10 @@ module small_extruder_gear(height){
 			translate([Shaft_flat + 0.75,0,height/2])
 				cube([1.5,5,height],center=true);
 			//base
-			difference(){
-				cylinder(r=6.3,h=1.0,$fn=64);			
-				cylinder(r=Nema17_motor_shaft/2,h=1.001,$fn=64);
-			}
+			//difference(){
+			//	cylinder(r=6.3,h=1.0,$fn=64);			
+			//	cylinder(r=Nema17_motor_shaft/2,h=1.001,$fn=64);
+			//}
 		}
 		//lead in
 		translate([0,0,-0.01])
@@ -261,7 +255,7 @@ module small_extruder_gear(height){
                r2=Nema17_motor_shaft/2-2,h=4,$fn=64);
 	}
 }
-//small_extruder_gear(6);
+//small_extruder_gear();
 
 module snelle(r1, r2, h, edge=1){
   cylinder(r1=r1, r2=r2, h=edge);

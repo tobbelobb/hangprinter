@@ -12,20 +12,21 @@ Bottom_plate_radius    = 82;
 Circular_pitch_top_gears = 400;
 Motor_gear_teeth = 12;
 Sandwich_gear_teeth = 37;
-Circular_pitch_extruder_gears = 150;
-Big_extruder_gear_teeth = 61;
-Small_extruder_gear_teeth = 13;
+Circular_pitch_extruder_gears = 180;
+Big_extruder_gear_teeth = 50;
+Small_extruder_gear_teeth = 14;
 Motor_gear_height = 17;
 
-Big_extruder_gear_rotation = 16; // Rotate around z-axis
-Big_extruder_gear_height = 8;
+Big_extruder_gear_rotation = 0; // Rotate around z-axis
+//Big_extruder_gear_height = 8;
+Big_extruder_gear_height = 4;
 Small_extruder_gear_height = 6;
 
 Snelle_radius = 34.25;
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//
-Extruder_motor_twist = -11;
+Extruder_motor_twist = 0;
 Hobbed_insert_height = 7;
 Drive_support_thickness = Bearing_623_width;
 Support_rx = Bearing_623_outer_diameter-3.5;
@@ -47,10 +48,10 @@ Motor_gear_pitch = Motor_gear_teeth*Circular_pitch_top_gears/360;
 Sandwich_gear_pitch = Sandwich_gear_teeth*Circular_pitch_top_gears/360;
 Big_extruder_gear_pitch = Big_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
 Small_extruder_gear_pitch = Small_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
-Pitch_difference_extruder = Big_extruder_gear_pitch - Small_extruder_gear_pitch;
+Pitch_difference_extruder = Big_extruder_gear_pitch + Small_extruder_gear_pitch;
 Four_point_five_point_radius=Sandwich_gear_pitch+Motor_gear_pitch+0.1;
 
-Drive_support_height = Nema17_cube_width/2 +
+Drive_support_height = Nema17_cube_width/4 +
            Pitch_difference_extruder*cos(Big_extruder_gear_rotation)
            + 7
            + 1;

@@ -10,14 +10,14 @@ include <placed_parts.scad>
 
 // Rendering control
 render_bottom_plate = true;
-render_sandwich     = false;
-render_xy_motors    = false;
-render_gatts        = false;
-render_lines        = false;
+render_sandwich     = true;
+render_xy_motors    = true;
+render_gatts        = true;
+render_lines        = true;
 render_extruder     = true;
-render_hotend       = false;
-render_ramps        = false;
-render_plates       = false;
+render_hotend       = true;
+render_ramps        = true;
+render_plates       = true;
 
 // Modules not in contact with any printed parts
 // Just explanatory

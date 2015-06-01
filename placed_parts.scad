@@ -41,7 +41,7 @@ module support_bearing_translate(rotation){
   translate([(Hobbed_insert_diameter + 
               Bearing_623_outer_diameter)/2 + 1.5
               + sin(rotation)*Pitch_difference_extruder,
-              - cos(rotation)*Pitch_difference_extruder,15]) children(0);
+              - cos(rotation)*Pitch_difference_extruder,11]) children(0);
 }
 
 // For rendering
@@ -63,7 +63,7 @@ module translated_insert_tower(){
   bearing_base_translation = 8.3;
   hobbed_insert_placement = bearing_base_translation +
                             Bearing_623_width + 0.2;
-    translate([0,-Pitch_difference_extruder,1.5]){
+    translate([0,-Pitch_difference_extruder,-2.1]){
       translate([0,0,bearing_base_translation])
         Bearing_623();
       translate([0,0,2])
@@ -83,7 +83,7 @@ module assembled_drive(rotation){
   rotate([0,0,rotation]){
     small_extruder_gear(Small_extruder_gear_height);
     translate([0,-Pitch_difference_extruder,1.5])
-      large_extruder_gear(Big_extruder_gear_height);
+      %big_extruder_gear(Big_extruder_gear_height);
     translated_insert_tower();
   } // end rotate
 
@@ -97,15 +97,11 @@ module assembled_drive(rotation){
           Drive_support_thickness])
         translate([0,0, k])
           mirror([0,0,k])
-          drive_support();
+          drive_support(k);
     }
     // Space for tower in bearing supports
     rotate([0,0,rotation])
       translated_insert_tower();
-    // Hole through support bearing (antimateria)
-    translate([0,0,-5.5])
-    support_bearing_translate(rotation)
-      M3_screw(Big);
   }
   support_bearing(rotation);
   // M3 through support bearing (materia)
@@ -113,7 +109,7 @@ module assembled_drive(rotation){
   support_bearing_translate(rotation)
     M3_screw(19);
 }
-//assembled_drive(rotation=Big_extruder_gear_rotation);
+assembled_drive(rotation=Big_extruder_gear_rotation);
 
 // Further assembly of parts. For rendering.
 module Nema17_with_drive(rotation=0){
