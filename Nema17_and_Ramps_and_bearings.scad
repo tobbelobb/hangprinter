@@ -2,7 +2,7 @@ include <measured_numbers.scad>
 
 module Nema17_screw_translate(){
   for (i=[0:90:359]){
-    rotate([0,0,i+45]) translate([Nema17_screw_hole_width/2,0,0]) child(0);
+    rotate([0,0,i+45]) translate([Nema17_screw_hole_width/2,0,0]) children(0);
   }
 }
 

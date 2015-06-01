@@ -1,5 +1,5 @@
-// Thanks to GregFrost for this: http://www.thingiverse.com/thing:3575
-// Thanks also to Reprappro: https://github.com/reprappro/Extruder-drive
+// Minor modifications of code by GregFrost for this: http://www.thingiverse.com/thing:3575
+// and Reprappro: https://github.com/reprappro/Extruder-drive
 include <measured_numbers.scad>
 include <design_numbers.scad>
 
@@ -52,20 +52,16 @@ module involute_gear_tooth(pitch_radius,
 	start_angle = involute_intersect_angle(base_radius, min_radius);
 	stop_angle = involute_intersect_angle(base_radius, outer_radius);
 	res=(involute_facets!=0)?involute_facets:($fn==0)?5:$fn/4;
-	union(){
-		for(i=[1:res])
-		assign(point1=involute(base_radius,start_angle+(stop_angle - start_angle)*(i-1)/res),
-			     point2=involute(base_radius,start_angle+(stop_angle - start_angle)*i/res)){
-			assign(side1_point1=rotate_point(centre_angle, point1),
-				     side1_point2=rotate_point(centre_angle, point2),
-				     side2_point1=mirror_point(rotate_point(centre_angle, point1)),
-				     side2_point2=mirror_point(rotate_point(centre_angle, point2))){
-				       polygon(points=[[0,0],side1_point1,side1_point2,side2_point2,side2_point1],
-					             paths=[[0,1,2,3,4,0]]);
-			}
-		}
-	}
+  for(i=[1:res]){
+    polygon(points=[[0,0], rotate_point(centre_angle, involute(base_radius,start_angle+(stop_angle - start_angle)*(i-1)/res)),
+                           rotate_point(centre_angle, involute(base_radius,start_angle+(stop_angle - start_angle)*i/res)),
+                           mirror_point(rotate_point(centre_angle, involute(base_radius,start_angle+(stop_angle - start_angle)*i/res))),
+                           mirror_point(rotate_point(centre_angle, involute(base_radius,start_angle+(stop_angle - start_angle)*(i-1)/res)))],
+        paths=[[0,1,2,3,4,0]]);
+  }
 }
+//my_gear(40,10);
+
 
 module gear_shape(number_of_teeth,
 	                pitch_radius,
@@ -181,7 +177,9 @@ module gear(number_of_teeth = 15,
 
 module my_gear(teeth, height){
 	gear(number_of_teeth = teeth,
-			 circular_pitch  = 400,
+       // Increasing circular_pitch this makes gears larger
+       // Should possibly be parameter in design_numbers.scad...
+			 circular_pitch  = Circular_pitch_top_gears, 
 			 pressure_angle  = 30,
 			 clearance       = 0.2,
 			 gear_thickness  = height,
@@ -191,12 +189,13 @@ module my_gear(teeth, height){
 			 hub_diameter    = 15);
 }
 
-module large_gear(height=Large_gear_height){
+module large_extruder_gear(height){
   difference(){
     cylinder(r=28,h=height,$fn=128);
     translate([0,0,-0.1]) gear(
-        number_of_teeth=61,
-        circular_pitch=150, diametral_pitch=false,  // Changed from 150 - AB
+        number_of_teeth=Big_extruder_gear_teeth,
+        circular_pitch=Circular_pitch_extruder_gears,
+        diametral_pitch=false,
         pressure_angle=28,
         clearance = 0.2,
         gear_thickness=0.01,
@@ -224,16 +223,16 @@ module large_gear(height=Large_gear_height){
     cylinder(r=2.95/sqrt(3),h=Big,center=true,$fn=6);
   }
 }
-//large_gear(12);
+//large_extruder_gear(12);
 
-module small_gear(height=Small_gear_height){
+module small_extruder_gear(height){
 	difference(){
 		union(){
       translate([0,0,0.1])
 			gear(
-				number_of_teeth=13,
-				circular_pitch=150,
-        diametral_pitch=false, // Changed from 150 - AB
+				number_of_teeth=Small_extruder_gear_teeth,
+				circular_pitch=Circular_pitch_extruder_gears,
+        diametral_pitch=false,
 				pressure_angle=28,
 				clearance = 0.2,
 				gear_thickness=5,
@@ -262,4 +261,95 @@ module small_gear(height=Small_gear_height){
                r2=Nema17_motor_shaft/2-2,h=4,$fn=64);
 	}
 }
-//small_gear(6);
+//small_extruder_gear(6);
+
+module snelle(r1, r2, h, edge=1){
+  cylinder(r1=r1, r2=r2, h=edge);
+  cylinder(r=r2, h=h);
+}
+//snelle(r1 = 10, r2 = 5, h = 3);
+
+// Sandwich height follows exactly 608 bearing thickness
+module sandwich(teeth = Sandwich_gear_teeth){
+  od              = Bearing_608_outer_diameter;
+  bw              = Bearing_608_width;
+  meltlength      = 0.1;
+  sandwich_height = Bearing_608_width + Lock_height;
+	gear_height     = sandwich_height*4/7-1;
+  cylinder_height = sandwich_height*3/7+1;
+
+  difference(){
+    union(){
+      translate([0, 0, cylinder_height - meltlength])
+        my_gear(teeth, gear_height);
+      // Snelle
+      snelle(r1 = Snelle_radius + 1,
+        r2 = Snelle_radius, h = cylinder_height, $fn = 150);
+    }
+    // Dig out the right holes
+    translate([0, 0, -1.2])
+      cylinder(r = od/2, h = gear_height + cylinder_height); // 0.15 added to raduis during print...
+    cylinder(r = od/2-2, h = Big);
+    // Decoration/material saving holes
+    for(i = [1:60:360]){
+      rotate([0,0,i])
+        translate([2*Snelle_radius/3,0,-1])
+        cylinder(r=8.5,h=Big);
+    }
+    //translate([0, 0, -8.7])
+    //  cylinder(r = 20, h = 10);
+  }
+  //Bearing_608();
+}
+//sandwich();
+
+// 17.79 will be the protruding shaftlength up from bottom plate
+// Making the motor gear a little shorter might let us use same on all
+module motor_gear(height = Motor_gear_height){
+  swh  = Bearing_608_width + Lock_height;
+  r_swh = swh - 1; // reduced sandwich height
+  e_swh = swh + 1; // extended sandwich height
+  melt = 0.1;
+  teeth = Motor_gear_teeth;
+  difference(){
+    union(){
+      difference(){
+        union(){
+          translate([0,0,height - e_swh - melt])
+            my_gear(teeth, r_swh + melt);
+
+          // Shaft cylinder
+          cylinder(r = 10, h = height - e_swh, $fn=40); 
+          // Upper protection disc
+          translate([0,0,height-2.5])
+            cylinder(r2 = Motor_gear_pitch+3,
+                r1 = Motor_gear_pitch + 2, h=2.5, $fn=50);
+          translate([0,0,height -2 - e_swh])
+            cylinder(r1 = Motor_gear_pitch+3,
+                r2 = Motor_gear_pitch + 2, h=2.5, $fn=50);
+        }
+        // Center bore
+        difference(){
+          translate([0, 0, -1])
+            cylinder(r = 5.1/2, h = height + 2);
+        }
+      }
+      // D-wall in bore
+      translate([-6/2, 1.83, 0])
+        cube([6,3,height]);
+    }
+    // Phase in
+    translate([0,0,-0.1])
+      cylinder(r1=5/2+0.8, r2=1.6, h=3.0);
+    translate([0,0,height - 2.9])
+     cylinder(r2=5/2+0.8, r1=1.6, h=3.0);
+  }
+}
+//motor_gear();
+
+// Visualization only
+module gear_friends(){
+  translate([Four_point_five_point_radius,0,-5]) motor_gear();
+  sandwich();
+}
+//gear_friends();
