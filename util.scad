@@ -24,4 +24,19 @@ module special_tri(s, h){
 }
 //special_tri(40,10);
 
-
+module pline(v0, v1, r){
+  v2 = v1 - v0;
+  v2l = sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
+  v2n = v2/v2l;
+  theta = acos(v2n[2]);
+  phi   = acos(v2n[1]/sqrt(v2n[1]*v2n[1] + v2n[0]*v2n[0]));
+  translate(v0)
+    if(v2n[0] < 0){
+      rotate([-theta,0,phi])
+        cylinder(r=r, h=v2l);
+    } else {
+      rotate([-theta,0,-phi])
+        cylinder(r=r, h=v2l);
+    }
+}
+//pline([-23,41,-25],[10,-32,34],7);
