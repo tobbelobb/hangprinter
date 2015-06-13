@@ -2,13 +2,7 @@
 // and Reprappro: https://github.com/reprappro/Extruder-drive
 include <measured_numbers.scad>
 include <design_numbers.scad>
-
-//////////// Utility numbers //////////////
-// When numbers get larger than Big, models start to look funny
-// (parametrization breaks down).
-Big   = 300; 
-Sqrt3 = sqrt(3);
-pi    = 3.1415926535897932384626433832795;
+include <util.scad>
 
 //////////// Functions /////////////
 function mirror_point(coord) = 
@@ -60,8 +54,6 @@ module involute_gear_tooth(pitch_radius,
         paths=[[0,1,2,3,4,0]]);
   }
 }
-//my_gear(40,10);
-
 
 module gear_shape(number_of_teeth,
 	                pitch_radius,
@@ -188,6 +180,7 @@ module my_gear(teeth, height){
 			 hub_thickness   = height,
 			 hub_diameter    = 15);
 }
+//my_gear(40,10);
 
 module big_extruder_gear(height=Big_extruder_gear_height){
   difference(){
@@ -212,7 +205,7 @@ module big_extruder_gear(height=Big_extruder_gear_height){
         translate([Big_extruder_gear_pitch/2+2,0,-1])
         cylinder(r=5.7,h=Big);
     // Hex head
-    translate([0,0,-0.01]) cylinder(h=height/2, r=5.4/sqrt(3),$fn=6);
+    translate([0,0,-0.01]) cylinder(h=Big_extruder_gear_screw_head_depth + 0.01, r=5.4/sqrt(3),$fn=6);
     // Screw hole
     cylinder(r=2.95/sqrt(3),h=Big,center=true,$fn=6);
   }

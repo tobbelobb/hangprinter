@@ -1,10 +1,11 @@
-include <util.scad>
 include <measured_numbers.scad>
+include <util.scad>
 include <design_numbers.scad>
 include <Nema17_and_Ramps_and_bearings.scad>
 include <Gears.scad>
 
 //** bottom_plate start **//
+
 
 // Assumes children(0) is centered in xy-plane
 // A little odd that reference translation is along y...
@@ -19,12 +20,12 @@ module four_point_translate(){
 
 // Needed here to get screw holes right
 module extruder_motor_translate(extruder_twist = 12){
-  radius = Four_point_five_point_radius;
-  translate([0, radius, -Nema17_cube_width/2 - 1])
+  radius = Four_point_five_point_radius + 5;
+  translate([0, radius, -Nema17_cube_width/3])
     rotate([0, 0, extruder_twist])
       translate([0, -Nema17_cube_height, 0])
         rotate([90,0,0])
-          translate([0, 0, -Nema17_cube_height/2]) children(0);
+          translate([0, 0, -3*Nema17_cube_height/2 - 2]) children(0);
 }
 
 
@@ -51,6 +52,8 @@ module bottom_plate(){
     union(){
       // Largest possible triangular plate
       eq_tri(Full_tri_side, th);
+      // Circular bottom plate
+      cylinder(r=bpr, h = th);
       // Flexible sandwich stick
       difference(){
         union(){
@@ -72,21 +75,50 @@ module bottom_plate(){
         rotate([0, 0, 90])
           cube([1.3, Big, Big], center = true);
       }
-      // Circular bottom plate
-      cylinder(r=bpr, h = th);
     }
+    // Hole for extruder motor
+    extruder_motor_translate(Extruder_motor_twist)
+      scale(1.01) // Leave 1% extra space, don't need tight fit
+      Nema17();
+
+    // Screw holes for extruder motor mounting screws
+    rotate([0,0,Extruder_motor_twist])
+    translate([-18.5,77,Bottom_plate_thickness/2])
+    rotate([-90,0,0])
+    cylinder(h=Big, r=2.0);
+    rotate([0,0,Extruder_motor_twist])
+    translate([-50,77,Bottom_plate_thickness/2])
+    rotate([-90,0,0])
+    cylinder(h=Big, r=2.0);
+    rotate([0,0,Extruder_motor_twist])
+    translate([-18.5,7,Bottom_plate_thickness/2])
+    rotate([-90,0,0])
+    cylinder(h=Big, r=M3_diameter/2+0.1);
+    rotate([0,0,Extruder_motor_twist])
+    translate([-50,7,Bottom_plate_thickness/2])
+    rotate([-90,0,0])
+    cylinder(h=Big, r=M3_diameter/2+0.1);
+
+    rotate([0,0,Extruder_motor_twist])
+    translate([-18.5,11,Bottom_plate_thickness/2])
+    rotate([-90,0,0])
+    cube([9,9,30], center=true);
+
+    rotate([0,0,Extruder_motor_twist])
+    translate([-50,11,Bottom_plate_thickness/2])
+    rotate([-90,0,0])
+    cube([9,9,30], center=true);
+
     // Dig out filament hole in sandwich stick and base.
     // When physical build is done, fill this hole for stiffness
     translate([0, 0, -1]) cylinder(r = 2.4, h = Big);
-    // Screw holes for extruder motor
-    // ...
     // Screw holes for XY Nema
     // TODO: Make Nemas turnable
     translate([0, 0, -1])
       four_point_translate()
         translate([0,0,-Big/2]) Nema17_screw_holes(M3_diameter, Big);
 
-    // Middle hole for Nema
+    // Middle hole for ABCD-motors
     translate([0, 0, -1])
       four_point_translate()
         cylinder(r = 8, h = Big);
@@ -97,26 +129,31 @@ module bottom_plate(){
     extruder_motor_twist = Extruder_motor_twist;
     // From translated_extruder_motor_and_drive
     extruder_motor_translate(extruder_motor_twist)
-      translate([0,0,-Nema17_cube_height - 2]){
-        // From Nema17_with_drive
-        translate([0,0,Nema17_shaft_height - 6]){
-          // drive_support is called by assembled_drive only
-          //from assembled_drive
-          translate([-(Bearing_623_outer_diameter + 6)/2
-              + sin(rotation)*Pitch_difference_extruder,
-              - cos(rotation)*Pitch_difference_extruder - 10,
-              Big_extruder_gear_height + 1.5 + 0.7]){
-            for(k = [0,Hobbed_insert_height + 1.1*Bearing_623_width + 
-                Drive_support_thickness])
-              translate([0,0, k])
-                mirror([0,0,k])
-                // Found in drive_support()
-                translate([0,
-                    Drive_support_height,
-                    -Hobbed_insert_height - 1*Bearing_623_width])
-                Drive_support_holes(Drive_support_v);
-          }
-        }
+      // From Nema17_with_drive
+      translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+1]){
+        // drive_support is called by assembled_drive only
+        //from assembled_drive
+        translate([ // Center 623 in x-dim 
+            -Bearing_623_outer_diameter/2 -5 //match 5 in drive_support
+            // Take rotation into account x-dim
+            + sin(rotation)*Pitch_difference_extruder,
+            // Take rotation into account y-dim (place hobb on edge)
+            -cos(rotation)*Pitch_difference_extruder
+            - Hobb_from_edge,
+            // Big extruder gear placed below this structure, z-dim
+            Big_extruder_gear_height + 0.2]) // Big gear |.2mm| support
+          for(k = [0,Drive_support_thickness//Bring to same z
+              + Bearing_623_width
+              + 0.2 // 623 |.2mm| Hobb |.2mm| 623
+              + Hobbed_insert_height
+              + 0.2])
+            translate([0,0, k])
+              mirror([0,0,k])
+              // Found in drive_support()
+              translate([0,
+                  Drive_support_height,
+                  -Hobbed_insert_height - 1*Bearing_623_width])
+              Drive_support_holes(Drive_support_v);
       }
   }
 }
@@ -248,20 +285,28 @@ module punched_cube(v){
 //punched_cube(Drive_support_v);
 
 // height of the tower depends on big extruder gear rotation
+// Used in assembled_drive in placed_parts.scad
 module drive_support(flag){
-  Hobb_from_edge=12;
-  th = Bearing_623_width+0.5;
+  th = Drive_support_thickness;
   difference(){
     cube([Bearing_623_outer_diameter + 14,
         Drive_support_height,
         th]);
     // Hole for bearings supporting hobbed insert screw
-    translate([Bearing_623_outer_diameter-1.5,Hobb_from_edge,-Big/2])
+    translate([Bearing_623_outer_diameter,Hobb_from_edge,-Big/2])
       M3_screw(Big);
-    translate([Bearing_623_outer_diameter-1.5,Hobb_from_edge,-1.5])
-      Bearing_623();
+    translate([Bearing_623_outer_diameter/2 + 5,
+        Hobb_from_edge,
+        -1])
+      cylinder(r=Bearing_623_outer_diameter/2, h=Big);
     // Hole for support bearing M3
-    translate([Hobbed_insert_diameter+Bearing_623_outer_diameter,
+    //translate([Hobbed_insert_diameter/2
+    //           + Bearing_623_outer_diameter
+    //           + Extruder_filament_opening,
+    //    Hobb_from_edge,-1])
+    translate([Bearing_623_outer_diameter + 5 // Center of hobb x-dir
+               + Hobbed_insert_diameter/2
+               + Extruder_filament_opening,
         Hobb_from_edge,-1])
       M3_screw(Big);
     // Tightening mechanism
@@ -304,7 +349,7 @@ module drive_support(flag){
 // + sin(Big_extruder_gear_rotation)*Pitch_difference_extruder,
 // -cos(Big_extruder_gear_rotation)*Pitch_difference_extruder - 10,
 // Big_extruder_gear_height + 1.5 + 0.7])
-drive_support(0);
+//drive_support(0);
 
 //** Plates start **//
 
@@ -346,6 +391,14 @@ module top_flerp(side_length){
     eq_tri(side_length,Top_plate_thickness);
     translate([0,1,0]) cylinder(r=M3_diameter/2,h=Big,center=true);
   }
+}
+
+// Translation, iterating and rotating modules
+module z_gatt_translate(back = 0){
+  for(i=[0,120,240])
+    rotate([0,0,i])
+      translate([0,Full_tri_side/Sqrt3 - back,0])
+        children(0);
 }
 
 module top_plate(){
