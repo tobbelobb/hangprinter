@@ -1,14 +1,65 @@
 include <measured_numbers.scad>
+include <util.scad>
+
+LEFT = 0;
+RIGHT = 1;
+MIDDLE = 2;
+A = 0;
+B = 1;
+C = 2;
+D = 3;
+X = 0;
+Y = 1;
+Z = 2;
 
 //////////// Design decision numbers //////////////
+// TODO:
+//  * Numbers in Configuration.h and Configuration_adv.h should
+//    be found here with identical names.
+//    That means coordinates of anchor points and action points
+//    should be coded in clear text here.
 
 //** The bottom plate parameters **//
-Full_tri_side          = 200*1.035; // Rotate eq_tri relative to 200
+Full_tri_side          = 200*1.035; // Rotate eq_tri relative to 200 mm
                                     // printbed, gain 3.5 % side length
 Lock_height            = 2;
 Bottom_plate_thickness = 4.5;
 Top_plate_thickness    = Bottom_plate_thickness;
 Bottom_plate_radius    = 82;
+
+
+// For rotating lines and gatts in place
+d_gatt_back = 13;
+
+Sandwich_height      = Bearing_608_width + Lock_height;
+Sandwich_gear_height = Sandwich_height*4/7-1;
+Snelle_height        = Sandwich_height*3/7+1;
+
+// Distance between parallell contact points on one side of printer
+Abc_xy_split = Full_tri_side - 2*30;
+
+// This is the xy coordinate of one wall/printer contact point
+Line_action_point_abc_xy     = [0, -Full_tri_side/(2*Sqrt3) + 5, 0];
+Line_contact_abc_xy          = Line_action_point_abc_xy - [Abc_xy_split/2, 0, 0];
+// For left-right symmetry for pairs of wall/printer contact points
+Mirrored_line_contact_abc_xy = mirror_point_x(Line_contact_abc_xy);
+
+Wall_action_point_a  = [0, -200, -25];
+Wall_action_point_b  = [300, 100, -22];
+Wall_action_point_c  = [-350, 100, -12];
+Ceiling_action_point = [0, 0, 500];
+
+// This is the xy coordinate of one point where a D-line enters the
+// printer. Preferrably near a corner.
+Line_contact_d_xy = [0, Full_tri_side/Sqrt3 - d_gatt_back, 0];
+// This is the three different z-heights of the three spools (snelles)
+// TODO: change xy to abc in "xy_motors" and other places
+Line_contacts_abcd_z = [Bottom_plate_thickness+0.7+Snelle_height/2 + 3*(Sandwich_height + 0.2), 
+                        Bottom_plate_thickness+0.7+Snelle_height/2 + 2*(Sandwich_height + 0.2), // Gap between sandwiches is 0.2 mm
+                        Bottom_plate_thickness+0.7+Snelle_height/2 + Sandwich_height + 0.2,     // Gap from bottom_plate to sandwich is 0.7 mm
+                        Bottom_plate_thickness+0.7+Snelle_height/2];    // D-lines have lowest contact point, maximizes build volume
+
+
 
 //** Gear parameters **//
 Circular_pitch_top_gears = 400;
@@ -18,16 +69,14 @@ Circular_pitch_extruder_gears = 180;
 Big_extruder_gear_teeth = 50;
 Small_extruder_gear_teeth = 14;
 Motor_gear_height = 17;
-
 //Big_extruder_gear_height = 8;
 Big_extruder_gear_height = 4;
 Small_extruder_gear_height = 6;
 
-Snelle_radius = 34.25;
+Snelle_radius = 34.25; // This is the radius the line will wind around
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//
-//Bearing_support_wall = 1.5;
 Big_extruder_gear_rotation = 62; // Rotate around z-axis
 Extruder_motor_twist = -35; // Manually adjusted to center hobb
 Hobbed_insert_height = 6;
@@ -42,12 +91,6 @@ Drive_support_v = [Bearing_623_outer_diameter + 14,
                    Drive_support_thickness,
                    Hobbed_insert_height + 2*Bearing_623_width];
 
-
-// For rotating lines and gatts in place
-Middlerot = 41.3;
-Splitrot_1 = 142;
-Splitrot_2 = 53.2;
-Z_gatt_back = 13;
 
 //** Derived parameters **//
 Motor_gear_pitch = Motor_gear_teeth*Circular_pitch_top_gears/360;

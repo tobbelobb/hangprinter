@@ -9,25 +9,56 @@ use <render_parts.scad>
 
 module placed_lines(){
   th  = Bottom_plate_thickness; 
-  gap = 0.2;
-  lh  = Lock_height;
-  bw  = Bearing_608_width;
-  bt  = 1.9; // line radius, edge of snelle and some space
-  i = 0;
-  for(i=[0,120,240])
-    rotate([0,0,i]){
-      translate([0,0, bt+th+lh/4+gap/2 + (1 + i/120)*(gap + lh + bw)]){
-        // Left line as seen from above
-        rotate([0, 0, Splitrot_1]) line(87,36,32);
-        // Right line as seen from above
-        rotate([0, 0, Splitrot_2]) line(84,71,-58);
+  // Lines from sandwich out to gatts
+  for(i=[0,1,2]){
+    rotate([0,0,i*120]){
+      // Pairs of inner abc-lines (onboard printer)
+      translate([0,0, Line_contacts_abcd_z[i]]){
+        pline(tangent_point(Snelle_radius, Line_contact_abc_xy),
+            Line_contact_abc_xy, 0.8);
+        pline(tangent_point_2(Snelle_radius,
+              Mirrored_line_contact_abc_xy),
+            Mirrored_line_contact_abc_xy, 0.8);
       }
-      translate([0, 0, bt+th+lh/4+gap/2])
-        rotate([0, 0, Middlerot-0.3])
-          line(114-Z_gatt_back,-90,0);
+      // inner d-lines (onboard printer)
+      translate([0,0, Line_contacts_abcd_z[3]])
+        pline(tangent_point_3(Snelle_radius, Line_contact_d_xy),
+            Line_contact_d_xy, 0.8);
     }
+  }
+  // Outer pair of a-lines
+  pline(Wall_action_point_a + [-Abc_xy_split/2,0,0], Line_contact_abc_xy + [0,0,Line_contacts_abcd_z[A]]);
+  pline(Wall_action_point_a + [ Abc_xy_split/2,0,0], Mirrored_line_contact_abc_xy + [0,0,Line_contacts_abcd_z[A]]);
+  // Outer pair of b-lines
+  pline(Wall_action_point_b + rotate_point_around_z(240, [-Abc_xy_split/2,0,0]),
+        rotate_point_around_z(240, Line_contact_abc_xy) + [0,0,Line_contacts_abcd_z[B]]);
+  pline(Wall_action_point_b + rotate_point_around_z(240, [ Abc_xy_split/2,0,0]),
+        rotate_point_around_z(240, Mirrored_line_contact_abc_xy + [0,0,Line_contacts_abcd_z[B]]));
+  // Outer pair of c-lines
+  pline(Wall_action_point_c + rotate_point_around_z(120, [-Abc_xy_split/2,0,0]),
+        rotate_point_around_z(120, Line_contact_abc_xy) + [0,0,Line_contacts_abcd_z[C]]);
+  pline(Wall_action_point_c + rotate_point_around_z(120, [ Abc_xy_split/2,0,0]),
+        rotate_point_around_z(120, Mirrored_line_contact_abc_xy + [0,0,Line_contacts_abcd_z[C]]));
+  // Outer triple of d-lines
+  for(i=[0,1,2])
+    rotate([0,0,i*120])
+      eline(Line_contact_d_xy + [0,0,Line_contacts_abcd_z[D]], Line_contact_d_xy + Ceiling_action_point);
 }
-//placed_lines();
+color("green")
+placed_lines();
+placed_sandwich();
+bottom_plate();
+//One point is exactly
+//Line_contact_d_xy
+//The other point satisfies
+// sqrt(x*x + y*y) = Snelle_radius
+// and
+// dot(Line_contact_d_xy - (x, y), (x, y)) = 0
+// so
+// (a - x)x = (y - b)y
+// where a and b are known
+// ax - x*x = y*y - by
+// ax + by = x*x + y*y = Snelle_radius*Snelle_radius
 
 
 module xy_gatt_translate_1(back = 0, sidestep = 3){
@@ -41,16 +72,11 @@ module xy_gatt_translate_2(back = 0, sidestep = 3){
     children(0);
 }
 
-
 module placed_sandwich(){
-  th  = Bottom_plate_thickness; 
-  gap = 0.2;
-  lh  = Lock_height;
-  bw  = Bearing_608_width;
-  translate([0,0, th + lh/4 + gap/2]) sandwich();
-  translate([0,0, th + lh/4 + gap/2 + gap + lh + bw]) sandwich();
-  translate([0,0, th + lh/4 + gap/2 + 2*(gap + lh + bw)]) sandwich();
-  translate([0,0, th + lh/4 + gap/2 + 3*(gap + lh + bw)]) sandwich();
+  translate([0,0, Line_contacts_abcd_z[0] - Snelle_height/2]) sandwich();
+  translate([0,0, Line_contacts_abcd_z[1] - Snelle_height/2]) sandwich();
+  translate([0,0, Line_contacts_abcd_z[2] - Snelle_height/2]) sandwich();
+  translate([0,0, Line_contacts_abcd_z[3] - Snelle_height/2]) sandwich();
 }
 //placed_sandwich();
 
@@ -139,7 +165,7 @@ module assembled_drive(rotation){
     M3_screw(19);
 }
 //assembled_drive(rotation=Big_extruder_gear_rotation);
-//assembled_drive(rotation=25);
+//assembled_drive(rotation=103);
 
 // Further assembly of parts...
 module Nema17_with_drive(rotation=0){
@@ -148,7 +174,7 @@ module Nema17_with_drive(rotation=0){
   translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+1])
     assembled_drive(rotation);
 }
-//Nema17_with_drive(10);
+//Nema17_with_drive(42);
 
 module translated_extruder_motor_and_drive(extruder_motor_twist = 27,
                                             big_gear_rotation = 8){
@@ -181,7 +207,7 @@ module placed_gatts(){
   gap = 0.2;
   lh  = Lock_height;
   bw  = Bearing_608_width;
-  z_back = Z_gatt_back;
+  z_back = d_gatt_back;
   z_rotate = 19;
   z_height = th+lh/4+gap/2+2;
   xy_height_1 = z_height + gap+lh+bw;
@@ -191,12 +217,11 @@ module placed_gatts(){
   // Splitrot_1 and Splitrot_2
   xy_back = 31;
   xy_sidestep = 25;
-  gatt_1_rotate = -90+Splitrot_1;
-  gatt_2_rotate = -90+Splitrot_2 + 120;
+  gatt_1_rotate = 0;
+  gatt_2_rotate = 0;
 
   // Z-gatts
   z_gatt_translate(z_back)
-    rotate([0,0,-90+Middlerot+120])
       gatt(z_height, 180);
   // Lowest xy-gatts
   xy_gatt_translate_1(xy_back, xy_sidestep)

@@ -261,21 +261,17 @@ module sandwich(teeth = Sandwich_gear_teeth){
   od              = Bearing_608_outer_diameter;
   bw              = Bearing_608_width;
   meltlength      = 0.1;
-  sandwich_height = Bearing_608_width + Lock_height;
-	gear_height     = sandwich_height*4/7-1;
-  cylinder_height = sandwich_height*3/7+1;
-
   difference(){
     union(){
-      translate([0, 0, cylinder_height - meltlength])
-        my_gear(teeth, gear_height);
+      translate([0, 0, Snelle_height - meltlength])
+        my_gear(teeth, Sandwich_gear_height);
       // Snelle
       snelle(r1 = Snelle_radius + 1,
-        r2 = Snelle_radius, h = cylinder_height, $fn = 150);
+        r2 = Snelle_radius, h = Snelle_height, $fn = 150);
     }
     // Dig out the right holes
     translate([0, 0, -1.2])
-      cylinder(r = od/2, h = gear_height + cylinder_height); // 0.15 added to raduis during print...
+      cylinder(r = od/2, h = Sandwich_height); // 0.15 added to raduis during print...
     cylinder(r = od/2-2, h = Big);
     // Decoration/material saving holes
     for(i = [1:60:360]){

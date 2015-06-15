@@ -130,7 +130,7 @@ module bottom_plate(){
     // From translated_extruder_motor_and_drive
     extruder_motor_translate(extruder_motor_twist)
       // From Nema17_with_drive
-      translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+1]){
+     translate([0,0,Nema17_shaft_height-Small_extruder_gear_height+1]){
         // drive_support is called by assembled_drive only
         //from assembled_drive
         translate([ // Center 623 in x-dim 
@@ -259,7 +259,7 @@ module gatt(height=25, arm_rotation=0){
       Bearing_608();
 
 }
-//gatt(17, 26);
+//gatt(30, 31);
 
 //** gatt end **//
 
@@ -345,10 +345,6 @@ module drive_support(flag){
       punched_cube(Drive_support_v);
   }
 }
-//translate([-(Bearing_623_outer_diameter + 6)/2
-// + sin(Big_extruder_gear_rotation)*Pitch_difference_extruder,
-// -cos(Big_extruder_gear_rotation)*Pitch_difference_extruder - 10,
-// Big_extruder_gear_height + 1.5 + 0.7])
 //drive_support(0);
 
 //** Plates start **//
@@ -401,96 +397,119 @@ module z_gatt_translate(back = 0){
         children(0);
 }
 
+// Flip before printing
 module top_plate(){
   th = Top_plate_thickness;
-  flerp_side=18;
-  // Base plate
-  union(){
-    difference(){
-      eq_tri(Full_tri_side, th);
-      translate([0,0,-1])
-        eq_tri(Full_tri_side-15, th+2);
-    }
-    // Flerpar att skruva i
-    for(i=[0,120,240])
-      rotate([0,0,i])
-        translate([0,Full_tri_side/Sqrt3-8-flerp_side/Sqrt3,0])
-          top_flerp(flerp_side);
-
-  }
-  // Place hooks precisely where gatts lets lines out (in xy-plane)
-  // That is gatts entry points + radius
-  //gatts();
-  // This movement is synced with movement in module gatts
-  z_gatt_translate(Z_gatt_back)
-    rotate([0,0,-90+Middlerot+120])
-      translate([Bearing_623_vgroove_small_diameter/2,0,th-0.1]){
-        // We want our hooks to be exactly here
-        hook();
-        //color("black") cylinder(r=0.5,h=20);
+  flerp_side=22;
+  height = 15;
+  melt=0.1;
+  translate([0,0,height]){
+    mirror([0,0,1]){
+      // Base plate
+      difference(){
+        eq_tri(Full_tri_side, th);
+        translate([0,0,-1])
+          eq_tri(Full_tri_side-15, th+2);
       }
+      for(i=[0,120,240])
+        // Screw holes
+        rotate([0,0,i]){
+          translate(Line_contact_d_xy)
+            translate([0,-7.5,0])
+            top_flerp(flerp_side);
+          // Hook holes for line
+          translate(Line_contact_d_xy)
+            translate([0,0,th-melt])
+            hook(height-th+melt);
+        }
+      // Mark action point d
+      cylinder(r=2, h=height);
+      rotate([0,0,60])
+        for(i=[0,120,240]) rotate([0,0,i])
+          difference(){
+            translate([-1.5,0,0])
+              cube([3,Full_tri_side*Sqrt3/6,height]);
+            translate([-2.5,0,height])
+              rotate([-10,0,0])
+              cube([5,Full_tri_side*Sqrt3/6+3,height]);
+          }
+    }
+  }
 }
 //top_plate();
-
-
-module XY_hook(height){
-  //color("green")
-  //cylinder(r=0.7,h=10);
-  line_radius = 0.75;
-  width = 3;
-  difference(){
-    translate([-width/2,0,0])   cube([width,5,height]);
-    translate([-width/2-1,2,height-1.5]) cube([width+2,1.0*line_radius,height]);
-    translate([0,5.2,height-1.4])
-      rotate_extrude(convexity=4, $fn=40)
-        translate([3,0,0])
-          circle(r=line_radius,$fn=40); 
-  }
-}
-//XY_hook(5);
 
 module side_plate1(height=15){
   s = Full_tri_side;
   th = Bottom_plate_thickness;
   // Frame
-  translate([-s/4,-s*Sqrt3/4,0])
-  rotate([0,0,30])
   difference(){
-    special_tri(s,height);
-    translate([6,6,-1]) special_tri(s-34,height+2);
-    translate([24,10,height/2])
-      rotate([90,0,0])
-        cylinder(r=M3_diameter/2, h=20);
-    translate([s*Sqrt3/2-24,20,height/2])
-      rotate([90,0,0]){
-        cylinder(r=M3_diameter/2, h=30);
-        translate([0,0,-8])
-        cylinder(r=M3_head_diameter/2, h=19);
+    translate([-s/4,-s*Sqrt3/4,-height/2])
+      rotate([0,0,30])
+      difference(){
+        special_tri(s,height);
+        translate([6,6,-1]) special_tri(s-34,height+2);
+        translate([24,10,height/2])
+          rotate([90,0,0])
+          cylinder(r=M3_diameter/2, h=20);
+        translate([s*Sqrt3/2-17,20,height/2])
+          rotate([90,0,0]){
+            cylinder(r=M3_diameter/2, h=30);
+            translate([0,0,-8])
+              cylinder(r=M3_head_diameter/2, h=19);
+          }
       }
+    // hook holes
+    translate([0,-7,0])
+    for(k=[1,-1])
+      translate([k*Abc_xy_split/2,0,0])
+        rotate([-90,0,0])
+        cylinder(r=0.75, h=20);
+    // Mark wall action point
+    rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
+    mirror([0,0,1])
+      rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
   }
-  // Where to put hooks?
-  // Manually adjusted!
-  translate([-67,0.2,0])
-    XY_hook(height/2+1);
-  translate([67,0.2,0])
-    XY_hook(height/2+1);
+  // Pulleys to wind line around
+  for(k=[1,-1])
+    translate([k*Abc_xy_split/2,0,0]){
+      translate([-5,-3,height/2-0.1]) cylinder(r=3, h=7);
+      translate([ 5,-3,height/2-0.1]) cylinder(r=3, h=7);
+    }
 }
 //side_plate1();
 
 module side_plate2(height=15,th=7){
-  s = Full_tri_side-30;
+  s = Abc_xy_split + 2*15;
   difference(){
-    translate([-s/2,-th,0])
+    translate([-s/2,-th,-height/2])
       cube([s,th,height]);
+    // Wall screw holes
     for(k=[1,0])
       mirror([k,0,0])
-        translate([75,-th-1,height/2])
-          rotate([-90,0,0])
+        translate([Abc_xy_split/2 + 7.5,-th-1,0])
+          rotate([-90,0,0]){
             cylinder(r=M3_diameter/2, h=Big);
+            translate([0,0,th/2]) cylinder(r=M3_head_diameter/2, h=Big);
+          }
+    // Hook holes
+    for(k=[1,0])
+      mirror([k,0,0]){
+        translate([Abc_xy_split/2,-th-1,0])
+          rotate([-90,0,0])
+            cylinder(r=0.75, h=Big);
+        translate([-1 + Abc_xy_split/2, -th - th +2, -height])
+          cube([2, th, 2*height]);
+      }
+    // Mark wall action point
+    rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
+    mirror([0,0,1])
+      rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
   }
-  translate([-67,0.2,0])
-    XY_hook(height/2+1);
-  translate([67,0.2,0])
-    XY_hook(height/2+1);
+  // Pulleys to wind line around
+  for(k=[1,-1])
+    translate([k*Abc_xy_split/2,0,0]){
+      translate([-4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+      translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+    }
 }
 //side_plate2();
