@@ -489,7 +489,7 @@ module side_plate2(height=15,th=7){
         translate([Abc_xy_split/2 + 7.5,-th-1,0])
           rotate([-90,0,0]){
             cylinder(r=M3_diameter/2, h=Big);
-            translate([0,0,th/2]) cylinder(r=M3_head_diameter/2, h=Big);
+            translate([0,0,th/2]) cylinder(r=M3_head_diameter/2,h=Big);
           }
     // Hook holes
     for(k=[1,0])
@@ -513,3 +513,52 @@ module side_plate2(height=15,th=7){
     }
 }
 //side_plate2();
+
+module fish_ring(){
+  $fn = 15;
+  // Measured numbers
+  ins_h  = 1.76;
+  edg_h  = 0.67;
+  lar_h  = 4.00;
+  hol_h  = 1.57;
+  ins_ri = 3.00/2;
+  ins_ro = 4.90/2;
+  edg_r  = 6.50/2;
+  lar_ri = 3.00/2;
+  lar_ro = 4.62/2;
+  hol_r1 = 5.86/2;
+  hol_r2 = 5.42/2;
+  cdist  = 6.80;
+  trdist = cdist + lar_ro;
+  // Bring action point to origo
+  translate([0,-ins_ri,0])
+  difference(){
+    union(){
+      color("black")
+        cylinder(r=ins_ro, h=ins_h, center=true);  // Inside ring (cheramic)
+      color("grey")
+        cylinder(r=edg_r, h=edg_h, center=true);
+      translate([0,0,-edg_h/2])
+      color("grey")
+      linear_extrude(height=edg_h, slices=1)
+        polygon(points = [tangent_point(edg_r, [0,-trdist]),
+                          tangent_point_3(edg_r, [0,-trdist]),
+                          [0,-trdist]],
+                paths = [[0,1,2]]);
+      translate([0,-cdist,0]){
+        color("black")
+          translate([0,0,lar_h/4])
+          cylinder(r=lar_ro, h=lar_h, center=true);
+        color("grey")
+          cylinder(r=hol_r1, h=edg_h, center=true);
+        color("grey")
+          cylinder(r=hol_r2, h=hol_h-edg_h/2);
+      }
+    }
+    // Two holes
+    cylinder(r=ins_ri, h=ins_h+2, center=true);
+    translate([0,-cdist,0])
+      cylinder(r=lar_ri, h=lar_h*2, center=true);
+  }
+}
+//fish_ring();

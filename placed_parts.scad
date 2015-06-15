@@ -44,22 +44,7 @@ module placed_lines(){
     rotate([0,0,i*120])
       eline(Line_contact_d_xy + [0,0,Line_contacts_abcd_z[D]], Line_contact_d_xy + Ceiling_action_point);
 }
-color("green")
 placed_lines();
-placed_sandwich();
-bottom_plate();
-//One point is exactly
-//Line_contact_d_xy
-//The other point satisfies
-// sqrt(x*x + y*y) = Snelle_radius
-// and
-// dot(Line_contact_d_xy - (x, y), (x, y)) = 0
-// so
-// (a - x)x = (y - b)y
-// where a and b are known
-// ax - x*x = y*y - by
-// ax + by = x*x + y*y = Snelle_radius*Snelle_radius
-
 
 module xy_gatt_translate_1(back = 0, sidestep = 3){
   translate([sidestep,Full_tri_side/Sqrt3 - back,0])
@@ -201,7 +186,7 @@ module placed_xy_motors(){
 //placed_xy_motors();
 
 // These are adjusted by visually comparing to lines().
-// All hard coded numbers should be parameterized
+// TODO: All hard coded numbers should be parameterized
 module placed_gatts(){
   th  = Bottom_plate_thickness; 
   gap = 0.2;
@@ -269,17 +254,23 @@ module placed_ramps(){
 //placed_ramps();
 
 module placed_plates(){
-  translate([0,0,250])
-    mirror([0,0,1])
+  translate(Ceiling_action_point)
     top_plate();
-  for(k=[0,1]){
-    translate([0,0,-k*(Lock_height+Bearing_608_width)-97])
-      mirror([k,0,0])
-      rotate([0,0,-120])
-      translate([0,-270,0])
-      side_plate1();
-  }
-  translate([0,-270,(Lock_height+Bearing_608_width)-97])
+  translate(Wall_action_point_a)
     side_plate2();
+  translate(Wall_action_point_b)
+    mirror([1,0,0])
+    rotate([0,0,-120])
+    side_plate1();
+  translate(Wall_action_point_c)
+    rotate([0,0,240])
+    side_plate1();
 }
-//placed_plates();
+placed_plates();
+
+
+
+color("green")
+placed_lines();
+//placed_sandwich();
+bottom_plate();
