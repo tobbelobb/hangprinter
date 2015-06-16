@@ -1,8 +1,10 @@
 include <measured_numbers.scad>
 include <util.scad>
 include <design_numbers.scad>
+use <Gears.scad>
 use <parts.scad>
 use <render_parts.scad>
+use <Nema17_and_Ramps_and_bearings.scad>
 
 // All modules in here can be rendered through the
 // full_render module in Hangprinter.scad
@@ -44,34 +46,25 @@ module placed_lines(){
     rotate([0,0,i*120])
       eline(Line_contact_d_xy + [0,0,Line_contacts_abcd_z[D]], Line_contact_d_xy + Ceiling_action_point);
 }
-placed_lines();
+//placed_lines();
 
-module xy_gatt_translate_1(back = 0, sidestep = 3){
-  translate([sidestep,Full_tri_side/Sqrt3 - back,0])
-    children(0);
-}
-
-module xy_gatt_translate_2(back = 0, sidestep = 3){
-  rotate([0,0,-120])
-  translate([-sidestep,Full_tri_side/Sqrt3 - back,0])
-    children(0);
-}
 
 module placed_sandwich(){
-  translate([0,0, Line_contacts_abcd_z[0] - Snelle_height/2]) sandwich();
-  translate([0,0, Line_contacts_abcd_z[1] - Snelle_height/2]) sandwich();
-  translate([0,0, Line_contacts_abcd_z[2] - Snelle_height/2]) sandwich();
-  translate([0,0, Line_contacts_abcd_z[3] - Snelle_height/2]) sandwich();
+ translate([0,0,Line_contacts_abcd_z[A] - Snelle_height/2]) sandwich();
+ translate([0,0,Line_contacts_abcd_z[B] - Snelle_height/2]) sandwich();
+ translate([0,0,Line_contacts_abcd_z[C] - Snelle_height/2]) sandwich();
+ translate([0,0,Line_contacts_abcd_z[D] - Snelle_height/2]) sandwich();
 }
 //placed_sandwich();
+//placed_fish_rings();
 
 // Used by support bearing in drive, only rendering
 module support_bearing_translate(rotation){
   translate([Hobbed_insert_diameter/2
-              + Bearing_623_outer_diameter/2
-              + Extruder_filament_opening
-              + sin(rotation)*Pitch_difference_extruder,
-              - cos(rotation)*Pitch_difference_extruder,9]) children(0);
+             + Bearing_623_outer_diameter/2
+             + Extruder_filament_opening
+             + sin(rotation)*Pitch_difference_extruder,
+             - cos(rotation)*Pitch_difference_extruder,9]) children(0);
 }
 
 // For rendering
@@ -168,69 +161,32 @@ module translated_extruder_motor_and_drive(extruder_motor_twist = 27,
 }
 //translated_extruder_motor_and_drive(19, -47);
 
-module placed_xy_motors(){
+module placed_abc_motors(){
     four_point_translate()
       translate([0,0,-Nema17_cube_height - 2])
         Nema17();
-    rotate([0,0,72])
-      translate([0,Four_point_five_point_radius, 6+Motor_gear_height])
+    rotate([0,0,4*72])
+      translate([0,Four_point_five_point_radius,
+                   Line_contacts_abcd_z[D]+Motor_gear_height])
         mirror([0,0,1])
           motor_gear();
-    rotate([0,0,4*72])
-    translate([0,Four_point_five_point_radius, 11]) motor_gear();
     rotate([0,0,3*72])
-    translate([0,Four_point_five_point_radius, 5]) motor_gear();
+      translate([0,Four_point_five_point_radius,
+        Line_contacts_abcd_z[C]-Motor_gear_height+Sandwich_height + 1])
+      motor_gear();
     rotate([0,0,2*72])
-    translate([0,Four_point_five_point_radius, 9]) motor_gear();
+      translate([0,Four_point_five_point_radius, 
+    Line_contacts_abcd_z[B]-Motor_gear_height - 0.5])
+      motor_gear(Motor_gear_height+Sandwich_height);
+    rotate([0,0,1*72])
+      translate([0,Four_point_five_point_radius, 
+       Line_contacts_abcd_z[A]-Motor_gear_height-Sandwich_height+ 1])
+      motor_gear(Motor_gear_height+2*Sandwich_height);
 }
-//placed_xy_motors();
+//placed_abc_motors();
+//placed_sandwich();
+//placed_lines();
 
-// These are adjusted by visually comparing to lines().
-// TODO: All hard coded numbers should be parameterized
-module placed_gatts(){
-  th  = Bottom_plate_thickness; 
-  gap = 0.2;
-  lh  = Lock_height;
-  bw  = Bearing_608_width;
-  z_back = d_gatt_back;
-  z_rotate = 19;
-  z_height = th+lh/4+gap/2+2;
-  xy_height_1 = z_height + gap+lh+bw;
-  xy_height_2 = xy_height_1 + gap+lh+bw;
-  xy_height_3 = xy_height_2 + gap+lh+bw;
-  // xy_back and xy_sidestep is adjusted manually to fit
-  // Splitrot_1 and Splitrot_2
-  xy_back = 31;
-  xy_sidestep = 25;
-  gatt_1_rotate = 0;
-  gatt_2_rotate = 0;
-
-  // Z-gatts
-  z_gatt_translate(z_back)
-      gatt(z_height, 180);
-  // Lowest xy-gatts
-  xy_gatt_translate_1(xy_back, xy_sidestep)
-    rotate([0,0,gatt_1_rotate]) gatt(xy_height_1,-30);
-  xy_gatt_translate_2(xy_back, xy_sidestep)
-    rotate([0,0,gatt_2_rotate]) gatt(xy_height_1,46);
-  // Middle xy-gatts
-  rotate([0,0,120]){
-    xy_gatt_translate_1(xy_back, xy_sidestep)
-      rotate([0,0,gatt_1_rotate]) gatt(xy_height_2,-30);
-    xy_gatt_translate_2(xy_back, xy_sidestep)
-      rotate([0,0,gatt_2_rotate]) gatt(xy_height_2,46);
-  }
-  // Highest gatts 
-  rotate([0,0,240]){
-    xy_gatt_translate_1(xy_back, xy_sidestep)
-      rotate([0,0,gatt_1_rotate]) gatt(xy_height_3,-30);
-    xy_gatt_translate_2(xy_back, xy_sidestep)
-      rotate([0,0,gatt_2_rotate]) gatt(xy_height_3,46);
-  }
-}
-//placed_gatts();
-
-// TODO: Have hobb centered
 module placed_extruder(){
   translated_extruder_motor_and_drive(
       extruder_motor_twist = Extruder_motor_twist,
@@ -266,11 +222,11 @@ module placed_plates(){
     rotate([0,0,240])
     side_plate1();
 }
-placed_plates();
+//placed_plates();
 
 
-
-color("green")
+//color("green")
 placed_lines();
-//placed_sandwich();
+placed_sandwich();
 bottom_plate();
+placed_abc_motors();

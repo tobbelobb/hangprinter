@@ -3,6 +3,7 @@
 include <measured_numbers.scad>
 include <design_numbers.scad>
 include <util.scad>
+use <Nema17_and_Ramps_and_bearings.scad>
 
 //////////// Functions /////////////
 function mirror_point(coord) = 
@@ -282,14 +283,14 @@ module sandwich(teeth = Sandwich_gear_teeth){
     //translate([0, 0, -8.7])
     //  cylinder(r = 20, h = 10);
   }
-  //Bearing_608();
+  Bearing_608();
 }
 //sandwich();
 
 // 17.79 will be the protruding shaftlength up from bottom plate
 // Making the motor gear a little shorter might let us use same on all
 module motor_gear(height = Motor_gear_height){
-  swh  = Bearing_608_width + Lock_height;
+  swh  = Sandwich_height;
   r_swh = swh - 1; // reduced sandwich height
   e_swh = swh + 1; // extended sandwich height
   melt = 0.1;
@@ -328,7 +329,7 @@ module motor_gear(height = Motor_gear_height){
      cylinder(r2=5/2+0.8, r1=1.6, h=3.0);
   }
 }
-//motor_gear();
+motor_gear();
 
 // Visualization only
 module gear_friends(){

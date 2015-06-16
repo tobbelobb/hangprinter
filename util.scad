@@ -125,8 +125,8 @@ module pline(v0, v1, r = 0.7){
     v2n = v2/v2l;
     theta = acos(v2n[2]);
     phi   = acos(v2n[1]/sqrt(v2n[1]*v2n[1] + v2n[0]*v2n[0]));
-    echo(theta);
-    echo(phi);
+//    echo(theta);
+//    echo(phi);
     translate(v0)
       if(v2n[0] < 0){
         rotate([-theta,0,phi])
@@ -163,3 +163,27 @@ module eline(p0, p1, r=0.8) {
     cylinder(h = vl, r = r,center=true);
 }
 //eline([0, 106.512, 7.62857],  [0, 106.512, 500]);
+
+// Thickness of wall, radius to swing around, height of wall
+module cyl_wall_2(th, r, h, ang){
+  fn = 3;
+  theta = ang/fn;
+  translate([r-th/2,0,0])
+    cylinder(r=th/2,h=h);
+  rotate([0,0,-ang]){
+    translate([r*cos(theta/2),0,0])
+      translate([-th,0,0])
+      cube([th,sin(theta/2)*r,h]);
+    for(i=[1:1:fn-1]){
+      translate([r*cos((-0.5 + i)*theta),r*sin((-0.5 + i)*theta),0])
+        rotate([0,0,ang*i/fn])
+        translate([-th,0,0])
+        cube([th,2*sin(theta/2)*r,h]);
+    }
+    translate([r*cos((-0.5 + fn)*theta),r*sin((-0.5 + fn)*theta),0])
+      rotate([0,0,ang])
+      translate([-th,0,0])
+      cube([th,sin(theta/2)*r,h]);
+  }
+}
+//cyl_wall_2(3, 20, 12,90);

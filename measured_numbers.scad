@@ -2,7 +2,12 @@
 Nema17_cube_width          = 42.43;
 Nema17_cube_height         = 39.36;
 Nema17_shaft_height        = 63.65;
-Nema17_screw_hole_width    = 43.74;
+Nema17_screw_hole_width    = 43.74; // Opposite corner screws
+// So (s/2)^2 + (s/2)^2 = r^2
+// 2*(s*s/4) = r^2
+// s*s = 2*r*r
+// s ? sqrt(2)*(d/2)
+Nema17_screw_hole_dist     = Nema17_screw_hole_width/sqrt(2);
 Nema17_screw_hole_diameter = 5.92;
 Nema17_screw_hole_depth    = 2.25;
 Nema17_motor_shaft         = 5;
@@ -25,3 +30,10 @@ Bearing_623_vgroove_big_diameter = 12;
 Bearing_623_vgroove_small_diameter = 12 - 1.7;
 Bearing_623_vgroove_width = 3;
 Hobbed_insert_diameter     = 8.8;
+
+ins_h  = 1.76;   // Height of cheramic fish ring
+ins_ri = 3.00/2; // Inner radius of cheramic fish ring
+cdist  = 6.80;   // Distance between holes in fish ring
+lar_h  = 4.00;   // Larges height of any part of fish ring
+lar_ro = 4.62/2; // Outer diameter of largest-height-part
+edg_h  = 0.67;   // Height of thinnest outer edge...

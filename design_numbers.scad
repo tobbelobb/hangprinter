@@ -13,19 +13,15 @@ Y = 1;
 Z = 2;
 
 //////////// Design decision numbers //////////////
-// TODO:
-//  * Numbers in Configuration.h and Configuration_adv.h should
-//    be found here with identical names.
-//    That means coordinates of anchor points and action points
-//    should be coded in clear text here.
 
 //** The bottom plate parameters **//
-Full_tri_side          = 200*1.035; // Rotate eq_tri relative to 200 mm
-                                    // printbed, gain 3.5 % side length
-Lock_height            = 2;
-Bottom_plate_thickness = 4.5;
-Top_plate_thickness    = Bottom_plate_thickness;
-Bottom_plate_radius    = 82;
+Full_tri_side             = 200*1.035; // Rotate eq_tri relative to 200 mm printbed, gain 3.5 % side length
+Lock_height               = 2;
+Sandwich_gap              = 0.4;
+Bottom_plate_sandwich_gap = 0.4;
+Bottom_plate_thickness    = 4.5;
+Top_plate_thickness       = Bottom_plate_thickness;
+Bottom_plate_radius       = 82;
 
 
 // For rotating lines and gatts in place
@@ -39,12 +35,12 @@ Snelle_height        = Sandwich_height*3/7+1;
 Abc_xy_split = Full_tri_side - 2*30;
 
 // This is the xy coordinate of one wall/printer contact point
-Line_action_point_abc_xy     = [0, -Full_tri_side/(2*Sqrt3) + 5, 0];
+Line_action_point_abc_xy     = [0, -Full_tri_side/(2*Sqrt3), 0];
 Line_contact_abc_xy          = Line_action_point_abc_xy - [Abc_xy_split/2, 0, 0];
 // For left-right symmetry for pairs of wall/printer contact points
 Mirrored_line_contact_abc_xy = mirror_point_x(Line_contact_abc_xy);
 
-Wall_action_point_a  = [0, -200, -25];
+Wall_action_point_a  = [0, -400, -25];
 Wall_action_point_b  = [300, 100, -22];
 Wall_action_point_c  = [-350, 100, -12];
 Ceiling_action_point = [0, 0, 500];
@@ -53,12 +49,13 @@ Ceiling_action_point = [0, 0, 500];
 // printer. Preferrably near a corner.
 Line_contact_d_xy = [0, Full_tri_side/Sqrt3 - d_gatt_back, 0];
 // This is the three different z-heights of the three spools (snelles)
-// TODO: change xy to abc in "xy_motors" and other places
-Line_contacts_abcd_z = [Bottom_plate_thickness+0.7+Snelle_height/2 + 3*(Sandwich_height + 0.2), 
-                        Bottom_plate_thickness+0.7+Snelle_height/2 + 2*(Sandwich_height + 0.2), // Gap between sandwiches is 0.2 mm
-                        Bottom_plate_thickness+0.7+Snelle_height/2 + Sandwich_height + 0.2,     // Gap from bottom_plate to sandwich is 0.7 mm
-                        Bottom_plate_thickness+0.7+Snelle_height/2];    // D-lines have lowest contact point, maximizes build volume
+Line_contacts_abcd_z = [Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 3*(Sandwich_height + Sandwich_gap), 
+                        Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 2*(Sandwich_height + Sandwich_gap),
+                        Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 +    Sandwich_height + Sandwich_gap,
+                        Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2];    // D-lines have lowest contact point, maximizes build volume
 
+fish_ring_abc_rotation = -20;
+fish_ring_d_rotation   = 120;
 
 
 //** Gear parameters **//

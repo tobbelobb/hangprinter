@@ -1,5 +1,5 @@
 include <measured_numbers.scad>
-include <util.scad>
+use <util.scad>
 
 module Nema17_screw_translate(){
   for (i=[0:90:359]){
@@ -12,7 +12,37 @@ module Nema17_screw_holes(d, h){
 }
 //Nema17_screw_holes(M3_diameter, 15);
 
-module Nema17 (){
+module Nema17_schwung_screw_holes(d, h){
+  // Tight/still screw
+  rotate([0,0,-45])
+    translate([Nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
+  // Nearest screw in y-direction
+    rotate([0,0,-45])
+    translate([Nema17_screw_hole_width/2,0,0])
+    rotate([0,0,90+45])
+    cyl_wall_2(d,Nema17_screw_hole_dist+d/2, h,30);
+  // Nearest screw in x-direction
+    rotate([0,0,-45])
+    translate([Nema17_screw_hole_width/2,0,0])
+    rotate([0,0,2*90+45])
+    cyl_wall_2(d,Nema17_screw_hole_dist+d/2, h,30);
+  // diametral opposite screw
+    rotate([0,0,-45])
+    translate([Nema17_screw_hole_width/2,0,0])
+    rotate([0,0,2*90])
+    cyl_wall_2(d,Nema17_screw_hole_width+d/2, h,30);
+  //color("green"){
+  //  rotate([0,0,45])
+  //  translate([Nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
+  //  rotate([0,0,90+90+45])
+  //  translate([Nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
+  //  rotate([0,0,45+90])
+  //  translate([Nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
+  //}
+}
+//Nema17_schwung_screw_holes(M3_diameter, Big);
+
+module Nema17(){
   cw = Nema17_cube_width;
   ch = Nema17_cube_height;
   sh = Nema17_shaft_height;

@@ -1,11 +1,77 @@
 include <measured_numbers.scad>
 include <util.scad>
 include <design_numbers.scad>
-include <Nema17_and_Ramps_and_bearings.scad>
-include <Gears.scad>
+use <Nema17_and_Ramps_and_bearings.scad>
+use <Gears.scad>
+
+module fish_ring(){
+  $fn = 15;
+  // Measured numbers
+  hol_h  = 1.57;
+  ins_ro = 4.90/2;
+  edg_r  = 6.50/2;
+  lar_ri = 3.00/2;
+  hol_r1 = 5.86/2;
+  hol_r2 = 5.42/2;
+  trdist = cdist + lar_ro;
+  // Bring action point to origo
+  translate([0,-ins_ri,0])
+  difference(){
+    union(){
+      color("black")
+        cylinder(r=ins_ro, h=ins_h, center=true);  // Inside ring (cheramic)
+      color("grey")
+        cylinder(r=edg_r, h=edg_h, center=true);
+      translate([0,0,-edg_h/2])
+      color("grey")
+      linear_extrude(height=edg_h, slices=1)
+        polygon(points = [tangent_point(edg_r, [0,-trdist]),
+                          tangent_point_3(edg_r, [0,-trdist]),
+                          [0,-trdist]],
+                paths = [[0,1,2]]);
+      translate([0,-cdist,0]){
+        color("black")
+          translate([0,0,lar_h/4])
+          cylinder(r=lar_ro, h=lar_h, center=true);
+        color("grey")
+          cylinder(r=hol_r1, h=edg_h, center=true);
+        color("grey")
+          cylinder(r=hol_r2, h=hol_h-edg_h/2);
+      }
+    }
+    // The two holes (ceramic and lar ring)
+    cylinder(r=ins_ri, h=ins_h+2, center=true);
+    translate([0,-cdist,0])
+      cylinder(r=lar_ri, h=lar_h*2, center=true);
+  }
+}
+//fish_ring();
+
+module placed_fish_rings(){
+  for(i=[0,1,2]){
+    rotate([0,0,120*i]){
+      for(k=[0,1])
+        mirror([k,0,0])
+          translate(Line_contact_abc_xy
+            + [0,0, Line_contacts_abcd_z[i] + ins_ri + ins_ri/sqrt(2)])
+          rotate([90,0,fish_ring_abc_rotation])
+          translate([-ins_ri/sqrt(2),0,0])
+          mirror([0,0,1])
+          fish_ring();
+    }
+  }
+  // D-lines' fish rings
+  for(i=[0,1,2]){
+    rotate([0,0,120*i])
+      translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]])
+      rotate([fish_ring_d_rotation,0,0])
+      fish_ring();
+  }
+}
+//placed_fish_rings();
+
 
 //** bottom_plate start **//
-
 
 // Assumes children(0) is centered in xy-plane
 // A little odd that reference translation is along y...
@@ -28,13 +94,11 @@ module extruder_motor_translate(extruder_twist = 12){
           translate([0, 0, -3*Nema17_cube_height/2 - 2]) children(0);
 }
 
-
 // The thing separating bearings on center axis of bottom plate
 module lock(r, height){
   cylinder(r=r, h=height);
 }
 
-// TODO: make hole for extruder motor
 module bottom_plate(){
   // Global variables renamed short
   cw  = Nema17_cube_width;
@@ -44,85 +108,108 @@ module bottom_plate(){
   bw  = Bearing_608_width;
   swh = Bearing_608_width + Lock_height;
   lh  = Lock_height;
+  gap = Sandwich_gap;
   // Local variables
   lock_radius = bd/2 + 0.35;
-  gap = 0.2;
 
   difference(){
     union(){
       // Largest possible triangular plate
-      eq_tri(Full_tri_side, th);
+      eq_tri(Full_tri_side, th);  // p
       // Circular bottom plate
-      cylinder(r=bpr, h = th);
+      cylinder(r=bpr, h = th);    // p
       // Flexible sandwich stick
-      difference(){
-        union(){
-          // Sandwich stick base
-          cylinder(r = bd/2, h = 4*swh + lh/4 + th + 4*gap);
-          // The four locks
-          translate([0, 0, th])
-            lock(lock_radius, lh/4);
-          translate([0, 0, th + lh/4 + bw + gap])
-            lock(lock_radius, lh);
-          translate([0, 0, th + lh/4 + bw + gap + lh + bw + gap])
-            lock(lock_radius, lh);
-          translate([0, 0, th + lh/4 + bw + gap + 2*(lh + bw + gap)])
-            lock(lock_radius, lh);
-          translate([0, 0, th + lh/4 + bw + gap + 3*(lh + bw + gap)])
-            lock(lock_radius, lh);
+      // Sandwich stick base
+      cylinder(r = bd/2, h = 4*swh + lh/4 + th + 4*gap);
+      // The bottom four locks
+      for(i=[A,B,C,D]){
+        translate([0, 0,Line_contacts_abcd_z[i]-Snelle_height/2 - lh])
+          lock(lock_radius, lh);
+      }
+      // Top lock
+      translate([0,0,Line_contacts_abcd_z[A] -Snelle_height/2 - lh + Sandwich_height])
+        lock(lock_radius, lh);
+      // Mounting towers for abc fish rings
+      for(i=[0,1,2]){
+        rotate([0,0,120*i]){
+          for(k = [0, 1]){
+            mirror([k,0,0]){
+              translate(Line_contact_abc_xy)
+                rotate([0,0,fish_ring_abc_rotation])
+                translate([-6-ins_ri , -edg_h/2+0.01,0])
+                cube([12,5.5,Line_contacts_abcd_z[i] - ins_ri]);
+            }
+          }
         }
-        cube([1.3, Big, Big], center = true);
-        rotate([0, 0, 90])
-          cube([1.3, Big, Big], center = true);
+      }
+    } // End union
+
+
+    //*** ANTIMATERIA STARTS HERE ***//
+
+    // Screw holes for abc Nema
+    translate([0, 0, -1]){
+      four_point_translate()
+        Nema17_schwung_screw_holes(M3_diameter, th+2);
+      four_point_translate()
+        translate([0,0,th-1])
+          Nema17_screw_holes(M3_head_diameter, th+2);
+    }
+
+    // Tracks to put fish rings in
+    placed_fish_rings();
+
+    // Mounting space for d fish_rings  
+    big=5*th;
+    for(i=[0,1,2]){
+      rotate([0,0,120*i])
+        translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]]){
+          rotate([fish_ring_d_rotation-90,0,0])
+            translate([-3.3,-4.1 - edg_h/2 + 0.05,-big/2])
+            cube([6.6,4.1,big]); // Block to put fish ring in
+          rotate([fish_ring_d_rotation-180,0,0])
+            translate([0,ins_ri+cdist,0])
+            cylinder(r=M3_diameter/2, h=big, center=true);//Hole for M3
+          rotate([fish_ring_d_rotation-180,0,0])
+            translate([0,ins_ri+cdist,4])
+            cylinder(r=M3_head_diameter/2, h=big);//M3 screw head hole
+        }
+    }
+
+    // Mounting holes for abc fish rings
+    // rotations and translations synced with placed_fish_rings
+    for(i=[0,1,2]){
+      rotate([0,0,120*i]){
+        for(k=[0,1]){
+          mirror([k,0,0]){
+            translate(Line_contact_abc_xy
+              +[0,0,Line_contacts_abcd_z[i] + ins_ri + ins_ri/sqrt(2)])
+              rotate([90,0,fish_ring_abc_rotation]){
+                translate([-ins_ri/sqrt(2),0,0])
+                  translate([0,-cdist-ins_ri,0]){
+                    cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
+                  }
+              }
+          }
+        }
       }
     }
+
+    // Cuts in center tower to make it flexible
+    cube([1.3, lock_radius*2, Big], center = true);
+    rotate([0, 0, 90])
+      cube([1.3, lock_radius*2, Big], center = true);
+
     // Hole for extruder motor
     extruder_motor_translate(Extruder_motor_twist)
       scale(1.01) // Leave 1% extra space, don't need tight fit
       Nema17();
 
-    // Screw holes for extruder motor mounting screws
-    rotate([0,0,Extruder_motor_twist])
-    translate([-18.5,77,Bottom_plate_thickness/2])
-    rotate([-90,0,0])
-    cylinder(h=Big, r=2.0);
-    rotate([0,0,Extruder_motor_twist])
-    translate([-50,77,Bottom_plate_thickness/2])
-    rotate([-90,0,0])
-    cylinder(h=Big, r=2.0);
-    rotate([0,0,Extruder_motor_twist])
-    translate([-18.5,7,Bottom_plate_thickness/2])
-    rotate([-90,0,0])
-    cylinder(h=Big, r=M3_diameter/2+0.1);
-    rotate([0,0,Extruder_motor_twist])
-    translate([-50,7,Bottom_plate_thickness/2])
-    rotate([-90,0,0])
-    cylinder(h=Big, r=M3_diameter/2+0.1);
-
-    rotate([0,0,Extruder_motor_twist])
-    translate([-18.5,11,Bottom_plate_thickness/2])
-    rotate([-90,0,0])
-    cube([9,9,30], center=true);
-
-    rotate([0,0,Extruder_motor_twist])
-    translate([-50,11,Bottom_plate_thickness/2])
-    rotate([-90,0,0])
-    cube([9,9,30], center=true);
-
-    // Dig out filament hole in sandwich stick and base.
-    // When physical build is done, fill this hole for stiffness
-    translate([0, 0, -1]) cylinder(r = 2.4, h = Big);
-    // Screw holes for XY Nema
-    // TODO: Make Nemas turnable
-    translate([0, 0, -1])
-      four_point_translate()
-        translate([0,0,-Big/2]) Nema17_screw_holes(M3_diameter, Big);
-
     // Middle hole for ABCD-motors
     translate([0, 0, -1])
       four_point_translate()
-        cylinder(r = 8, h = Big);
-    
+      cylinder(r = 8, h = Big);
+
     // Place holes exaclty like punched_cube is placed when rendering
     // From placed_extruder
     rotation = Big_extruder_gear_rotation;
@@ -130,7 +217,7 @@ module bottom_plate(){
     // From translated_extruder_motor_and_drive
     extruder_motor_translate(extruder_motor_twist)
       // From Nema17_with_drive
-     translate([0,0,Nema17_shaft_height-Small_extruder_gear_height+1]){
+      translate([0,0,Nema17_shaft_height-Small_extruder_gear_height+1]){
         // drive_support is called by assembled_drive only
         //from assembled_drive
         translate([ // Center 623 in x-dim 
@@ -155,11 +242,48 @@ module bottom_plate(){
                   -Hobbed_insert_height - 1*Bearing_623_width])
               Drive_support_holes(Drive_support_v);
       }
+
+    // Screw holes for extruder motor mounting screws
+    rotate([0,0,Extruder_motor_twist])
+      translate([-18.5,77,Bottom_plate_thickness/2])
+      rotate([-90,0,0])
+      cylinder(h=Big, r=2.0);
+    rotate([0,0,Extruder_motor_twist])
+      translate([-50,77,Bottom_plate_thickness/2])
+      rotate([-90,0,0])
+      cylinder(h=Big, r=2.0);
+    rotate([0,0,Extruder_motor_twist])
+      translate([-18.5,7,Bottom_plate_thickness/2])
+      rotate([-90,0,0])
+      cylinder(h=Big, r=M3_diameter/2+0.1);
+    rotate([0,0,Extruder_motor_twist])
+      translate([-50,7,Bottom_plate_thickness/2])
+      rotate([-90,0,0])
+      cylinder(h=Big, r=M3_diameter/2+0.1);
+
+    rotate([0,0,Extruder_motor_twist])
+      translate([-18.5,11,Bottom_plate_thickness/2])
+      rotate([-90,0,0])
+      cube([9,9,30], center=true);
+
+    rotate([0,0,Extruder_motor_twist])
+      translate([-50,11,Bottom_plate_thickness/2])
+      rotate([-90,0,0])
+      cube([9,9,30], center=true);
+
+    // Dig out filament hole in sandwich stick and base.
+    // When physical build is done, fill this hole for stiffness
+    translate([0, 0, -1]) cylinder(r = 2.4, h = Big);
   }
 }
 //bottom_plate();
 
 //** bottom_plate end **//
+//difference(){
+//  cube([70,70,10], center=true);
+//  translate([0,0,-10])
+//  Nema17_schwung_screw_holes(M3_diameter, 20);
+//}
 
 // Sandwich is defined in Gears.scad
 // Motors are defined in Nema17_and_Ramps_and_bearings.scad
@@ -514,51 +638,3 @@ module side_plate2(height=15,th=7){
 }
 //side_plate2();
 
-module fish_ring(){
-  $fn = 15;
-  // Measured numbers
-  ins_h  = 1.76;
-  edg_h  = 0.67;
-  lar_h  = 4.00;
-  hol_h  = 1.57;
-  ins_ri = 3.00/2;
-  ins_ro = 4.90/2;
-  edg_r  = 6.50/2;
-  lar_ri = 3.00/2;
-  lar_ro = 4.62/2;
-  hol_r1 = 5.86/2;
-  hol_r2 = 5.42/2;
-  cdist  = 6.80;
-  trdist = cdist + lar_ro;
-  // Bring action point to origo
-  translate([0,-ins_ri,0])
-  difference(){
-    union(){
-      color("black")
-        cylinder(r=ins_ro, h=ins_h, center=true);  // Inside ring (cheramic)
-      color("grey")
-        cylinder(r=edg_r, h=edg_h, center=true);
-      translate([0,0,-edg_h/2])
-      color("grey")
-      linear_extrude(height=edg_h, slices=1)
-        polygon(points = [tangent_point(edg_r, [0,-trdist]),
-                          tangent_point_3(edg_r, [0,-trdist]),
-                          [0,-trdist]],
-                paths = [[0,1,2]]);
-      translate([0,-cdist,0]){
-        color("black")
-          translate([0,0,lar_h/4])
-          cylinder(r=lar_ro, h=lar_h, center=true);
-        color("grey")
-          cylinder(r=hol_r1, h=edg_h, center=true);
-        color("grey")
-          cylinder(r=hol_r2, h=hol_h-edg_h/2);
-      }
-    }
-    // Two holes
-    cylinder(r=ins_ri, h=ins_h+2, center=true);
-    translate([0,-cdist,0])
-      cylinder(r=lar_ri, h=lar_h*2, center=true);
-  }
-}
-//fish_ring();
