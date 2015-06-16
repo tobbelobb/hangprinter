@@ -280,19 +280,23 @@ module sandwich(teeth = Sandwich_gear_teeth){
         translate([2*Snelle_radius/3,0,-1])
         cylinder(r=8.5,h=Big);
     }
-    //translate([0, 0, -8.7])
-    //  cylinder(r = 20, h = 10);
+    rotate([90,0,33])
+      translate([0,Snelle_height/2,Snelle_radius/2])
+      cylinder(r = 0.95, h = 40);
+    rotate([90,0,27])
+      translate([0,Snelle_height/2,Snelle_radius/2])
+      cylinder(r = 0.95, h = 40);
   }
   Bearing_608();
 }
-//sandwich();
+sandwich();
 
 // 17.79 will be the protruding shaftlength up from bottom plate
 // Making the motor gear a little shorter might let us use same on all
-module motor_gear(height = Motor_gear_height){
+module motor_gear(height = Motor_gear_height, letter){
   swh  = Sandwich_height;
-  r_swh = swh - 1; // reduced sandwich height
-  e_swh = swh + 1; // extended sandwich height
+  r_swh = swh - 0; // reduced sandwich height
+  e_swh = swh + 0; // extended sandwich height
   melt = 0.1;
   teeth = Motor_gear_teeth;
   difference(){
@@ -303,14 +307,14 @@ module motor_gear(height = Motor_gear_height){
             my_gear(teeth, r_swh + melt);
 
           // Shaft cylinder
-          cylinder(r = 10, h = height - e_swh, $fn=40); 
+          cylinder(r = 8, h = height - e_swh, $fn=40); 
           // Upper protection disc
-          translate([0,0,height-2.5])
+          translate([0,0,height-2])
             cylinder(r2 = Motor_gear_pitch+3,
-                r1 = Motor_gear_pitch + 2, h=2.5, $fn=50);
-          translate([0,0,height -2 - e_swh])
-            cylinder(r1 = Motor_gear_pitch+3,
-                r2 = Motor_gear_pitch + 2, h=2.5, $fn=50);
+                r1 = Motor_gear_pitch + 1.5, h=2, $fn=50);
+          translate([0,0,height - 1 - e_swh])
+            cylinder(r1 = Motor_gear_pitch+2.5,
+                r2 = Motor_gear_pitch + 1.5, h=2, $fn=50);
         }
         // Center bore
         difference(){
@@ -327,9 +331,13 @@ module motor_gear(height = Motor_gear_height){
       cylinder(r1=5/2+0.8, r2=1.6, h=3.0);
     translate([0,0,height - 2.9])
      cylinder(r2=5/2+0.8, r1=1.6, h=3.0);
+
+    translate([5/2,0,height-1])
+      linear_extrude(height=2)
+      text(letter,halign="left",valign="center");
   }
 }
-motor_gear();
+//motor_gear(letter="A");
 
 // Visualization only
 module gear_friends(){

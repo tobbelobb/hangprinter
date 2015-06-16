@@ -118,6 +118,7 @@ module bottom_plate(){
       eq_tri(Full_tri_side, th);  // p
       // Circular bottom plate
       cylinder(r=bpr, h = th);    // p
+
       // Flexible sandwich stick
       // Sandwich stick base
       cylinder(r = bd/2, h = 4*swh + lh/4 + th + 4*gap);
@@ -129,6 +130,7 @@ module bottom_plate(){
       // Top lock
       translate([0,0,Line_contacts_abcd_z[A] -Snelle_height/2 - lh + Sandwich_height])
         lock(lock_radius, lh);
+
       // Mounting towers for abc fish rings
       for(i=[0,1,2]){
         rotate([0,0,120*i]){
@@ -142,8 +144,20 @@ module bottom_plate(){
           }
         }
       }
-    } // End union
 
+      // Measurment points
+      for(i=[0,1,2]){
+        rotate([0,0,120*i]){
+          translate(Line_action_point_abc_xy + [-2,-2,0])
+            cube([4,4,Line_contacts_abcd_z[i]-2]);
+          translate(Line_action_point_abc_xy
+                   + [0,0,Line_contacts_abcd_z[i]-2])
+            sphere(r=2);
+        }
+      }
+
+
+    } // End union
 
     //*** ANTIMATERIA STARTS HERE ***//
 
@@ -274,118 +288,34 @@ module bottom_plate(){
     // Dig out filament hole in sandwich stick and base.
     // When physical build is done, fill this hole for stiffness
     translate([0, 0, -1]) cylinder(r = 2.4, h = Big);
+
+    // Letters for easier identification
+    translate([0,0,-1]){
+      rotate([0,0,120*A+7])
+        translate(Line_action_point_abc_xy + [0,-8,th])
+        scale([1,1,1.5])
+        linear_extrude(height=2)
+        text("A",halign="center",valign="center");
+      rotate([0,0,120*B+7])
+        translate(Line_action_point_abc_xy + [0,-8,th])
+        scale([1,1,1.5])
+        linear_extrude(height=2)
+        text("B",halign="center",valign="center");
+      rotate([0,0,120*C+7])
+        translate(Line_action_point_abc_xy + [0,-8,th])
+        scale([1,1,1.5])
+        linear_extrude(height=2)
+        text("C",halign="center",valign="center");
+    }
+
   }
 }
 //bottom_plate();
 
 //** bottom_plate end **//
-//difference(){
-//  cube([70,70,10], center=true);
-//  translate([0,0,-10])
-//  Nema17_schwung_screw_holes(M3_diameter, 20);
-//}
 
 // Sandwich is defined in Gears.scad
 // Motors are defined in Nema17_and_Ramps_and_bearings.scad
-
-//** gatt start **//
-
-module arm(r, xsz, ysz, th, xdiff, ydiff){
-  difference(){
-    hull(){
-      translate([-xsz - xdiff, ydiff, 0])
-        cube([xsz,ysz,th]);
-      cylinder(r=r, h=th);
-    }
-    translate([0,0,-1]) cylinder(r=M3_diameter/2, h=Big);
-  }
-}
-//arm(3, 4, 1.8, 2, 2);
-
-// height is the height of the snelle
-module gatt(height=25, arm_rotation=0){
-  bd = Bearing_623_vgroove_big_diameter;   // Big diameter
-  sd = Bearing_623_vgroove_small_diameter; // Small diameter
-  h1 = Bearing_623_width;
-  h2 = Bearing_623_vgroove_width;
-
-  bod = Bearing_608_outer_diameter;   // Big outer diameter
-  bid = Bearing_608_bore_diameter;    // Big inner diemater
-  h12 = Bearing_608_width + 2;        // Thikness of support
-
-  // Support walls
-  difference(){
-    translate([-h12/2 - bd/2 - 1, -(bod+4)/2, 0]){
-      translate([0.2,0,0])
-      cube([h12/2-0.2, bod+4, height + (bod+4)/2]);
-      translate([-h12/2, 0, 0])
-        cube([h12/2-0.2, bod+4, height + (bod+4)/2]);
-    }
-    // Hole for arm-cylinder
-    translate([0,0,height])
-      rotate([0,-90,0])
-        cylinder(r=bid/2+2.2, h=30);
-    // Hole for 608 bearing itself
-    translate([-bd/2 - 2,0,height])
-      rotate([0,-90,0])
-        cylinder(r=bod/2, h=h12-2);
-
-    // Screw holes in support walls
-    for(k=[0,1]){
-      mirror([0,k,0]){
-        translate([0,bod/2-2,4])
-          rotate([0,-90,0])
-            cylinder(r=M3_diameter/2, h=Big);
-        translate([0,bod/2-2,height + (bod+4)/2 - 4])
-          rotate([0,-90,0])
-            cylinder(r=M3_diameter/2, h=Big);
-      }
-    }
-  }
-  // Arm
-  difference(){
-    union(){
-      // Cylinder through 608 center
-      translate([-bd/2,0,height])
-        rotate([0,-90,0])
-          cylinder(r=Bearing_608_bore_diameter/2, h=h12+2);
-      translate([0,0,height])
-        rotate([arm_rotation,0,0])
-          translate([0,0,-height]){
-            // Plate, tightly pushed to 608 bore
-            translate([-2 - bd/2, -(h1+4)/2, height - (h1+4)/2])
-              cube([2,h1+4,h1+4]);
-            // Actual arms connecting 608 and 623
-            for(k=[0,1]){
-              mirror([0,k,0]){
-                translate([0,-(h1/2) - 0.2,height - sd/2])
-                  rotate([90,0,0])
-                    arm(3,h1-1,h1+4,1.8,(bd/2+0.01)-(h1-1),1.2);
-              }
-            }
-          }
-    }
-    // Hole for line
-    translate([0,0,height])
-      rotate([0,-90,0])
-        cylinder(r=0.7, h=30);
-  }
-  // The bearings
-  translate([0,0,height])
-    rotate([arm_rotation,0,0])
-      translate([0,0,-height])
-        rotate([90,0,0])
-          translate([0,height - sd/2,-h1/2])
-            color("purple")
-              Bearing_623_vgroove();
-  translate([-bd/2 - 1.5,0,height])
-    rotate([0,-90,0])
-      Bearing_608();
-
-}
-//gatt(30, 31);
-
-//** gatt end **//
 
 
 //** extruder start **//
