@@ -165,23 +165,23 @@ module placed_abc_motors(){
     four_point_translate()
       translate([0,0,-Nema17_cube_height - 2])
         Nema17();
-    rotate([0,0,4*72])
-      translate([0,Four_point_five_point_radius,
-                   Line_contacts_abcd_z[D]+Motor_gear_height])
-        mirror([0,0,1])
-          motor_gear();
     rotate([0,0,3*72])
       translate([0,Four_point_five_point_radius,
-        Line_contacts_abcd_z[C]-Motor_gear_height+Sandwich_height + 1])
-      motor_gear();
+                   Line_contacts_abcd_z[D]+Motor_gear_height-1])
+        mirror([0,0,1])
+          motor_gear(letter="D");
     rotate([0,0,2*72])
-      translate([0,Four_point_five_point_radius, 
-    Line_contacts_abcd_z[B]-Motor_gear_height - 0.5])
-      motor_gear(Motor_gear_height+Sandwich_height);
+      translate([0,Four_point_five_point_radius,
+        Line_contacts_abcd_z[C]-Motor_gear_height+Sandwich_height + 2])
+      motor_gear(letter="C");
     rotate([0,0,1*72])
       translate([0,Four_point_five_point_radius, 
+    Line_contacts_abcd_z[B]-Motor_gear_height + 1])
+      motor_gear(Motor_gear_height+Sandwich_height, letter="B");
+    rotate([0,0,4*72])
+      translate([0,Four_point_five_point_radius, 
        Line_contacts_abcd_z[A]-Motor_gear_height-Sandwich_height+ 1])
-      motor_gear(Motor_gear_height+2*Sandwich_height);
+      motor_gear(Motor_gear_height+2*Sandwich_height, letter="A");
 }
 //placed_abc_motors();
 //placed_sandwich();
