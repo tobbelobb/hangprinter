@@ -40,48 +40,37 @@
 
 FUNCTION sqrt
 
-.L_nf:	brne	.L_pk		; NaN, return as is
-	brtc	.L_pk		; sqrt(+Inf) --> +Inf
-.L_nan:	rjmp	_U(__fp_nan)
-.L_pk:	rjmp	_U(__fp_mpack)
+;.L_nf:	brne	.L_pk		; NaN, return as is
+;	brtc	.L_pk		; sqrt(+Inf) --> +Inf
+;.L_nan:	XJMP	_U(__fp_nan)
+;.L_pk:	XJMP	_U(__fp_mpack)
 
 ENTRY sqrt
 ALIAS_ENTRY sqrtf
   ; split and check arg.
-	rcall	_U(__fp_splitA)
-	brcs	.L_nf		; !isfinite(A)
-	tst	rA3
-	breq	.L_pk		; return 0 with original sign
-	brts	.L_nan		; sqrt(negative) --> NaN
+	XCALL	_U(__fp_splitA) ; What does __fp_splitA do? Rolls bits over so exponent is in rA3 and rB3, and mantissas are ...
+;	brcs	.L_nf		; !isfinite(A)
+;	tst	rA3 ; compare exponent with zero
+;	breq	.L_pk		; return 0 with original sign
+;	brts	.L_nan		; sqrt(negative) --> NaN
   ; exponent bias
-	subi	rA3, 127
-	sbc	rB3, rB3	; exponent high byte
-  ; normalize, if A is subnormal
-	sbrs	rA2, 7
-	rcall	_U(__fp_norm2)
+	subi	rA3, 127 ; So now rA3 contains our exponent
+	sbc	rB3, rB3	; exponent high byte. Carry flag written in exponent rB3
+  ; normalize, if A is subnormal. Hangprinter will never have to do with subnormal lengths
+	;sbrs	rA2, 7
+	;XCALL	_U(__fp_norm2)
 
 #define	msk0	r0
 #define msk1	r1
 #define msk2	rBE
 
 	clr	msk0		; msk1=R1 already 0
-	ldi	msk2, 0x60	; Initial rotation mask   =
-				;	01100000.00000000.00000000
+	ldi	msk2, 0x60	; Initial rotation mask =	01100000.00000000.00000000
 	ldi	rB2, 0xa0
-	X_movw	rB0, msk0	; Initial developing root =
-				;	10100000.00000000.00000000
+	X_movw	rB0, msk0	; Initial developing root =	10100000.00000000.00000000
 
-/* TODO: Now the Avr-libs does not have an infrastructure to build and
-   *test automaticaly* with both OPTIMIZE_SPEED definitions. So the
-   one variant is enabled today only.
- */
-#if	1 /* defined(OPTIMIZE_SPEED) && OPTIMIZE_SPEED	*/
-
-  ;** Optimized for speed (9 code words larger than size optimized,
-  ; 67 less cycles in average)
-
-	subi	rA2, 0x80
-	lsr	rB3
+	subi	rA2, 0x80 ;; Why would we want to subtract highest bit here?
+	lsr	rB3 ; logical shift right
 	ror	rA3		; Divide exponent by 2, C==>exponent was odd
 	brcc	1f		; Jump for even exponent in argument
 	subi	rA2, lo8(-0x40)	; Initial remainder for odd exponent.
@@ -126,55 +115,6 @@ ALIAS_ENTRY sqrtf
 	adc	rB2, msk1	; Add 1 to result
 5:	com	msk2		; ZF if second time
 	brne	.Loop1		; 1 for last bit, 1 for rounding
-
-#else	/* vs. to OPTIMIZE_SPEED	*/
-  ;** Optimized for size (9 code words smaller than speed optimized,
-  ; 67 more cycles in average)
-
-#define tv	rAE
-
-	clr	tv		; Test value for end of loop
-	subi	rA2, 0x40	; Initial remainder for odd exponent
-	lsr	rB3
-	ror	rA3		; Divide exponent by 2, C==>exponent was odd
-	brcs	3f		; Jump for odd exponent in argument
-	subi	rA2, 0x40	; Initial remainder for even exponent, C=0
-
-  ; Loop for all 24 bits
-.Loop:	brcc	2f		; NC --> nope, bit is 0
-	cp	msk2, tv	; Only needed to get the proper rounding
-				;   for ffffff
-	sbc	rA0, rB0
-	sbc	rA1, rB1
-	sbc	rA2, rB2	; Prepare remainder argument for next bits
-	or	rB0, msk0
-	or	rB1, msk1
-	or	rB2, msk2	; Set developing bit to 1
-2:	lsr	msk2
-	ror	msk1
-	ror	msk0		; Shift right mask, C --> end loop
-	rol	tv		; Bit 1 set if end of loop
-	eor	rB0, msk0
-	eor	rB1, msk1
-	eor	rB2, msk2	; Shift right test bit in developing root
-3:	lsl	rA0
-	rol	rA1
-	rol	rA2		; Shift left remainder argument (C used
-				;   at .Loop)
-	brcs	4f
-	cp	rB0, rA0
-	cpc	rB1, rA1
-	cpc	rB2, rA2
-
-4:	sbrs	tv, 1
-	rjmp	.Loop
-
-  ; Rounding
-	adc	rB0, msk1
-	adc	rB1, msk1
-	adc	rB2, msk1	; Rounded mantissa ready (msk1=0)
-
-#endif	/* !OPTIMIZE_SPEED */
 
 	X_movw	rA0, rB0
 	mov	rA2, rB2	; Copy to rA

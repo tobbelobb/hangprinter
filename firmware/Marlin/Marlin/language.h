@@ -28,55 +28,45 @@
 // ca    Catalan
 // eu    Basque-Euskera
 
-#ifndef LANGUAGE_INCLUDE
-  // pick your language from the list above
-  #define LANGUAGE_INCLUDE GENERATE_LANGUAGE_INCLUDE(en)
-#endif
-
 #define PROTOCOL_VERSION "1.0"
 #define FIRMWARE_URL "https://github.com/MarlinFirmware/Marlin"
 
 #if MB(ULTIMAKER)|| MB(ULTIMAKER_OLD)|| MB(ULTIMAIN_2)
-  #define MACHINE_NAME "Ultimaker"
-  #define FIRMWARE_URL "http://firmware.ultimaker.com"
+#define MACHINE_NAME "Ultimaker"
+#define FIRMWARE_URL "http://firmware.ultimaker.com"
 #elif MB(RUMBA)
-  #define MACHINE_NAME "Rumba"
+#define MACHINE_NAME "Rumba"
 #elif MB(3DRAG)
-  #define MACHINE_NAME "3Drag"
-  #define FIRMWARE_URL "http://3dprint.elettronicain.it/"
+#define MACHINE_NAME "3Drag"
+#define FIRMWARE_URL "http://3dprint.elettronicain.it/"
 #elif MB(K8200)
-  #define MACHINE_NAME "K8200"
+#define MACHINE_NAME "K8200"
 #elif MB(5DPRINT)
-  #define MACHINE_NAME "Makibox"
+#define MACHINE_NAME "Makibox"
 #elif MB(SAV_MKI)
-  #define MACHINE_NAME "SAV MkI"
-  #define FIRMWARE_URL "https://github.com/fmalpartida/Marlin/tree/SAV-MkI-config"
+#define MACHINE_NAME "SAV MkI"
+#define FIRMWARE_URL "https://github.com/fmalpartida/Marlin/tree/SAV-MkI-config"
 #elif MB(WITBOX)
-  #define MACHINE_NAME "WITBOX"
-  #define FIRMWARE_URL "http://www.bq.com/gb/downloads-witbox.html"
+#define MACHINE_NAME "WITBOX"
+#define FIRMWARE_URL "http://www.bq.com/gb/downloads-witbox.html"
 #elif MB(HEPHESTOS)
-  #define MACHINE_NAME "HEPHESTOS"
-  #define FIRMWARE_URL "http://www.bq.com/gb/downloads-prusa-i3-hephestos.html"
+#define MACHINE_NAME "HEPHESTOS"
+#define FIRMWARE_URL "http://www.bq.com/gb/downloads-prusa-i3-hephestos.html"
 #else // Default firmware set to Mendel
-  #define MACHINE_NAME "Mendel"
+#define MACHINE_NAME "Mendel"
 #endif
 
 #ifdef CUSTOM_MENDEL_NAME
-  #define MACHINE_NAME CUSTOM_MENDEL_NAME
+#define MACHINE_NAME CUSTOM_MENDEL_NAME
 #endif
 
 #ifndef MACHINE_UUID
-   #define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
+#define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 #endif
 
 
 #define STRINGIFY_(n) #n
 #define STRINGIFY(n) STRINGIFY_(n)
-
-
-// Common LCD messages
-
-  /* nothing here yet */
 
 // Common serial messages
 #define MSG_MARLIN "Marlin"
@@ -159,50 +149,6 @@
 
 #define MSG_ERR_EEPROM_WRITE                "Error writing to EEPROM!"
 
-// LCD Menu Messages
-
-// Add your own character. Reference: https://github.com/MarlinFirmware/Marlin/pull/1434 photos
-//                                and https://www.sparkfun.com/datasheets/LCD/HD44780.pdf page 17-18
-#ifdef DOGLCD
-  #define STR_Ae "\304"               // 'Ä' U8glib
-  #define STR_ae "\344"               // 'ä'
-  #define STR_Oe "\326"               // 'Ö'
-  #define STR_oe STR_Oe               // 'ö'
-  #define STR_Ue "\334"               // 'Ü'
-  #define STR_ue STR_Ue               // 'ü'
-  #define STR_sz "\337"               // 'ß'
-  #define STR_h2 "\262"               // '²'
-  #define STR_h3 "\263"               // '³'
-  #define STR_Deg "\260"              // '°'
-  #define STR_THERMOMETER "\377"
-#else
-  #ifdef DISPLAY_CHARSET_HD44780_JAPAN // HD44780 ROM Code: A00 (Japan)
-    #define STR_ae "\xe1"
-    #define STR_Ae STR_ae
-    #define STR_oe "\357"
-    #define STR_Oe STR_oe
-    #define STR_ue "\365"
-    #define STR_Ue STR_ue
-    #define STR_sz "\342"
-    #define STR_h2 "2"
-    #define STR_h3 "3"
-    #define STR_Deg "\271"
-    #define STR_THERMOMETER "\002"
-  #endif
-  #ifdef DISPLAY_CHARSET_HD44780_WESTERN // HD44780 ROM Code: A02 (Western)
-    #define STR_Ae "\216"
-    #define STR_ae "\204"
-    #define STR_Oe "\211"
-    #define STR_oe "\204"
-    #define STR_Ue "\212"
-    #define STR_ue "\201"
-    #define STR_sz "\160"
-    #define STR_h2 "\262"
-    #define STR_h3 "\263"
-    #define STR_Deg "\337"
-    #define STR_THERMOMETER "\002"
-  #endif
-#endif
 /*
 #define TESTSTRING000 "\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017"
 #define TESTSTRING020 "\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037"
@@ -221,7 +167,5 @@
 #define TESTSTRING340 "\340\341\342\343\344\345\346\347\350\351\352\353\354\355\356\357"
 #define TESTSTRING360 "\360\361\362\363\364\365\366\367\370\371\372\373\374\375\376\377"
 */
-
-#include LANGUAGE_INCLUDE
 
 #endif //__LANGUAGE_H

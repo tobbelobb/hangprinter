@@ -8,7 +8,7 @@
 //============================= Getting Started =============================
 //===========================================================================
 /*
-Here are some standard links for getting your machine calibrated:
+   Here are some standard links for getting your machine calibrated:
  * http://reprap.org/wiki/Calibration 
  * http://youtu.be/wAL9d7FgInk
  * http://calculator.josefprusa.cz
@@ -16,7 +16,7 @@ Here are some standard links for getting your machine calibrated:
  * http://www.thingiverse.com/thing:5573
  * https://sites.google.com/site/repraplogphase/calibration-of-your-reprap
  * http://www.thingiverse.com/thing:298812
-*/
+ */
 
 // This configuration file contains the basic settings.
 // Advanced settings can be found in Configuration_adv.h
@@ -33,10 +33,10 @@ Here are some standard links for getting your machine calibrated:
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION "1.0.2"
-#define STRING_URL "reprap.org"
+#define STRING_VERSION "1.0.2.tobbelobb"
+#define STRING_URL "github.com/tobbelobb/hangprinter"
 #define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
-#define STRING_CONFIG_H_AUTHOR "(none, default config)" // Who made the changes.
+#define STRING_CONFIG_H_AUTHOR "tobbelobb" // Who made the changes.
 #define STRING_SPLASH_LINE1 "v" STRING_VERSION // will be shown during bootup in line 1
 //#define STRING_SPLASH_LINE2 STRING_VERSION_CONFIG_H // will be shown during bootup in line2
 
@@ -55,7 +55,7 @@ Here are some standard links for getting your machine calibrated:
 // The following define selects which electronics board you have.
 // Please choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_RAMPS_13_EFB
+#define MOTHERBOARD BOARD_RAMPS_13_EFB
 #endif
 
 // Define this to set a custom name for your generic Mendel,
@@ -74,10 +74,6 @@ Here are some standard links for getting your machine calibrated:
 // 2 = X-Box 360 203Watts (the blue wire connected to PS_ON and the red wire to VCC)
 
 #define POWER_SUPPLY 1
-
-// Define this to have the electronics keep the power supply off on startup. If you don't know what this is leave it.
-// #define PS_DEFAULT_OFF
-
 
 //===========================================================================
 //============================== Delta Settings =============================
@@ -101,6 +97,7 @@ Here are some standard links for getting your machine calibrated:
 #define AZ 0.0 // mm
 #endif
 
+#if defined(DELTA) && !defined(HANGPRINTER)
 // Horizontal offset from middle of printer to smooth rod center.
 #define DELTA_SMOOTH_ROD_OFFSET 773.6 // mm
 // ^^ MEASURE AGAIN WHEN SLIDEPRINTER MOUNTED 
@@ -113,7 +110,19 @@ Here are some standard links for getting your machine calibrated:
 
 // Effective horizontal distance bridged by diagonal push rods.
 #define DELTA_RADIUS (DELTA_SMOOTH_ROD_OFFSET-DELTA_EFFECTOR_OFFSET-DELTA_CARRIAGE_OFFSET)
-
+#elif defined(HANGPRINTER) // Hard coded coordinates of anchor points. Changeable with M665
+#define ANCHOR_A_X -1000.0 // anchor point A's Carthesian x-coordinate. In mm
+#define ANCHOR_A_Y -1000.0
+#define ANCHOR_A_Z 10.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_B_X 1000.0
+#define ANCHOR_B_Y 1000.0
+#define ANCHOR_B_Z 10.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_C_X 0.0
+#define ANCHOR_C_Y 1000.0
+#define ANCHOR_C_Z 10.0 // measured from print surface to frame middle. In mm
+// It's important that middle of frame D is directly above (x,y) = (0,0)
+#define ANCHOR_D_Z 2000.0 // measured from print surface to frame middle. In mm
+#endif
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -205,19 +214,19 @@ Here are some standard links for getting your machine calibrated:
 #define BANG_MAX 255 // limits current to nozzle while in bang-bang mode; 255=full current
 #define PID_MAX 255 // limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #ifdef PIDTEMP
-  //#define PID_DEBUG // Sends debug data to the serial port.
-  //#define PID_OPENLOOP 1 // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
-  #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
-                                  // is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
-  #define PID_INTEGRAL_DRIVE_MAX 255  //limit for the integral term
-  #define K1 0.95 //smoothing factor within the PID
-  #define PID_dT ((OVERSAMPLENR * 10.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the temperature routine
+//#define PID_DEBUG // Sends debug data to the serial port.
+//#define PID_OPENLOOP 1 // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
+#define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
+// is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
+#define PID_INTEGRAL_DRIVE_MAX 255  //limit for the integral term
+#define K1 0.95 //smoothing factor within the PID
+#define PID_dT ((OVERSAMPLENR * 10.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the temperature routine
 
 // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-    #define  DEFAULT_Kp 22.2
-    #define  DEFAULT_Ki 1.08
-    #define  DEFAULT_Kd 114
+#define  DEFAULT_Kp 22.2
+#define  DEFAULT_Ki 1.08
+#define  DEFAULT_Kd 114
 
 // MakerGear
 //    #define  DEFAULT_Kp 7.0
@@ -256,9 +265,9 @@ Here are some standard links for getting your machine calibrated:
 #ifdef PIDTEMPBED
 //120v 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
 //from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-    #define  DEFAULT_bedKp 10.00
-    #define  DEFAULT_bedKi .023
-    #define  DEFAULT_bedKd 305.4
+#define  DEFAULT_bedKp 10.00
+#define  DEFAULT_bedKi .023
+#define  DEFAULT_bedKd 305.4
 
 //120v 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
 //from pidautotune
@@ -284,25 +293,25 @@ Here are some standard links for getting your machine calibrated:
 //============================= Thermal Runaway Protection ==================
 //===========================================================================
 /*
-This is a feature to protect your printer from burn up in flames if it has
-a thermistor coming off place (this happened to a friend of mine recently and
-motivated me writing this feature).
+   This is a feature to protect your printer from burn up in flames if it has
+   a thermistor coming off place (this happened to a friend of mine recently and
+   motivated me writing this feature).
 
-The issue: If a thermistor come off, it will read a lower temperature than actual.
-The system will turn the heater on forever, burning up the filament and anything
-else around.
+   The issue: If a thermistor come off, it will read a lower temperature than actual.
+   The system will turn the heater on forever, burning up the filament and anything
+   else around.
 
-After the temperature reaches the target for the first time, this feature will 
-start measuring for how long the current temperature stays below the target 
-minus _HYSTERESIS (set_temperature - THERMAL_RUNAWAY_PROTECTION_HYSTERESIS).
+   After the temperature reaches the target for the first time, this feature will 
+   start measuring for how long the current temperature stays below the target 
+   minus _HYSTERESIS (set_temperature - THERMAL_RUNAWAY_PROTECTION_HYSTERESIS).
 
-If it stays longer than _PERIOD, it means the thermistor temperature
-cannot catch up with the target, so something *may be* wrong. Then, to be on the
-safe side, the system will he halt.
+   If it stays longer than _PERIOD, it means the thermistor temperature
+   cannot catch up with the target, so something *may be* wrong. Then, to be on the
+   safe side, the system will he halt.
 
-Bear in mind the count down will just start AFTER the first time the 
-thermistor temperature is over the target, so you will have no problem if
-your extruder heater takes 2 minutes to hit the target on heating.
+   Bear in mind the count down will just start AFTER the first time the 
+   thermistor temperature is over the target, so you will have no problem if
+   your extruder heater takes 2 minutes to hit the target on heating.
 
 */
 // If you want to enable this feature for all your extruder heaters,
@@ -328,22 +337,22 @@ your extruder heater takes 2 minutes to hit the target on heating.
 #define ENDSTOPPULLUPS // Comment this out (using // at the start of the line) to disable the endstop pullup resistors
 
 #ifndef ENDSTOPPULLUPS
-  // fine endstop settings: Individual pullups. will be ignored if ENDSTOPPULLUPS is defined
-  // #define ENDSTOPPULLUP_XMAX
-  // #define ENDSTOPPULLUP_YMAX
-  // #define ENDSTOPPULLUP_ZMAX
-  // #define ENDSTOPPULLUP_XMIN
-  // #define ENDSTOPPULLUP_YMIN
-  // #define ENDSTOPPULLUP_ZMIN
+// fine endstop settings: Individual pullups. will be ignored if ENDSTOPPULLUPS is defined
+// #define ENDSTOPPULLUP_XMAX
+// #define ENDSTOPPULLUP_YMAX
+// #define ENDSTOPPULLUP_ZMAX
+// #define ENDSTOPPULLUP_XMIN
+// #define ENDSTOPPULLUP_YMIN
+// #define ENDSTOPPULLUP_ZMIN
 #endif
 
 #ifdef ENDSTOPPULLUPS
-  #define ENDSTOPPULLUP_XMAX
-  #define ENDSTOPPULLUP_YMAX
-  #define ENDSTOPPULLUP_ZMAX
-  #define ENDSTOPPULLUP_XMIN
-  #define ENDSTOPPULLUP_YMIN
-  #define ENDSTOPPULLUP_ZMIN
+#define ENDSTOPPULLUP_XMAX
+#define ENDSTOPPULLUP_YMAX
+#define ENDSTOPPULLUP_ZMAX
+#define ENDSTOPPULLUP_XMIN
+#define ENDSTOPPULLUP_YMIN
+#define ENDSTOPPULLUP_ZMIN
 #endif
 
 // The pullups are needed if you directly connect a mechanical endswitch between the signal and ground pins.
@@ -356,10 +365,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //#define DISABLE_MAX_ENDSTOPS
 // Deltas never have min endstops
 #define DISABLE_MIN_ENDSTOPS
-// Disable max endstops for compatibility with endstop checking routine
-#if defined(COREXY) && !defined(DISABLE_MAX_ENDSTOPS)
-  #define DISABLE_MAX_ENDSTOPS
-#endif
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
 #define X_ENABLE_ON 0
@@ -399,6 +404,15 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define Y_MIN_POS -90
 #define Z_MAX_POS MANUAL_Z_HOME_POS
 #define Z_MIN_POS 0
+// Not in use yet, software endstops will be removed
+#define A_MAX_POS 900
+#define A_MIN_POS -900
+#define B_MAX_POS 900
+#define B_MIN_POS -900
+#define C_MAX_POS 900
+#define C_MIN_POS -900
+#define D_MAX_POS MANUAL_Z_HOME_POS
+#define D_MIN_POS 0
 
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
 #define Y_MAX_LENGTH (Y_MAX_POS - Y_MIN_POS)
@@ -426,10 +440,18 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define MANUAL_Z_HOME_POS 250 // For delta: Distance between nozzle and print surface after homing.
 
 //// MOVEMENT SETTINGS
-#ifdef EXTRUDERS
-#define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
+// Dirs is the number of motors connected to print head, excluding extruder
+// > 3 means overconstrained machine
+#if defined(HANGPRINTER)
+#define DIRS 4
 #else
-#define NUM_AXIS 3
+#define DIRS 3
+#endif
+
+#ifdef EXTRUDERS
+#define NUM_AXIS 5 // The axis order in all axis related arrays is A, B, C, D
+#else
+#define NUM_AXIS 4
 #endif
 // delta homing speeds must be the same on xyz
 #define HOMING_FEEDRATE {200*60, 200*60, 200*60, 0}  // set the homing speeds (mm/min)
@@ -442,6 +464,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
 #define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
+
+#define DEFAULT_NOMINAL_FILAMENT_DIA 1.75
 
 // Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
 // The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
@@ -457,15 +481,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //===========================================================================
 //============================= Additional Features =========================
 //===========================================================================
-
-// Custom M code points
-#define CUSTOM_M_CODES
-#ifdef CUSTOM_M_CODES
-  #define CUSTOM_M_CODE_SET_Z_PROBE_OFFSET 851
-  #define Z_PROBE_OFFSET_RANGE_MIN -15
-  #define Z_PROBE_OFFSET_RANGE_MAX -5
-#endif
-
 
 // EEPROM
 // The microcontroller can store settings in the EEPROM, e.g. max velocity...
@@ -488,23 +503,13 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define ABS_PREHEAT_HPB_TEMP 100
 #define ABS_PREHEAT_FAN_SPEED 255   // Insert Value between 0 and 255
 #endif
-//LCD and SD support
+//SD support
 
-// Character based displays can have different extended charsets.
-#define DISPLAY_CHARSET_HD44780_JAPAN     // "ääööüüß23°"
-//#define DISPLAY_CHARSET_HD44780_WESTERN // "ÄäÖöÜüß²³°" if you see a '~' instead of a 'arrow_right' at the right of submenuitems - this is the right one.
-
-//#define ULTRA_LCD  //general LCD support, also 16x2
-//#define DOGLCD  // Support for SPI LCD 128x64 (Controller ST7565R graphic Display Family)
 //#define SDSUPPORT // Enable SD Card Support in Hardware Console
 //#define SDSLOW // Use slower SD transfer mode (not normally needed - uncomment if you're getting volume init error)
 //#define SD_CHECK_AND_RETRY // Use CRC checks and retries on the SD communication
 //#define ENCODER_PULSES_PER_STEP 1 // Increase if you have a high resolution encoder
 //#define ENCODER_STEPS_PER_MENU_ITEM 5 // Set according to ENCODER_PULSES_PER_STEP or your liking
-//#define ULTIMAKERCONTROLLER //as available from the Ultimaker online store.
-//#define ULTIPANEL  //the UltiPanel as on Thingiverse
-//#define LCD_FEEDBACK_FREQUENCY_HZ 1000	// this is the tone frequency the buzzer plays when on UI feedback. ie Screen Click
-//#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 100 // the duration the buzzer plays the UI feedback sound. ie Screen Click
 
 // The MaKr3d Makr-Panel with graphic controller and SD support
 // http://reprap.org/wiki/MaKr3d_MaKrPanel
@@ -541,134 +546,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // in ultralcd.cpp@lcd_delta_calibrate_menu()
 // #define DELTA_CALIBRATION_MENU
 
-//automatic expansion
-#if defined (MAKRPANEL)
- #define DOGLCD
- #define SDSUPPORT
- #define ULTIPANEL
- #define NEWPANEL
- #define DEFAULT_LCD_CONTRAST 17
-#endif
-
-#if defined (REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
- #define DOGLCD
- #define U8GLIB_ST7920
- #define REPRAP_DISCOUNT_SMART_CONTROLLER
-#endif
-
-#if defined(ULTIMAKERCONTROLLER) || defined(REPRAP_DISCOUNT_SMART_CONTROLLER) || defined(G3D_PANEL)
- #define ULTIPANEL
- #define NEWPANEL
-#endif
-
-#if defined(REPRAPWORLD_KEYPAD)
-  #define NEWPANEL
-  #define ULTIPANEL
-#endif
-#if defined(RA_CONTROL_PANEL)
- #define ULTIPANEL
- #define NEWPANEL
- #define LCD_I2C_TYPE_PCA8574
- #define LCD_I2C_ADDRESS 0x27   // I2C Address of the port expander
-#endif
-
-//I2C PANELS
-
-//#define LCD_I2C_SAINSMART_YWROBOT
-#ifdef LCD_I2C_SAINSMART_YWROBOT
-  // This uses the LiquidCrystal_I2C library ( https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home )
-  // Make sure it is placed in the Arduino libraries directory.
-  #define LCD_I2C_TYPE_PCF8575
-  #define LCD_I2C_ADDRESS 0x27   // I2C Address of the port expander
-  #define NEWPANEL
-  #define ULTIPANEL
-#endif
-
-// PANELOLU2 LCD with status LEDs, separate encoder and click inputs
-//#define LCD_I2C_PANELOLU2
-#ifdef LCD_I2C_PANELOLU2
-  // This uses the LiquidTWI2 library v1.2.3 or later ( https://github.com/lincomatic/LiquidTWI2 )
-  // Make sure the LiquidTWI2 directory is placed in the Arduino or Sketchbook libraries subdirectory.
-  // (v1.2.3 no longer requires you to define PANELOLU in the LiquidTWI2.h library header file)
-  // Note: The PANELOLU2 encoder click input can either be directly connected to a pin
-  //       (if BTN_ENC defined to != -1) or read through I2C (when BTN_ENC == -1).
-  #define LCD_I2C_TYPE_MCP23017
-  #define LCD_I2C_ADDRESS 0x20 // I2C Address of the port expander
-  #define LCD_USE_I2C_BUZZER //comment out to disable buzzer on LCD
-  #define NEWPANEL
-  #define ULTIPANEL
-
-  #ifndef ENCODER_PULSES_PER_STEP
-	#define ENCODER_PULSES_PER_STEP 4
-  #endif
-
-  #ifndef ENCODER_STEPS_PER_MENU_ITEM
-	#define ENCODER_STEPS_PER_MENU_ITEM 1
-  #endif
-
-
-  #ifdef LCD_USE_I2C_BUZZER
-	#define LCD_FEEDBACK_FREQUENCY_HZ 1000
-	#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 100
-  #endif
-
-#endif
-
-// Panucatt VIKI LCD with status LEDs, integrated click & L/R/U/P buttons, separate encoder inputs
-//#define LCD_I2C_VIKI
-#ifdef LCD_I2C_VIKI
-  // This uses the LiquidTWI2 library v1.2.3 or later ( https://github.com/lincomatic/LiquidTWI2 )
-  // Make sure the LiquidTWI2 directory is placed in the Arduino or Sketchbook libraries subdirectory.
-  // Note: The pause/stop/resume LCD button pin should be connected to the Arduino
-  //       BTN_ENC pin (or set BTN_ENC to -1 if not used)
-  #define LCD_I2C_TYPE_MCP23017
-  #define LCD_I2C_ADDRESS 0x20 // I2C Address of the port expander
-  #define LCD_USE_I2C_BUZZER //comment out to disable buzzer on LCD (requires LiquidTWI2 v1.2.3 or later)
-  #define NEWPANEL
-  #define ULTIPANEL
-#endif
-
-// Shift register panels
-// ---------------------
-// 2 wire Non-latching LCD SR from:
-// https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/schematics#!shiftregister-connection
-//#define SR_LCD
-#ifdef SR_LCD
-   #define SR_LCD_2W_NL    // Non latching 2 wire shift register
-   //#define NEWPANEL
-#endif
-
-
-#ifdef ULTIPANEL
-//  #define NEWPANEL  //enable this if you have a click-encoder panel
-  #define SDSUPPORT
-  #define ULTRA_LCD
-  #ifdef DOGLCD // Change number of lines to match the DOG graphic display
-    #define LCD_WIDTH 20
-    #define LCD_HEIGHT 5
-  #else
-    #define LCD_WIDTH 20
-    #define LCD_HEIGHT 4
-  #endif
-#else //no panel but just LCD
-  #ifdef ULTRA_LCD
-  #ifdef DOGLCD // Change number of lines to match the 128x64 graphics display
-    #define LCD_WIDTH 20
-    #define LCD_HEIGHT 5
-  #else
-    #define LCD_WIDTH 16
-    #define LCD_HEIGHT 2
-  #endif
-  #endif
-#endif
-
-// default LCD contrast for dogm-like LCD displays
-#ifdef DOGLCD
-# ifndef DEFAULT_LCD_CONTRAST
-#  define DEFAULT_LCD_CONTRAST 32
-# endif
-#endif
-
 // Increase the FAN pwm frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
 
@@ -694,68 +571,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
 // SF send wrong arc g-codes when using Arc Point as fillet procedure
 //#define SF_ARC_FIX
-
-// Support for the BariCUDA Paste Extruder.
-//#define BARICUDA
-
-//define BlinkM/CyzRgb Support
-//#define BLINKM
-
-/*********************************************************************\
-* R/C SERVO support
-* Sponsored by TrinityLabs, Reworked by codexmas
-**********************************************************************/
-
-// Number of servos
-//
-// If you select a configuration below, this will receive a default value and does not need to be set manually
-// set it manually if you have more servos than extruders and wish to manually control some
-// leaving it undefined or defining as 0 will disable the servo subsystem
-// If unsure, leave commented / disabled
-//
-//#define NUM_SERVOS 3 // Servo index starts with 0 for M280 command
-
-// Servo Endstops
-//
-// This allows for servo actuated endstops, primary usage is for the Z Axis to eliminate calibration or bed height changes.
-// Use M206 command to correct for switch height offset to actual nozzle height. Store that setting with M500.
-//
-//#define SERVO_ENDSTOPS {-1, -1, 0} // Servo index for X, Y, Z. Disable with -1
-//#define SERVO_ENDSTOP_ANGLES {0,0, 0,0, 70,0} // X,Y,Z Axis Extend and Retract angles
-
-/**********************************************************************\
- * Support for a filament diameter sensor
- * Also allows adjustment of diameter at print time (vs  at slicing)
- * Single extruder only at this point (extruder 0)
- * 
- * Motherboards
- * 34 - RAMPS1.4 - uses Analog input 5 on the AUX2 connector 
- * 81 - Printrboard - Uses Analog input 2 on the Exp1 connector (version B,C,D,E)
- * 301 - Rambo  - uses Analog input 3
- * Note may require analog pins to be defined for different motherboards
- **********************************************************************/
-// Uncomment below to enable
-//#define FILAMENT_SENSOR
-
-#define FILAMENT_SENSOR_EXTRUDER_NUM  0  //The number of the extruder that has the filament sensor (0,1,2)
-#define MEASUREMENT_DELAY_CM      14  //measurement delay in cm.  This is the distance from filament sensor to middle of barrel
-
-#define DEFAULT_NOMINAL_FILAMENT_DIA  3.0  //Enter the diameter (in mm) of the filament generally used (3.0 mm or 1.75 mm) - this is then used in the slicer software.  Used for sensor reading validation
-#define MEASURED_UPPER_LIMIT          3.30  //upper limit factor used for sensor reading validation in mm
-#define MEASURED_LOWER_LIMIT          1.90  //lower limit factor for sensor reading validation in mm
-#define MAX_MEASUREMENT_DELAY     20  //delay buffer size in bytes (1 byte = 1cm)- limits maximum measurement delay allowable (must be larger than MEASUREMENT_DELAY_CM  and lower number saves RAM)
-
-//defines used in the code
-#define DEFAULT_MEASURED_FILAMENT_DIA  DEFAULT_NOMINAL_FILAMENT_DIA  //set measured to nominal initially 
-
-//When using an LCD, uncomment the line below to display the Filament sensor data on the last line instead of status.  Status will appear for 5 sec.
-//#define FILAMENT_LCD_DISPLAY
-
-
-
-
-
-
 
 #include "Configuration_adv.h"
 #ifdef EXTRUDERS

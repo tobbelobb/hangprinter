@@ -34,7 +34,7 @@ struct pin_map_t {
 };
 //------------------------------------------------------------------------------
 #if defined(__AVR_ATmega1280__)\
-|| defined(__AVR_ATmega2560__)
+  || defined(__AVR_ATmega2560__)
 // Mega
 
 // Two Wire (aka I2C) ports
@@ -123,7 +123,7 @@ static const pin_map_t digitalPinMap[] = {
 };
 //------------------------------------------------------------------------------
 #elif defined(__AVR_ATmega644P__)\
-|| defined(__AVR_ATmega644__)\
+  || defined(__AVR_ATmega644__)\
 || defined(__AVR_ATmega1284P__)
 // Sanguino
 
@@ -214,7 +214,7 @@ static const pin_map_t digitalPinMap[] = {
 };
 //------------------------------------------------------------------------------
 #elif defined(__AVR_AT90USB646__)\
-|| defined(__AVR_AT90USB1286__)
+  || defined(__AVR_AT90USB1286__)
 // Teensy++ 1.0 & 2.0
 
 // Two Wire (aka I2C) ports
@@ -277,7 +277,7 @@ static const pin_map_t digitalPinMap[] = {
 };
 //------------------------------------------------------------------------------
 #elif defined(__AVR_ATmega168__)\
-||defined(__AVR_ATmega168P__)\
+  ||defined(__AVR_ATmega168P__)\
 ||defined(__AVR_ATmega328P__)
 // 168 and 328 Arduinos
 
@@ -324,44 +324,44 @@ uint8_t badPinNumber(void)
 
 static inline __attribute__((always_inline))
   bool getPinMode(uint8_t pin) {
-  if (__builtin_constant_p(pin) && pin < digitalPinCount) {
-    return (*digitalPinMap[pin].ddr >> digitalPinMap[pin].bit) & 1;
-  } else {
-    return badPinNumber();
+    if (__builtin_constant_p(pin) && pin < digitalPinCount) {
+      return (*digitalPinMap[pin].ddr >> digitalPinMap[pin].bit) & 1;
+    } else {
+      return badPinNumber();
+    }
   }
-}
 static inline __attribute__((always_inline))
   void setPinMode(uint8_t pin, uint8_t mode) {
-  if (__builtin_constant_p(pin) && pin < digitalPinCount) {
-    if (mode) {
-      *digitalPinMap[pin].ddr |= 1 << digitalPinMap[pin].bit;
+    if (__builtin_constant_p(pin) && pin < digitalPinCount) {
+      if (mode) {
+        *digitalPinMap[pin].ddr |= 1 << digitalPinMap[pin].bit;
+      } else {
+        *digitalPinMap[pin].ddr &= ~(1 << digitalPinMap[pin].bit);
+      }
     } else {
-      *digitalPinMap[pin].ddr &= ~(1 << digitalPinMap[pin].bit);
+      badPinNumber();
     }
-  } else {
-    badPinNumber();
   }
-}
 static inline __attribute__((always_inline))
   bool fastDigitalRead(uint8_t pin) {
-  if (__builtin_constant_p(pin) && pin < digitalPinCount) {
-    return (*digitalPinMap[pin].pin >> digitalPinMap[pin].bit) & 1;
-  } else {
-    return badPinNumber();
+    if (__builtin_constant_p(pin) && pin < digitalPinCount) {
+      return (*digitalPinMap[pin].pin >> digitalPinMap[pin].bit) & 1;
+    } else {
+      return badPinNumber();
+    }
   }
-}
 static inline __attribute__((always_inline))
   void fastDigitalWrite(uint8_t pin, uint8_t value) {
-  if (__builtin_constant_p(pin) && pin < digitalPinCount) {
-    if (value) {
-      *digitalPinMap[pin].port |= 1 << digitalPinMap[pin].bit;
+    if (__builtin_constant_p(pin) && pin < digitalPinCount) {
+      if (value) {
+        *digitalPinMap[pin].port |= 1 << digitalPinMap[pin].bit;
+      } else {
+        *digitalPinMap[pin].port &= ~(1 << digitalPinMap[pin].bit);
+      }
     } else {
-      *digitalPinMap[pin].port &= ~(1 << digitalPinMap[pin].bit);
+      badPinNumber();
     }
-  } else {
-    badPinNumber();
   }
-}
 #endif  // Sd2PinMap_h
 
 

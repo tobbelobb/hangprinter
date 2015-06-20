@@ -100,7 +100,7 @@ bool SdVolume::allocContiguous(uint32_t count, uint32_t* curCluster) {
 
   return true;
 
- fail:
+fail:
   return false;
 }
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ bool SdVolume::cacheFlush() {
   }
   return true;
 
- fail:
+fail:
   return false;
 }
 //------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ bool SdVolume::cacheRawBlock(uint32_t blockNumber, bool dirty) {
   if (dirty) cacheDirty_ = true;
   return true;
 
- fail:
+fail:
   return false;
 }
 //------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ bool SdVolume::chainSize(uint32_t cluster, uint32_t* size) {
   *size = s;
   return true;
 
- fail:
+fail:
   return false;
 }
 //------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ bool SdVolume::fatGet(uint32_t cluster, uint32_t* value) {
   }
   return true;
 
- fail:
+fail:
   return false;
 }
 //------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ bool SdVolume::fatPut(uint32_t cluster, uint32_t value) {
   if (fatCount_ > 1) cacheMirrorBlock_ = lba + blocksPerFat_;
   return true;
 
- fail:
+fail:
   return false;
 }
 //------------------------------------------------------------------------------
@@ -269,7 +269,7 @@ bool SdVolume::freeChain(uint32_t cluster) {
 
   return true;
 
- fail:
+fail:
   return false;
 }
 //------------------------------------------------------------------------------
@@ -340,8 +340,8 @@ bool SdVolume::init(Sd2Card* dev, uint8_t part) {
     if (!cacheRawBlock(volumeStartBlock, CACHE_FOR_READ)) goto fail;
     part_t* p = &cacheBuffer_.mbr.part[part-1];
     if ((p->boot & 0X7F) !=0  ||
-      p->totalSectors < 100 ||
-      p->firstSector == 0) {
+        p->totalSectors < 100 ||
+        p->firstSector == 0) {
       // not a valid partition
       goto fail;
     }
@@ -350,11 +350,11 @@ bool SdVolume::init(Sd2Card* dev, uint8_t part) {
   if (!cacheRawBlock(volumeStartBlock, CACHE_FOR_READ)) goto fail;
   fbs = &cacheBuffer_.fbs32;
   if (fbs->bytesPerSector != 512 ||
-    fbs->fatCount == 0 ||
-    fbs->reservedSectorCount == 0 ||
-    fbs->sectorsPerCluster == 0) {
-       // not valid FAT volume
-      goto fail;
+      fbs->fatCount == 0 ||
+      fbs->reservedSectorCount == 0 ||
+      fbs->sectorsPerCluster == 0) {
+    // not valid FAT volume
+    goto fail;
   }
   fatCount_ = fbs->fatCount;
   blocksPerCluster_ = fbs->sectorsPerCluster;
@@ -365,7 +365,7 @@ bool SdVolume::init(Sd2Card* dev, uint8_t part) {
     if (clusterSizeShift_++ > 7) goto fail;
   }
   blocksPerFat_ = fbs->sectorsPerFat16 ?
-                    fbs->sectorsPerFat16 : fbs->sectorsPerFat32;
+    fbs->sectorsPerFat16 : fbs->sectorsPerFat32;
 
   fatStartBlock_ = volumeStartBlock + fbs->reservedSectorCount;
 
@@ -380,7 +380,7 @@ bool SdVolume::init(Sd2Card* dev, uint8_t part) {
 
   // total blocks for FAT16 or FAT32
   totalBlocks = fbs->totalSectors16 ?
-                           fbs->totalSectors16 : fbs->totalSectors32;
+    fbs->totalSectors16 : fbs->totalSectors32;
   // total data blocks
   clusterCount_ = totalBlocks - (dataStartBlock_ - volumeStartBlock);
 
@@ -399,7 +399,7 @@ bool SdVolume::init(Sd2Card* dev, uint8_t part) {
   }
   return true;
 
- fail:
+fail:
   return false;
 }
 #endif

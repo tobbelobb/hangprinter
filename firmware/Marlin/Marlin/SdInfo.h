@@ -58,7 +58,7 @@ uint8_t const CMD25 = 0X19;
 /** ERASE_WR_BLK_START - sets the address of the first block to be erased */
 uint8_t const CMD32 = 0X20;
 /** ERASE_WR_BLK_END - sets the address of the last block of the continuous
-    range to be erased*/
+  range to be erased*/
 uint8_t const CMD33 = 0X21;
 /** ERASE - erase all previously selected blocks */
 uint8_t const CMD38 = 0X26;
@@ -67,10 +67,10 @@ uint8_t const CMD55 = 0X37;
 /** READ_OCR - read the OCR register of a card */
 uint8_t const CMD58 = 0X3A;
 /** SET_WR_BLK_ERASE_COUNT - Set the number of write blocks to be
-     pre-erased before writing */
+  pre-erased before writing */
 uint8_t const ACMD23 = 0X17;
 /** SD_SEND_OP_COMD - Sends host capacity support information and
-    activates the card's initialization process */
+  activates the card's initialization process */
 uint8_t const ACMD41 = 0X29;
 //------------------------------------------------------------------------------
 /** status for card in the ready state */

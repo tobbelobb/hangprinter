@@ -1,7 +1,7 @@
 /*
-  This code contributed by Triffid_Hunter and modified by Kliment
-  why double up on these macros? see http://gcc.gnu.org/onlinedocs/cpp/Stringification.html
-*/
+   This code contributed by Triffid_Hunter and modified by Kliment
+   why double up on these macros? see http://gcc.gnu.org/onlinedocs/cpp/Stringification.html
+   */
 
 #ifndef	_FASTIO_ARDUINO_H
 #define	_FASTIO_ARDUINO_H
@@ -9,8 +9,8 @@
 #include <avr/io.h>
 
 /*
-  utility functions
-*/
+   utility functions
+   */
 
 #ifndef MASK
 /// MASKING- returns \f$2^PIN\f$
@@ -18,9 +18,9 @@
 #endif
 
 /*
-  magic I/O routines
-  now you can simply SET_OUTPUT(STEP); WRITE(STEP, 1); WRITE(STEP, 0);
-*/
+   magic I/O routines
+   now you can simply SET_OUTPUT(STEP); WRITE(STEP, 1); WRITE(STEP, 0);
+   */
 
 /// Read a pin
 #define _READ(IO) ((bool)(DIO ## IO ## _RPORT & MASK(DIO ## IO ## _PIN)))
@@ -30,17 +30,17 @@
 #define _WRITE_NC(IO, v)  do { if (v) {DIO ##  IO ## _WPORT |= MASK(DIO ## IO ## _PIN); } else {DIO ##  IO ## _WPORT &= ~MASK(DIO ## IO ## _PIN); }; } while (0)
 
 #define _WRITE_C(IO, v)   do { if (v) { \
-                                         CRITICAL_SECTION_START; \
-                                         {DIO ##  IO ## _WPORT |= MASK(DIO ## IO ## _PIN); }\
-                                         CRITICAL_SECTION_END; \
-                                       }\
-                                       else {\
-                                         CRITICAL_SECTION_START; \
-                                         {DIO ##  IO ## _WPORT &= ~MASK(DIO ## IO ## _PIN); }\
-                                         CRITICAL_SECTION_END; \
-                                       }\
-                                     }\
-                                     while (0)
+  CRITICAL_SECTION_START; \
+  {DIO ##  IO ## _WPORT |= MASK(DIO ## IO ## _PIN); }\
+  CRITICAL_SECTION_END; \
+}\
+else {\
+  CRITICAL_SECTION_START; \
+  {DIO ##  IO ## _WPORT &= ~MASK(DIO ## IO ## _PIN); }\
+  CRITICAL_SECTION_END; \
+}\
+}\
+while (0)
 
 #define _WRITE(IO, v)  do {  if (&(DIO ##  IO ## _RPORT) >= (uint8_t *)0x100) {_WRITE_C(IO, v); } else {_WRITE_NC(IO, v); }; } while (0)
 
@@ -60,34 +60,34 @@
 /// check if pin is an timer
 #define	_GET_TIMER(IO)  ((DIO ## IO ## _PWM)
 
-//  why double up on these macros? see http://gcc.gnu.org/onlinedocs/cpp/Stringification.html
+    //  why double up on these macros? see http://gcc.gnu.org/onlinedocs/cpp/Stringification.html
 
-/// Read a pin wrapper
+    /// Read a pin wrapper
 #define READ(IO)  _READ(IO)
-/// Write to a pin wrapper
+    /// Write to a pin wrapper
 #define WRITE(IO, v)  _WRITE(IO, v)
 
-/// toggle a pin wrapper
+    /// toggle a pin wrapper
 #define TOGGLE(IO)  _TOGGLE(IO)
 
-/// set pin as input wrapper
+    /// set pin as input wrapper
 #define SET_INPUT(IO)  _SET_INPUT(IO)
-/// set pin as output wrapper
+    /// set pin as output wrapper
 #define SET_OUTPUT(IO)  _SET_OUTPUT(IO)
 
-/// check if pin is an input wrapper
+    /// check if pin is an input wrapper
 #define GET_INPUT(IO)  _GET_INPUT(IO)
-/// check if pin is an output wrapper
+    /// check if pin is an output wrapper
 #define GET_OUTPUT(IO)  _GET_OUTPUT(IO)
 
 /// check if pin is an timer wrapper
 #define GET_TIMER(IO)  _GET_TIMER(IO)
 
 /*
-	ports and functions
+   ports and functions
 
-	added as necessary or if I feel like it- not a comprehensive list!
-*/
+   added as necessary or if I feel like it- not a comprehensive list!
+   */
 
 #if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328__) || defined (__AVR_ATmega328P__)
 // UART
@@ -115,8 +115,8 @@
 #define	DEBUG_LED		AIO5
 
 /*
-pins
-*/
+   pins
+   */
 
 #define DIO0_PIN		PIND0
 #define DIO0_RPORT	PIND
@@ -454,8 +454,8 @@ pins
 
 #define	DEBUG_LED		DIO0
 /*
-pins
-*/
+   pins
+   */
 
 #define DIO0_PIN		PINB0
 #define DIO0_RPORT	PINB
@@ -963,8 +963,8 @@ pins
 #define	DEBUG_LED		DIO21
 
 /*
-pins
-*/
+   pins
+   */
 #define	DIO0_PIN		PINE0
 #define	DIO0_RPORT	PINE
 #define	DIO0_WPORT	PORTE
@@ -2033,8 +2033,8 @@ pins
 #define	DEBUG_LED		DIO31 /* led D5 red */
 
 /*
-pins
-*/
+   pins
+   */
 
 //#define AT90USBxx_TEENSYPP_ASSIGNMENTS // Use Teensy++ 2.0 assignments 
 #ifndef AT90USBxx_TEENSYPP_ASSIGNMENTS // Use traditional Marlin pin assignments
@@ -2676,12 +2676,12 @@ pins
 
 /*
 
-AT90USB  51 50 49 48 47 46 45 44 10 11 12 13 14 15 16 17 35 36 37 38 39 40 41 42 25 26 27 28 29 30 31 32 33 34 43 09 18 19 01 02 61 60 59 58 57 56 55 54 
-Port     A0 A1 A2 A3 A4 A5 A6 A7 B0 B1 B2 B3 B4 B5 B6 B7 C0 C1 C2 C3 C4 C5 C6 C7 D0 D1 D2 D3 D4 D5 D6 D7 E0 E1 E2 E3 E4 E5 E6 E7 F0 F1 F2 F3 F4 F5 F6 F7 
-Marlin   00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
-Teensy   28 29 30 31 32 33 34 35 20 21 22 23 24 25 26 27 10 11 12 13 14 15 16 17 00 01 02 03 04 05 06 07 08 09(46*47)36 37 18 19 38 39 40 41 42 43 44 45
-         The pins 46 and 47 are not supported by Teensyduino, but are supported below.
-*/
+   AT90USB  51 50 49 48 47 46 45 44 10 11 12 13 14 15 16 17 35 36 37 38 39 40 41 42 25 26 27 28 29 30 31 32 33 34 43 09 18 19 01 02 61 60 59 58 57 56 55 54 
+   Port     A0 A1 A2 A3 A4 A5 A6 A7 B0 B1 B2 B3 B4 B5 B6 B7 C0 C1 C2 C3 C4 C5 C6 C7 D0 D1 D2 D3 D4 D5 D6 D7 E0 E1 E2 E3 E4 E5 E6 E7 F0 F1 F2 F3 F4 F5 F6 F7 
+   Marlin   00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+   Teensy   28 29 30 31 32 33 34 35 20 21 22 23 24 25 26 27 10 11 12 13 14 15 16 17 00 01 02 03 04 05 06 07 08 09(46*47)36 37 18 19 38 39 40 41 42 43 44 45
+   The pins 46 and 47 are not supported by Teensyduino, but are supported below.
+   */
 
 #define DIO0_PIN PIND0
 #define DIO0_RPORT PIND
@@ -3350,8 +3350,8 @@ Teensy   28 29 30 31 32 33 34 35 20 21 22 23 24 25 26 27 10 11 12 13 14 15 16 17
 #define	DEBUG_LED		DIO46
 
 /*
-pins
-*/
+   pins
+   */
 #define	DIO0_PIN		PINE0
 #define	DIO0_RPORT	PINE
 #define	DIO0_WPORT	PORTE

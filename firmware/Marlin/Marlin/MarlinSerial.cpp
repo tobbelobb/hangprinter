@@ -1,24 +1,24 @@
 /*
-  HardwareSerial.cpp - Hardware serial library for Wiring
-  Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
+   HardwareSerial.cpp - Hardware serial library for Wiring
+   Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-  
-  Modified 23 November 2006 by David A. Mellis
-  Modified 28 September 2010 by Mark Sproul
-*/
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+   Modified 23 November 2006 by David A. Mellis
+   Modified 28 September 2010 by Mark Sproul
+   */
 
 #include "Marlin.h"
 #include "MarlinSerial.h"
@@ -29,7 +29,7 @@
 #if defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H)
 
 #if UART_PRESENT(SERIAL_PORT)
-  ring_buffer rx_buffer  =  { { 0 }, 0, 0 };
+ring_buffer rx_buffer  =  { { 0 }, 0, 0 };
 #endif
 
 FORCE_INLINE void store_char(unsigned char c) {
@@ -48,12 +48,12 @@ FORCE_INLINE void store_char(unsigned char c) {
 
 //#elif defined(SIG_USART_RECV)
 #if defined(M_USARTx_RX_vect)
-  // fixed by Mark Sproul this is on the 644/644p
-  //SIGNAL(SIG_USART_RECV)
-  SIGNAL(M_USARTx_RX_vect) {
-    unsigned char c  =  M_UDRx;
-    store_char(c);
-  }
+// fixed by Mark Sproul this is on the 644/644p
+//SIGNAL(SIG_USART_RECV)
+SIGNAL(M_USARTx_RX_vect) {
+  unsigned char c  =  M_UDRx;
+  store_char(c);
+}
 #endif
 
 // Constructors ////////////////////////////////////////////////////////////////
@@ -66,15 +66,15 @@ void MarlinSerial::begin(long baud) {
   uint16_t baud_setting;
   bool useU2X = true;
 
-  #if F_CPU == 16000000UL && SERIAL_PORT == 0
-    // hard-coded exception for compatibility with the bootloader shipped
-    // with the Duemilanove and previous boards and the firmware on the 8U2
-    // on the Uno and Mega 2560.
-    if (baud == 57600) {
-      useU2X = false;
-    }
-  #endif
-  
+#if F_CPU == 16000000UL && SERIAL_PORT == 0
+  // hard-coded exception for compatibility with the bootloader shipped
+  // with the Duemilanove and previous boards and the firmware on the 8U2
+  // on the Uno and Mega 2560.
+  if (baud == 57600) {
+    useU2X = false;
+  }
+#endif
+
   if (useU2X) {
     M_UCSRxA = 1 << M_U2Xx;
     baud_setting = (F_CPU / 4 / baud - 1) / 2;
@@ -244,22 +244,22 @@ void MarlinSerial::printNumber(unsigned long n, uint8_t base) {
 
   for (; i > 0; i--)
     print((char) (buf[i - 1] < 10 ?
-      '0' + buf[i - 1] :
-      'A' + buf[i - 1] - 10));
+          '0' + buf[i - 1] :
+          'A' + buf[i - 1] - 10));
 }
 
 void MarlinSerial::printFloat(double number, uint8_t digits) {
   // Handle negative numbers
   if (number < 0.0) {
-     print('-');
-     number = -number;
+    print('-');
+    number = -number;
   }
 
   // Round correctly so that print(1.999, 2) prints as "2.00"
   double rounding = 0.5;
   for (uint8_t i = 0; i < digits; ++i)
     rounding /= 10.0;
-  
+
   number += rounding;
 
   // Extract the integer part of the number and print it
@@ -289,6 +289,6 @@ MarlinSerial MSerial;
 
 // For AT90USB targets use the UART for BT interfacing
 #if defined(AT90USB) && defined (BTENABLED)
-   HardwareSerial bt;
+HardwareSerial bt;
 #endif
 

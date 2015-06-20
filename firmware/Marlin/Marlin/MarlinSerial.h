@@ -1,44 +1,44 @@
 /*
-  HardwareSerial.h - Hardware serial library for Wiring
-  Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
+   HardwareSerial.h - Hardware serial library for Wiring
+   Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-  Modified 28 September 2010 by Mark Sproul
-*/
+   Modified 28 September 2010 by Mark Sproul
+   */
 
 #ifndef MarlinSerial_h
 #define MarlinSerial_h
 #include "Marlin.h"
 
 #ifndef SERIAL_PORT
-  #define SERIAL_PORT 0
+#define SERIAL_PORT 0
 #endif
 
 // The presence of the UBRRH register is used to detect a UART.
 #define UART_PRESENT(port) ((port == 0 && (defined(UBRRH) || defined(UBRR0H))) || \
-						(port == 1 && defined(UBRR1H)) || (port == 2 && defined(UBRR2H)) || \
-						(port == 3 && defined(UBRR3H)))				
-						
+    (port == 1 && defined(UBRR1H)) || (port == 2 && defined(UBRR2H)) || \
+    (port == 3 && defined(UBRR3H)))				
+
 // These are macros to build serial port register names for the selected SERIAL_PORT (C preprocessor
 // requires two levels of indirection to expand macro values properly)
 #define SERIAL_REGNAME(registerbase,number,suffix) SERIAL_REGNAME_INTERNAL(registerbase,number,suffix)
 #if SERIAL_PORT == 0 && (!defined(UBRR0H) || !defined(UDR0)) // use un-numbered registers if necessary
-  #define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##suffix
+#define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##suffix
 #else
-  #define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##number##suffix
+#define SERIAL_REGNAME_INTERNAL(registerbase,number,suffix) registerbase##number##suffix
 #endif
 
 // Registers used by MarlinSerial class (these are expanded 
@@ -79,7 +79,7 @@ struct ring_buffer {
 };
 
 #if UART_PRESENT(SERIAL_PORT)
-  extern ring_buffer rx_buffer;
+extern ring_buffer rx_buffer;
 #endif
 
 class MarlinSerial { //: public Stream
@@ -154,7 +154,7 @@ extern MarlinSerial MSerial;
 
 // Use the UART for BT in AT90USB configurations
 #if defined(AT90USB) && defined (BTENABLED)
-   extern HardwareSerial bt;
+extern HardwareSerial bt;
 #endif
 
 #endif

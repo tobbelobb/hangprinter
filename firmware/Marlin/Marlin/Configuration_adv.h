@@ -6,7 +6,7 @@
 //===========================================================================
 
 #ifdef BED_LIMIT_SWITCHING
-  #define BED_HYSTERESIS 2 //only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
+#define BED_HYSTERESIS 2 //only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
 #endif
 #define BED_CHECK_INTERVAL 5000 //ms between checks in bang-bang control
 
@@ -19,12 +19,12 @@
 //#define WATCH_TEMP_INCREASE 10  //Heat up at least 10 degree in 20 seconds
 
 #ifdef PIDTEMP
-  // this adds an experimental additional term to the heatingpower, proportional to the extrusion speed.
-  // if Kc is choosen well, the additional required power due to increased melting should be compensated.
-  #define PID_ADD_EXTRUSION_RATE  
-  #ifdef PID_ADD_EXTRUSION_RATE
-    #define  DEFAULT_Kc (1) //heatingpower=Kc*(e_speed)
-  #endif
+// this adds an experimental additional term to the heatingpower, proportional to the extrusion speed.
+// if Kc is choosen well, the additional required power due to increased melting should be compensated.
+#define PID_ADD_EXTRUSION_RATE  
+#ifdef PID_ADD_EXTRUSION_RATE
+#define  DEFAULT_Kc (1) //heatingpower=Kc*(e_speed)
+#endif
 #endif
 
 
@@ -37,7 +37,7 @@
 // on an ultimaker, some initial testing worked with M109 S215 B260 F1 in the start.gcode
 #define AUTOTEMP
 #ifdef AUTOTEMP
-  #define AUTOTEMP_OLDWEIGHT 0.98
+#define AUTOTEMP_OLDWEIGHT 0.98
 #endif
 
 //Show Temperature ADC value
@@ -92,51 +92,49 @@
 //// AUTOSET LOCATIONS OF LIMIT SWITCHES
 //// Added by ZetaPhoenix 09-15-2012
 #ifdef MANUAL_HOME_POSITIONS  // Use manual limit switch locations
-  #define X_HOME_POS MANUAL_X_HOME_POS
-  #define Y_HOME_POS MANUAL_Y_HOME_POS
-  #define Z_HOME_POS MANUAL_Z_HOME_POS
+#define X_HOME_POS MANUAL_X_HOME_POS
+#define Y_HOME_POS MANUAL_Y_HOME_POS
+#define Z_HOME_POS MANUAL_Z_HOME_POS
 #else //Set min/max homing switch positions based upon homing direction and min/max travel limits
-  //X axis
-  #if X_HOME_DIR == -1
-    #ifdef BED_CENTER_AT_0_0
-      #define X_HOME_POS X_MAX_LENGTH * -0.5
-    #else
-      #define X_HOME_POS X_MIN_POS
-    #endif //BED_CENTER_AT_0_0
-  #else    
-    #ifdef BED_CENTER_AT_0_0
-      #define X_HOME_POS X_MAX_LENGTH * 0.5
-    #else
-      #define X_HOME_POS X_MAX_POS
-    #endif //BED_CENTER_AT_0_0
-  #endif //X_HOME_DIR == -1
-  
-  //Y axis
-  #if Y_HOME_DIR == -1
-    #ifdef BED_CENTER_AT_0_0
-      #define Y_HOME_POS Y_MAX_LENGTH * -0.5
-    #else
-      #define Y_HOME_POS Y_MIN_POS
-    #endif //BED_CENTER_AT_0_0
-  #else    
-    #ifdef BED_CENTER_AT_0_0
-      #define Y_HOME_POS Y_MAX_LENGTH * 0.5
-    #else
-      #define Y_HOME_POS Y_MAX_POS
-    #endif //BED_CENTER_AT_0_0
-  #endif //Y_HOME_DIR == -1
-  
-  // Z axis
-  #if Z_HOME_DIR == -1 //BED_CENTER_AT_0_0 not used
-    #define Z_HOME_POS Z_MIN_POS
-  #else    
-    #define Z_HOME_POS Z_MAX_POS
-  #endif //Z_HOME_DIR == -1
+//X axis
+#if X_HOME_DIR == -1
+#ifdef BED_CENTER_AT_0_0
+#define X_HOME_POS X_MAX_LENGTH * -0.5
+#else
+#define X_HOME_POS X_MIN_POS
+#endif //BED_CENTER_AT_0_0
+#else    
+#ifdef BED_CENTER_AT_0_0
+#define X_HOME_POS X_MAX_LENGTH * 0.5
+#else
+#define X_HOME_POS X_MAX_POS
+#endif //BED_CENTER_AT_0_0
+#endif //X_HOME_DIR == -1
+
+//Y axis
+#if Y_HOME_DIR == -1
+#ifdef BED_CENTER_AT_0_0
+#define Y_HOME_POS Y_MAX_LENGTH * -0.5
+#else
+#define Y_HOME_POS Y_MIN_POS
+#endif //BED_CENTER_AT_0_0
+#else    
+#ifdef BED_CENTER_AT_0_0
+#define Y_HOME_POS Y_MAX_LENGTH * 0.5
+#else
+#define Y_HOME_POS Y_MAX_POS
+#endif //BED_CENTER_AT_0_0
+#endif //Y_HOME_DIR == -1
+
+// Z axis
+#if Z_HOME_DIR == -1 //BED_CENTER_AT_0_0 not used
+#define Z_HOME_POS Z_MIN_POS
+#else    
+#define Z_HOME_POS Z_MAX_POS
+#endif //Z_HOME_DIR == -1
 #endif //End auto min/max positions
 //END AUTOSET LOCATIONS OF LIMIT SWITCHES -ZP
 
-
-//#define Z_LATE_ENABLE // Enable Z the last moment. Needed if your Z driver overheats.
 
 // A single Z stepper driver is usually used to drive 2 stepper motors.
 // Uncomment this define to utilize a separate stepper driver for each Z axis motor.
@@ -146,8 +144,8 @@
 //#define Z_DUAL_STEPPER_DRIVERS
 
 #ifdef Z_DUAL_STEPPER_DRIVERS
-  #undef EXTRUDERS
-  #define EXTRUDERS 1
+#undef EXTRUDERS
+#define EXTRUDERS 1
 #endif
 
 // Same again but for Y Axis.
@@ -157,58 +155,14 @@
 #define INVERT_Y2_VS_Y_DIR true
 
 #ifdef Y_DUAL_STEPPER_DRIVERS
-  #undef EXTRUDERS
-  #define EXTRUDERS 1
+#undef EXTRUDERS
+#define EXTRUDERS 1
 #endif
 
 #if defined (Z_DUAL_STEPPER_DRIVERS) && defined (Y_DUAL_STEPPER_DRIVERS)
-  #error "You cannot have dual drivers for both Y and Z"
+#error "You cannot have dual drivers for both Y and Z"
 #endif
 
-// Enable this for dual x-carriage printers. 
-// A dual x-carriage design has the advantage that the inactive extruder can be parked which
-// prevents hot-end ooze contaminating the print. It also reduces the weight of each x-carriage
-// allowing faster printing speeds.
-//#define DUAL_X_CARRIAGE
-#ifdef DUAL_X_CARRIAGE
-// Configuration for second X-carriage
-// Note: the first x-carriage is defined as the x-carriage which homes to the minimum endstop;
-// the second x-carriage always homes to the maximum endstop.
-#define X2_MIN_POS 80     // set minimum to ensure second x-carriage doesn't hit the parked first X-carriage
-#define X2_MAX_POS 353    // set maximum to the distance between toolheads when both heads are homed 
-#define X2_HOME_DIR 1     // the second X-carriage always homes to the maximum endstop position
-#define X2_HOME_POS X2_MAX_POS // default home position is the maximum carriage position 
-    // However: In this mode the EXTRUDER_OFFSET_X value for the second extruder provides a software 
-    // override for X2_HOME_POS. This also allow recalibration of the distance between the two endstops
-    // without modifying the firmware (through the "M218 T1 X???" command).
-    // Remember: you should set the second extruder x-offset to 0 in your slicer.
-
-// Pins for second x-carriage stepper driver (defined here to avoid further complicating pins.h)
-#define X2_ENABLE_PIN 29
-#define X2_STEP_PIN 25
-#define X2_DIR_PIN 23
-
-// There are a few selectable movement modes for dual x-carriages using M605 S<mode>
-//    Mode 0: Full control. The slicer has full control over both x-carriages and can achieve optimal travel results
-//                           as long as it supports dual x-carriages. (M605 S0)
-//    Mode 1: Auto-park mode. The firmware will automatically park and unpark the x-carriages on tool changes so
-//                           that additional slicer support is not required. (M605 S1)
-//    Mode 2: Duplication mode. The firmware will transparently make the second x-carriage and extruder copy all  
-//                           actions of the first x-carriage. This allows the printer to print 2 arbitrary items at
-//                           once. (2nd extruder x offset and temp offset are set using: M605 S2 [Xnnn] [Rmmm])
-
-// This is the default power-up mode which can be later using M605. 
-#define DEFAULT_DUAL_X_CARRIAGE_MODE 0 
-
-// Default settings in "Auto-park Mode" 
-#define TOOLCHANGE_PARK_ZLIFT   0.2      // the distance to raise Z axis when parking an extruder
-#define TOOLCHANGE_UNPARK_ZLIFT 1        // the distance to raise Z axis when unparking an extruder
-
-// Default x offset in duplication mode (typically set to half print bed width)
-#define DEFAULT_DUPLICATION_X_OFFSET 100
-
-#endif //DUAL_X_CARRIAGE
-    
 //homing hits the endstop, then retracts by this distance, before it tries to slowly bump again:
 #define X_HOME_RETRACT_MM 5 
 #define Y_HOME_RETRACT_MM 5 
@@ -216,8 +170,8 @@
 
 //#define QUICK_HOME  //if this is defined, if both x and y are to be homed, a diagonal move will be performed initially.
 
-//#define AXIS_RELATIVE_MODES {false, false, false, false}
-#define AXIS_RELATIVE_MODES {true, true, true, false} // Does not affect hangprinter coords...
+#define AXIS_RELATIVE_MODES {false, false, false, false, false}
+//#define AXIS_RELATIVE_MODES {true, true, true, true, false} // Does not affect hangprinter coords...
 
 #define MAX_STEP_FREQUENCY 40000 // Max step frequency for Ultimaker (5000 pps / half step)
 
@@ -232,11 +186,6 @@
 
 #define DEFAULT_MINIMUMFEEDRATE       0.0     // minimum feedrate
 #define DEFAULT_MINTRAVELFEEDRATE     0.0
-
-// Feedrates for manual moves along X, Y, Z, E from panel
-#ifdef ULTIPANEL
-#define MANUAL_FEEDRATE {50*60, 50*60, 4*60, 60}  // set the speeds for manual moves (mm/min)
-#endif
 
 // minimum time in microseconds that a movement needs to take if the buffer is emptied.
 #define DEFAULT_MINSEGMENTTIME        20000
@@ -294,14 +243,14 @@
 //#define LCD_PROGRESS_BAR
 
 #ifdef LCD_PROGRESS_BAR
-  // Amount of time (ms) to show the bar
-  #define PROGRESS_BAR_BAR_TIME 2000
-  // Amount of time (ms) to show the status message
-  #define PROGRESS_BAR_MSG_TIME 2000
-  // Amount of time (ms) to retain the status message (0=forever)
-  #define PROGRESS_MSG_EXPIRE   0
-  // Enable this to show messages for MSG_TIME then hide them
-  //#define PROGRESS_MSG_ONCE
+// Amount of time (ms) to show the bar
+#define PROGRESS_BAR_BAR_TIME 2000
+// Amount of time (ms) to show the status message
+#define PROGRESS_BAR_MSG_TIME 2000
+// Amount of time (ms) to retain the status message (0=forever)
+#define PROGRESS_MSG_EXPIRE   0
+// Enable this to show messages for MSG_TIME then hide them
+//#define PROGRESS_MSG_ONCE
 #endif
 
 // The hardware watchdog should reset the Microcontroller disabling all outputs, in case the firmware gets stuck and doesn't do temperature regulation.
@@ -322,19 +271,15 @@
 // does not respect endstops!
 //#define BABYSTEPPING
 #ifdef BABYSTEPPING
-  #define BABYSTEP_XY  //not only z, but also XY in the menu. more clutter, more functions
-  #define BABYSTEP_INVERT_Z false  //true for inverse movements in Z
-  #define BABYSTEP_Z_MULTIPLICATOR 2 //faster z movements
-  
-  #ifdef COREXY
-    #error BABYSTEPPING not implemented for COREXY yet.
-  #endif
+#define BABYSTEP_XY  //not only z, but also XY in the menu. more clutter, more functions
+#define BABYSTEP_INVERT_Z false  //true for inverse movements in Z
+#define BABYSTEP_Z_MULTIPLICATOR 2 //faster z movements
 
-  #ifdef DELTA
-    #ifdef BABYSTEP_XY
-      #error BABYSTEPPING only implemented for Z axis on deltabots.
-    #endif
-  #endif
+#ifdef DELTA
+#ifdef BABYSTEP_XY
+#error BABYSTEPPING only implemented for Z axis on deltabots.
+#endif
+#endif
 #endif
 
 // extruder advance constant (s2/mm3)
@@ -347,12 +292,12 @@
 //#define ADVANCE
 
 #ifdef ADVANCE
-  #define EXTRUDER_ADVANCE_K .0
+#define EXTRUDER_ADVANCE_K .0
 
-  #define D_FILAMENT 2.85
-  #define STEPS_MM_E 836
-  #define EXTRUSION_AREA (0.25 * D_FILAMENT * D_FILAMENT * 3.14159)
-  #define STEPS_PER_CUBIC_MM_E (axis_steps_per_unit[E_AXIS]/ EXTRUSION_AREA)
+#define D_FILAMENT 2.85
+#define STEPS_MM_E 836
+#define EXTRUSION_AREA (0.25 * D_FILAMENT * D_FILAMENT * 3.14159)
+#define STEPS_PER_CUBIC_MM_E (axis_steps_per_unit[E_AXIS]/ EXTRUSION_AREA)
 
 #endif // ADVANCE
 
@@ -368,24 +313,20 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 // be commented out otherwise
 #define SDCARDDETECTINVERTED 
 
-#ifdef ULTIPANEL
- #undef SDCARDDETECTINVERTED
-#endif
-
 // Power Signal Control Definitions
 // By default use ATX definition
 #ifndef POWER_SUPPLY
-  #define POWER_SUPPLY 1
+#define POWER_SUPPLY 1
 #endif
 // 1 = ATX
 #if (POWER_SUPPLY == 1) 
-  #define PS_ON_AWAKE  LOW
-  #define PS_ON_ASLEEP HIGH
+#define PS_ON_AWAKE  LOW
+#define PS_ON_ASLEEP HIGH
 #endif
 // 2 = X-Box 360 203W
 #if (POWER_SUPPLY == 2) 
-  #define PS_ON_AWAKE  HIGH
-  #define PS_ON_ASLEEP LOW
+#define PS_ON_AWAKE  HIGH
+#define PS_ON_ASLEEP LOW
 #endif
 
 // Control heater 0 and heater 1 in parallel.
@@ -398,9 +339,9 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 // The number of linear motions that can be in the plan at any give time.  
 // THE BLOCK_BUFFER_SIZE NEEDS TO BE A POWER OF 2, i.g. 8,16,32 because shifts and ors are used to do the ringbuffering.
 #if defined SDSUPPORT
-  #define BLOCK_BUFFER_SIZE 16   // SD,LCD,Buttons take more memory, block buffer needs to be smaller
+#define BLOCK_BUFFER_SIZE 16   // SD,LCD,Buttons take more memory, block buffer needs to be smaller
 #else
-  #define BLOCK_BUFFER_SIZE 16 // maximize block buffer
+#define BLOCK_BUFFER_SIZE 16 // maximize block buffer
 #endif
 
 
@@ -408,105 +349,70 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 #define MAX_CMD_SIZE 96
 #define BUFSIZE 4
 
-
-// Firmware based and LCD controled retract
-// M207 and M208 can be used to define parameters for the retraction. 
-// The retraction can be called by the slicer using G10 and G11
-// until then, intended retractions can be detected by moves that only extrude and the direction. 
-// the moves are than replaced by the firmware controlled ones.
-
-// #define FWRETRACT  //ONLY PARTIALLY TESTED
-#ifdef FWRETRACT
-  #define MIN_RETRACT 0.1                //minimum extruded mm to accept a automatic gcode retraction attempt
-  #define RETRACT_LENGTH 3               //default retract length (positive mm)
-  #define RETRACT_LENGTH_SWAP 13         //default swap retract length (positive mm), for extruder change
-  #define RETRACT_FEEDRATE 45            //default feedrate for retracting (mm/s)
-  #define RETRACT_ZLIFT 0                //default retract Z-lift
-  #define RETRACT_RECOVER_LENGTH 0       //default additional recover length (mm, added to retract length when recovering)
-  #define RETRACT_RECOVER_LENGTH_SWAP 0  //default additional swap recover length (mm, added to retract length when recovering from extruder change)
-  #define RETRACT_RECOVER_FEEDRATE 8     //default feedrate for recovering from retraction (mm/s)
-#endif
-
-//adds support for experimental filament exchange support M600; requires display
-#ifdef ULTIPANEL
-  #define FILAMENTCHANGEENABLE
-  #ifdef FILAMENTCHANGEENABLE
-    #define FILAMENTCHANGE_XPOS 3
-    #define FILAMENTCHANGE_YPOS 3
-    #define FILAMENTCHANGE_ZADD 10
-    #define FILAMENTCHANGE_FIRSTRETRACT -2
-    #define FILAMENTCHANGE_FINALRETRACT -100
-  #endif
-#endif
-
 #ifdef FILAMENTCHANGEENABLE
-  #ifdef EXTRUDER_RUNOUT_PREVENT
-    #error EXTRUDER_RUNOUT_PREVENT currently incompatible with FILAMENTCHANGE
-  #endif 
+#ifdef EXTRUDER_RUNOUT_PREVENT
+#error EXTRUDER_RUNOUT_PREVENT currently incompatible with FILAMENTCHANGE
+#endif 
 #endif
- 
+
 //===========================================================================
 //=============================  Define Defines  ============================
 //===========================================================================
 
-#if defined (ENABLE_AUTO_BED_LEVELING) && defined (DELTA)
-  #error "Bed Auto Leveling is still not compatible with Delta Kinematics."
-#endif  
-
 #if EXTRUDERS > 1 && defined TEMP_SENSOR_1_AS_REDUNDANT
-  #error "You cannot use TEMP_SENSOR_1_AS_REDUNDANT if EXTRUDERS > 1"
+#error "You cannot use TEMP_SENSOR_1_AS_REDUNDANT if EXTRUDERS > 1"
 #endif
 
 #if EXTRUDERS > 1 && defined HEATERS_PARALLEL
-  #error "You cannot use HEATERS_PARALLEL if EXTRUDERS > 1"
+#error "You cannot use HEATERS_PARALLEL if EXTRUDERS > 1"
 #endif
 
 #if TEMP_SENSOR_0 > 0
-  #define THERMISTORHEATER_0 TEMP_SENSOR_0
-  #define HEATER_0_USES_THERMISTOR
+#define THERMISTORHEATER_0 TEMP_SENSOR_0
+#define HEATER_0_USES_THERMISTOR
 #endif
 #if TEMP_SENSOR_1 > 0
-  #define THERMISTORHEATER_1 TEMP_SENSOR_1
-  #define HEATER_1_USES_THERMISTOR
+#define THERMISTORHEATER_1 TEMP_SENSOR_1
+#define HEATER_1_USES_THERMISTOR
 #endif
 #if TEMP_SENSOR_2 > 0
-  #define THERMISTORHEATER_2 TEMP_SENSOR_2
-  #define HEATER_2_USES_THERMISTOR
+#define THERMISTORHEATER_2 TEMP_SENSOR_2
+#define HEATER_2_USES_THERMISTOR
 #endif
 #if TEMP_SENSOR_BED > 0
-  #define THERMISTORBED TEMP_SENSOR_BED
-  #define BED_USES_THERMISTOR
+#define THERMISTORBED TEMP_SENSOR_BED
+#define BED_USES_THERMISTOR
 #endif
 #if TEMP_SENSOR_0 == -1
-  #define HEATER_0_USES_AD595
+#define HEATER_0_USES_AD595
 #endif
 #if TEMP_SENSOR_1 == -1
-  #define HEATER_1_USES_AD595
+#define HEATER_1_USES_AD595
 #endif
 #if TEMP_SENSOR_2 == -1
-  #define HEATER_2_USES_AD595
+#define HEATER_2_USES_AD595
 #endif
 #if TEMP_SENSOR_BED == -1
-  #define BED_USES_AD595
+#define BED_USES_AD595
 #endif
 #if TEMP_SENSOR_0 == -2
-  #define HEATER_0_USES_MAX6675
+#define HEATER_0_USES_MAX6675
 #endif
 #if TEMP_SENSOR_0 == 0
-  #undef HEATER_0_MINTEMP
-  #undef HEATER_0_MAXTEMP
+#undef HEATER_0_MINTEMP
+#undef HEATER_0_MAXTEMP
 #endif
 #if TEMP_SENSOR_1 == 0
-  #undef HEATER_1_MINTEMP
-  #undef HEATER_1_MAXTEMP
+#undef HEATER_1_MINTEMP
+#undef HEATER_1_MAXTEMP
 #endif
 #if TEMP_SENSOR_2 == 0
-  #undef HEATER_2_MINTEMP
-  #undef HEATER_2_MAXTEMP
+#undef HEATER_2_MINTEMP
+#undef HEATER_2_MAXTEMP
 #endif
 #if TEMP_SENSOR_BED == 0
-  #undef BED_MINTEMP
-  #undef BED_MAXTEMP
+#undef BED_MINTEMP
+#undef BED_MAXTEMP
 #endif
 
 
