@@ -95,9 +95,14 @@ module extruder_motor_translate(extruder_twist = 12){
 }
 
 // The thing separating bearings on center axis of bottom plate
-module lock(r, height){
-  cylinder(r=r, h=height);
+module lock(r1, r2, height){
+  difference(){
+    cylinder(r=r2, h=height);
+    translate([0,0,-1])
+      cylinder(r=r1, h=height+2);
+  }
 }
+//lock(Lock_radius_1, Lock_radius_2, Lock_height);
 
 module bottom_plate(){
   // Global variables renamed short
@@ -105,12 +110,10 @@ module bottom_plate(){
   th  = Bottom_plate_thickness; 
   bpr = Bottom_plate_radius;
   bd  = Bearing_608_bore_diameter; 
-  bw  = Bearing_608_width;
-  swh = Bearing_608_width + Lock_height;
-  lh  = Lock_height;
+  bw  = Bearing_608_width; 
+  swh = Sandwich_height;
   gap = Sandwich_gap;
   // Local variables
-  lock_radius = bd/2 + 0.35;
 
   difference(){
     union(){
@@ -119,17 +122,17 @@ module bottom_plate(){
       // Circular bottom plate
       cylinder(r=bpr, h = th);    // p
 
-      // Flexible sandwich stick
-      // Sandwich stick base
-      cylinder(r = bd/2, h = 4*swh + lh/4 + th + 4*gap);
-      // The bottom four locks
-      for(i=[A,B,C,D]){
-        translate([0, 0,Line_contacts_abcd_z[i]-Snelle_height/2 - lh])
-          lock(lock_radius, lh);
-      }
-      // Top lock
-      translate([0,0,Line_contacts_abcd_z[A] -Snelle_height/2 - lh + Sandwich_height])
-        lock(lock_radius, lh);
+      // Sandwich stick
+      cylinder(r=bd/2+0.16,
+               h=Line_contacts_abcd_z[A]+swh-Snelle_height/2
+                 + 5 // for putting some kind of top lock mechanism
+                 );
+
+      // The bottom lock, larger radius ok here
+      // pho not needed because of increased radius
+      cylinder(r=Lock_radius_2, h=th + Bottom_plate_sandwich_gap);
+      // Print other three locks sepparately with
+      // lock(Lock_radius_1, Lock_radius_2, Lock_height);
 
       // Mounting towers for abc fish rings
       for(i=[0,1,2]){
@@ -160,6 +163,12 @@ module bottom_plate(){
     } // End union
 
     //*** ANTIMATERIA STARTS HERE ***//
+
+    // top fastening sandwich stick
+    for(k=[1,-1])
+     translate([k*2,0,Line_contacts_abcd_z[A]+swh-Snelle_height/2+2.5])
+        rotate([90,0,0])
+        cylinder(r=1, h=10, center=true);
 
     // Screw holes for abc Nema
     translate([0, 0, -1]){
@@ -201,7 +210,7 @@ module bottom_plate(){
               rotate([90,0,fish_ring_abc_rotation]){
                 translate([-ins_ri/sqrt(2),0,0])
                   translate([0,-cdist-ins_ri,0]){
-                    cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
+                    #cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
                   }
               }
           }
@@ -210,9 +219,19 @@ module bottom_plate(){
     }
 
     // Cuts in center tower to make it flexible
-    cube([1.3, lock_radius*2, Big], center = true);
-    rotate([0, 0, 90])
-      cube([1.3, lock_radius*2, Big], center = true);
+    //translate([0,0,-Big/2
+    //               +Line_contacts_abcd_z[A]+swh-Snelle_height/2
+    //               -lh])
+    //cube([1.3, lock_radius*2, Big], center = true);
+    //translate([0,0,-Big/2
+    //               +Line_contacts_abcd_z[C]+swh-Snelle_height/2
+    //               -lh])
+    //  rotate([0, 0, 90])
+    //  cube([1.3, lock_radius*2, Big], center = true);
+    //translate([0,0,+Big/2
+    //               +Line_contacts_abcd_z[C]-Snelle_height/2+swh+gap])
+    //  rotate([0, 0, 90])
+    //  cube([1.3, lock_radius*2, Big], center = true);
 
     // Hole for extruder motor
     extruder_motor_translate(Extruder_motor_twist)
@@ -286,8 +305,7 @@ module bottom_plate(){
       cube([9,9,30], center=true);
 
     // Dig out filament hole in sandwich stick and base.
-    // When physical build is done, fill this hole for stiffness
-    translate([0, 0, -1]) cylinder(r = 2.4, h = Big);
+    translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
 
     // Letters for easier identification
     translate([0,0,-1]){
@@ -310,7 +328,7 @@ module bottom_plate(){
 
   }
 }
-//bottom_plate();
+bottom_plate();
 
 //** bottom_plate end **//
 

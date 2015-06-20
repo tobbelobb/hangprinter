@@ -272,7 +272,7 @@ module sandwich(teeth = Sandwich_gear_teeth){
     }
     // Dig out the right holes
     translate([0, 0, -1.2])
-      cylinder(r = od/2, h = Sandwich_height); // 0.15 added to raduis during print...
+      cylinder(r = od/2 + 0.16, h = Sandwich_height); // 0.15 added to raduis during print...
     cylinder(r = od/2-2, h = Big);
     // Decoration/material saving holes
     for(i = [1:60:360]){
@@ -287,9 +287,11 @@ module sandwich(teeth = Sandwich_gear_teeth){
       translate([0,Snelle_height/2,Snelle_radius/2])
       cylinder(r = 0.95, h = 40);
   }
-  Bearing_608();
+  //Bearing_608();
 }
-sandwich();
+//sandwich();
+//mirror([0,0,1])
+//sandwich();
 
 // 17.79 will be the protruding shaftlength up from bottom plate
 // Making the motor gear a little shorter might let us use same on all
@@ -345,3 +347,26 @@ module gear_friends(){
   sandwich();
 }
 //gear_friends();
+
+
+// D
+//    rotate([0,0,3*72])
+//      translate([0,Four_point_five_point_radius,
+//                   Line_contacts_abcd_z[D]+Motor_gear_height-1])
+//        mirror([0,0,1])
+//          motor_gear(letter="D");
+
+//    rotate([180,0,2*72])
+//      translate([0,Four_point_five_point_radius,
+//        Line_contacts_abcd_z[C]-Motor_gear_height+Sandwich_height + 2])
+//      motor_gear(letter="C");
+
+//    rotate([180,0,1*72])
+//      translate([0,Four_point_five_point_radius, 
+//    Line_contacts_abcd_z[B]-Motor_gear_height + 1])
+//      motor_gear(Motor_gear_height+Sandwich_height, letter="B");
+
+//    rotate([180,0,4*72])
+//      translate([0,Four_point_five_point_radius, 
+//       Line_contacts_abcd_z[A]-Motor_gear_height-Sandwich_height+ 1])
+//      motor_gear(Motor_gear_height+2*Sandwich_height, letter="A");

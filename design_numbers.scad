@@ -16,10 +16,13 @@ Z = 2;
 
 //** The bottom plate parameters **//
 Full_tri_side             = 200*1.035; // Rotate eq_tri relative to 200 mm printbed, gain 3.5 % side length
-Lock_height               = 2;
-Sandwich_gap              = 0.4;
-Bottom_plate_sandwich_gap = 0.4;
-Bottom_plate_thickness    = 4.5;
+Sandwich_gap              = 0.8;
+Sandwich_height           = Bearing_608_width + 2;
+Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
+Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
+Lock_radius_2 = Lock_radius_1 + 2;
+Bottom_plate_sandwich_gap = 1;
+Bottom_plate_thickness    = 5.5;
 Top_plate_thickness       = Bottom_plate_thickness;
 Bottom_plate_radius       = 82;
 
@@ -27,7 +30,6 @@ Bottom_plate_radius       = 82;
 // For rotating lines and gatts in place
 d_gatt_back = 13;
 
-Sandwich_height      = Bearing_608_width + Lock_height;
 Sandwich_gear_height = Sandwich_height*4/7-1;
 Snelle_height        = Sandwich_height*3/7+1;
 
@@ -35,8 +37,8 @@ Snelle_height        = Sandwich_height*3/7+1;
 Abc_xy_split = Full_tri_side - 2*30;
 
 // This is the xy coordinate of one wall/printer contact point
-Line_action_point_abc_xy     = [0, -Full_tri_side/(2*Sqrt3), 0];
-Line_contact_abc_xy          = Line_action_point_abc_xy - [Abc_xy_split/2, 0, 0];
+Line_action_point_abc_xy = [0, -Full_tri_side/(2*Sqrt3), 0];
+Line_contact_abc_xy      = Line_action_point_abc_xy - [Abc_xy_split/2, 0, 0];
 // For left-right symmetry for pairs of wall/printer contact points
 Mirrored_line_contact_abc_xy = mirror_point_x(Line_contact_abc_xy);
 

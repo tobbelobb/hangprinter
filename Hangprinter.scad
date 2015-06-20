@@ -5,7 +5,6 @@ use <placed_parts.scad>
 use <render_parts.scad>
 
 // TODO:
-//  - Place gatts reliably with screw holes or similar
 //  - Place hot end reliably
 // Style:
 //  - Spaces separate arguments and long words only
@@ -13,15 +12,15 @@ use <render_parts.scad>
 //  - Modules that are meant as anti-materia starts with capital letter
 
 // Rendering control
-render_bottom_plate = true;
+render_bottom_plate = false;
 render_sandwich     = true;
-render_xy_motors    = true;
-render_gatts        = false;
-render_lines        = false;
+render_abc_motors   = true;
+render_fish_rings   = false;
+render_lines        = true;
 render_extruder     = true;
-render_hotend       = false;
-render_ramps        = false;
-render_plates       = false;
+render_hotend       = true;
+render_ramps        = true;
+render_plates       = true;
 render_filament     = true;
 
 module full_render(){
@@ -31,13 +30,14 @@ module full_render(){
   if(render_sandwich){
     placed_sandwich();
   }
-  if(render_xy_motors){
-    placed_xy_motors();
+  if(render_abc_motors){
+    placed_abc_motors();
   }
-  if(render_gatts){
-    placed_gatts();
+  if(render_fish_rings){
+    placed_fish_rings();
   }
   if(render_lines){
+    color("green")
     placed_lines();
   }
   if(render_extruder){
