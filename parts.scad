@@ -87,7 +87,8 @@ module four_point_translate(){
 // Needed here to get screw holes right
 module extruder_motor_translate(extruder_twist = 12){
   radius = Four_point_five_point_radius + 5;
-  translate([0, radius, -Nema17_cube_width/3])
+  translate([0, radius, -Nema17_screw_hole_dist/2 // z-center screwhole
+                        +Bottom_plate_thickness/2])
     rotate([0, 0, extruder_twist])
       translate([0, -Nema17_cube_height, 0])
         rotate([90,0,0])
@@ -113,14 +114,13 @@ module bottom_plate(){
   bw  = Bearing_608_width; 
   swh = Sandwich_height;
   gap = Sandwich_gap;
-  // Local variables
 
   difference(){
     union(){
       // Largest possible triangular plate
-      eq_tri(Full_tri_side, th);  // p
+      eq_tri(Full_tri_side, th);
       // Circular bottom plate
-      cylinder(r=bpr, h = th);    // p
+      cylinder(r=bpr, h = th);
 
       // Sandwich stick
       cylinder(r=bd/2+0.16,
@@ -128,11 +128,8 @@ module bottom_plate(){
                  + 5 // for putting some kind of top lock mechanism
                  );
 
-      // The bottom lock, larger radius ok here
-      // pho not needed because of increased radius
+      // The bottom lock
       cylinder(r=Lock_radius_2, h=th + Bottom_plate_sandwich_gap);
-      // Print other three locks sepparately with
-      // lock(Lock_radius_1, Lock_radius_2, Lock_height);
 
       // Mounting towers for abc fish rings
       for(i=[0,1,2]){
@@ -158,8 +155,6 @@ module bottom_plate(){
             sphere(r=2);
         }
       }
-
-
     } // End union
 
     //*** ANTIMATERIA STARTS HERE ***//
@@ -175,7 +170,7 @@ module bottom_plate(){
       four_point_translate()
         Nema17_schwung_screw_holes(M3_diameter, th+2);
       four_point_translate()
-        translate([0,0,th-1])
+        translate([0,0,th-2.5])
           Nema17_screw_holes(M3_head_diameter, th+2);
     }
 
@@ -210,7 +205,7 @@ module bottom_plate(){
               rotate([90,0,fish_ring_abc_rotation]){
                 translate([-ins_ri/sqrt(2),0,0])
                   translate([0,-cdist-ins_ri,0]){
-                    #cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
+                    cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
                   }
               }
           }
@@ -218,35 +213,30 @@ module bottom_plate(){
       }
     }
 
-    // Cuts in center tower to make it flexible
-    //translate([0,0,-Big/2
-    //               +Line_contacts_abcd_z[A]+swh-Snelle_height/2
-    //               -lh])
-    //cube([1.3, lock_radius*2, Big], center = true);
-    //translate([0,0,-Big/2
-    //               +Line_contacts_abcd_z[C]+swh-Snelle_height/2
-    //               -lh])
-    //  rotate([0, 0, 90])
-    //  cube([1.3, lock_radius*2, Big], center = true);
-    //translate([0,0,+Big/2
-    //               +Line_contacts_abcd_z[C]-Snelle_height/2+swh+gap])
-    //  rotate([0, 0, 90])
-    //  cube([1.3, lock_radius*2, Big], center = true);
-
     // Hole for extruder motor
+    
     extruder_motor_translate(Extruder_motor_twist)
       scale(1.01) // Leave 1% extra space, don't need tight fit
       Nema17();
 
     // Middle hole for ABCD-motors
-    translate([0, 0, -1])
-      four_point_translate()
-      cylinder(r = 8, h = Big);
+    translate([0, 0, -Big+Nema17_ring_height])
+      four_point_translate(){
+        union(){
+        cylinder(r = Nema17_ring_diameter/2, h = Big);
+        translate([0,0,Big-0.1])
+          cylinder(r1 = Nema17_ring_diameter/2,
+                   r2 = Nema17_ring_diameter/2 - 5, h = 6);
+        }
+      }
 
     // Place holes exaclty like punched_cube is placed when rendering
     // From placed_extruder
     rotation = Big_extruder_gear_rotation;
     extruder_motor_twist = Extruder_motor_twist;
+    // Added only here
+    translate([0,0,-Big/2 + Bottom_plate_thickness -1.5])
+    mirror([0,0,1])
     // From translated_extruder_motor_and_drive
     extruder_motor_translate(extruder_motor_twist)
       // From Nema17_with_drive
@@ -328,6 +318,7 @@ module bottom_plate(){
 
   }
 }
+//rotate([0,0,15])
 bottom_plate();
 
 //** bottom_plate end **//

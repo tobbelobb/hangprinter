@@ -21,7 +21,7 @@ Sandwich_height           = Bearing_608_width + 2;
 Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
 Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
 Lock_radius_2 = Lock_radius_1 + 2;
-Bottom_plate_sandwich_gap = 1;
+Bottom_plate_sandwich_gap = 1.5;
 Bottom_plate_thickness    = 5.5;
 Top_plate_thickness       = Bottom_plate_thickness;
 Bottom_plate_radius       = 82;
@@ -57,7 +57,7 @@ Line_contacts_abcd_z = [Bottom_plate_thickness + Bottom_plate_sandwich_gap + Sne
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2];    // D-lines have lowest contact point, maximizes build volume
 
 fish_ring_abc_rotation = -20;
-fish_ring_d_rotation   = 120;
+fish_ring_d_rotation   = 125;
 
 
 //** Gear parameters **//
