@@ -409,9 +409,16 @@ void getHighESpeed()
   uint8_t block_index = block_buffer_tail;
 
   while(block_index != block_buffer_head) {
+#if defined(HANGPRINTER)
+    if((block_buffer[block_index].steps_a != 0) ||
+        (block_buffer[block_index].steps_b != 0) ||
+        (block_buffer[block_index].steps_c != 0) ||
+        (block_buffer[block_index].steps_d != 0)) {
+#else
     if((block_buffer[block_index].steps_x != 0) ||
         (block_buffer[block_index].steps_y != 0) ||
         (block_buffer[block_index].steps_z != 0)) {
+#endif
       float se=(float(block_buffer[block_index].steps_e)/float(block_buffer[block_index].step_event_count))*block_buffer[block_index].nominal_speed;
       //se; mm/sec;
       if(se>high)
@@ -439,8 +446,11 @@ void getHighESpeed()
 }
 #endif
 
+// Not relevant for the hangprinter...
 void check_axes_activity()
 {
+#if defined(HANGPRINTER)
+#else
   unsigned char x_active = 0;
   unsigned char y_active = 0;  
   unsigned char z_active = 0;
@@ -496,6 +506,7 @@ void check_axes_activity()
 #ifdef AUTOTEMP
   getHighESpeed();
 #endif
+#endif// if defined(HANGPRINTER)
 }
 
 
@@ -815,13 +826,13 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
   {
     block->acceleration_st = ceil(acceleration * steps_per_mm); // convert to: acceleration steps/sec^2
     // Limit acceleration per axis
-    if(((float)block->acceleration_st * (float)block->steps_x / (float)block->step_event_count) > axis_steps_per_sqr_second[A_AXIS])
+    if(((float)block->acceleration_st * (float)block->steps_a / (float)block->step_event_count) > axis_steps_per_sqr_second[A_AXIS])
       block->acceleration_st = axis_steps_per_sqr_second[A_AXIS];
-    if(((float)block->acceleration_st * (float)block->steps_y / (float)block->step_event_count) > axis_steps_per_sqr_second[B_AXIS])
+    if(((float)block->acceleration_st * (float)block->steps_b / (float)block->step_event_count) > axis_steps_per_sqr_second[B_AXIS])
       block->acceleration_st = axis_steps_per_sqr_second[B_AXIS];
-    if(((float)block->acceleration_st * (float)block->steps_z / (float)block->step_event_count ) > axis_steps_per_sqr_second[C_AXIS])
+    if(((float)block->acceleration_st * (float)block->steps_c / (float)block->step_event_count ) > axis_steps_per_sqr_second[C_AXIS])
       block->acceleration_st = axis_steps_per_sqr_second[C_AXIS];
-    if(((float)block->acceleration_st * (float)block->steps_e / (float)block->step_event_count) > axis_steps_per_sqr_second[D_AXIS])
+    if(((float)block->acceleration_st * (float)block->steps_d / (float)block->step_event_count) > axis_steps_per_sqr_second[D_AXIS])
       block->acceleration_st = axis_steps_per_sqr_second[D_AXIS];
     if(((float)block->acceleration_st * (float)block->steps_e / (float)block->step_event_count) > axis_steps_per_sqr_second[E_AXIS])
       block->acceleration_st = axis_steps_per_sqr_second[E_AXIS];
@@ -866,8 +877,8 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
   if ((moves_queued > 1) && (previous_nominal_speed > 0.0001)) {
 #if defined(HANGPRINTER) // use L1 norm instead of L2 norm...
     float jerk = max(fabs(current_speed[A_AXIS]-previous_speed[A_AXIS]),
-                     fabs(current_speed[B_AXIS]-previous_speed[B_AXIS]),
-                     fabs(current_speed[C_AXIS]-previous_speed[C_AXIS]));
+                     max(fabs(current_speed[B_AXIS]-previous_speed[B_AXIS]),
+                         fabs(current_speed[C_AXIS]-previous_speed[C_AXIS])));
 #else
     float jerk = sqrt(pow((current_speed[X_AXIS]-previous_speed[X_AXIS]), 2)+pow((current_speed[Y_AXIS]-previous_speed[Y_AXIS]), 2));
 #endif
@@ -961,6 +972,22 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
   st_wake_up();
 }
 
+#if defined(HANGPRINTER)
+void plan_set_position(const float &a, const float &b, const float &c, const float &d, const float &e)
+{
+  position[A_AXIS] = lround(a*axis_steps_per_unit[A_AXIS]);
+  position[B_AXIS] = lround(b*axis_steps_per_unit[B_AXIS]);
+  position[C_AXIS] = lround(c*axis_steps_per_unit[C_AXIS]);     
+  position[D_AXIS] = lround(d*axis_steps_per_unit[D_AXIS]);     
+  position[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);  
+  st_set_position(position[A_AXIS], position[B_AXIS], position[C_AXIS], position[D_AXIS], position[E_AXIS]);
+  previous_nominal_speed = 0.0; // Resets planner junction speeds. Assumes start from rest.
+  previous_speed[0] = 0.0;
+  previous_speed[1] = 0.0;
+  previous_speed[2] = 0.0;
+  previous_speed[3] = 0.0;
+}
+#else
 void plan_set_position(const float &x, const float &y, const float &z, const float &e)
 {
   position[X_AXIS] = lround(x*axis_steps_per_unit[X_AXIS]);
@@ -974,6 +1001,7 @@ void plan_set_position(const float &x, const float &y, const float &z, const flo
   previous_speed[2] = 0.0;
   previous_speed[3] = 0.0;
 }
+#endif
 
 void plan_set_e_position(const float &e)
 {

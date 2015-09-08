@@ -176,8 +176,13 @@ void manage_inactivity(bool ignore_stepper_queue=false);
 #define disable_e3() /* nothing */
 #endif
 
+// Todo: Read about details of enum...
+#if defined(HANGPRINTER)
 enum AxisEnum    {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEAD=4, Y_HEAD=5};
-enum AnchorsEnum {A_AXIS=0, B_AXIS=1, C_AXIS=2, D_AXIS=3, E_AXIS=4};
+enum AnchorsEnum {A_AXIS=0, B_AXIS=1, C_AXIS=2, D_AXIS=4}; // E_AXIS should not be confused with E_AXIS
+#else
+enum AxisEnum    {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEAD=4, Y_HEAD=5};
+#endif
 
 void FlushSerialRequestResend();
 void ClearToSend();

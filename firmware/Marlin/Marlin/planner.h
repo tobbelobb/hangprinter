@@ -79,8 +79,11 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
 #endif
 
 // Set position. Used for G92 instructions.
-// TODO: make hangprinter version of this. tobben 21. may 2015
+#if defined(HANGPRINTER)
+void plan_set_position(const float &a, const float &b, const float &c, const float &d, const float &e);
+#else
 void plan_set_position(const float &x, const float &y, const float &z, const float &e);
+#endif
 
 void plan_set_e_position(const float &e);
 
