@@ -294,8 +294,7 @@ module sandwich(teeth = Sandwich_gear_teeth){
 //sandwich();
 
 // 17.79 will be the protruding shaftlength up from bottom plate
-// Making the motor gear a little shorter might let us use same on all
-module motor_gear(height = Motor_gear_height, letter){
+module motor_gear(height = Motor_protruding_shaft_length, letter){
   swh  = Sandwich_height;
   r_swh = swh - 0; // reduced sandwich height
   e_swh = swh + 0; // extended sandwich height
@@ -340,6 +339,23 @@ module motor_gear(height = Motor_gear_height, letter){
   }
 }
 //motor_gear(letter="A");
+
+module motor_gear_a(){
+  motor_gear(Motor_gear_a_height ,"A");
+}
+
+module motor_gear_b(){
+  motor_gear(Motor_gear_b_height ,"B");
+}
+
+module motor_gear_c(){
+  motor_gear(Motor_gear_c_height ,"C");
+}
+
+module motor_gear_d(){
+  motor_gear(Motor_gear_d_height ,"D");
+}
+//motor_gear_d();
 
 // Visualization only
 module gear_friends(){

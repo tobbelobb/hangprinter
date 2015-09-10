@@ -17,11 +17,11 @@ render_sandwich     = true;
 render_abc_motors   = true;
 render_fish_rings   = false;
 render_lines        = true;
-render_extruder     = true;
-render_hotend       = true;
-render_ramps        = true;
-render_plates       = true;
-render_filament     = true;
+render_extruder     = false;
+render_hotend       = false;
+render_ramps        = false;
+render_plates       = false;
+render_filament     = false;
 
 module full_render(){
   if(render_bottom_plate){
