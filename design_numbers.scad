@@ -76,7 +76,7 @@ Motor_gear_d_height = Line_contacts_abcd_z[D];
 Big_extruder_gear_height = 4;
 Small_extruder_gear_height = 6;
 
-Snelle_radius = 34.25; // This is the radius the line will wind around
+Snelle_radius = 34.25; // This is the radius the line will wind around. TODO: Make Snelle_radius smaller so that Sandwich doesn't touch extruder motor
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//

@@ -583,7 +583,6 @@ void CardReader::printingHasFinished(){
     file.close();
     sdprinting = false;
     if(SD_FINISHED_STEPPERRELEASE){
-      //finishAndDisableSteppers();
       enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
     }
     autotempShutdown();

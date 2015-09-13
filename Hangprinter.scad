@@ -12,14 +12,14 @@ use <render_parts.scad>
 //  - Modules that are meant as anti-materia starts with capital letter
 
 // Rendering control
-render_bottom_plate = false;
-render_sandwich     = true;
+render_bottom_plate = true;
+render_sandwich     = false;
 render_abc_motors   = true;
 render_fish_rings   = false;
-render_lines        = true;
-render_extruder     = false;
+render_lines        = false;
+render_extruder     = true;
 render_hotend       = false;
-render_ramps        = false;
+render_ramps        = true;
 render_plates       = false;
 render_filament     = false;
 

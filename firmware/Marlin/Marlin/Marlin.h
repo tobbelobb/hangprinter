@@ -110,35 +110,26 @@ void process_commands();
 
 void manage_inactivity(bool ignore_stepper_queue=false);
 
+// Hangprinter needs all motors to be constantly enabled so it doesn't fall down */
 #if defined(X_ENABLE_PIN) && X_ENABLE_PIN > -1
 #define  enable_x() WRITE(X_ENABLE_PIN, X_ENABLE_ON)
-#define disable_x() { WRITE(X_ENABLE_PIN,!X_ENABLE_ON); axis_known_position[X_AXIS] = false; }
+#define disable_x() /* nothing for Hangprinter... { WRITE(X_ENABLE_PIN,!X_ENABLE_ON); axis_known_position[X_AXIS] = false; } */
 #else
 #define enable_x() ;
 #define disable_x() ;
 #endif
 
 #if defined(Y_ENABLE_PIN) && Y_ENABLE_PIN > -1
-#ifdef Y_DUAL_STEPPER_DRIVERS
-#define  enable_y() { WRITE(Y_ENABLE_PIN, Y_ENABLE_ON); WRITE(Y2_ENABLE_PIN,  Y_ENABLE_ON); }
-#define disable_y() { WRITE(Y_ENABLE_PIN,!Y_ENABLE_ON); WRITE(Y2_ENABLE_PIN, !Y_ENABLE_ON); axis_known_position[Y_AXIS] = false; }
-#else
 #define  enable_y() WRITE(Y_ENABLE_PIN, Y_ENABLE_ON)
-#define disable_y() { WRITE(Y_ENABLE_PIN,!Y_ENABLE_ON); axis_known_position[Y_AXIS] = false; }
-#endif
+#define disable_y() /* nothing for Hangprinter... { WRITE(Y_ENABLE_PIN,!Y_ENABLE_ON); axis_known_position[Y_AXIS] = false; } */
 #else
 #define enable_y() ;
 #define disable_y() ;
 #endif
 
 #if defined(Z_ENABLE_PIN) && Z_ENABLE_PIN > -1
-#ifdef Z_DUAL_STEPPER_DRIVERS
-#define  enable_z() { WRITE(Z_ENABLE_PIN, Z_ENABLE_ON); WRITE(Z2_ENABLE_PIN, Z_ENABLE_ON); }
-#define disable_z() { WRITE(Z_ENABLE_PIN,!Z_ENABLE_ON); WRITE(Z2_ENABLE_PIN,!Z_ENABLE_ON); axis_known_position[Z_AXIS] = false; }
-#else
 #define  enable_z() WRITE(Z_ENABLE_PIN, Z_ENABLE_ON)
-#define disable_z() { WRITE(Z_ENABLE_PIN,!Z_ENABLE_ON); axis_known_position[Z_AXIS] = false; }
-#endif
+#define disable_z() /* nothing for Hangprinter... { WRITE(Z_ENABLE_PIN,!Z_ENABLE_ON); axis_known_position[Z_AXIS] = false; } */
 #else
 #define enable_z() ;
 #define disable_z() ;
@@ -152,50 +143,25 @@ void manage_inactivity(bool ignore_stepper_queue=false);
 #define disable_e0() /* nothing */
 #endif
 
-#if (EXTRUDERS > 1) && defined(E1_ENABLE_PIN) && (E1_ENABLE_PIN > -1)
+#if defined(E1_ENABLE_PIN) && (E1_ENABLE_PIN > -1)
 #define enable_e1() WRITE(E1_ENABLE_PIN, E_ENABLE_ON)
-#define disable_e1() WRITE(E1_ENABLE_PIN,!E_ENABLE_ON)
+#define disable_e1() /* nothing for Hangprinter... WRITE(E1_ENABLE_PIN,!E_ENABLE_ON) */
 #else
 #define enable_e1()  /* nothing */
 #define disable_e1() /* nothing */
 #endif
 
-#if (EXTRUDERS > 2) && defined(E2_ENABLE_PIN) && (E2_ENABLE_PIN > -1)
-#define enable_e2() WRITE(E2_ENABLE_PIN, E_ENABLE_ON)
-#define disable_e2() WRITE(E2_ENABLE_PIN,!E_ENABLE_ON)
-#else
-#define enable_e2()  /* nothing */
-#define disable_e2() /* nothing */
-#endif
-
-#if (EXTRUDERS > 3) && defined(E3_ENABLE_PIN) && (E3_ENABLE_PIN > -1)
-#define enable_e3() WRITE(E3_ENABLE_PIN, E_ENABLE_ON)
-#define disable_e3() WRITE(E3_ENABLE_PIN,!E_ENABLE_ON)
-#else
-#define enable_e3()  /* nothing */
-#define disable_e3() /* nothing */
-#endif
-
-// Todo: Read about details of enum...
-#if defined(HANGPRINTER)
-enum AxisEnum    {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEAD=4, Y_HEAD=5};
-enum AnchorsEnum {A_AXIS=0, B_AXIS=1, C_AXIS=2, D_AXIS=4}; // E_AXIS should not be confused with E_AXIS
-#else
-enum AxisEnum    {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, E_AXIS=3, X_HEAD=4, Y_HEAD=5};
-#endif
+// Note that E_AXIS and E_CARTH are different numbers
+// arrays that need to use E_CARTH instead of E_AXIS is difference[4], destination[4], current_position[4]. tobben 10 sep 2015
+enum AxisEnum {A_AXIS=0, B_AXIS=1, C_AXIS=2, D_AXIS=3, E_AXIS=4};
+enum CarthesianEnum {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, E_CARTH=3};
 
 void FlushSerialRequestResend();
 void ClearToSend();
 
 void get_coordinates();
-#ifdef DELTA
 void calculate_delta(float cartesian[3]);
 extern float delta[DIRS];
-#endif
-#ifdef SCARA
-void calculate_delta(float cartesian[3]);
-void calculate_SCARA_forward_Transform(float f_scara[3]);
-#endif
 void prepare_move();
 void kill();
 void Stop();
@@ -205,7 +171,6 @@ bool IsStopped();
 void enquecommand(const char *cmd); //put an ASCII command at the end of the current buffer.
 void enquecommand_P(const char *cmd); //put an ASCII command at the end of the current buffer, read from flash
 void prepare_arc_move(char isclockwise);
-void clamp_to_software_endstops(float target[DIRS]);
 
 void refresh_cmd_timeout(void);
 

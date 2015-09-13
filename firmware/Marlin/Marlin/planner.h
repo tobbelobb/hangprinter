@@ -30,26 +30,14 @@
 // the source g-code and may never actually be reached if acceleration management is active.
 typedef struct {
   // Fields used by the bresenham algorithm for tracing the line
-#if defined(HANGPRINTER)
   long steps_a, steps_b, steps_c, steps_d, steps_e;  // Step count along each axis
-#else
-  long steps_x, steps_y, steps_z, steps_e;  // Step count along each axis
-#endif
   unsigned long step_event_count;           // The number of step events required to complete this block
   long accelerate_until;                    // The index of the step event on which to stop acceleration
   long decelerate_after;                    // The index of the step event on which to start decelerating
   long acceleration_rate;                   // The acceleration rate used for acceleration calculation
   unsigned char direction_bits;             // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
   unsigned char active_extruder;            // Selects the active extruder
-#ifdef ADVANCE
-  long advance_rate;
-  volatile long initial_advance;
-  volatile long final_advance;
-  float advance;
-#endif
-
   // Fields used by the motion planner to manage acceleration
-  //  float speed_x, speed_y, speed_z, speed_e;        // Nominal mm/sec for each axis
   float nominal_speed;                               // The nominal speed for this block in mm/sec 
   float entry_speed;                                 // Entry speed at previous-current junction in mm/sec
   float max_entry_speed;                             // Maximum allowable junction entry speed in mm/sec
@@ -57,7 +45,6 @@ typedef struct {
   float acceleration;                                // acceleration mm/sec^2
   unsigned char recalculate_flag;                    // Planner flag to recalculate trapezoids on entry junction
   unsigned char nominal_length_flag;                 // Planner flag for nominal speed always reached
-
   // Settings for the trapezoid generator
   unsigned long nominal_rate;                        // The nominal step rate for this block in step_events/sec 
   unsigned long initial_rate;                        // The jerk-adjusted step rate at start of block  
@@ -72,22 +59,12 @@ void plan_init();
 
 // Add a new linear movement to the buffer. x, y and z is the signed, absolute target position in 
 // millimeters. Feed rate specifies the speed of the motion.
-#if defined(HANGPRINTER)
 void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e, float feed_rate, const uint8_t &extruder);
-#else
-void plan_buffer_line(const float &x, const float &y, const float &z, const float &e, float feed_rate, const uint8_t &extruder);
-#endif
 
 // Set position. Used for G92 instructions.
-#if defined(HANGPRINTER)
 void plan_set_position(const float &a, const float &b, const float &c, const float &d, const float &e);
-#else
-void plan_set_position(const float &x, const float &y, const float &z, const float &e);
-#endif
 
 void plan_set_e_position(const float &e);
-
-
 
 void check_axes_activity();
 uint8_t movesplanned(); //return the nr of buffered moves
@@ -111,9 +88,6 @@ extern float autotemp_max;
 extern float autotemp_min;
 extern float autotemp_factor;
 #endif
-
-
-
 
 extern block_t block_buffer[BLOCK_BUFFER_SIZE];            // A ring buffer for motion instfructions
 extern volatile unsigned char block_buffer_head;           // Index of the next block to be pushed
