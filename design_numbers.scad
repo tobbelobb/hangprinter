@@ -67,12 +67,16 @@ Sandwich_gear_teeth = 37;
 Circular_pitch_extruder_gears = 180;
 Big_extruder_gear_teeth = 50;
 Small_extruder_gear_teeth = 14;
-Motor_gear_height = 17;
+Motor_protruding_shaft_length = 17;
+Motor_gear_a_height = Line_contacts_abcd_z[A] + 1; // A and B has the longest, most important shafts
+Motor_gear_b_height = Line_contacts_abcd_z[B] + 1;
+Motor_gear_c_height = Line_contacts_abcd_z[C];
+Motor_gear_d_height = Line_contacts_abcd_z[D];
 //Big_extruder_gear_height = 8;
 Big_extruder_gear_height = 4;
 Small_extruder_gear_height = 6;
 
-Snelle_radius = 34.25; // This is the radius the line will wind around
+Snelle_radius = 34.25; // This is the radius the line will wind around. TODO: Make Snelle_radius smaller so that Sandwich doesn't touch extruder motor
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//

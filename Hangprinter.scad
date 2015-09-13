@@ -15,13 +15,13 @@ use <render_parts.scad>
 render_bottom_plate = true;
 render_sandwich     = false;
 render_abc_motors   = true;
-render_fish_rings   = true;
-render_lines        = true;
+render_fish_rings   = false;
+render_lines        = false;
 render_extruder     = true;
-render_hotend       = true;
+render_hotend       = false;
 render_ramps        = true;
-render_plates       = true;
-render_filament     = true;
+render_plates       = false;
+render_filament     = false;
 
 module full_render(){
   if(render_bottom_plate){

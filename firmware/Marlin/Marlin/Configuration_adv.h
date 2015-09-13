@@ -35,6 +35,7 @@
 // you exit the value by any M109 without F*
 // Also, if the temperature is set to a value <mintemp, it is not changed by autotemp.
 // on an ultimaker, some initial testing worked with M109 S215 B260 F1 in the start.gcode
+// Hangprinter could make good use of this? tobben 9 sep 2015
 #define AUTOTEMP
 #ifdef AUTOTEMP
 #define AUTOTEMP_OLDWEIGHT 0.98
@@ -176,10 +177,11 @@
 #define MAX_STEP_FREQUENCY 40000 // Max step frequency for Ultimaker (5000 pps / half step)
 
 //By default pololu step drivers require an active high signal. However, some high power drivers require an active low signal as step.
-#define INVERT_X_STEP_PIN false
-#define INVERT_Y_STEP_PIN false
-#define INVERT_Z_STEP_PIN false
-#define INVERT_E_STEP_PIN false
+#define INVERT_X_STEP_PIN  false
+#define INVERT_Y_STEP_PIN  false
+#define INVERT_Z_STEP_PIN  false
+#define INVERT_E_STEP_PIN  false
+#define INVERT_E1_STEP_PIN false
 
 //default stepper release if idle
 #define DEFAULT_STEPPER_DEACTIVE_TIME 60
@@ -189,10 +191,6 @@
 
 // minimum time in microseconds that a movement needs to take if the buffer is emptied.
 #define DEFAULT_MINSEGMENTTIME        20000
-
-// If defined the movements slow down when the look ahead buffer is only half full
-// (don't use SLOWDOWN with DELTA because DELTA generates hundreds of segments per second)
-//#define SLOWDOWN
 
 // Frequency limit
 // See nophead's blog for more info
@@ -282,30 +280,12 @@
 #endif
 #endif
 
-// extruder advance constant (s2/mm3)
-//
-// advance (steps) = STEPS_PER_CUBIC_MM_E * EXTRUDER_ADVANCE_K * cubic mm per second ^ 2
-//
-// hooke's law says:		force = k * distance
-// Bernoulli's principle says:	v ^ 2 / 2 + g . h + pressure / density = constant
-// so: v ^ 2 is proportional to number of steps we advance the extruder
-//#define ADVANCE
-
-#ifdef ADVANCE
-#define EXTRUDER_ADVANCE_K .0
-
-#define D_FILAMENT 2.85
-#define STEPS_MM_E 836
-#define EXTRUSION_AREA (0.25 * D_FILAMENT * D_FILAMENT * 3.14159)
-#define STEPS_PER_CUBIC_MM_E (axis_steps_per_unit[E_AXIS]/ EXTRUSION_AREA)
-
-#endif // ADVANCE
-
 // Arc interpretation settings:
 #define MM_PER_ARC_SEGMENT 1
 #define N_ARC_CORRECTION 25
 
-const unsigned int dropsegments=5; //everything with less than this number of steps will be ignored as move and joined with the next movement
+//const unsigned int dropsegments=5; //everything with less than this number of steps will be ignored as move and joined with the next movement
+const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 
 // If you are using a RAMPS board or cheap E-bay purchased boards that do not detect when an SD card is inserted
 // You can get round this by connecting a push button or single throw switch to the pin defined as SDCARDCARDDETECT 

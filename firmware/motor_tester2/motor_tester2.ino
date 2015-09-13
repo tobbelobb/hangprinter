@@ -16,6 +16,9 @@
 #define Z_MIN_PIN          18
 #define Z_MAX_PIN          19
 
+#define E1_STEP_PIN        36
+#define E1_DIR_PIN         34
+#define E1_ENABLE_PIN      30
 
 #define PS_ON_PIN          12
 #define KILL_PIN           -1
@@ -34,10 +37,15 @@ void setup() {
   pinMode(Z_STEP_PIN  , OUTPUT);
   pinMode(Z_DIR_PIN   , OUTPUT);
   pinMode(Z_ENABLE_PIN, OUTPUT);
+
+  pinMode(E1_STEP_PIN  , OUTPUT);
+  pinMode(E1_DIR_PIN   , OUTPUT);
+  pinMode(E1_ENABLE_PIN, OUTPUT);
   
   digitalWrite(X_ENABLE_PIN, LOW);
   digitalWrite(Y_ENABLE_PIN, LOW);
   digitalWrite(Z_ENABLE_PIN, LOW);
+  digitalWrite(E1_ENABLE_PIN, LOW);
   steps = 0;
 }
 
@@ -48,18 +56,22 @@ void loop () {
       digitalWrite(X_DIR_PIN, HIGH);
       digitalWrite(Y_DIR_PIN, LOW);
       digitalWrite(Z_DIR_PIN, HIGH);
+      digitalWrite(E1_DIR_PIN, LOW);
     } else {
       digitalWrite(X_DIR_PIN, LOW);
       digitalWrite(Y_DIR_PIN, HIGH);
       digitalWrite(Z_DIR_PIN, LOW);
+      digitalWrite(E1_DIR_PIN, HIGH);
     }
   } 
-  digitalWrite(X_STEP_PIN, HIGH);
-  digitalWrite(Y_STEP_PIN, HIGH);
-  digitalWrite(Z_STEP_PIN, HIGH);
-  delay(1);
-  digitalWrite(X_STEP_PIN, LOW);
-  digitalWrite(Y_STEP_PIN, LOW);
-  digitalWrite(Z_STEP_PIN, LOW);
+  //digitalWrite(X_STEP_PIN, HIGH);
+  //digitalWrite(Y_STEP_PIN, HIGH);
+  //digitalWrite(Z_STEP_PIN, HIGH);
+  //digitalWrite(E1_STEP_PIN, HIGH);
+  delay(2);
+  //digitalWrite(X_STEP_PIN, LOW);
+  //digitalWrite(Y_STEP_PIN, LOW);
+  //digitalWrite(Z_STEP_PIN, LOW);
+  //digitalWrite(E1_STEP_PIN, LOW);
   steps++;
 }
