@@ -66,14 +66,33 @@ module Nema17(){
     }
     color("silver")
     difference(){
-      cylinder(r=22/2, h=ch+2);
-      translate([0,0,1]) cylinder(r=8.76/2, h=ch+2);
+      cylinder(r=Nema17_ring_diameter/2, h=ch+Nema17_ring_height);
+      translate([0,0,1]) cylinder(r=8.76/2, h=ch+Nema17_ring_height);
     }
     color("silver")
       cylinder(r=5/2, h=sh);
   }
 }
 //Nema17();
+//translate([0,0,-Nema17_cube_height]) Nema17();
+//%Nema17_damping_plate();
+
+module Nema17_damping_plate(){
+  cw = Nema17_cube_width;
+  rh = Nema17_ring_height+0.5;
+  difference(){
+    translate([-cw/2,-cw/2,0])
+      cube([cw,cw,rh]);
+    translate([0,0,-1])
+      Nema17_screw_holes(M3_diameter+0.2, h=rh+2);
+    cylinder(r=Nema17_ring_diameter/2+0.5, h=2*rh+2, center=true);
+    for(i=[45:90:359])
+      rotate([0,0,i])
+        translate([53.36/2,-cw/2,-1])
+          cube([cw,cw,rh+2]);
+  }
+}
+//Nema17_damping_plate();
 
 module Ramps(){
   color("red")

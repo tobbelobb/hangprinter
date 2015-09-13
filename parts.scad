@@ -319,7 +319,7 @@ module bottom_plate(){
   }
 }
 //rotate([0,0,15])
-bottom_plate();
+//bottom_plate();
 
 //** bottom_plate end **//
 
@@ -414,7 +414,7 @@ module drive_support(flag){
 
 // An upside down hook that can be printed without support structure
 module hook(height=10){
-  line_radius = 0.75;
+  line_radius = 0.90;
   big=30;
   difference(){
     // Main cube
@@ -448,7 +448,7 @@ module hook(height=10){
 module top_flerp(side_length){
   difference(){
     eq_tri(side_length,Top_plate_thickness);
-    translate([0,1,0]) cylinder(r=M3_diameter/2,h=Big,center=true);
+    translate([0,0,0]) cylinder(r=M3_diameter/2,h=Big,center=true);
   }
 }
 
@@ -466,40 +466,114 @@ module top_plate(){
   flerp_side=22;
   height = 15;
   melt=0.1;
-  translate([0,0,height]){
+  translate([0,0,height])
     mirror([0,0,1]){
-      // Base plate
-      difference(){
-        eq_tri(Full_tri_side, th);
-        translate([0,0,-1])
-          eq_tri(Full_tri_side-15, th+2);
-      }
-      for(i=[0,120,240])
-        // Screw holes
-        rotate([0,0,i]){
-          translate(Line_contact_d_xy)
-            translate([0,-7.5,0])
-            top_flerp(flerp_side);
-          // Hook holes for line
-          translate(Line_contact_d_xy)
-            translate([0,0,th-melt])
-            hook(height-th+melt);
-        }
-      // Mark action point d
-      cylinder(r=2, h=height);
-      rotate([0,0,60])
-        for(i=[0,120,240]) rotate([0,0,i])
-          difference(){
-            translate([-1.5,0,0])
-              cube([3,Full_tri_side*Sqrt3/6,height]);
-            translate([-2.5,0,height])
-              rotate([-10,0,0])
-              cube([5,Full_tri_side*Sqrt3/6+3,height]);
-          }
-    }
+  // Base plate
+  difference(){
+    eq_tri(Full_tri_side, th);
+    translate([0,0,-1])
+      eq_tri(Full_tri_side-15, th+2);
   }
+  for(i=[0,120,240])
+    // Screw holes
+    rotate([0,0,i]){
+      translate(Line_contact_d_xy)
+        translate([0,-7.5,0])
+        top_flerp(flerp_side);
+      // Hook holes for line
+      translate(Line_contact_d_xy)
+        translate([0,0,th-melt])
+        hook(height-th+melt);
+    }
+  // Mark action point d
+  cylinder(r=2, h=height);
+  rotate([0,0,60])
+    for(i=[0,120,240]) rotate([0,0,i])
+      difference(){
+        translate([-1.5,0,0])
+          cube([3,Full_tri_side*Sqrt3/6,height]);
+        translate([-2.5,0,height])
+          rotate([-10,0,0])
+          cube([5,Full_tri_side*Sqrt3/6+3,height]);
+      }
+    }
 }
 //top_plate();
+//%cube([139,139,20]);
+module parted_top_plate_piece1(){
+  th = Top_plate_thickness;
+  flerp_side=21;
+  height = 15;
+  melt=0.1;
+  translate([0,Full_tri_side/(2*Sqrt3),0])
+  difference(){
+    eq_tri(Full_tri_side/2, th);
+    translate([0,-6,-1])
+      eq_tri(Full_tri_side/2-15+6*Sqrt3, th+2);
+    translate([0,- Full_tri_side/(2*Sqrt3),0])
+    // Cut the sharp points
+    for(k=[0,-1])
+      mirror([k,0,0])
+        rotate([0,0,30])
+        translate([(Full_tri_side-15)/(2*Sqrt3),0,-1])
+        cube([15,5/2,th+2]);
+  }
+  translate(Line_contact_d_xy)
+    translate([0,-5.5,0])
+    top_flerp(flerp_side);
+  // Hook holes for line
+  translate(Line_contact_d_xy)
+    translate([0,0,th-melt])
+    hook(height-th+melt);
+  // Flerp to screw together parts
+  for(k=[0,-1])
+    mirror([k,0,0])
+      rotate([0,0,30])
+      translate([(Full_tri_side-15)/(2*Sqrt3),1.5,0])
+      difference(){
+        cube([14,3,th]);
+        translate([10,-1,th/2])
+          rotate([-90,0,0])
+          cylinder(r=M3_diameter/2, h=5);
+      }
+}
+//parted_top_plate_piece1();
+//translate([-139/2,-17,0])
+//%cube([139,139,20]);
+parted_top_plate_piece1();
+translate([0,-25,0,])
+parted_top_plate_piece1();
+translate([0,2*-25,0,])
+parted_top_plate_piece1();
+
+// Fits on a Huxley
+module parted_top_plate_piece2(){
+  th = Top_plate_thickness;
+  flerp_side=22;
+  height = 15;
+  melt=0.1;
+  cylinder(r=2, h=height);
+  rotate([0,0,60])
+    for(i=[0,120,240]) rotate([0,0,i])
+      difference(){
+        translate([-1.5,0,0])
+          cube([3,Full_tri_side*Sqrt3/6,height]);
+        translate([-2.5,0,height])
+          rotate([-9.7,0,0])
+          cube([5,Full_tri_side*Sqrt3/6+3,height]);
+      }
+  for(k=[[0,0,0],[-1,0,0],[1,Sqrt3,0]])
+    mirror(k)
+      rotate([0,0,30])
+      translate([(Full_tri_side-15)/(2*Sqrt3),-1.5,0])
+      difference(){
+        cube([14,3,th]);
+        translate([10,-1,th/2])
+          rotate([-90,0,0])
+          cylinder(r=M3_diameter/2, h=5);
+      }
+}
+//parted_top_plate_piece2();
 
 module side_plate1(height=15){
   s = Full_tri_side;
@@ -511,15 +585,19 @@ module side_plate1(height=15){
       difference(){
         special_tri(s,height);
         translate([6,6,-1]) special_tri(s-34,height+2);
-        translate([24,10,height/2])
-          rotate([90,0,0])
-          cylinder(r=M3_diameter/2, h=20);
-        translate([s*Sqrt3/2-17,20,height/2])
-          rotate([90,0,0]){
-            cylinder(r=M3_diameter/2, h=30);
-            translate([0,0,-8])
-              cylinder(r=M3_head_diameter/2, h=19);
-          }
+        // Cut sharpest angle corner down
+        translate([149,0,-1])
+          rotate([0,0,-30])
+          cube(60);
+        translate([124,-53,-1])
+          cube(60);
+        // Cut right angle corner down
+        translate([-53.5,23,-1])
+          rotate([0,0,-30])
+          cube([60,90,60]);
+        translate([-47,89,-1])
+          rotate([0,0,-30])
+          cube(60);
       }
     // hook holes
     translate([0,-7,0])
@@ -531,25 +609,39 @@ module side_plate1(height=15){
     rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
     mirror([0,0,1])
       rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
+    // Screw holes
+    translate([-38,-62,0])
+      rotate([90,0,30])
+      cylinder(r=M3_diameter/2,h=20);
+    translate([38,-26,0])
+      rotate([90,0,30])
+      cylinder(r=M3_diameter/2,h=20);
   }
   // Pulleys to wind line around
   for(k=[1,-1])
-    translate([k*Abc_xy_split/2,0,0]){
+    translate([k*(Abc_xy_split/2-7),0,0]){
       translate([-5,-3,height/2-0.1]) cylinder(r=3, h=7);
       translate([ 5,-3,height/2-0.1]) cylinder(r=3, h=7);
     }
+  // Connect sharpest corner again
+  translate([49.6,-27.5,-height/2])
+  cube([6,27,height]);
+  // Connect right angle corner again
+  translate([-49.6,-82,-height/2])
+  cube([6,82,height]);
 }
+//rotate([0,0,30])
 //side_plate1();
 
 module side_plate2(height=15,th=7){
-  s = Abc_xy_split + 2*15;
+  s = Abc_xy_split + 2*6;
   difference(){
     translate([-s/2,-th,-height/2])
       cube([s,th,height]);
     // Wall screw holes
     for(k=[1,0])
       mirror([k,0,0])
-        translate([Abc_xy_split/2 + 7.5,-th-1,0])
+        translate([Abc_xy_split/2 - 10,-th-1,0])
           rotate([-90,0,0]){
             cylinder(r=M3_diameter/2, h=Big);
             translate([0,0,th/2]) cylinder(r=M3_head_diameter/2,h=Big);
@@ -570,10 +662,76 @@ module side_plate2(height=15,th=7){
   }
   // Pulleys to wind line around
   for(k=[1,-1])
-    translate([k*Abc_xy_split/2,0,0]){
+    translate([k*(Abc_xy_split/2 - 8),0,0]){
       translate([-4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
       translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
     }
 }
 //side_plate2();
 
+module side_plate3(height=15,th=7){
+  s = Abc_xy_split + 2*6;
+  d = 7;
+  a = s/2 - Sqrt3*d/2;
+  difference(){
+    union(){
+      // Main cube (the one where lines enter)
+      translate([-s/2,-th,-height/2])
+        cube([s,th,height]);
+      // Short leg
+      translate([-s/2+Sqrt3*d,-1,-height/2])
+        cube([th, d+1, height]);
+      // Long leg
+      translate([s/2 - th - Sqrt3*d,-4,-height/2])
+        rotate([0,0,30])
+        cube([th, a+0, height]);
+      // Foot of short leg
+      translate([-s/2+Sqrt3*d+th/2,d-th*Sqrt3/2,-height/2])
+        rotate([0,0,30])
+        cube([15,th,height]);
+      // Foot of long leg
+      translate([-s/2+Sqrt3*d+th/2,d-th*Sqrt3/2,-height/2])
+        rotate([0,0,30])
+        translate([Sqrt3*a-2*d-14-1.5-th,0,0])
+        cube([16,th,height]);
+      // Pulleys to wind line around
+      for(k=[1,-1])
+        translate([k*(Abc_xy_split/2 - 8),0,0]){
+          translate([-4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+          translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+        }
+    }
+    // Hook holes (Where lines enter)
+    for(k=[1,0])
+      mirror([k,0,0]){
+        translate([Abc_xy_split/2,-th-1,0])
+          rotate([-90,0,0])
+            cylinder(r=0.75, h=Big);
+        translate([-1 + Abc_xy_split/2, -2, -height])
+          cube([2, th, 2*height]);
+      }
+    translate([-s/2+27,0,0])
+    rotate([-90,0,30]){
+      translate([0,0,-11]) cylinder(r=7/2,h=20);
+      cylinder(r=M3_diameter/2,h=42,center=true);
+    }
+
+    translate([s/2-29,0,0])
+      rotate([-90,0,30]){
+      translate([0,0,20]) cylinder(r=M3_diameter/2,h=54);
+      translate([0,0,20]) cylinder(r=7/2,h=40);
+      // A little space for a screwdriver along long leg
+      rotate([-7,0,0])
+      translate([0,-7,-11]) cylinder(r=7/2,h=44);
+    }
+    // Mark wall action point
+    for(k=[0,1])
+      mirror([0,0,k])
+      translate([0,-th,0])
+      rotate([-15,0,0]) translate([-1,-5,0]) cube([2,5,height]);
+  }
+}
+//rotate([0,0,15])
+//mirror([0,1,0])
+//rotate([0,0,-30])
+//side_plate3();
