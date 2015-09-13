@@ -48,6 +48,7 @@
 // This determines the communication speed of the printer
 //#define BAUDRATE 250000
 #define BAUDRATE 115200
+//#define BAUDRATE 9600
 
 // This enables the serial port associated to the Bluetooth interface
 //#define BTENABLED              // Enable BT interface on AT90USB devices
@@ -85,44 +86,28 @@
 // Make delta curves from many straight lines (linear interpolation).
 // This is a trade-off between visible corners (not enough segments)
 // and processor overload (too many expensive sqrt calls).
-#define DELTA_SEGMENTS_PER_SECOND 200
+#define DELTA_SEGMENTS_PER_SECOND 20
 
-// NOTE NB all values for DELTA_* values MUST be floating point, so always have a decimal point in them
-
-#ifndef HANGPRINTER
-// Center-to-center distance of the holes in the diagonal push rods.
-#define DELTA_DIAGONAL_ROD 250.0 // mm
-#else
-// Z-distance from bed to anchor points
-#define AZ 0.0 // mm
-#endif
-
-#if defined(DELTA) && !defined(HANGPRINTER)
-// Horizontal offset from middle of printer to smooth rod center.
-#define DELTA_SMOOTH_ROD_OFFSET 773.6 // mm
-// ^^ MEASURE AGAIN WHEN SLIDEPRINTER MOUNTED 
-
-// Horizontal offset of the universal joints on the end effector.
-#define DELTA_EFFECTOR_OFFSET 47.0 // mm
-
-// Horizontal offset of the universal joints on the carriages.
-#define DELTA_CARRIAGE_OFFSET 0.0 // mm
-
-// Effective horizontal distance bridged by diagonal push rods.
-#define DELTA_RADIUS (DELTA_SMOOTH_ROD_OFFSET-DELTA_EFFECTOR_OFFSET-DELTA_CARRIAGE_OFFSET)
-#elif defined(HANGPRINTER) // Hard coded coordinates of anchor points. Changeable with M665
-#define ANCHOR_A_X -1000.0 // anchor point A's Carthesian x-coordinate. In mm
-#define ANCHOR_A_Y -1000.0
+// NOTE! all values here MUST be floating point, so always have a decimal point in them
+#define ANCHOR_A_X -500.0 // anchor point A's Carthesian x-coordinate. In mm
+#define ANCHOR_A_Y -500.0
 #define ANCHOR_A_Z 10.0 // measured from print surface to frame middle. In mm
-#define ANCHOR_B_X 1000.0
-#define ANCHOR_B_Y 1000.0
+#define INITIAL_LENGTH_A sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z)
+// This gives A-length of 707.177
+#define ANCHOR_B_X 500.0
+#define ANCHOR_B_Y -500.0
 #define ANCHOR_B_Z 10.0 // measured from print surface to frame middle. In mm
+#define INITIAL_LENGTH_B sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z)
+// This gives B-length of 707.177
 #define ANCHOR_C_X 0.0
-#define ANCHOR_C_Y 1000.0
+#define ANCHOR_C_Y 500.0
 #define ANCHOR_C_Z 10.0 // measured from print surface to frame middle. In mm
+#define INITIAL_LENGTH_C sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z)
+// This gives A-length of sqrt(500^2 + 10^2) = 500.099...
 // It's important that middle of frame D is directly above (x,y) = (0,0)
-#define ANCHOR_D_Z 2000.0 // measured from print surface to frame middle. In mm
-#endif
+#define ANCHOR_D_Z 1000.0 // measured from print surface to frame middle. In mm
+#define INITIAL_LENGTH_D ANCHOR_D_Z
+// This gives D-length of 1000.0
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -394,8 +379,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define Y_HOME_DIR 1
 #define Z_HOME_DIR 1
 
-#define min_software_endstops true // If true, axis won't move to coordinates less than HOME_POS.
-#define max_software_endstops true  // If true, axis won't move to coordinates greater than the defined lengths below.
+#define min_software_endstops false // If true, axis won't move to coordinates less than HOME_POS.
+#define max_software_endstops false  // If true, axis won't move to coordinates greater than the defined lengths below.
 
 // Travel limits after homing (units are in mm)
 #define X_MAX_POS 90
@@ -437,30 +422,24 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // For deltabots this means top and center of the Cartesian print volume.
 #define MANUAL_X_HOME_POS 0
 #define MANUAL_Y_HOME_POS 0
-#define MANUAL_Z_HOME_POS 250 // For delta: Distance between nozzle and print surface after homing.
+#define MANUAL_Z_HOME_POS 0.2 // For delta: Distance between nozzle and print surface after homing.
 
-//// MOVEMENT SETTINGS
-// Dirs is the number of motors connected to print head, excluding extruder
-// > 3 means overconstrained machine
-#if defined(HANGPRINTER)
-#define DIRS 4
-#else
-#define DIRS 3
-#endif
-
-#ifdef EXTRUDERS
-#define NUM_AXIS 5 // The axis order in all axis related arrays is A, B, C, D
-#else
-#define NUM_AXIS 4
-#endif
+#define NUM_AXIS 5 // The axis order in all axis related arrays is A, B, C, D, E
+#define DIRS 4     // (that is A_AXIS, B_AXIS, C_AXIS, D_AXIS, E_AXIS or 0, 1, 2, 3, 4)
+//
 // delta homing speeds must be the same on xyz
-#define HOMING_FEEDRATE {200*60, 200*60, 200*60, 0}  // set the homing speeds (mm/min)
+#define HOMING_FEEDRATE {200*60, 200*60, 200*60, 200*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
-// delta speeds must be the same on xyz
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {54.2, 54.2, 54.2, 760*1.1}  // default steps per unit for Slideprinter
-#define DEFAULT_MAX_FEEDRATE          {500, 500, 500, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {9000,9000,9000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+// Steps per revolution: 200*2 (factor 2 from 1/2 step microstepping)
+// Snelle radius: 34.25
+// Sandwich pitch radius: 41.11
+// Motor gear pitch radius: 13.33
+//
+// 2*200 / ((34.25/41.11) * 2 * pi * 13.33) = 5.732
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {5.732, 5.732, 5.732, 5.732, 760.0}  // default steps per unit for Hangprinter
+#define DEFAULT_MAX_FEEDRATE          {500, 500, 500, 500, 25}    // (mm/sec)
+#define DEFAULT_MAX_ACCELERATION      {9000,9000,9000,9000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
 #define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts

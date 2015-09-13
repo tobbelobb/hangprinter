@@ -52,11 +52,7 @@ void st_init();
 void st_synchronize();
 
 // Set current position in steps
-#if defined(HANGPRINTER)
 void st_set_position(const long &a, const long &b, const long &c, const long &d, const long &e);
-#else
-void st_set_position(const long &x, const long &y, const long &z, const long &e);
-#endif
 void st_set_e_position(const long &e);
 
 // Get current position in steps
