@@ -1717,10 +1717,10 @@ void calculate_delta(float cartesian[3]) // array destination[3] filled with abs
   // With current calculations delta will contain the new absolute coordinate
   delta[A_AXIS] = sqrt(sq(anchor_A_x - cartesian[X_AXIS])
                      + sq(anchor_A_y - cartesian[Y_AXIS])
-                     + sq(anchor_A_z - cartesian[Z_AXIS])); //-DELTA_RADIUS
+                     + sq(anchor_A_z - cartesian[Z_AXIS]));
   delta[B_AXIS] = sqrt(sq(anchor_B_x - cartesian[X_AXIS])
                      + sq(anchor_B_y - cartesian[Y_AXIS])
-                     + sq(anchor_B_z - cartesian[Z_AXIS])); //-DELTA_RADIUS
+                     + sq(anchor_B_z - cartesian[Z_AXIS]));
   //SERIAL_ECHOLN("anchor_C_x");
   //SERIAL_ECHOLN(anchor_C_x);
   //SERIAL_ECHOLN("anchor_C_y");
@@ -1733,13 +1733,12 @@ void calculate_delta(float cartesian[3]) // array destination[3] filled with abs
   //SERIAL_ECHOLN(cartesian[Y_AXIS]);
   //SERIAL_ECHOLN("cartesian[Z_AXIS]");
   //SERIAL_ECHOLN(cartesian[Z_AXIS]);
-  // TODO: when using anchor_C_x it get overwritten, so we have serious overflow problems in our code...
   delta[C_AXIS] = sqrt(sq(anchor_C_x - cartesian[X_AXIS])
                      + sq(anchor_C_y - cartesian[Y_AXIS])
-                     + sq(anchor_C_z - cartesian[Z_AXIS])); //-DELTA_RADIUS
+                     + sq(anchor_C_z - cartesian[Z_AXIS]));
   delta[D_AXIS] = sqrt(sq(             cartesian[X_AXIS])
                      + sq(             cartesian[Y_AXIS])
-                     + sq(anchor_D_z - cartesian[Z_AXIS])); //-DELTA_RADIUS
+                     + sq(anchor_D_z - cartesian[Z_AXIS]));
 
   //SERIAL_ECHOPGM(" x="); SERIAL_ECHOLN(cartesian[X_AXIS]);
   //SERIAL_ECHOPGM(" y="); SERIAL_ECHOLN(cartesian[Y_AXIS]);
@@ -1754,15 +1753,13 @@ void calculate_delta(float cartesian[3]) // array destination[3] filled with abs
 
 void prepare_move(){
   previous_millis_cmd = millis();
-
-  // TODO: Make separate HANGPRINTER version of prepare_move(). tobben 20. may 2015
   float difference[4]; // difference will be in gcode Carthesian xyze. tobben 21. may 2015
   for (int8_t i=0; i < 4; i++){ // if we are in relative mode we could wait with making destination global to after this. tobben 21. may 2015
     difference[i] = destination[i] - current_position[i];
   }
   float cartesian_mm = sqrt(sq(difference[X_AXIS]) +
-      sq(difference[Y_AXIS]) +
-      sq(difference[Z_AXIS]));
+                            sq(difference[Y_AXIS]) +
+                            sq(difference[Z_AXIS]));
   if(cartesian_mm < 0.000001){ cartesian_mm = abs(difference[E_CARTH]); }
   if(cartesian_mm < 0.000001){ return; }
   float seconds = 6000 * cartesian_mm / feedrate / feedmultiply;
@@ -1784,7 +1781,6 @@ void prepare_move(){
     //SERIAL_ECHO(destination[3]);
     //SERIAL_ECHO("\n");
     calculate_delta(destination); // delta will be in hangprinter abcde coords
-    // TODO: plan_buffer_line must be specific for HANGPRINTER too. tobben 20. may 2015
     plan_buffer_line(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS],
         destination[E_CARTH], feedrate*feedmultiply/60/100.0,
         active_extruder);

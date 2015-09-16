@@ -89,25 +89,27 @@
 #define DELTA_SEGMENTS_PER_SECOND 20
 
 // NOTE! all values here MUST be floating point, so always have a decimal point in them
-#define ANCHOR_A_X -500.0 // anchor point A's Carthesian x-coordinate. In mm
-#define ANCHOR_A_Y -500.0
-#define ANCHOR_A_Z 10.0 // measured from print surface to frame middle. In mm
+// These values are the difference between measurement stick top (along sides of Hangprinter when
+// placed in origo) and frame measurment point,
+// alternatively measure from one fish eye, along corresponding line to the lines anchor point.
+#define ANCHOR_A_X 893.0 // anchor point A's Carthesian x-coordinate. In mm
+#define ANCHOR_A_Y -575.0
+#define ANCHOR_A_Z -122.0 // measured from print surface to frame middle. In mm
 #define INITIAL_LENGTH_A sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z)
-// This gives A-length of 707.177
-#define ANCHOR_B_X 500.0
-#define ANCHOR_B_Y -500.0
-#define ANCHOR_B_Z 10.0 // measured from print surface to frame middle. In mm
+// This gives A-length of 1069.1
+#define ANCHOR_B_X 0.0
+#define ANCHOR_B_Y 864.0
+#define ANCHOR_B_Z -113.0 // measured from print surface to frame middle. In mm
 #define INITIAL_LENGTH_B sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z)
-// This gives B-length of 707.177
-#define ANCHOR_C_X 0.0
-#define ANCHOR_C_Y 500.0
-#define ANCHOR_C_Z 10.0 // measured from print surface to frame middle. In mm
+// This gives B-length of 871.36
+#define ANCHOR_C_X -1435.0
+#define ANCHOR_C_Y -1325.0
+#define ANCHOR_C_Z -140.0 // measured from print surface to frame middle. In mm
 #define INITIAL_LENGTH_C sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z)
-// This gives A-length of sqrt(500^2 + 10^2) = 500.099...
+// This gives C-length of 1958.2
 // It's important that middle of frame D is directly above (x,y) = (0,0)
-#define ANCHOR_D_Z 1000.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_D_Z 2284.0 // measured along vertical line, from fish eye to anchor point. In mm
 #define INITIAL_LENGTH_D ANCHOR_D_Z
-// This gives D-length of 1000.0
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -436,9 +438,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // Sandwich pitch radius: 41.11
 // Motor gear pitch radius: 13.33
 //
-// 2*200 / ((34.25/41.11) * 2 * pi * 13.33) = 5.732
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {5.732, 5.732, 5.732, 5.732, 760.0}  // default steps per unit for Hangprinter
-#define DEFAULT_MAX_FEEDRATE          {500, 500, 500, 500, 25}    // (mm/sec)
+// 16*200 / ((34.25/41.11) * 2 * pi * 13.33) = 45.859
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {45.859, 45.859, 45.859, 91.718, 760.0}  // default steps per unit for Hangprinter
+#define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {9000,9000,9000,9000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
 #define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
