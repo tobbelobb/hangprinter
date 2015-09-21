@@ -433,17 +433,19 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define HOMING_FEEDRATE {200*60, 200*60, 200*60, 200*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
-// Steps per revolution: 200*2 (factor 2 from 1/2 step microstepping)
+// Steps per revolution: m*200 (factor m from microstepping)
 // Snelle radius: 34.25
 // Sandwich pitch radius: 41.11
 // Motor gear pitch radius: 13.33
 //
+//  4*200 / ((34.25/41.11) * 2 * pi * 13.33) = 11.465 
+//  8*200 / ((34.25/41.11) * 2 * pi * 13.33) = 22.930 
 // 16*200 / ((34.25/41.11) * 2 * pi * 13.33) = 45.859
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {45.859, 45.859, 45.859, 91.718, 760.0}  // default steps per unit for Hangprinter
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {22.930, 22.930, 22.930, 45.859, 760.0}  // default steps per unit for Hangprinter
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {9000,9000,9000,9000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
-#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
+#define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
 
 #define DEFAULT_NOMINAL_FILAMENT_DIA 1.75
@@ -455,8 +457,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // #define EXTRUDER_OFFSET_Y {0.0, 5.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
 
 // The speed change that does not require acceleration (i.e. the software might assume it can be done instantaneously)
-#define DEFAULT_XYJERK                20.0    // (mm/sec)
-#define DEFAULT_ZJERK                 20.0    // (mm/sec) Must be same as XY for delta
+#define DEFAULT_XYJERK                13.0    // (mm/sec)
+#define DEFAULT_ZJERK                 13.0    // (mm/sec) Must be same as XY for delta
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 
 //===========================================================================
