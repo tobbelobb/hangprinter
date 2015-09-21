@@ -63,8 +63,8 @@ fish_ring_d_rotation   = 125;
 
 //** Gear parameters **//
 Circular_pitch_top_gears = 400;
-Motor_gear_teeth = 12;
-Sandwich_gear_teeth = 37;
+Motor_gear_teeth = 11;
+Sandwich_gear_teeth = 38;
 Circular_pitch_extruder_gears = 180;
 Big_extruder_gear_teeth = 50;
 Small_extruder_gear_teeth = 14;
