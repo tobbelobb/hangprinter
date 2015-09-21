@@ -36,10 +36,30 @@ function tangent_point(r, p) =
 [
   r*r*p[0]/(p[0]*p[0] + p[1]*p[1])
    + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
-     *sqrt(r*r*p[0]*p[0]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[1]*p[1]),
+     *sqrt(abs(r*r*p[0]*p[0]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[1]*p[1])),
   r*r*p[1]/(p[0]*p[0] + p[1]*p[1])
    - (r/sqrt(p[0]*p[0] + p[1]*p[1]))
-     *sqrt(r*r*p[1]*p[1]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[0]*p[0])
+     *sqrt(abs(r*r*p[1]*p[1]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[0]*p[0]))
+];
+
+function tangent_point_2(r, p) = 
+[
+  r*r*p[0]/(p[0]*p[0] + p[1]*p[1])
+   + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
+     *sqrt(abs(r*r*p[0]*p[0]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[1]*p[1])),
+  r*r*p[1]/(p[0]*p[0] + p[1]*p[1])
+   + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
+     *sqrt(abs(r*r*p[1]*p[1]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[0]*p[0]))
+];
+
+function tangent_point_3(r, p) = 
+[
+  r*r*p[0]/(p[0]*p[0] + p[1]*p[1])
+   - (r/sqrt(p[0]*p[0] + p[1]*p[1]))
+     *sqrt(abs(r*r*p[0]*p[0]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[1]*p[1])),
+  r*r*p[1]/(p[0]*p[0] + p[1]*p[1])
+   + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
+     *sqrt(abs(r*r*p[1]*p[1]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[0]*p[0]))
 ];
 
 function tangent_3d_point(r, p) = 
@@ -53,16 +73,6 @@ function tangent_3d_point(r, p) =
   0
 ];
 
-function tangent_point_2(r, p) = 
-[
-  r*r*p[0]/(p[0]*p[0] + p[1]*p[1])
-   + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
-     *sqrt(r*r*p[0]*p[0]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[1]*p[1]),
-  r*r*p[1]/(p[0]*p[0] + p[1]*p[1])
-   + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
-     *sqrt(r*r*p[1]*p[1]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[0]*p[0])
-];
-
 function tangent_3d_point_2(r, p) = 
 [
   r*r*p[0]/(p[0]*p[0] + p[1]*p[1])
@@ -72,16 +82,6 @@ function tangent_3d_point_2(r, p) =
    + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
      *sqrt(r*r*p[1]*p[1]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[0]*p[0]),
   0
-];
-
-function tangent_point_3(r, p) = 
-[
-  r*r*p[0]/(p[0]*p[0] + p[1]*p[1])
-   - (r/sqrt(p[0]*p[0] + p[1]*p[1]))
-     *sqrt(r*r*p[0]*p[0]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[1]*p[1]),
-  r*r*p[1]/(p[0]*p[0] + p[1]*p[1])
-   + (r/sqrt(p[0]*p[0] + p[1]*p[1]))
-     *sqrt(r*r*p[1]*p[1]/(p[0]*p[0]+p[1]*p[1]) - r*r + p[0]*p[0])
 ];
 
 function tangent_3d_point_3(r, p) = 
