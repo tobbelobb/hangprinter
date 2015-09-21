@@ -441,6 +441,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //  4*200 / ((34.25/41.11) * 2 * pi * 13.33) = 11.465 
 //  8*200 / ((34.25/41.11) * 2 * pi * 13.33) = 22.930 
 // 16*200 / ((34.25/41.11) * 2 * pi * 13.33) = 45.859
+//
+//  4*200 / ((33/42.22) * 2 * pi * 12.22) = 13.330
+//  8*200 / ((33/42.22) * 2 * pi * 12.22) = 26.661
+// 16*200 / ((33/42.22) * 2 * pi * 12.22) = 53.322
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {22.930, 22.930, 22.930, 45.859, 760.0}  // default steps per unit for Hangprinter
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
