@@ -169,7 +169,7 @@ module placed_abc_motors(){
       translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4])
           motor_gear_d();
     rotate([0,0,2*72])
-      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4])
+      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4 + 5])
       motor_gear_c();
     rotate([0,0,1*72])
       translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4])

@@ -336,7 +336,7 @@ module motor_gear(height = Motor_protruding_shaft_length, letter){
           translate([0,0,height - swgh])
             my_gear(teeth, swgh);
           // Shaft cylinder
-          cylinder(r = 7, h = height - swgh + melt, $fn=40); 
+          cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40); 
         }
         // Center bore
         difference(){

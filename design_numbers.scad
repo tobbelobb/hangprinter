@@ -71,12 +71,13 @@ Small_extruder_gear_teeth = 14;
 Motor_protruding_shaft_length = 17;
 Motor_gear_a_height = Line_contacts_abcd_z[A]; // A and B has the longest shafts
 Motor_gear_b_height = Line_contacts_abcd_z[B];
-Motor_gear_c_height = Line_contacts_abcd_z[C];
+Motor_gear_c_height = Line_contacts_abcd_z[C] - 5;
 Motor_gear_d_height = Line_contacts_abcd_z[D];
 //Big_extruder_gear_height = 8;
 Big_extruder_gear_height = 4;
 Small_extruder_gear_height = 6;
 
+Motor_gear_shaft_radius = 7;
 Snelle_radius = 33; // This is the radius the line will wind around.
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
