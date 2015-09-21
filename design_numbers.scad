@@ -18,6 +18,7 @@ Z = 2;
 Full_tri_side             = 200*1.035; // Rotate eq_tri relative to 200 mm printbed, gain 3.5 % side length
 Sandwich_gap              = 0.8;
 Sandwich_height           = Bearing_608_width + 2;
+Sandwich_edge_thickness   = 0.6;
 Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
 Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
 Lock_radius_2 = Lock_radius_1 + 2;
@@ -68,8 +69,8 @@ Circular_pitch_extruder_gears = 180;
 Big_extruder_gear_teeth = 50;
 Small_extruder_gear_teeth = 14;
 Motor_protruding_shaft_length = 17;
-Motor_gear_a_height = Line_contacts_abcd_z[A] + 1; // A and B has the longest, most important shafts
-Motor_gear_b_height = Line_contacts_abcd_z[B] + 1;
+Motor_gear_a_height = Line_contacts_abcd_z[A]; // A and B has the longest shafts
+Motor_gear_b_height = Line_contacts_abcd_z[B];
 Motor_gear_c_height = Line_contacts_abcd_z[C];
 Motor_gear_d_height = Line_contacts_abcd_z[D];
 //Big_extruder_gear_height = 8;
@@ -96,12 +97,13 @@ Drive_support_v = [Bearing_623_outer_diameter + 14,
 
 
 //** Derived parameters **//
-Motor_gear_pitch = Motor_gear_teeth*Circular_pitch_top_gears/360;
-Sandwich_gear_pitch = Sandwich_gear_teeth*Circular_pitch_top_gears/360;
-Big_extruder_gear_pitch = Big_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
-Small_extruder_gear_pitch = Small_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
-Pitch_difference_extruder = Big_extruder_gear_pitch + Small_extruder_gear_pitch;
-Four_point_five_point_radius=Sandwich_gear_pitch+Motor_gear_pitch+0.1;
+Motor_gear_pitch             = Motor_gear_teeth*Circular_pitch_top_gears/360;
+Sandwich_gear_pitch          = Sandwich_gear_teeth*Circular_pitch_top_gears/360;
+Sandwich_radius              = Sandwich_gear_pitch + Sandwich_gear_pitch*2/Sandwich_gear_teeth;
+Big_extruder_gear_pitch      = Big_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
+Small_extruder_gear_pitch    = Small_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
+Pitch_difference_extruder    = Big_extruder_gear_pitch + Small_extruder_gear_pitch;
+Four_point_five_point_radius = Sandwich_gear_pitch+Motor_gear_pitch+0.1;
 
 Drive_support_height = Nema17_cube_width/3 +
            Pitch_difference_extruder*cos(Big_extruder_gear_rotation)

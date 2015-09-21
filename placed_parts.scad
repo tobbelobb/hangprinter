@@ -166,16 +166,16 @@ module placed_abc_motors(){
       translate([0,0,-Nema17_cube_height - 2])
         Nema17();
     rotate([0,0,3*72])
-      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 4])
+      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4])
           motor_gear_d();
     rotate([0,0,2*72])
-      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 4.5])
+      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4])
       motor_gear_c();
     rotate([0,0,1*72])
-      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 3])
+      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4])
       motor_gear_b();
     rotate([0,0,4*72])
-      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 3])
+      translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 1.4])
       motor_gear_a();
 }
 //placed_abc_motors();

@@ -251,28 +251,29 @@ module small_extruder_gear(height=Small_extruder_gear_height){
 }
 //small_extruder_gear();
 
-module snelle(r1, r2, h, edge=1){
-  cylinder(r1=r1, r2=r2, h=edge);
-  cylinder(r=r2, h=h);
-}
-//snelle(r1 = 10, r2 = 5, h = 3);
+// Sandwich is a sandwich gear on top of a snelle.
+// These are modelled together, then split up before printing to make a cleaner edge.
 
 // Sandwich height follows exactly 608 bearing thickness
-module sandwich(teeth = Sandwich_gear_teeth){
+module sandwich(){
   od              = Bearing_608_outer_diameter;
   bw              = Bearing_608_width;
   meltlength      = 0.1;
   difference(){
     union(){
+      // sandwich gear
       translate([0, 0, Snelle_height - meltlength])
-        my_gear(teeth, Sandwich_gear_height);
+        my_gear(Sandwich_gear_teeth, Sandwich_gear_height);
       // Snelle
-      snelle(r1 = Snelle_radius + 1,
-        r2 = Snelle_radius, h = Snelle_height, $fn = 150);
+      cylinder(r = Snelle_radius,   h = Snelle_height, $fn=150);
+      cylinder(r = Sandwich_radius, h = Sandwich_edge_thickness, $fn=150);
+      translate([0,0,Snelle_height - Sandwich_edge_thickness])
+        cylinder(r = Sandwich_radius, h = Sandwich_edge_thickness, $fn=150);
     }
     // Dig out the right holes
+    // Bearing hole
     translate([0, 0, -1.2])
-      cylinder(r = od/2 + 0.16, h = Sandwich_height); // 0.15 added to raduis during print...
+      cylinder(r = od/2 + 0.15, h = Sandwich_height); // 0.15 added to raduis during print...
     cylinder(r = od/2-2, h = Big);
     // Decoration/material saving holes
     for(i = [1:60:360]){
@@ -286,36 +287,57 @@ module sandwich(teeth = Sandwich_gear_teeth){
     rotate([90,0,27])
       translate([0,Snelle_height/2,Snelle_radius/2])
       cylinder(r = 0.95, h = 40);
+    // screw holes
+    for(i = [1:120:360]){
+      rotate([0,0,i]){
+      translate([0,Snelle_radius - 4, Sandwich_height])
+      mirror([0,0,1])
+        M3_screw(Sandwich_height+2);
+      translate([0,Snelle_radius - 4, -0.5])
+        M3_screw(Sandwich_height+2);
+      }
+    }
+
   }
   //Bearing_608();
 }
 //sandwich();
-//mirror([0,0,1])
-//sandwich();
 
-// 17.79 will be the protruding shaftlength up from bottom plate
+// May not render correctly in preview...
+module sandwich_gear(){
+  rotate([180,0,0])
+    difference(){
+      sandwich();
+      translate([0,0,-1])
+        cylinder(r=Big, h=Snelle_height - Sandwich_edge_thickness + 1);
+    }
+}
+//sandwich_gear();
+
+// May not render correctly in preview...
+module snelle(){
+  difference(){
+    sandwich();
+    translate([0,0,Snelle_height - Sandwich_edge_thickness])
+      cylinder(r=Big, h=Big);
+  }
+}
+//snelle();
+
+
 module motor_gear(height = Motor_protruding_shaft_length, letter){
-  swh  = Sandwich_height;
-  r_swh = swh - 0; // reduced sandwich height
-  e_swh = swh + 0; // extended sandwich height
+  swgh  = Sandwich_gear_height  - 0.4;  // allow some space for easier printing
+
   melt = 0.1;
   teeth = Motor_gear_teeth;
   difference(){
     union(){
       difference(){
         union(){
-          translate([0,0,height - e_swh - melt])
-            my_gear(teeth, r_swh + melt);
-
+          translate([0,0,height - swgh])
+            my_gear(teeth, swgh);
           // Shaft cylinder
-          cylinder(r = 8, h = height - e_swh, $fn=40); 
-          // Upper protection disc
-          translate([0,0,height-2])
-            cylinder(r2 = Motor_gear_pitch+3,
-                r1 = Motor_gear_pitch + 1.5, h=2, $fn=50);
-          translate([0,0,height - 1 - e_swh])
-            cylinder(r1 = Motor_gear_pitch+2.5,
-                r2 = Motor_gear_pitch + 1.5, h=2, $fn=50);
+          cylinder(r = 8, h = height - swgh + melt, $fn=40); 
         }
         // Center bore
         difference(){
@@ -335,7 +357,7 @@ module motor_gear(height = Motor_protruding_shaft_length, letter){
 
     translate([5/2,0,height-1])
       linear_extrude(height=2)
-      text(letter,halign="left",valign="center");
+      text(letter,halign="left",valign="center", size=8);
   }
 }
 //motor_gear(letter="A");
