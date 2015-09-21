@@ -31,8 +31,8 @@ Bottom_plate_radius       = 82;
 // For rotating lines and gatts in place
 d_gatt_back = 13;
 
-Sandwich_gear_height = Sandwich_height*4/7-1;
-Snelle_height        = Sandwich_height*3/7+1;
+Sandwich_gear_height = Sandwich_height*3/8;
+Snelle_height        = Sandwich_height*5/8;
 
 // Distance between parallell contact points on one side of printer
 Abc_xy_split = Full_tri_side - 2*30;

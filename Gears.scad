@@ -290,18 +290,17 @@ module sandwich(){
     // screw holes
     for(i = [1:120:360]){
       rotate([0,0,i]){
-      translate([0,Snelle_radius - 4, Sandwich_height])
+      translate([0,Snelle_radius - 4, Sandwich_height + 0.2])
       mirror([0,0,1])
         M3_screw(Sandwich_height+2);
       translate([0,Snelle_radius - 4, -0.5])
         M3_screw(Sandwich_height+2);
       }
     }
-
   }
   //Bearing_608();
 }
-//sandwich();
+sandwich();
 
 // May not render correctly in preview...
 module sandwich_gear(){
