@@ -300,7 +300,7 @@ module sandwich(){
   }
   //Bearing_608();
 }
-sandwich();
+//sandwich();
 
 // May not render correctly in preview...
 module sandwich_gear(){
@@ -364,18 +364,25 @@ module motor_gear(height = Motor_protruding_shaft_length, letter){
 module motor_gear_a(){
   motor_gear(Motor_gear_a_height ,"A");
 }
+//rotate([180,0,0])
+//motor_gear_a();
 
 module motor_gear_b(){
   motor_gear(Motor_gear_b_height ,"B");
 }
+//rotate([180,0,0])
+//motor_gear_b();
 
 module motor_gear_c(){
   motor_gear(Motor_gear_c_height ,"C");
 }
+//rotate([180,0,0])
+//motor_gear_c();
 
 module motor_gear_d(){
   motor_gear(Motor_gear_d_height ,"D");
 }
+//rotate([180,0,0])
 //motor_gear_d();
 
 // Visualization only
