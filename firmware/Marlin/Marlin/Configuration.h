@@ -92,23 +92,23 @@
 // These values are the difference between measurement stick top (along sides of Hangprinter when
 // placed in origo) and frame measurment point,
 // alternatively measure from one fish eye, along corresponding line to the lines anchor point.
-#define ANCHOR_A_X 893.0 // anchor point A's Carthesian x-coordinate. In mm
+#define ANCHOR_A_X 887.0 // anchor point A's Carthesian x-coordinate. In mm
 #define ANCHOR_A_Y -575.0
-#define ANCHOR_A_Z -122.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_A_Z -130.0 // measured from print surface to frame middle. In mm
 #define INITIAL_LENGTH_A sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z)
-// This gives A-length of 1069.1
+// This gives A-length of sqrt(887^2 + 575^2 + 130^2) = 1065
 #define ANCHOR_B_X 0.0
-#define ANCHOR_B_Y 864.0
-#define ANCHOR_B_Z -113.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_B_Y 867.0
+#define ANCHOR_B_Z -119.0 // measured from print surface to frame middle. In mm
 #define INITIAL_LENGTH_B sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z)
-// This gives B-length of 871.36
-#define ANCHOR_C_X -1435.0
-#define ANCHOR_C_Y -1325.0
-#define ANCHOR_C_Z -140.0 // measured from print surface to frame middle. In mm
+// This gives B-length of sqrt(867^2 + 119^2) = 875
+#define ANCHOR_C_X -1429.0
+#define ANCHOR_C_Y -1317.0
+#define ANCHOR_C_Z -141.0 // measured from print surface to frame middle. In mm
 #define INITIAL_LENGTH_C sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z)
-// This gives C-length of 1958.2
+// This gives C-length of sqrt(1429^2 + 1317^2 + 141^2) = 1948.4
 // It's important that middle of frame D is directly above (x,y) = (0,0)
-#define ANCHOR_D_Z 2284.0 // measured along vertical line, from fish eye to anchor point. In mm
+#define ANCHOR_D_Z 2286.0 // measured along vertical line, from fish eye to anchor point. In mm
 #define INITIAL_LENGTH_D ANCHOR_D_Z
 
 //===========================================================================
@@ -445,7 +445,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //  4*200 / ((33/42.22) * 2 * pi * 12.22) = 13.330
 //  8*200 / ((33/42.22) * 2 * pi * 12.22) = 26.661
 // 16*200 / ((33/42.22) * 2 * pi * 12.22) = 53.322
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {22.930, 22.930, 22.930, 45.859, 760.0}  // default steps per unit for Hangprinter
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {26.661, 26.661, 26.661, 53.322, 760.0}  // default steps per unit for Hangprinter
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
