@@ -1,0 +1,4 @@
+Notes:
+Changed avr-gcc optimization flag from -Os to -O3 in
+... /hardware/arduino/avr/platform.txt
+This change is not included in this repo but is local to developers own arduino-installation.
