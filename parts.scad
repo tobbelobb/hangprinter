@@ -297,6 +297,7 @@ module bottom_plate(){
       cube([9,9,30], center=true);
 
     // Dig out filament hole in sandwich stick and base.
+    // Note that bowden tube should fit in this from below
     translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
 
     // Letters for easier identification
@@ -317,9 +318,14 @@ module bottom_plate(){
         linear_extrude(height=2)
         text("C",halign="center",valign="center");
     }
+    // Funnel shape for easier bowden tube fit
+    translate([0,0,-0.1])
+      cylinder(h=3, r1=3, r2=2);
 
   }
 }
+// The rotate is for easier fitting print bed when printing
+// this part on 200 mm square print bed 
 //rotate([0,0,15])
 //bottom_plate();
 
