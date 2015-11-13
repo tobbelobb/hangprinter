@@ -83,14 +83,14 @@ module hobbed_insert(){
 
 // Only for rendering
 module translated_hobb_tower(){
-  bearing_base_translation = Big_extruder_gear_height;
+  bearing_base_translation = Big_extruder_gear_height+1.2;
   hobbed_insert_placement = bearing_base_translation +
                             Bearing_623_width + 0.2;
-    translate([0,-Pitch_difference_extruder,0]){
+    translate([0,-Pitch_difference_extruder,1]){
       translate([0,0,bearing_base_translation])
         Bearing_623();
-      translate([0,0,-0.1])
-        M3_screw(25, $fn=6);
+      translate([0,0,-2.1])
+        M3_screw(27, $fn=6);
       translate([0,0,hobbed_insert_placement])
         hobbed_insert();
       translate([0,0, hobbed_insert_placement + Hobbed_insert_height
@@ -103,10 +103,10 @@ module translated_hobb_tower(){
 // Support and big extruder gear are translated to fit around
 // a non-translated small extruder gear.
 // rotation is around the small gear
-module assembled_drive(rotation){
+module assembled_drive(){
   // Height adapted so support always get high enough
-  // no matter the rotation
-  rotate([0,0,rotation]){
+  // no matter the Big_extruder_gear_rotation
+  rotate([0,0,Big_extruder_gear_rotation]){
     translate([0,0,-2])
     small_extruder_gear(Small_extruder_gear_height);
     translate([0,-Pitch_difference_extruder,0])
@@ -119,30 +119,26 @@ module assembled_drive(rotation){
       // Hobb, support bearing and big gear are placed first,
       // drive supports translated to fit them here.
     translate([ // Center 623 in x-dim 
-               -Bearing_623_outer_diameter/2 - 5 // match 5 in drive_support
-                 // Take rotation into account x-dim
-                 + sin(rotation)*Pitch_difference_extruder,
-               // Take rotation into account y-dim (place hobb on edge)
-               -cos(rotation)*Pitch_difference_extruder
-                 - Hobb_from_edge,
-                // Big extruder gear placed below this structure, z-dim
-               Big_extruder_gear_height + 0.2]) // Big gear |.2mm| support
-      for(k = [0,Drive_support_thickness // Bring supports to same z
-                 + Bearing_623_width
-                 + 0.2 // 623 |.2mm| Hobb |.2mm| 623
-                 + Hobbed_insert_height
-                 + 0.2])
-        translate([0,0, k])
-          mirror([0,0,k])
-          drive_support(k);
+          -Bearing_623_outer_diameter/2 - 5//match 5 in drive_support
+              // Take rotation into account x-dim
+          + sin(Big_extruder_gear_rotation)*Pitch_difference_extruder,
+            // Take rotation into account y-dim (place hobb on edge)
+          -cos(Big_extruder_gear_rotation)*Pitch_difference_extruder
+              - Hobb_from_edge,
+             // Big extruder gear placed below this structure, z-dim
+            Big_extruder_gear_height + 0.2])//Big gear|.2mm|support
+      drive_support();
   }
-  support_bearing(rotation);
+  support_bearing(Big_extruder_gear_rotation);
   // M3 through support bearing (just rendering)
   translate([0,0,-5.0])
-  support_bearing_translate(rotation)
+  support_bearing_translate(Big_extruder_gear_rotation)
     M3_screw(19);
 }
-//assembled_drive(rotation=Big_extruder_gear_rotation);
+//translate([33,-70,12]) rotate([-90,0,0]){
+//  e3d_v6_volcano_hotend();
+//  color("purple") cylinder(r=1.75/2, h=60);
+//}
 //assembled_drive(rotation=103);
 
 // Further assembly of parts...
@@ -190,10 +186,15 @@ module placed_extruder(){
 //placed_extruder();
 
 module placed_hotend(){
-  translate([0,0,-73])
-    rotate([0,0,Extruder_motor_twist])
-    //reprappro_hotend();
-    rotate([0,0,90]) e3d_hotend();
+    // Manually placed. For exact placement look in the difference
+    // that creates groove in drive_support
+    translate([-0, 0, 0])
+    translate([0,0,-74.5])
+      rotate([0,0,56]){
+        e3d_v6_volcano_hotend();
+        // filament following placed hotend
+        //cylinder(r=1.75/2,h=82);
+      }
 }
 //placed_hotend();
 
@@ -222,7 +223,7 @@ module placed_plates(){
 
 
 //color("green")
-placed_lines();
-placed_sandwich();
-bottom_plate();
-placed_abc_motors();
+//placed_lines();
+//placed_sandwich();
+//bottom_plate();
+//placed_abc_motors();

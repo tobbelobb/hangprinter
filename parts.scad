@@ -3,6 +3,7 @@ include <util.scad>
 include <design_numbers.scad>
 use <Nema17_and_Ramps_and_bearings.scad>
 use <Gears.scad>
+use <render_parts.scad>
 
 module fish_ring(){
   $fn = 15;
@@ -259,6 +260,7 @@ module bottom_plate(){
               + 0.2])
             translate([0,0, k])
               mirror([0,0,k])
+              // TODO: look at after e3d v6 Volcano adjustments
               // Found in drive_support()
               translate([0,
                   Drive_support_height,
@@ -349,56 +351,37 @@ module punched_cube(v){
 
 // height of the tower depends on big extruder gear rotation
 // Used in assembled_drive in placed_parts.scad
-module drive_support(flag){
+module drive_support_helper(flag){
   th = Drive_support_thickness;
+
   difference(){
-    cube([Bearing_623_outer_diameter + 14,
-        Drive_support_height,
-        th]);
+    union(){
+      // Cube to make hotend mounting possible
+      //mount_th = 3;
+      //translate([0,-14,-mount_th])
+      //  cube([Drive_support_v[0],14,th+mount_th]);
+      translate([0,-E3d_v6_support_height,0]){
+        cube([Drive_support_v[0],
+            Drive_support_height + E3d_v6_support_height,
+            th]);
+      }
+    }
     // Hole for bearings supporting hobbed insert screw
     translate([Bearing_623_outer_diameter,Hobb_from_edge,-Big/2])
       M3_screw(Big);
     translate([Bearing_623_outer_diameter/2 + 5,
         Hobb_from_edge,
-        -1])
+        +1])
       cylinder(r=Bearing_623_outer_diameter/2, h=Big);
-    // Hole for support bearing M3
-    //translate([Hobbed_insert_diameter/2
-    //           + Bearing_623_outer_diameter
-    //           + Extruder_filament_opening,
-    //    Hobb_from_edge,-1])
-    translate([Bearing_623_outer_diameter + 5 // Center of hobb x-dir
+    // Somewhat prolonged hole
+    // Put something rubber-like in hole for suspension against
+    // filament.
+    for(i=[0:0.33:1])
+    translate([Bearing_623_outer_diameter+5-i // Center of hobb x-dir
                + Hobbed_insert_diameter/2
                + Extruder_filament_opening,
         Hobb_from_edge,-1])
       M3_screw(Big);
-    // Tightening mechanism
-    translate([1.7 + (Bearing_623_outer_diameter + 14)/2,
-        -Big + 30, // Depth of skåra
-        -1])
-      cube([2,Big,th+2]);
-    translate([17.6,0,-1])
-    rotate([0,0,15+90]) 
-      special_tri(13,13);
-    if(flag == 0){
-      translate([-10,3,th/2])
-      rotate([0,90,0])
-      M3_screw(h=Big);
-    }
-  }
-  if(flag != 0){
-    difference(){
-      translate([-3 + 1.7 + (Bearing_623_outer_diameter + 14)/2,
-          0,
-          -7]){
-        cube([3,7,th+7]);
-        translate([5,0,0])
-          cube([2.7,7,th+7]);
-      }
-      translate([9.5,3.5,-3.2])
-        rotate([0,90,0])
-        M3_screw(h=Big);
-    }
   }
 
   // Foot to screw on to bottom_plate
@@ -408,7 +391,29 @@ module drive_support(flag){
       punched_cube(Drive_support_v);
   }
 }
-//drive_support(0);
+//drive_support_helper(0);
+
+module drive_support(){
+  // This difference makes e3d mount
+  difference(){
+    for(k = [0,2*Drive_support_thickness // Bring supports to same z
+        + 0.2 // 623 |.2mm| Hobb |.2mm| 623
+        + Hobbed_insert_height
+        + 0.0])
+      translate([0,0, k])
+        mirror([0,0,k])
+        drive_support_helper(k);
+    translate([14.7,-42.8,8.5]) rotate([-90,0,0]){
+      e3d_v6_volcano_hotend(fan=0);
+      // Render some purple filament
+      //%color("purple") cylinder(r=1.75/2, h=80);
+    }
+    translate([7.5,-7,-Big/2]) cylinder(r=1.6, h=Big);
+    translate([22,-7,-Big/2]) cylinder(r=1.6, h=Big);
+  }
+}
+drive_support();
+
 
 //** Plates start **//
 
@@ -540,11 +545,11 @@ module parted_top_plate_piece1(){
 //parted_top_plate_piece1();
 //translate([-139/2,-17,0])
 //%cube([139,139,20]);
-parted_top_plate_piece1();
-translate([0,-25,0,])
-parted_top_plate_piece1();
-translate([0,2*-25,0,])
-parted_top_plate_piece1();
+//parted_top_plate_piece1();
+//translate([0,-25,0,])
+//parted_top_plate_piece1();
+//translate([0,2*-25,0,])
+//parted_top_plate_piece1();
 
 // Fits on a Huxley
 module parted_top_plate_piece2(){

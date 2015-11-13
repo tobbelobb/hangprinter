@@ -12,24 +12,27 @@ use <render_parts.scad>
 //  - Modules that are meant as anti-materia starts with capital letter
 
 // Rendering control
-render_bottom_plate = true;
+render_bottom_plate = false;
 render_sandwich     = false;
 render_abc_motors   = true;
 render_fish_rings   = false;
 render_lines        = false;
 render_extruder     = true;
-render_hotend       = false;
-render_ramps        = true;
+render_hotend       = true;
+render_ramps        = false;
 render_plates       = false;
-render_filament     = false;
+render_filament     = true;
 
 module full_render(){
   if(render_bottom_plate){
-    bottom_plate();
-    //import("/home/torbjorn/Exjobb/Hangprinter/stl/bottom_plate_1.stl");
+    //bottom_plate();
+    // For better rendering performance, precompile bottom_plate
+    import("stl/bottom_plate_for_renter.stl");
   }
   if(render_sandwich){
-    placed_sandwich();
+    //placed_sandwich();
+    // For better rendering performance, precompile placed sandwich
+    import("stl/complete_sandwich_for_render.stl");
   }
   if(render_abc_motors){
     placed_abc_motors();

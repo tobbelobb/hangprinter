@@ -71,6 +71,28 @@ module reprappro_hotend(){
 }
 //reprappro_hotend();
 
+module fan(width=30, height=10){
+  linear_extrude(height=height, twist=-40)
+  for(i=[0:6]){
+    rotate([0,0,(360/7)*i])
+      translate([0,-0.5])
+        square([width/2 - 2, 1]);
+  }
+  cylinder(h=height, r=width/4.5);
+  
+  difference(){
+    translate([-width/2, -width/2,0])
+      cube([width,width,height]);
+    translate([0,0,-1]) cylinder(r=width/2 - 1, h=height+2);
+    for(i=[1,-1]){
+      for(k=[1,-1]){
+        translate([i*width/2-i*2.5,k*width/2-k*2.5,-1])
+          cylinder(r=1, h=height+2);
+      }
+    }
+  }
+}
+
 module Volcano_block(){
   small_height = 18.5;
   large_height = 20;
@@ -92,9 +114,15 @@ module Volcano_block(){
 //Volcano_block();
 
 //cylinder(h=42.7, r=22.3/2);
-module e3d_hotend(){
+module e3d_v6_volcano_hotend(fan=1){
   lpl = 2.1;
+  if(fan){
   color("blue") rotate([90,0,0]) import("stl/V6_Duct.stl");
+  color("black")
+    translate([-15,0,15])
+      rotate([0,-90,0])
+        fan(width=30, height=10);
+  }
   color("LightSteelBlue"){
     cylinder(h=26, r1=13/2, r2=8/2);
     for(i = [0:10]){
@@ -110,4 +138,4 @@ module e3d_hotend(){
   }
   translate([0,0,-20-lpl]) Volcano_block();
 }
-e3d_hotend();
+e3d_v6_volcano_hotend();
