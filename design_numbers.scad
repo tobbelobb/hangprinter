@@ -66,9 +66,9 @@ Circular_pitch_top_gears = 400;
 Motor_gear_teeth = 11;
 Sandwich_gear_teeth = 38;
 Circular_pitch_extruder_gears = 180;
-Small_extruder_gear_teeth = 14;
+Small_extruder_gear_teeth = 15;
 // 1/3 is sweetspot ratio
-Big_extruder_gear_teeth = Small_extruder_gear_teeth*2.7;
+Big_extruder_gear_teeth = Small_extruder_gear_teeth*3;
 Motor_protruding_shaft_length = 17;
 Motor_gear_a_height = Line_contacts_abcd_z[A]; // A and B has the longest shafts
 Motor_gear_b_height = Line_contacts_abcd_z[B];
@@ -83,8 +83,8 @@ Snelle_radius = 33; // This is the radius the line will wind around.
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//
-Big_extruder_gear_rotation = 70; // Rotate around z-axis
-Extruder_motor_twist = -29; // Manually adjusted to center hobb
+Big_extruder_gear_rotation = 65.5; // Rotate around z-axis
+Extruder_motor_twist = -35; // Manually adjusted to center hobb
 Hobbed_insert_height = 6;
 Extruder_filament_opening = 1.3;
 Big_extruder_gear_screw_head_depth = Big_extruder_gear_height/2;

@@ -186,10 +186,10 @@ module placed_extruder(){
 //placed_extruder();
 
 module placed_hotend(){
-    // Manually placed. For exact placement look in the difference
+    // Manually placed.
+    // For exact placement look in the difference
     // that creates groove in drive_support
-    translate([-0, 0, 0])
-    translate([0,0,-74.5])
+    translate([-2.5,0.5,-80])
       rotate([0,0,56]){
         e3d_v6_volcano_hotend();
         // filament following placed hotend
