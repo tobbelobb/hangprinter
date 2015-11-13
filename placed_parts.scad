@@ -190,9 +190,10 @@ module placed_extruder(){
 //placed_extruder();
 
 module placed_hotend(){
-  translate([0,0,-81])
+  translate([0,0,-73])
     rotate([0,0,Extruder_motor_twist])
-    reprappro_hotend();
+    //reprappro_hotend();
+    rotate([0,0,90]) e3d_hotend();
 }
 //placed_hotend();
 

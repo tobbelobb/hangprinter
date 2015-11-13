@@ -71,7 +71,43 @@ module reprappro_hotend(){
 }
 //reprappro_hotend();
 
-module e3d_hotend(){
-  cylinder(h=42.7, r=22.3/2);
+module Volcano_block(){
+  small_height = 18.5;
+  large_height = 20;
+  color("silver"){
+  translate([-15.0,-11/2,0])
+    difference(){
+      cube([20,11,large_height]);
+      translate([7,0,small_height+3])
+        rotate([90,0,0])
+        cylinder(h=23, r=3, center=true,$fn=20);
+      translate([-(20-7+1.5),-1,small_height]) cube([22,13,2]);
+    }
+    }
+  color("gold"){
+    translate([0,0,-3]) cylinder(h=3.1,r=8/2,$fn=6);
+    translate([0,0,-3-2]) cylinder(h=2.01, r2=6/2, r1=2.8/2);
+  }
 }
-//e3d_hotend();
+//Volcano_block();
+
+//cylinder(h=42.7, r=22.3/2);
+module e3d_hotend(){
+  lpl = 2.1;
+  color("blue") rotate([90,0,0]) import("stl/V6_Duct.stl");
+  color("LightSteelBlue"){
+    cylinder(h=26, r1=13/2, r2=8/2);
+    for(i = [0:10]){
+      translate([0,0,i*2.5]) cylinder(h=1, r=22.3/2);
+    }
+    translate([0,0,42.7-3.7]) cylinder(h=3.7, r=16/2);
+    translate([0,0,42.7-3.7-6.1]) cylinder(h=6.2, r=12/2);
+    translate([0,0,42.7-3.7-6-3]) cylinder(h=3, r=16/2);
+    translate([0,0,26-0.1]) cylinder(h=42.7-(12.7+26)+0.2, r=8/2);
+    translate([0,0,26+1.5]) cylinder(h=1, r=16/2);
+    echo(42.7-(12.7+26));
+    translate([0,0,-lpl-0.1]) cylinder(h=lpl+0.2,r=2.8/2);
+  }
+  translate([0,0,-20-lpl]) Volcano_block();
+}
+e3d_hotend();
