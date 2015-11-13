@@ -4,19 +4,21 @@ use <parts.scad>
 use <placed_parts.scad>
 use <render_parts.scad>
 
-// TODO:
-//  - Place hot end reliably
 // Style:
-//  - Spaces separate arguments and long words only
 //  - Global parameters starts with capital letter, others don't
-//  - Modules that are meant as anti-materia starts with capital letter
+
+// TODO:
+//  - Improve extruder drive and hotend mount.
+//    Complete rewrite of those
+//    (assembling along z-direction from the beginning)
+//    might be worth it...
 
 // Rendering control
-render_bottom_plate = false;
-render_sandwich     = false;
+render_bottom_plate = true;
+render_sandwich     = true;
 render_abc_motors   = true;
-render_fish_rings   = false;
-render_lines        = false;
+render_fish_rings   = true;
+render_lines        = true;
 render_extruder     = true;
 render_hotend       = true;
 render_ramps        = false;
@@ -27,12 +29,12 @@ module full_render(){
   if(render_bottom_plate){
     //bottom_plate();
     // For better rendering performance, precompile bottom_plate
-    import("stl/bottom_plate_for_renter.stl");
+    precompiled("stl/bottom_plate_for_render.stl");
   }
   if(render_sandwich){
     //placed_sandwich();
     // For better rendering performance, precompile placed sandwich
-    import("stl/complete_sandwich_for_render.stl");
+    precompiled("stl/complete_sandwich_for_render.stl");
   }
   if(render_abc_motors){
     placed_abc_motors();
@@ -61,3 +63,9 @@ module full_render(){
   }
 }
 full_render();
+
+// Use for better rendering performance while working on other part.
+module precompiled(s){
+    echo("Warning: using precompiled file", s);
+    import(s);
+}
