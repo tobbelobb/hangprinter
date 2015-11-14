@@ -204,13 +204,14 @@ module big_extruder_gear(height=Big_extruder_gear_height){
     for(i=[0:60:359])
       rotate([0,0,i])
         translate([Big_extruder_gear_pitch/2+2,0,-1])
-        cylinder(r=4,h=Big);
+        cylinder(r=5,h=Big);
     // Hex head
     translate([0,0,-0.01]) cylinder(h=Big_extruder_gear_screw_head_depth + 0.01, r=5.4/sqrt(3),$fn=6);
     // Screw hole
     cylinder(r=2.95/sqrt(3),h=Big,center=true,$fn=6);
   }
 }
+//rotate([180,0,0])
 //big_extruder_gear();
 
 module small_extruder_gear(height=Small_extruder_gear_height){

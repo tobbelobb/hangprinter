@@ -83,7 +83,7 @@ Snelle_radius = 33; // This is the radius the line will wind around.
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//
-Big_extruder_gear_rotation = 65.5; // Rotate around z-axis
+Big_extruder_gear_rotation = 69; // Rotate around z-axis
 Extruder_motor_twist = -35; // Manually adjusted to center hobb
 Hobbed_insert_height = 6;
 Extruder_filament_opening = 1.3;
@@ -109,6 +109,5 @@ Four_point_five_point_radius = Sandwich_gear_pitch+Motor_gear_pitch+0.1;
 
 Drive_support_height = Nema17_cube_width/3 +
            Pitch_difference_extruder*cos(Big_extruder_gear_rotation)
-           + 7
-           + 2;
+           + 5.3;
 E3d_v6_support_height = 15;

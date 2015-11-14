@@ -74,6 +74,7 @@ module placed_fish_rings(){
 
 //** bottom_plate start **//
 
+// TODO: reason for using children(0) instead of just children() here?
 // Assumes children(0) is centered in xy-plane
 // A little odd that reference translation is along y...
 // Used for XY and Z motors
@@ -93,7 +94,7 @@ module extruder_motor_translate(extruder_twist = 12){
     rotate([0, 0, extruder_twist])
       translate([0, -Nema17_cube_height, 0])
         rotate([90,0,0])
-          translate([0, 0, -3*Nema17_cube_height/2 - 2]) children(0);
+          translate([0, 0, -3*Nema17_cube_height/2 - 2]) children();
 }
 
 // The thing separating bearings on center axis of bottom plate
@@ -337,27 +338,17 @@ module bottom_plate(){
 
 //** extruder start **//
 
-module Drive_support_holes(v=Drive_support_v){
-    rotate([-90,0,0]){
-      for(k=[1,-1])
-        translate([k*Support_rx+v[0]/2,
-            -v[2]/2 + Drive_support_thickness/2,
-            -Big/2])
-          M3_screw(h=Big);
-    }
-}
+// A better way to match holes: 
+// make bottom_plate take two flags:
+//   render_plate?
+//   render_drive?
+// make diff holes outside the if-statement, so
+// holes always align anyway.
 
-module punched_cube(v){
-  difference(){
-    cube(v);
-    Drive_support_holes(v);
-  }
-}
-//punched_cube(Drive_support_v);
 
 // height of the tower depends on big extruder gear rotation
 // Used in assembled_drive in placed_parts.scad
-module drive_support_helper(flag){
+module drive_support_helper(non_motor_side){
   th = Drive_support_thickness;
 
   difference(){
@@ -382,22 +373,53 @@ module drive_support_helper(flag){
     // Somewhat prolonged hole
     // Put something rubber-like in hole for suspension against
     // filament.
-    for(i=[0:0.33:1])
+    for(i=[0:0.5:1])
     translate([Bearing_623_outer_diameter+5-i // Center of hobb x-dir
                + Hobbed_insert_diameter/2
                + Extruder_filament_opening,
         Hobb_from_edge,-1])
-      M3_screw(Big);
+      M3_screw(Big, $fn=6);
   }
 
   // Foot to screw on to bottom_plate
   difference(){
     translate([0,Drive_support_height,
-                 -Drive_support_v[2]+th])
-      punched_cube(Drive_support_v);
+        -Drive_support_v[2]+th])
+      // TODO
+      // 1.6 here is ad hoc...
+      // Rewrite drive stuff...
+      cube([Drive_support_v[0]+8,
+            Drive_support_v[1],
+            Drive_support_v[2]]);
+    // Screw holes...
+    // This hole punching should really be done in bottom_plate module
+    // Marking all hole punches with "punch" for easier removal later
+    translate([Drive_support_v[0]+8-3,0,-Drive_support_v[2]+th+3])
+      rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
+    translate([Drive_support_v[0]+8-3,0,th-3])
+      rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
+
+    if(!non_motor_side){
+      // Make space for big extruder gear
+      // 2 inserted here to get alignment with extruder motor
+      // screw holes in bottom_plate
+      translate([Bearing_623_outer_diameter - 2,
+                 Hobb_from_edge,
+                 -Big_extruder_gear_height-1-0.02])
+        cylinder(r= Drive_support_height
+            -Hobb_from_edge
+            +Drive_support_v[1] + 0.1,
+            h=Big_extruder_gear_height+1, $fn = 50);
+    // Screw hole
+    translate([3,0,-Drive_support_v[2]+th+3])
+      rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
+    }else{
+      translate([Drive_support_v[0]/2,0,-Drive_support_v[2]+th+6])
+        rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
+    }
   }
 }
-//drive_support_helper(0);
+//drive_support_helper(1);
 
 module drive_support(){
   // This difference makes e3d mount
@@ -406,7 +428,9 @@ module drive_support(){
         + 0.2 // 623 |.2mm| Hobb |.2mm| 623
         + Hobbed_insert_height
         + 0.0])
-      translate([0,0, k])
+      // 2 inserted here to get alignment with extruder
+      // motors screw holes in bottom_plate
+      translate([2,0, k])
         mirror([0,0,k])
         drive_support_helper(k);
     translate([14.7,-42.8,8.5]) rotate([-90,0,0]){
@@ -419,6 +443,24 @@ module drive_support(){
   }
 }
 //drive_support();
+// Some dividing and stuff for printing
+// == Extruder gear side ==
+//rotate([0,90,0])
+//rotate([0,180,0])
+//intersection(){
+//  drive_support();
+//  translate([-1,-16,-23])
+//  cube([50,60,30]);
+//}
+
+// == Not extruder gear side ==
+//rotate([0,90,0])
+//rotate([0,0,180])
+//difference(){
+//  drive_support();
+//  translate([-1,-16,-23])
+//  cube([50,60,30]);
+//}
 
 
 //** Plates start **//

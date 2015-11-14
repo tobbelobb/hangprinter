@@ -141,22 +141,6 @@ module assembled_drive(){
 //}
 //assembled_drive(rotation=103);
 
-// Further assembly of parts...
-module Nema17_with_drive(rotation=0){
-  Nema17();
-  // Move drive up extruder motor shaft
-  translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+1])
-    assembled_drive(rotation);
-}
-//Nema17_with_drive(42);
-
-module translated_extruder_motor_and_drive(extruder_motor_twist = 27,
-                                            big_gear_rotation = 8){
-  extruder_motor_translate(extruder_motor_twist)
-    Nema17_with_drive(big_gear_rotation);
-}
-//translated_extruder_motor_and_drive(19, -47);
-
 module placed_abc_motors(){
     four_point_translate()
       translate([0,0,-Nema17_cube_height - 2])
@@ -179,9 +163,12 @@ module placed_abc_motors(){
 //placed_lines();
 
 module placed_extruder(){
-  translated_extruder_motor_and_drive(
-      extruder_motor_twist = Extruder_motor_twist,
-      big_gear_rotation  = Big_extruder_gear_rotation);
+  extruder_motor_translate(Extruder_motor_twist){
+    Nema17();
+    // Move drive up extruder motor shaft
+    translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+0])
+      assembled_drive(Big_extruder_gear_rotation);
+  }
 }
 //placed_extruder();
 
