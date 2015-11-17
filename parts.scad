@@ -386,7 +386,6 @@ module drive_support_helper(non_motor_side){
     translate([0,Drive_support_height,
         -Drive_support_v[2]+th])
       // TODO
-      // 1.6 here is ad hoc...
       // Rewrite drive stuff...
       cube([Drive_support_v[0]+8,
             Drive_support_v[1],

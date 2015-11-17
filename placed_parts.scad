@@ -176,9 +176,9 @@ module placed_hotend(){
     // Manually placed.
     // For exact placement look in the difference
     // that creates groove in drive_support
-    translate([-2.5,0.5,-80])
+    translate([-1.1,0.9,-78.3])
       rotate([0,0,56]){
-        e3d_v6_volcano_hotend();
+        e3d_v6_volcano_hotend(fan=0);
         // filament following placed hotend
         //cylinder(r=1.75/2,h=82);
       }
