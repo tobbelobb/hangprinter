@@ -54,9 +54,7 @@
 #include "Marlin.h"
 #include "planner.h"
 #include "stepper.h"
-#ifdef EXTRUDERS
 #include "temperature.h"
-#endif
 #include "language.h"
 
 //===========================================================================

@@ -38,11 +38,9 @@
  *
  */
 #include "Marlin.h"
-#include "language.h"
 #include "planner.h"
-#ifdef EXTRUDERS
 #include "temperature.h"
-#endif
+#include "language.h"
 #include "ConfigurationStore.h"
 
 void _EEPROM_writeData(int &pos, uint8_t* value, uint8_t size) {
@@ -493,7 +491,6 @@ void Config_StoreSettings()  {
     SERIAL_EOL;
 #endif // PIDTEMP
 
-#ifdef EXTRUDERS
     SERIAL_ECHO_START;
     if (volumetric_enabled) {
       if (!forReplay) {
@@ -524,7 +521,6 @@ void Config_StoreSettings()  {
         SERIAL_ECHOLNPGM("Filament settings: Disabled");
       }
     }
-#endif // ifdef EXTRUDERS
 
   }
 

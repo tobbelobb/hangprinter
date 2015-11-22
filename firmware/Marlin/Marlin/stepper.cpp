@@ -24,9 +24,7 @@
 #include "Marlin.h"
 #include "stepper.h"
 #include "planner.h"
-#ifdef EXTRUDERS
 #include "temperature.h"
-#endif
 #include "language.h"
 #include "cardreader.h"
 #include "speed_lookuptable.h"

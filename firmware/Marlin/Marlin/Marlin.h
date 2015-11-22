@@ -151,6 +151,22 @@ void manage_inactivity(bool ignore_stepper_queue=false);
 #define disable_e1() /* nothing */
 #endif
 
+#if (EXTRUDERS > 2) && defined(E2_ENABLE_PIN) && (E2_ENABLE_PIN > -1)
+  #define enable_e2() WRITE(E2_ENABLE_PIN, E_ENABLE_ON)
+  #define disable_e2() WRITE(E2_ENABLE_PIN,!E_ENABLE_ON)
+#else
+  #define enable_e2()  /* nothing */
+  #define disable_e2() /* nothing */
+#endif
+
+#if (EXTRUDERS > 3) && defined(E3_ENABLE_PIN) && (E3_ENABLE_PIN > -1)
+  #define enable_e3() WRITE(E3_ENABLE_PIN, E_ENABLE_ON)
+  #define disable_e3() WRITE(E3_ENABLE_PIN,!E_ENABLE_ON)
+#else
+  #define enable_e3()  /* nothing */
+  #define disable_e3() /* nothing */
+#endif
+
 // Note that E_AXIS and E_CARTH are different numbers
 // arrays that need to use E_CARTH instead of E_AXIS is difference[4], destination[4], current_position[4]. tobben 10 sep 2015
 enum AxisEnum {A_AXIS=0, B_AXIS=1, C_AXIS=2, D_AXIS=3, E_AXIS=4};

@@ -1,9 +1,7 @@
 #include "Marlin.h"
 #include "cardreader.h"
 #include "stepper.h"
-#ifdef EXTRUDERS
 #include "temperature.h"
-#endif
 #include "language.h"
 
 #ifdef SDSUPPORT
