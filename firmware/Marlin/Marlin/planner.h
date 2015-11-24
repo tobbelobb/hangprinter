@@ -52,6 +52,7 @@ typedef struct {
   unsigned long acceleration_st;                     // acceleration steps/sec^2
   unsigned long fan_speed;
   volatile char busy;
+  unsigned char count_it;
 } block_t;
 
 // Initialize the motion plan subsystem      
@@ -59,7 +60,8 @@ void plan_init();
 
 // Add a new linear movement to the buffer. x, y and z is the signed, absolute target position in 
 // millimeters. Feed rate specifies the speed of the motion.
-void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e, float feed_rate, const uint8_t &extruder);
+void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e,
+                     float feed_rate, const uint8_t &extruder, unsigned char count_it);
 
 // Set position. Used for G92 instructions.
 void plan_set_position(const float &a, const float &b, const float &c, const float &d, const float &e);

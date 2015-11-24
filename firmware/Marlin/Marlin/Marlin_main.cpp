@@ -765,52 +765,22 @@ void process_commands(){
           //ClearToSend();
         }
         break;
-      case 3: // G3 tighten Hangprinter lines.
-        /* TODO: make a version of plan_buffer_line that doesn't count anything */
-        double tmp_position[3];
-        long tmp_stepper_positions[4];
-        // Cache previous Carthesian position and stepper count
-        tmp_position[0] = current_position[0];
-        tmp_position[1] = current_position[1];
-        tmp_position[2] = current_position[2];
-        if(code_seen('A')) delta[A_AXIS] += code_value();
-        if(code_seen('B')) delta[B_AXIS] += code_value();
-        if(code_seen('C')) delta[C_AXIS] += code_value();
-        if(code_seen('D')) delta[D_AXIS] += code_value();
-        // Make sure we have no other blocks in line, so step count gets correct
-        st_synchronize(); 
-        tmp_stepper_positions[A_AXIS] = st_get_position(A_AXIS);
-        tmp_stepper_positions[B_AXIS] = st_get_position(B_AXIS);
-        tmp_stepper_positions[C_AXIS] = st_get_position(C_AXIS);
-        tmp_stepper_positions[D_AXIS] = st_get_position(D_AXIS);
-        // Move to the new position (puts block in line).
-        // Guess the st_set_position after this could be erronous, better use when printer paused
-        plan_buffer_line(delta[A_AXIS],
-                         delta[B_AXIS],
-                         delta[C_AXIS],
-                         delta[D_AXIS],
-                         destination[E_CARTH], homing_feedrate[A_AXIS]/100.0/60.0, active_extruder);
-        // Revert changes to variables
-        // Make sure block got executed
-        st_synchronize();
-        st_set_position(tmp_stepper_positions[A_AXIS],
-                        tmp_stepper_positions[B_AXIS],
-                        tmp_stepper_positions[C_AXIS],
-                        tmp_stepper_positions[D_AXIS],
-                        st_get_position(E_AXIS));
-        if(code_seen('A')) delta[A_AXIS] -= code_value();
-        if(code_seen('B')) delta[B_AXIS] -= code_value();
-        if(code_seen('C')) delta[C_AXIS] -= code_value();
-        if(code_seen('D')) delta[D_AXIS] -= code_value();
-        current_position[0] = tmp_position[0];
-        current_position[1] = tmp_position[1];
-        current_position[2] = tmp_position[2];
-        // This sets the position array
-        plan_set_position(delta[A_AXIS],
-                          delta[B_AXIS],
-                          delta[C_AXIS],
-                          delta[D_AXIS],
-                          destination[E_CARTH]);
+      // G3 tighten Hangprinter lines.
+      // Make moves without altering position variables.
+      // Speed variables for planning are modified.
+      case 3:
+        double tmp_delta[DIRS];
+        memcpy(tmp_delta, delta, sizeof(delta));
+        if(code_seen('A')) tmp_delta[A_AXIS] += code_value();
+        if(code_seen('B')) tmp_delta[B_AXIS] += code_value();
+        if(code_seen('C')) tmp_delta[C_AXIS] += code_value();
+        if(code_seen('D')) tmp_delta[D_AXIS] += code_value();
+        if(code_seen('E')) destination[E_CARTH] += code_value();
+        plan_buffer_line(tmp_delta[A_AXIS],
+                         tmp_delta[B_AXIS],
+                         tmp_delta[C_AXIS],
+                         tmp_delta[D_AXIS],
+                         destination[E_CARTH], homing_feedrate[A_AXIS]/100.0/60.0, active_extruder, false);
         break;
       case 90: // G90
         relative_mode = false;
@@ -1798,8 +1768,7 @@ void process_commands(){
       calculate_delta(destination); // delta will be in hangprinter abcde coords
       plan_buffer_line(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS],
           destination[E_CARTH], feedrate*feedmultiply/60/100.0,
-          active_extruder);
-      //SERIAL_ECHOLN("Got past plan_buffer_line");
+          active_extruder, true);
     }
 
     for(int8_t i=0; i < 4; i++){
@@ -2061,7 +2030,7 @@ void process_commands(){
         float oldedes=destination[E_CARTH];
         plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS],
             destination[E_CARTH]+EXTRUDER_RUNOUT_EXTRUDE*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS],
-            EXTRUDER_RUNOUT_SPEED/60.*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS], active_extruder);
+            EXTRUDER_RUNOUT_SPEED/60.*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS], active_extruder, true);
         current_position[E_CARTH]=oldepos;
         destination[E_CARTH]=oldedes;
         plan_set_e_position(oldepos);

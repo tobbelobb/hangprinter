@@ -363,12 +363,11 @@ void plan_init() {
   block_buffer_head = 0;
   block_buffer_tail = 0;
   memset(position, 0, sizeof(position)); // clear position
-#if defined(HANGPRINTER) // Assume printer is started in origo
+// Assume printer is started in origo
   position[A_AXIS] = INITIAL_LENGTH_A*axis_steps_per_unit[A_AXIS];
   position[B_AXIS] = INITIAL_LENGTH_B*axis_steps_per_unit[B_AXIS];
   position[C_AXIS] = INITIAL_LENGTH_C*axis_steps_per_unit[C_AXIS];
   position[D_AXIS] = INITIAL_LENGTH_D*axis_steps_per_unit[D_AXIS];
-#endif
   previous_speed[A_AXIS] = 0.0;
   previous_speed[B_AXIS] = 0.0;
   previous_speed[C_AXIS] = 0.0;
@@ -384,11 +383,9 @@ void getHighESpeed()
   if(!autotemp_enabled){
     return;
   }
-#ifdef EXTRUDERS
   if(degTargetHotend0()+2<autotemp_min) {  //probably temperature set to zero.
     return; //do nothing
   }
-#endif
 
   float high=0.0;
   uint8_t block_index = block_buffer_tail;
@@ -480,16 +477,8 @@ float junction_deviation = 0.1;
 //
 // Help, why does this comment contradict comments in planner.h?
 // I'm quite sure steps_a, _b, ... are absolute step count along each axis, and that a, b, c, d are absolute positions in mm that we plan on taking. tobben 9 sep 2015
-void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e, float feed_rate, const uint8_t &extruder){
-  //SERIAL_ECHO("We are in plan_buffer_line\n");
-  //SERIAL_ECHOLN("a: ");
-  //SERIAL_ECHOLN(a);
-  //SERIAL_ECHOLN("b: ");
-  //SERIAL_ECHOLN(b);
-  //SERIAL_ECHOLN("c: ");
-  //SERIAL_ECHOLN(c);
-  //SERIAL_ECHOLN("d: ");
-  //SERIAL_ECHOLN(d);
+void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e,
+                     float feed_rate, const uint8_t &extruder, unsigned char count_it){
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
 
@@ -497,9 +486,7 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
   // Rest here until there is room in the buffer.
   while(block_buffer_tail == next_buffer_head)
   {
-#ifdef EXTRUDERS
     manage_heater(); 
-#endif
     manage_inactivity(); 
   }
 
@@ -522,6 +509,9 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
 
   // Mark block as not busy (Not executed by the stepper interrupt)
   block->busy = false;
+  
+  // Mark if this is a move that will have its steps counted or not
+  block->count_it = count_it;
 
   // Number of steps for each axis
   // TODO: Why do we get crazy jerky movements if we remove these serials?
@@ -540,12 +530,10 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
   //SERIAL_ECHO("block->steps_d: ");
   //SERIAL_ECHOLN(block->steps_d);
 
-#ifdef EXTRUDERS
   block->steps_e = labs(target[E_AXIS]-position[E_AXIS]);
   block->steps_e *= volumetric_multiplier[active_extruder];
   block->steps_e *= extrudemultiply;
   block->steps_e /= 100;
-#endif
   block->step_event_count = max(block->steps_a, max(block->steps_b, max(block->steps_c, max(block->steps_d, block->steps_e))));
 
   // Bail if this is a zero-length block
@@ -564,12 +552,13 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
 
   block->active_extruder = extruder;
 
+#if !defined(HANGPRINTER)
   //enable active axes
-  // TODO: make sure axes are always enabled on hangprinter. No need to enable them.
   if(block->steps_a != 0) enable_x();
   if(block->steps_b != 0) enable_y();
   if(block->steps_c != 0) enable_z();
   if(block->steps_d != 0) enable_e1();
+#endif
 
   // Enable extruder(s)
   if(block->steps_e != 0){
@@ -594,9 +583,7 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
   //SERIAL_ECHOLN(delta_mm[D_AXIS]);
   //SERIAL_ECHO("delta_mm[E_AXIS]: ");
   //SERIAL_ECHOLN(delta_mm[E_AXIS]);
-#ifdef EXTRUDERS
   delta_mm[E_AXIS] =((target[E_AXIS]-position[E_AXIS])/axis_steps_per_unit[E_AXIS])*volumetric_multiplier[active_extruder]*extrudemultiply/100.0;
-#endif
 
   if (block->steps_a <=dropsegments && block->steps_b <=dropsegments && block->steps_c <=dropsegments && block->steps_d <=dropsegments ){
     block->millimeters = fabs(delta_mm[E_AXIS]);
@@ -743,7 +730,9 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
   block_buffer_head = next_buffer_head;
 
   // Update position
-  memcpy(position, target, sizeof(target)); // position[] = target[]
+  if(block->count_it){
+    memcpy(position, target, sizeof(target)); // position[] = target[]
+  }
 
   planner_recalculate();
 

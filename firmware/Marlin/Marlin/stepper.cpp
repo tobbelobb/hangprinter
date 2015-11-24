@@ -403,7 +403,9 @@ ISR(TIMER1_COMPA_vect)
       if (counter_a > 0) {
         WRITE(X_STEP_PIN, !INVERT_X_STEP_PIN);
         counter_a -= current_block->step_event_count;
-        count_position[A_AXIS]+=count_direction[A_AXIS];
+        if(current_block->count_it){
+          count_position[A_AXIS]+=count_direction[A_AXIS];
+        }
         // TODO: could we use the delay for something, rather than just waiting?
         // For examle read a sensor that feels if a step has been skipped?
         // Five nops tested to be shortest possible delay using atmega 2560 (16Mhz) and drv8825
@@ -420,7 +422,9 @@ ISR(TIMER1_COMPA_vect)
       if (counter_b > 0) {
         WRITE(Y_STEP_PIN, !INVERT_Y_STEP_PIN);
         counter_b -= current_block->step_event_count;
-        count_position[B_AXIS]+=count_direction[B_AXIS];
+        if(current_block->count_it){
+          count_position[B_AXIS]+=count_direction[B_AXIS];
+        }
         __asm__ volatile("nop\n\t"
                          "nop\n\t"
                          "nop\n\t"
@@ -433,7 +437,9 @@ ISR(TIMER1_COMPA_vect)
       if (counter_c > 0) {
         WRITE(Z_STEP_PIN, !INVERT_Z_STEP_PIN);
         counter_c -= current_block->step_event_count;
-        count_position[C_AXIS]+=count_direction[C_AXIS];
+        if(current_block->count_it){
+          count_position[C_AXIS]+=count_direction[C_AXIS];
+        }
         __asm__ volatile("nop\n\t"
                          "nop\n\t"
                          "nop\n\t"
@@ -447,7 +453,9 @@ ISR(TIMER1_COMPA_vect)
       if (counter_d > 0) {
         WRITE(E1_STEP_PIN, !INVERT_E1_STEP_PIN);
         counter_d -= current_block->step_event_count;
-        count_position[D_AXIS]+=count_direction[D_AXIS];
+        if(current_block->count_it){
+          count_position[D_AXIS]+=count_direction[D_AXIS];
+        }
         __asm__ volatile("nop\n\t"
                          "nop\n\t"
                          "nop\n\t"
@@ -460,7 +468,9 @@ ISR(TIMER1_COMPA_vect)
       if (counter_e > 0) {
         WRITE_E_STEP(!INVERT_E_STEP_PIN);
         counter_e -= current_block->step_event_count;
-        count_position[E_AXIS]+=count_direction[E_AXIS];
+        if(current_block->count_it){
+          count_position[E_AXIS]+=count_direction[E_AXIS];
+        }
         __asm__ volatile("nop\n\t"
                          "nop\n\t"
                          "nop\n\t"
@@ -724,9 +734,7 @@ void st_init()
 void st_synchronize()
 {
   while( blocks_queued()) {
-#ifdef EXTRUDERS
     manage_heater();
-#endif // ifdef EXTRUDERS
     manage_inactivity();
   }
 }
