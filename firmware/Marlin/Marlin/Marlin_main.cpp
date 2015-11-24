@@ -407,6 +407,14 @@ void setup(){
   digipot_i2c_init();
 #endif
   setup_homepin();
+// Hangprinter needs it motors always enabled
+#if defined(HANGPRINTER)
+enable_x();
+enable_y();
+enable_z();
+enable_e1();
+calculate_delta(current_position);
+#endif
 }
 
 void loop(){
@@ -637,56 +645,9 @@ XYZ_CONSTS_FROM_CONFIG(float, home_retract_mm, HOME_RETRACT_MM);
 XYZ_CONSTS_FROM_CONFIG(signed char, home_dir,  HOME_DIR);
 
 static void axis_is_at_home(int axis){
-#ifdef SCARA
-  float homeposition[3];
-  char i;
-
-  if(axis < 2){
-
-    for (i=0; i<3; i++){
-      homeposition[i] = base_home_pos(i); 
-    }  
-    // SERIAL_ECHOPGM("homeposition[x]= "); SERIAL_ECHO(homeposition[0]);
-    //  SERIAL_ECHOPGM("homeposition[y]= "); SERIAL_ECHOLN(homeposition[1]);
-    // Works out real Homeposition angles using inverse kinematics, 
-    // and calculates homing offset using forward kinematics
-    calculate_delta(homeposition);
-
-    // SERIAL_ECHOPGM("base Theta= "); SERIAL_ECHO(delta[X_AXIS]);
-    // SERIAL_ECHOPGM(" base Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
-
-    for (i=0; i<2; i++){
-      delta[i] -= add_homing[i];
-    } 
-
-    // SERIAL_ECHOPGM("addhome X="); SERIAL_ECHO(add_homing[X_AXIS]);
-    // SERIAL_ECHOPGM(" addhome Y="); SERIAL_ECHO(add_homing[Y_AXIS]);
-    // SERIAL_ECHOPGM(" addhome Theta="); SERIAL_ECHO(delta[X_AXIS]);
-    // SERIAL_ECHOPGM(" addhome Psi+Theta="); SERIAL_ECHOLN(delta[Y_AXIS]);
-
-    calculate_SCARA_forward_Transform(delta);
-
-    // SERIAL_ECHOPGM("Delta X="); SERIAL_ECHO(delta[X_AXIS]);
-    // SERIAL_ECHOPGM(" Delta Y="); SERIAL_ECHOLN(delta[Y_AXIS]);
-
-    current_position[axis] = delta[axis];
-
-    // SCARA home positions are based on configuration since the actual limits are determined by the 
-    // inverse kinematic transform.
-    min_pos[axis] =          base_min_pos(axis); // + (delta[axis] - base_home_pos(axis));
-    max_pos[axis] =          base_max_pos(axis); // + (delta[axis] - base_home_pos(axis));
-  } 
-  else
-  {
-    current_position[axis] = base_home_pos(axis) + add_homing[axis];
-    min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
-    max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
-  }
-#else
   current_position[axis] = base_home_pos(axis) + add_homing[axis];
   min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
   max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
-#endif
 }
 
 
@@ -803,6 +764,53 @@ void process_commands(){
           prepare_move();
           //ClearToSend();
         }
+        break;
+      case 3: // G3 tighten Hangprinter lines.
+        /* TODO: make a version of plan_buffer_line that doesn't count anything */
+        double tmp_position[3];
+        long tmp_stepper_positions[4];
+        // Cache previous Carthesian position and stepper count
+        tmp_position[0] = current_position[0];
+        tmp_position[1] = current_position[1];
+        tmp_position[2] = current_position[2];
+        if(code_seen('A')) delta[A_AXIS] += code_value();
+        if(code_seen('B')) delta[B_AXIS] += code_value();
+        if(code_seen('C')) delta[C_AXIS] += code_value();
+        if(code_seen('D')) delta[D_AXIS] += code_value();
+        // Make sure we have no other blocks in line, so step count gets correct
+        st_synchronize(); 
+        tmp_stepper_positions[A_AXIS] = st_get_position(A_AXIS);
+        tmp_stepper_positions[B_AXIS] = st_get_position(B_AXIS);
+        tmp_stepper_positions[C_AXIS] = st_get_position(C_AXIS);
+        tmp_stepper_positions[D_AXIS] = st_get_position(D_AXIS);
+        // Move to the new position (puts block in line).
+        // Guess the st_set_position after this could be erronous, better use when printer paused
+        plan_buffer_line(delta[A_AXIS],
+                         delta[B_AXIS],
+                         delta[C_AXIS],
+                         delta[D_AXIS],
+                         destination[E_CARTH], homing_feedrate[A_AXIS]/100.0/60.0, active_extruder);
+        // Revert changes to variables
+        // Make sure block got executed
+        st_synchronize();
+        st_set_position(tmp_stepper_positions[A_AXIS],
+                        tmp_stepper_positions[B_AXIS],
+                        tmp_stepper_positions[C_AXIS],
+                        tmp_stepper_positions[D_AXIS],
+                        st_get_position(E_AXIS));
+        if(code_seen('A')) delta[A_AXIS] -= code_value();
+        if(code_seen('B')) delta[B_AXIS] -= code_value();
+        if(code_seen('C')) delta[C_AXIS] -= code_value();
+        if(code_seen('D')) delta[D_AXIS] -= code_value();
+        current_position[0] = tmp_position[0];
+        current_position[1] = tmp_position[1];
+        current_position[2] = tmp_position[2];
+        // This sets the position array
+        plan_set_position(delta[A_AXIS],
+                          delta[B_AXIS],
+                          delta[C_AXIS],
+                          delta[D_AXIS],
+                          destination[E_CARTH]);
         break;
       case 90: // G90
         relative_mode = false;
