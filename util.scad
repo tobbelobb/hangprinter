@@ -187,3 +187,15 @@ module cyl_wall_2(th, r, h, ang){
   }
 }
 //cyl_wall_2(3, 20, 12,90);
+
+// For making nut locks and stuff
+module point_cube(v, ang){
+  translate([v[0]/2,0,0])
+  difference(){
+    translate([-v[0]/2,0,0]) cube(v);
+    rotate([0,-ang/2,0]) translate([-2*v[0],1.5-v[1],-v[2]]) cube([2*v[0],2*v[1],3*v[2]]);
+    mirror([1,0,0]) rotate([0,-ang/2,0]) translate([-2*v[0],1.5-v[1],-v[2]])
+      cube([2*v[0],2*v[1],3*v[2]]);
+  }
+}
+//point_cube([10,11,12],60);

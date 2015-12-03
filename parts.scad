@@ -152,9 +152,29 @@ module bottom_plate(){
       // Bluetooth mount (and autocooling while printing tower)
       translate(Line_action_point_abc_xy)
         cube([4,4,sandwich_stick_height]);
+
+      // Block to insert d stopper screw
+      translate([Sandwich_radius+2,-20,0])
+        rotate([0,0,25])
+          cube([9,7,th+Sandwich_height+Bottom_plate_sandwich_gap+3]);
     } // End union
 
+
     //*** ANTIMATERIA STARTS HERE ***//
+
+    // Nyloc nut lock for d stopper screw
+    translate([Sandwich_radius+6,-17,th+1.5+Sandwich_edge_thickness+Snelle_height+0.5]){
+      rotate([-90,0,25])
+        translate([0,0,-10])
+        M3_screw(25);
+        rotate([0,90,25])
+          translate([-5.52/2,0,-5]){
+          point_cube([5.52,4.1,12],120);
+          translate([3.53/2,0,0])
+            cube([2,4.1,12]);
+          }
+    }
+
 
     // top fastening sandwich stick
     for(k=[1,-1])
@@ -168,11 +188,11 @@ module bottom_plate(){
     // Mounting space for d fish_rings  
     big=5*th;
     for(i=[0,1,2]){
-      rotate([0,0,120*i])
+      rotate([0,0,120*i]){
         translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]]){
           rotate([fish_ring_d_rotation-90,0,0])
-            translate([-3.3,-4.1 - edg_h/2 + 0.05,-big/2])
-            cube([6.6,4.1,big]); // Block to put fish ring in
+            translate([-3.3,-10 - edg_h/2 + 0.05,-big/2])
+            cube([6.6,10,big]); // Block to put fish ring in
           rotate([fish_ring_d_rotation-180,0,0])
             translate([0,ins_ri+cdist,0])
             cylinder(r=M3_diameter/2, h=big, center=true);//Hole for M3
@@ -180,6 +200,11 @@ module bottom_plate(){
             translate([0,ins_ri+cdist,4])
             cylinder(r=M3_head_diameter/2, h=big);//M3 screw head hole
         }
+        // Straight edge towards center of the d fish ring hole
+        translate(Line_contact_d_xy)
+          translate([-3.3,-9.5,-big+th+1])
+            cube([6.6,7,big]); // Block to put fish ring in
+      }
     }
 
     // Mounting holes for abc fish rings

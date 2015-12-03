@@ -23,13 +23,13 @@ Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
 Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
 Lock_radius_2 = Lock_radius_1 + 2;
 Bottom_plate_sandwich_gap = 1.5;
-Bottom_plate_thickness    = 7;
+Bottom_plate_thickness    = 7.3;
 Top_plate_thickness       = Bottom_plate_thickness;
 Bottom_plate_radius       = 82;
 
 
 // For rotating lines and gatts in place
-d_gatt_back = 13;
+d_gatt_back = 14;
 
 Sandwich_gear_height = Sandwich_height*3/8;
 Snelle_height        = Sandwich_height*5/8;
@@ -113,4 +113,4 @@ Drive_support_height = Nema17_cube_width/3 +
            + 5.3;
 E3d_v6_support_height = 15;
 
-E_motor_z_offset = -0.5;
+E_motor_z_offset = -0.8;

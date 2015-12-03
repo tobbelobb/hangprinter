@@ -12,7 +12,7 @@ module Nema17_screw_holes(d, h){
 }
 //Nema17_screw_holes(M3_diameter, 15);
 
-module Nema17_schwung_screw_holes(d, h){
+module Nema17_schwung_screw_holes(d, h, schwung_length){
   // Tight/still screw
   rotate([0,0,-45])
     translate([Nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
@@ -30,7 +30,7 @@ module Nema17_schwung_screw_holes(d, h){
     rotate([0,0,-45])
     translate([Nema17_screw_hole_width/2,0,0])
     rotate([0,0,2*90])
-    cyl_wall_2(d,Nema17_screw_hole_width+d/2, h,30);
+    cyl_wall_2(d,Nema17_screw_hole_width+d/2, h,schwung_length);
   //color("green"){
   //  rotate([0,0,45])
   //  translate([Nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
