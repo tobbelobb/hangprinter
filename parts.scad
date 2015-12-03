@@ -90,7 +90,8 @@ module four_point_translate(){
 module extruder_motor_translate(extruder_twist = 12){
   radius = Four_point_five_point_radius + 5;
   translate([0, radius, -Nema17_screw_hole_dist/2 // z-center screwhole
-                        +Bottom_plate_thickness/2])
+                        +Bottom_plate_thickness/2
+                        +E_motor_z_offset])
     rotate([0, 0, extruder_twist])
       translate([0, -Nema17_cube_height, 0])
         rotate([90,0,0])
@@ -216,9 +217,8 @@ module bottom_plate(){
     }
 
     // Hole for extruder motor
-    
     extruder_motor_translate(Extruder_motor_twist)
-      scale(1.01) // Leave 1% extra space, don't need tight fit
+      scale(1.015) // Leave 1.5% extra space, don't need tight fit
       Nema17();
 
     // Middle hole for ABCD-motors
@@ -232,44 +232,8 @@ module bottom_plate(){
         }
       }
 
-    // Place holes exaclty like punched_cube is placed when rendering
-    // From placed_extruder
-    rotation = Big_extruder_gear_rotation;
-    extruder_motor_twist = Extruder_motor_twist;
-    // Added only here
-    translate([0,0,-Big/2 + Bottom_plate_thickness -1.5])
-    mirror([0,0,1])
-    // From translated_extruder_motor_and_drive
-    extruder_motor_translate(extruder_motor_twist)
-      // From Nema17_with_drive
-      translate([0,0,Nema17_shaft_height-Small_extruder_gear_height+1]){
-        // drive_support is called by assembled_drive only
-        //from assembled_drive
-        translate([ // Center 623 in x-dim 
-            -Bearing_623_outer_diameter/2 -5 //match 5 in drive_support
-            // Take rotation into account x-dim
-            + sin(rotation)*Pitch_difference_extruder,
-            // Take rotation into account y-dim (place hobb on edge)
-            -cos(rotation)*Pitch_difference_extruder
-            - Hobb_from_edge,
-            // Big extruder gear placed below this structure, z-dim
-            Big_extruder_gear_height + 0.2]) // Big gear |.2mm| support
-          for(k = [0,Drive_support_thickness//Bring to same z
-              + Bearing_623_width
-              + 0.2 // 623 |.2mm| Hobb |.2mm| 623
-              + Hobbed_insert_height
-              + 0.2])
-            translate([0,0, k])
-              mirror([0,0,k])
-              // TODO: look at after e3d v6 Volcano adjustments
-              // Found in drive_support()
-              translate([0,
-                  Drive_support_height,
-                  -Hobbed_insert_height - 1*Bearing_623_width])
-              Drive_support_holes(Drive_support_v);
-      }
-
     // Screw holes for extruder motor mounting screws
+    translate([0,0,E_motor_z_offset]){
     rotate([0,0,Extruder_motor_twist])
       translate([-18.5,77,Bottom_plate_thickness/2])
       rotate([-90,0,0])
@@ -286,16 +250,17 @@ module bottom_plate(){
       translate([-50,7,Bottom_plate_thickness/2])
       rotate([-90,0,0])
       cylinder(h=Big, r=M3_diameter/2+0.1);
+    }
 
     rotate([0,0,Extruder_motor_twist])
       translate([-18.5,11,Bottom_plate_thickness/2])
       rotate([-90,0,0])
-      cube([9,9,30], center=true);
+      cube([9,Bottom_plate_thickness+2,30], center=true);
 
     rotate([0,0,Extruder_motor_twist])
       translate([-50,11,Bottom_plate_thickness/2])
       rotate([-90,0,0])
-      cube([9,9,30], center=true);
+      cube([9,Bottom_plate_thickness+2,30], center=true);
 
     // Dig out filament hole in sandwich stick and base.
     // Note that bowden tube should fit in this from below
@@ -345,10 +310,79 @@ module bottom_plate(){
 // make diff holes outside the if-statement, so
 // holes always align anyway.
 
+module fan(width=30, height=10){
+  linear_extrude(height=height, twist=-40)
+  for(i=[0:6]){
+    rotate([0,0,(360/7)*i])
+      translate([0,-0.5])
+        square([width/2 - 2, 1]);
+  }
+  cylinder(h=height, r=width/4.5);
+  
+  difference(){
+    translate([-width/2, -width/2,0])
+      cube([width,width,height]);
+    translate([0,0,-1]) cylinder(r=width/2 - 1, h=height+2);
+    for(i=[1,-1]){
+      for(k=[1,-1]){
+        translate([i*width/2-i*2.5,k*width/2-k*2.5,-1])
+          cylinder(r=1, h=height+2);
+      }
+    }
+  }
+}
 
+module Volcano_block(){
+  small_height = 18.5;
+  large_height = 20;
+  color("silver"){
+  translate([-15.0,-11/2,0])
+    difference(){
+      cube([20,11,large_height]);
+      translate([7,0,small_height+3])
+        rotate([90,0,0])
+        cylinder(h=23, r=3, center=true,$fn=20);
+      translate([-(20-7+1.5),-1,small_height]) cube([22,13,2]);
+    }
+    }
+  color("gold"){
+    translate([0,0,-3]) cylinder(h=3.1,r=8/2,$fn=6);
+    translate([0,0,-3-2]) cylinder(h=2.01, r2=6/2, r1=2.8/2);
+  }
+}
+//Volcano_block();
+
+// Contains a lot of unnamed measured numbers...
+module e3d_v6_volcano_hotend(fan=1){
+  lpl = 2.1;
+  if(fan){
+  color("blue") rotate([90,0,0]) import("stl/V6_Duct.stl");
+  color("black")
+    translate([-15,0,15])
+      rotate([0,-90,0])
+        fan(width=30, height=10);
+  }
+  color("LightSteelBlue"){
+    cylinder(h=26, r1=13/2, r2=8/2);
+    for(i = [0:10]){
+      translate([0,0,i*2.5]) cylinder(h=1, r=22.3/2);
+    }
+    translate([0,0,E3d_heatsink_height-3.7]) cylinder(h=3.7, r=E3d_mount_big_r);
+    translate([0,0,E3d_heatsink_height-3.7-6.1]) cylinder(h=6.2, r=E3d_mount_small_r);
+    translate([0,0,E3d_heatsink_height-3.7-6-3]) cylinder(h=3, r=E3d_mount_big_r);
+    translate([0,0,26-0.1]) cylinder(h=E3d_heatsink_height-(12.7+26)+0.2, r=8/2);
+    translate([0,0,26+1.5]) cylinder(h=1, r=E3d_mount_big_r);
+    // echo(42.7-(12.7+26));
+    translate([0,0,-lpl-0.1]) cylinder(h=lpl+0.2,r=2.8/2);
+  }
+  translate([0,0,-20-lpl]) Volcano_block();
+}
+//e3d_v6_volcano_hotend();
+
+// towermove moves materia but not antimateria of drive_support 
 // height of the tower depends on big extruder gear rotation
 // Used in assembled_drive in placed_parts.scad
-module drive_support_helper(non_motor_side){
+module drive_support_helper(non_motor_side,towermove=0){
   th = Drive_support_thickness;
 
   difference(){
@@ -357,7 +391,7 @@ module drive_support_helper(non_motor_side){
       //mount_th = 3;
       //translate([0,-14,-mount_th])
       //  cube([Drive_support_v[0],14,th+mount_th]);
-      translate([0,-E3d_v6_support_height,0]){
+      translate([towermove,-E3d_v6_support_height,0]){
         cube([Drive_support_v[0],
             Drive_support_height + E3d_v6_support_height,
             th]);
@@ -374,16 +408,17 @@ module drive_support_helper(non_motor_side){
     // Put something rubber-like in hole for suspension against
     // filament.
     for(i=[0:0.5:1])
-    translate([Bearing_623_outer_diameter+5-i // Center of hobb x-dir
+    translate([Bearing_623_outer_diameter/2+5 // Center of hobb x-dir
                + Hobbed_insert_diameter/2
-               + Extruder_filament_opening,
+               + Extruder_filament_opening
+               + Bearing_623_outer_diameter/2 - i,
         Hobb_from_edge,-1])
       M3_screw(Big, $fn=6);
   }
 
   // Foot to screw on to bottom_plate
   difference(){
-    translate([0,Drive_support_height,
+    translate([towermove,Drive_support_height,
         -Drive_support_v[2]+th])
       // TODO
       // Rewrite drive stuff...
@@ -404,13 +439,13 @@ module drive_support_helper(non_motor_side){
       // screw holes in bottom_plate
       translate([Bearing_623_outer_diameter - 2,
                  Hobb_from_edge,
-                 -Big_extruder_gear_height-1-0.02])
+                 -Big_extruder_gear_height-4-0.02])
         cylinder(r= Drive_support_height
             -Hobb_from_edge
-            +Drive_support_v[1] + 0.1,
-            h=Big_extruder_gear_height+1, $fn = 50);
+            +Drive_support_v[1] + 1.4,
+            h=Big_extruder_gear_height+4, $fn = 50);
     // Screw hole
-    translate([3,0,-Drive_support_v[2]+th+3])
+    translate([3+towermove,0,-Drive_support_v[2]+th+3])
       rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
     }else{
       translate([Drive_support_v[0]/2,0,-Drive_support_v[2]+th+6])
@@ -420,7 +455,13 @@ module drive_support_helper(non_motor_side){
 }
 //drive_support_helper(1);
 
-module drive_support(){
+// towermove moves materia but not antimateria of drive_support 
+module drive_support(towermove=0){
+  e3d_x_center = Bearing_623_outer_diameter/2 +5 //Center of hobb x-dir
+               + Hobbed_insert_diameter/2
+               + Extruder_filament_opening/2
+               + 0.7; // Add 0.7 because hobb pushes that way
+
   // This difference makes e3d mount
   difference(){
     for(k = [0,2*Drive_support_thickness // Bring supports to same z
@@ -429,16 +470,21 @@ module drive_support(){
         + 0.0])
       // 2 inserted here to get alignment with extruder
       // motors screw holes in bottom_plate
-      translate([2,0, k])
+      translate([0,0, k])
         mirror([0,0,k])
-        drive_support_helper(k);
-    translate([14.7,-42.8,8.5]) rotate([-90,0,0]){
-      e3d_v6_volcano_hotend(fan=0);
-      // Render some purple filament
-      //%color("purple") cylinder(r=1.75/2, h=80);
+        drive_support_helper(k,towermove);
+
+    //translate([14.7+1.5,-42.8,8.5]) rotate([-90,0,0]){
+    translate([e3d_x_center, // Add 0.7 because hobb pushes that way
+               - E3d_heatsink_height,
+               Drive_support_thickness+(0.2+Hobbed_insert_height)/2])
+      rotate([-90,0,0]){
+        e3d_v6_volcano_hotend(fan=0);
+        // Render some purple filament
+        //color("purple") cylinder(r=1.75/2, h=80);
     }
-    translate([7.5,-7,-Big/2]) cylinder(r=1.6, h=Big);
-    translate([22,-7,-Big/2]) cylinder(r=1.6, h=Big);
+    translate([e3d_x_center-1.6-E3d_mount_small_r+0.2,-7,-Big/2]) cylinder(r=1.6, h=Big);
+    translate([e3d_x_center+1.6+E3d_mount_small_r-0.2,-7,-Big/2]) cylinder(r=1.6, h=Big);
   }
 }
 //drive_support();

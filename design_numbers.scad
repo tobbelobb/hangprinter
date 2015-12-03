@@ -23,7 +23,7 @@ Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
 Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
 Lock_radius_2 = Lock_radius_1 + 2;
 Bottom_plate_sandwich_gap = 1.5;
-Bottom_plate_thickness    = 5.5;
+Bottom_plate_thickness    = 7;
 Top_plate_thickness       = Bottom_plate_thickness;
 Bottom_plate_radius       = 82;
 
@@ -85,7 +85,7 @@ Shaft_flat = 2; // Determines D-shape of motor shaft
 //** Extruder numbers **//
 Big_extruder_gear_rotation = 69; // Rotate around z-axis
 Extruder_motor_twist = -35; // Manually adjusted to center hobb
-Hobbed_insert_height = 6;
+Hobbed_insert_height = 9;
 Extruder_filament_opening = 1.3;
 Big_extruder_gear_screw_head_depth = Big_extruder_gear_height/2;
 // Allow bearing to protrude on both sides
@@ -111,3 +111,5 @@ Drive_support_height = Nema17_cube_width/3 +
            Pitch_difference_extruder*cos(Big_extruder_gear_rotation)
            + 5.3;
 E3d_v6_support_height = 15;
+
+E_motor_z_offset = -0.5;

@@ -39,3 +39,7 @@ cdist  = 6.80;   // Distance between holes in fish ring
 lar_h  = 4.00;   // Larges height of any part of fish ring
 lar_ro = 4.62/2; // Outer diameter of largest-height-part
 edg_h  = 0.67;   // Height of thinnest outer edge...
+
+E3d_heatsink_height = 42.7;
+E3d_mount_small_r = 6;
+E3d_mount_big_r = 8;

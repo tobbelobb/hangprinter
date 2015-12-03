@@ -123,11 +123,11 @@ module assembled_drive(){
               // Take rotation into account x-dim
           + sin(Big_extruder_gear_rotation)*Pitch_difference_extruder,
             // Take rotation into account y-dim (place hobb on edge)
-          -cos(Big_extruder_gear_rotation)*Pitch_difference_extruder
+          - cos(Big_extruder_gear_rotation)*Pitch_difference_extruder
               - Hobb_from_edge,
              // Big extruder gear placed below this structure, z-dim
             Big_extruder_gear_height + 0.2])//Big gear|.2mm|support
-      drive_support();
+      drive_support(2);
   }
   support_bearing(Big_extruder_gear_rotation);
   // M3 through support bearing (just rendering)
