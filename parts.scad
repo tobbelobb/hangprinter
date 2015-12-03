@@ -216,8 +216,8 @@ module bottom_plate(){
       four_point_translate()
         Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 20);
       four_point_translate()
-        translate([0,0,th-2.5])
-          Nema17_screw_holes(M3_head_diameter, th+2);
+        translate([0,0,th-3.5])
+          Nema17_screw_holes(M3_head_diameter+0.1, th+2);
     }
 
     // Hole for extruder motor
