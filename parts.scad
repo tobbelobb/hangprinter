@@ -117,6 +117,9 @@ module bottom_plate(){
   bw  = Bearing_608_width; 
   swh = Sandwich_height;
   gap = Sandwich_gap;
+  sandwich_stick_height = Line_contacts_abcd_z[A]+swh-Snelle_height/2
+                 + 5; // for putting some kind of top lock mechanism
+
 
   difference(){
     union(){
@@ -127,9 +130,7 @@ module bottom_plate(){
 
       // Sandwich stick
       cylinder(r=bd/2+0.16,
-               h=Line_contacts_abcd_z[A]+swh-Snelle_height/2
-                 + 5 // for putting some kind of top lock mechanism
-                 );
+               h=sandwich_stick_height);
 
       // The bottom lock
       cylinder(r=Lock_radius_2, h=th + Bottom_plate_sandwich_gap);
@@ -148,9 +149,9 @@ module bottom_plate(){
         }
       }
 
-      // Bluetooth mount (and potential measurment point A)
+      // Bluetooth mount (and autocooling while printing tower)
       translate(Line_action_point_abc_xy)
-        cube([4,4,Line_contacts_abcd_z[0]]);
+        cube([4,4,sandwich_stick_height]);
     } // End union
 
     //*** ANTIMATERIA STARTS HERE ***//
