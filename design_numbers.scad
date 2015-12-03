@@ -100,6 +100,7 @@ Drive_support_v = [Bearing_623_outer_diameter + 16,
 
 //** Derived parameters **//
 Motor_gear_pitch             = Motor_gear_teeth*Circular_pitch_top_gears/360;
+Motor_gear_radius            = Motor_gear_pitch + Motor_gear_pitch*2/Motor_gear_teeth;
 Sandwich_gear_pitch          = Sandwich_gear_teeth*Circular_pitch_top_gears/360;
 Sandwich_radius              = Sandwich_gear_pitch + Sandwich_gear_pitch*2/Sandwich_gear_teeth;
 Big_extruder_gear_pitch      = Big_extruder_gear_teeth*Circular_pitch_extruder_gears/360;

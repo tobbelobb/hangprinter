@@ -202,14 +202,11 @@ module bottom_plate(){
     }
 
     // Middle hole for ABCD-motors
-    translate([0, 0, -Big+Nema17_ring_height])
+    // Large enough to get motor gears through
       four_point_translate(){
-        union(){
-        cylinder(r = Nema17_ring_diameter/2, h = Big);
-        translate([0,0,Big-0.1])
-          cylinder(r1 = Nema17_ring_diameter/2,
-                   r2 = Nema17_ring_diameter/2 - 5, h = 6);
-        }
+        cylinder(r = Motor_gear_radius 
+                     + 2*(Motor_gear_radius-Motor_gear_pitch),
+                     h=Big, center=true);
       }
 
     // Screw holes for abc Nema
@@ -273,7 +270,7 @@ module bottom_plate(){
         linear_extrude(height=2)
         text("B",halign="center",valign="center");
       rotate([0,0,120*C+7])
-        translate(Line_action_point_abc_xy + [0,-8,th])
+        translate(Line_action_point_abc_xy + [0,-16,th])
         scale([1,1,1.5])
         linear_extrude(height=2)
         text("C",halign="center",valign="center");
