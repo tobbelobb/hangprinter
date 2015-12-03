@@ -195,7 +195,7 @@ float delta[DIRS] = { 0 }; // TODO: should this be static?
 
 #ifdef SCARA
 float axis_scaling[3] = { 1, 1, 1 };    // Build size scaling, default to 1
-#endif				
+#endif
 
 bool cancel_heatup = false;
 
@@ -1041,7 +1041,7 @@ void process_commands(){
         SERIAL_PROTOCOLLN("");
         return;
         break;
-      case 109: 
+      case 109:
         {// M109 - Wait for extruder heater to reach target.
           if(setTargetedHotend(109)){
             break;
@@ -1458,7 +1458,7 @@ void process_commands(){
               if(code_seen('D')) PID_PARAM(Kd,e) = scalePID_d(code_value());
 #ifdef PID_ADD_EXTRUSION_RATE
               if(code_seen('C')) PID_PARAM(Kc,e) = code_value();
-#endif			
+#endif
 
               updatePID();
               SERIAL_PROTOCOL(MSG_OK);
@@ -1671,9 +1671,9 @@ void process_commands(){
 #if defined(DELTA) && !defined(HANGPRINTER) // Not available for HANGPRINTER
   void recalc_delta_settings(float radius, float diagonal_rod){
     delta_tower1_x= -SIN_60*radius; // front left tower
-    delta_tower1_y= -COS_60*radius;	   
+    delta_tower1_y= -COS_60*radius;
     delta_tower2_x=  SIN_60*radius; // front right tower
-    delta_tower2_y= -COS_60*radius;	   
+    delta_tower2_y= -COS_60*radius;
     delta_tower3_x= 0.0;                  // back middle tower
     delta_tower3_y= radius;
     delta_diagonal_rod_2= sq(diagonal_rod);
@@ -1700,12 +1700,14 @@ void process_commands(){
   void calculate_delta(float cartesian[3]) // array destination[3] filled with absolute coordinates is fed into this. tobben 20. may 2015
   {
     // With current calculations delta will contain the new absolute coordinate
-    delta[A_AXIS] = sqrt(sq(anchor_A_x - cartesian[X_AXIS])
-        + sq(anchor_A_y - cartesian[Y_AXIS])
-        + sq(anchor_A_z - cartesian[Z_AXIS]));
-    delta[B_AXIS] = sqrt(sq(anchor_B_x - cartesian[X_AXIS])
-        + sq(anchor_B_y - cartesian[Y_AXIS])
-        + sq(anchor_B_z - cartesian[Z_AXIS]));
+    // Geometry of hangprinter makes sq(anchor_ABC_Z - carthesian[Z_AXIS]) the smallest term in the sum.
+    // Starting sum with smallest number givest smallest roundoff error.
+    delta[A_AXIS] = sqrt(sq(anchor_A_z - cartesian[Z_AXIS])
+                       + sq(anchor_A_y - cartesian[Y_AXIS])
+                       + sq(anchor_A_x - cartesian[X_AXIS]));
+    delta[B_AXIS] = sqrt(sq(anchor_B_z - cartesian[Z_AXIS])
+                       + sq(anchor_B_y - cartesian[Y_AXIS])
+                       + sq(anchor_B_x - cartesian[X_AXIS]));
     //SERIAL_ECHOLN("anchor_C_x");
     //SERIAL_ECHOLN(anchor_C_x);
     //SERIAL_ECHOLN("anchor_C_y");
@@ -1718,12 +1720,12 @@ void process_commands(){
     //SERIAL_ECHOLN(cartesian[Y_AXIS]);
     //SERIAL_ECHOLN("cartesian[Z_AXIS]");
     //SERIAL_ECHOLN(cartesian[Z_AXIS]);
-    delta[C_AXIS] = sqrt(sq(anchor_C_x - cartesian[X_AXIS])
-        + sq(anchor_C_y - cartesian[Y_AXIS])
-        + sq(anchor_C_z - cartesian[Z_AXIS]));
+    delta[C_AXIS] = sqrt(sq(anchor_C_z - cartesian[Z_AXIS])
+                       + sq(anchor_C_y - cartesian[Y_AXIS])
+                       + sq(anchor_C_x - cartesian[X_AXIS]));
     delta[D_AXIS] = sqrt(sq(             cartesian[X_AXIS])
-        + sq(             cartesian[Y_AXIS])
-        + sq(anchor_D_z - cartesian[Z_AXIS]));
+                       + sq(             cartesian[Y_AXIS])
+                       + sq(anchor_D_z - cartesian[Z_AXIS]));
 
     //SERIAL_ECHOPGM(" x="); SERIAL_ECHOLN(cartesian[X_AXIS]);
     //SERIAL_ECHOPGM(" y="); SERIAL_ECHOLN(cartesian[Y_AXIS]);
@@ -1860,7 +1862,7 @@ void process_commands(){
 
     //SERIAL_ECHOPGM(" delta[X_AXIS]="); SERIAL_ECHO(delta[X_AXIS]);
     //SERIAL_ECHOPGM(" delta[Y_AXIS]="); SERIAL_ECHOLN(delta[Y_AXIS]);
-  }  
+  }
 
   void calculate_delta(float cartesian[3]){
     //reverse kinematics.
@@ -1868,7 +1870,7 @@ void process_commands(){
     // The maths and first version has been done by QHARLEY . Integrated into masterbranch 06/2014 and slightly restructured by Joachim Cerny in June 2014
 
     float SCARA_pos[2];
-    static float SCARA_C2, SCARA_S2, SCARA_K1, SCARA_K2, SCARA_theta, SCARA_psi; 
+    static float SCARA_C2, SCARA_S2, SCARA_K1, SCARA_K2, SCARA_theta, SCARA_psi;
 
     SCARA_pos[X_AXIS] = cartesian[X_AXIS] * axis_scaling[X_AXIS] - SCARA_offset_x;  //Translate SCARA to standard X Y
     SCARA_pos[Y_AXIS] = cartesian[Y_AXIS] * axis_scaling[Y_AXIS] - SCARA_offset_y;  // With scaling factor.
@@ -1876,7 +1878,7 @@ void process_commands(){
 #if (Linkage_1 == Linkage_2)
     SCARA_C2 = ( ( sq(SCARA_pos[X_AXIS]) + sq(SCARA_pos[Y_AXIS]) ) / (2 * (float)L1_2) ) - 1;
 #else
-    SCARA_C2 =   ( sq(SCARA_pos[X_AXIS]) + sq(SCARA_pos[Y_AXIS]) - (float)L1_2 - (float)L2_2 ) / 45000; 
+    SCARA_C2 =   ( sq(SCARA_pos[X_AXIS]) + sq(SCARA_pos[Y_AXIS]) - (float)L1_2 - (float)L2_2 ) / 45000;
 #endif
 
     SCARA_S2 = sqrt( 1 - sq(SCARA_C2) );
