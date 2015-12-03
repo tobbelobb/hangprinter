@@ -148,16 +148,9 @@ module bottom_plate(){
         }
       }
 
-      // Measurment points
-      for(i=[0,1,2]){
-        rotate([0,0,120*i]){
-          translate(Line_action_point_abc_xy + [-2,-2,0])
-            cube([4,4,Line_contacts_abcd_z[i]-2]);
-          translate(Line_action_point_abc_xy
-                   + [0,0,Line_contacts_abcd_z[i]-2])
-            sphere(r=2);
-        }
-      }
+      // Bluetooth mount (and potential measurment point A)
+      translate(Line_action_point_abc_xy)
+        cube([4,4,Line_contacts_abcd_z[0]]);
     } // End union
 
     //*** ANTIMATERIA STARTS HERE ***//
@@ -167,15 +160,6 @@ module bottom_plate(){
      translate([k*2,0,Line_contacts_abcd_z[A]+swh-Snelle_height/2+2.5])
         rotate([90,0,0])
         cylinder(r=1, h=10, center=true);
-
-    // Screw holes for abc Nema
-    translate([0, 0, -1]){
-      four_point_translate()
-        Nema17_schwung_screw_holes(M3_diameter, th+2);
-      four_point_translate()
-        translate([0,0,th-2.5])
-          Nema17_screw_holes(M3_head_diameter, th+2);
-    }
 
     // Tracks to put fish rings in
     placed_fish_rings();
@@ -216,11 +200,6 @@ module bottom_plate(){
       }
     }
 
-    // Hole for extruder motor
-    extruder_motor_translate(Extruder_motor_twist)
-      scale(1.015) // Leave 1.5% extra space, don't need tight fit
-      Nema17();
-
     // Middle hole for ABCD-motors
     translate([0, 0, -Big+Nema17_ring_height])
       four_point_translate(){
@@ -231,6 +210,20 @@ module bottom_plate(){
                    r2 = Nema17_ring_diameter/2 - 5, h = 6);
         }
       }
+
+    // Screw holes for abc Nema
+    translate([0, 0, -1]){
+      four_point_translate()
+        Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 20);
+      four_point_translate()
+        translate([0,0,th-2.5])
+          Nema17_screw_holes(M3_head_diameter, th+2);
+    }
+
+    // Hole for extruder motor
+    extruder_motor_translate(Extruder_motor_twist)
+      scale(1.015) // Leave 1.5% extra space, don't need tight fit
+      Nema17();
 
     // Screw holes for extruder motor mounting screws
     translate([0,0,E_motor_z_offset]){
@@ -293,7 +286,7 @@ module bottom_plate(){
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed 
 //rotate([0,0,15])
-//bottom_plate();
+bottom_plate();
 
 //** bottom_plate end **//
 
