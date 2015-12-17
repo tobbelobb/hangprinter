@@ -3,7 +3,7 @@ Hangprinter
 
 A RepRap hanging from the ceiling. It has a [wiki page](http://reprap.org/wiki/Hangprinter) and a [forum thread](http://forums.reprap.org/read.php?178,344022,355803) over at reprap.org.
 
-It also has a [wiki page at appropedia](www.appropedia.org/Clerck,_a_RepRap_3D_printer_hanging_from_the_ceiling).
+It also has a [wiki page at appropedia](http://appropedia.org/Clerck,_a_RepRap_3D_printer_hanging_from_the_ceiling).
 
 A series of blog posts describes development.
 [18](http://vitana.se/opr3d/tbear/index.html#hangprinter_project_18)
