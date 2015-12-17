@@ -111,10 +111,10 @@ module lock(r1, r2, height){
 module bottom_plate(){
   // Global variables renamed short
   cw  = Nema17_cube_width;
-  th  = Bottom_plate_thickness; 
+  th  = Bottom_plate_thickness;
   bpr = Bottom_plate_radius;
-  bd  = Bearing_608_bore_diameter; 
-  bw  = Bearing_608_width; 
+  bd  = Bearing_608_bore_diameter;
+  bw  = Bearing_608_width;
   swh = Sandwich_height;
   gap = Sandwich_gap;
   sandwich_stick_height = Line_contacts_abcd_z[A]+swh-Snelle_height/2
@@ -185,7 +185,7 @@ module bottom_plate(){
     // Tracks to put fish rings in
     placed_fish_rings();
 
-    // Mounting space for d fish_rings  
+    // Mounting space for d fish_rings
     big=5*th;
     for(i=[0,1,2]){
       rotate([0,0,120*i]){
@@ -229,7 +229,7 @@ module bottom_plate(){
     // Middle hole for ABCD-motors
     // Large enough to get motor gears through
       four_point_translate(){
-        cylinder(r = Motor_gear_radius 
+        cylinder(r = Motor_gear_radius
                      + 2*(Motor_gear_radius-Motor_gear_pitch),
                      h=Big, center=true);
       }
@@ -307,9 +307,9 @@ module bottom_plate(){
   }
 }
 // The rotate is for easier fitting print bed when printing
-// this part on 200 mm square print bed 
+// this part on 200 mm square print bed
 //rotate([0,0,15])
-bottom_plate();
+//bottom_plate();
 
 //** bottom_plate end **//
 
@@ -319,7 +319,7 @@ bottom_plate();
 
 //** extruder start **//
 
-// A better way to match holes: 
+// A better way to match holes:
 // make bottom_plate take two flags:
 //   render_plate?
 //   render_drive?
@@ -334,7 +334,7 @@ module fan(width=30, height=10){
         square([width/2 - 2, 1]);
   }
   cylinder(h=height, r=width/4.5);
-  
+
   difference(){
     translate([-width/2, -width/2,0])
       cube([width,width,height]);
@@ -395,7 +395,7 @@ module e3d_v6_volcano_hotend(fan=1){
 }
 //e3d_v6_volcano_hotend();
 
-// towermove moves materia but not antimateria of drive_support 
+// towermove moves materia but not antimateria of drive_support
 // height of the tower depends on big extruder gear rotation
 // Used in assembled_drive in placed_parts.scad
 module drive_support_helper(non_motor_side,towermove=0){
@@ -469,10 +469,13 @@ module drive_support_helper(non_motor_side,towermove=0){
     }
   }
 }
-//drive_support_helper(1);
+//rotate([0,3*90,0])
+//drive_support_helper(1,Drive_support_towermove);
+//rotate([0,3*90,0])
+//  drive_support_helper(0,Drive_support_towermove);
 
-// towermove moves materia but not antimateria of drive_support 
-module drive_support(towermove=0){
+// towermove moves materia but not antimateria of drive_support
+module drive_support(towermove=Drive_support_towermove){
   e3d_x_center = Bearing_623_outer_diameter/2 +5 //Center of hobb x-dir
                + Hobbed_insert_diameter/2
                + Extruder_filament_opening/2
@@ -503,7 +506,8 @@ module drive_support(towermove=0){
     translate([e3d_x_center+1.6+E3d_mount_small_r-0.2,-7,-Big/2]) cylinder(r=1.6, h=Big);
   }
 }
-//drive_support();
+//rotate([0,-90,0])
+//drive_support(2);
 // Some dividing and stuff for printing
 // == Extruder gear side ==
 //rotate([0,90,0])
@@ -532,29 +536,26 @@ module hook(height=10){
   big=30;
   difference(){
     // Main cube
-    translate([-2,-1.5,0])
-      cube([4,6.5,height]);
+    translate([-3,-4,0])
+      cube([6,8,height]);
     // Hole
     translate([0,-line_radius/2,height])
       rotate([30,0,0])
         cylinder(r=line_radius, h=15.5, center=true);
-    // Spår
-    translate([0,5,height-2])
-      rotate([-56,0,0])
-        rotate_extrude(convexity=4)
-          translate([2.70,0,0])
-            circle(r=line_radius-0.2); 
-    translate([0,4.57,4])
+    translate([0,4.1,4.7])
     // Bent end of channel
     difference(){
       rotate([0,90,0])
-        rotate_extrude(convexity=4)
+        rotate_extrude(convexity=4, $fn=20)
           translate([1.3,0,0])
-            circle(r=line_radius); 
+            circle(r=line_radius, $fn=25);
       rotate([30,0,0])
         translate([-big/2,-big/2,0])
           cube(big);
     }
+    //translate([10,-1,height-4])
+    //  rotate([0,-90,0])
+    //    M3_screw(20);
   }
 }
 //hook();
@@ -577,8 +578,8 @@ module z_gatt_translate(back = 0){
 // Flip before printing
 module top_plate(){
   th = Top_plate_thickness;
-  flerp_side=22;
-  height = 15;
+  flerp_side=23;
+  height = 17;
   melt=0.1;
   translate([0,0,height])
     mirror([0,0,1]){
@@ -612,7 +613,9 @@ module top_plate(){
       }
     }
 }
+//rotate([180,0,15])
 //top_plate();
+
 //%cube([139,139,20]);
 module parted_top_plate_piece1(){
   th = Top_plate_thickness;
@@ -689,64 +692,6 @@ module parted_top_plate_piece2(){
 }
 //parted_top_plate_piece2();
 
-module side_plate1(height=15){
-  s = Full_tri_side;
-  th = Bottom_plate_thickness;
-  // Frame
-  difference(){
-    translate([-s/4,-s*Sqrt3/4,-height/2])
-      rotate([0,0,30])
-      difference(){
-        special_tri(s,height);
-        translate([6,6,-1]) special_tri(s-34,height+2);
-        // Cut sharpest angle corner down
-        translate([149,0,-1])
-          rotate([0,0,-30])
-          cube(60);
-        translate([124,-53,-1])
-          cube(60);
-        // Cut right angle corner down
-        translate([-53.5,23,-1])
-          rotate([0,0,-30])
-          cube([60,90,60]);
-        translate([-47,89,-1])
-          rotate([0,0,-30])
-          cube(60);
-      }
-    // hook holes
-    translate([0,-7,0])
-    for(k=[1,-1])
-      translate([k*Abc_xy_split/2,0,0])
-        rotate([-90,0,0])
-        cylinder(r=0.75, h=20);
-    // Mark wall action point
-    rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
-    mirror([0,0,1])
-      rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
-    // Screw holes
-    translate([-38,-62,0])
-      rotate([90,0,30])
-      cylinder(r=M3_diameter/2,h=20);
-    translate([38,-26,0])
-      rotate([90,0,30])
-      cylinder(r=M3_diameter/2,h=20);
-  }
-  // Pulleys to wind line around
-  for(k=[1,-1])
-    translate([k*(Abc_xy_split/2-7),0,0]){
-      translate([-5,-3,height/2-0.1]) cylinder(r=3, h=7);
-      translate([ 5,-3,height/2-0.1]) cylinder(r=3, h=7);
-    }
-  // Connect sharpest corner again
-  translate([49.6,-27.5,-height/2])
-  cube([6,27,height]);
-  // Connect right angle corner again
-  translate([-49.6,-82,-height/2])
-  cube([6,82,height]);
-}
-//rotate([0,0,30])
-//side_plate1();
-
 module side_plate2(height=15,th=7){
   s = Abc_xy_split + 2*6;
   difference(){
@@ -768,6 +713,9 @@ module side_plate2(height=15,th=7){
             cylinder(r=0.75, h=Big);
         translate([-1 + Abc_xy_split/2, -th - th +2, -height])
           cube([2, th, 2*height]);
+        // Holes for adjustment screws. Intentionally narrow
+        translate([20,-th/2,-Big/2])
+          cylinder(r=1.45,h=Big);
       }
     // Mark wall action point
     rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
@@ -781,7 +729,7 @@ module side_plate2(height=15,th=7){
       translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
     }
 }
-//side_plate2();
+side_plate2();
 
 module side_plate3(height=15,th=7){
   s = Abc_xy_split + 2*6;
@@ -823,6 +771,9 @@ module side_plate3(height=15,th=7){
             cylinder(r=0.75, h=Big);
         translate([-1 + Abc_xy_split/2, -2, -height])
           cube([2, th, 2*height]);
+        // Holes for adjustment screws. Intentionally narrow
+        translate([20,-th/2,-Big/2])
+          cylinder(r=1.45,h=Big);
       }
     translate([-s/2+27,0,0])
     rotate([-90,0,30]){
@@ -845,7 +796,5 @@ module side_plate3(height=15,th=7){
       rotate([-15,0,0]) translate([-1,-5,0]) cube([2,5,height]);
   }
 }
-//rotate([0,0,15])
-//mirror([0,1,0])
-//rotate([0,0,-30])
+//mirror([1,0,0])
 //side_plate3();

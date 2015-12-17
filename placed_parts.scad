@@ -10,7 +10,7 @@ use <Nema17_and_Ramps_and_bearings.scad>
 // full_render module in Hangprinter.scad
 
 module placed_lines(){
-  th  = Bottom_plate_thickness; 
+  th  = Bottom_plate_thickness;
   // Lines from sandwich out to gatts
   for(i=[0,1,2]){
     rotate([0,0,i*120]){
@@ -118,7 +118,7 @@ module assembled_drive(){
   difference(){
       // Hobb, support bearing and big gear are placed first,
       // drive supports translated to fit them here.
-    translate([ // Center 623 in x-dim 
+    translate([ // Center 623 in x-dim
           -Bearing_623_outer_diameter/2 - 5//match 5 in drive_support
               // Take rotation into account x-dim
           + sin(Big_extruder_gear_rotation)*Pitch_difference_extruder,
@@ -199,14 +199,14 @@ module placed_plates(){
   translate(Wall_action_point_a)
     side_plate2();
   translate(Wall_action_point_b)
-    mirror([1,0,0])
-    rotate([0,0,-120])
-    side_plate1();
+    rotate([0,0,-90+30])
+      mirror([1,0,0])
+        side_plate3();
   translate(Wall_action_point_c)
-    rotate([0,0,240])
-    side_plate1();
+    rotate([0,0,90-30])
+      side_plate3();
 }
-//placed_plates();
+placed_plates();
 
 
 //color("green")
