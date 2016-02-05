@@ -46,7 +46,7 @@ module fish_ring(){
       cylinder(r=lar_ri, h=lar_h*2, center=true);
   }
 }
-//fish_ring();
+fish_ring();
 
 module placed_fish_rings(){
   for(i=[0,1,2]){
@@ -729,7 +729,7 @@ module side_plate2(height=15,th=7){
       translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
     }
 }
-side_plate2();
+//side_plate2();
 
 module side_plate3(height=15,th=7){
   s = Abc_xy_split + 2*6;

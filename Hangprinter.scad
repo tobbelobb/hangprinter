@@ -14,27 +14,27 @@ use <render_parts.scad>
 //    might be worth it...
 
 // Rendering control
-render_bottom_plate = true;
-render_sandwich     = true;
-render_abc_motors   = true;
-render_fish_rings   = true;
-render_lines        = true;
+render_bottom_plate = false;
+render_sandwich     = false;
+render_abc_motors   = false;
+render_fish_rings   = false;
+render_lines        = false;
 render_extruder     = true;
-render_hotend       = true;
+render_hotend       = false;
 render_ramps        = false;
 render_plates       = false;
-render_filament     = true;
+render_filament     = false;
 
 module full_render(){
   if(render_bottom_plate){
-    //bottom_plate();
+    bottom_plate();
     // For better rendering performance, precompile bottom_plate
-    precompiled("stl/bottom_plate_for_render.stl");
+    //precompiled("stl/bottom_plate_for_render.stl");
   }
   if(render_sandwich){
-    //placed_sandwich();
+    placed_sandwich();
     // For better rendering performance, precompile placed sandwich
-    precompiled("stl/complete_sandwich_for_render.stl");
+    //precompiled("stl/complete_sandwich_for_render.stl");
   }
   if(render_abc_motors){
     placed_abc_motors();

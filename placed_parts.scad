@@ -50,10 +50,10 @@ module placed_lines(){
 
 
 module placed_sandwich(){
- translate([0,0,Line_contacts_abcd_z[A] - Snelle_height/2]) sandwich();
- translate([0,0,Line_contacts_abcd_z[B] - Snelle_height/2]) sandwich();
- translate([0,0,Line_contacts_abcd_z[C] - Snelle_height/2]) sandwich();
- translate([0,0,Line_contacts_abcd_z[D] - Snelle_height/2]) sandwich();
+ translate([0,0,(Line_contacts_abcd_z[A] - Snelle_height/2)*1]) sandwich();
+ translate([0,0,(Line_contacts_abcd_z[B] - Snelle_height/2)*1]) sandwich();
+ translate([0,0,(Line_contacts_abcd_z[C] - Snelle_height/2)*1]) sandwich();
+ translate([0,0,(Line_contacts_abcd_z[D] - Snelle_height/2)*1]) sandwich();
 }
 //placed_sandwich();
 //placed_fish_rings();
