@@ -6,9 +6,9 @@ include <util.scad>
 use <Nema17_and_Ramps_and_bearings.scad>
 
 //////////// Functions /////////////
-function mirror_point(coord) = 
+function mirror_point(coord) =
 [
-	coord[0], 
+	coord[0],
 	-coord[1]
 ];
 
@@ -18,13 +18,13 @@ function rotate_point(rotate, coord) =
 	cos(rotate)*coord[1] - sin(rotate)*coord[0]
 ];
 
-function involute(base_radius, involute_angle) = 
+function involute(base_radius, involute_angle) =
 [
 	base_radius*(cos(involute_angle) + involute_angle*pi/180*sin(involute_angle)),
 	base_radius*(sin(involute_angle) - involute_angle*pi/180*cos(involute_angle)),
 ];
 
-function rotated_involute(rotate, base_radius, involute_angle) = 
+function rotated_involute(rotate, base_radius, involute_angle) =
 [
 	cos(rotate)*involute(base_radius, involute_angle)[0] + sin(rotate)*involute(base_radius, involute_angle)[1],
 	cos(rotate)*involute(base_radius, involute_angle)[1] - sin(rotate)*involute(base_radius, involute_angle)[0]
@@ -93,7 +93,7 @@ module gear(number_of_teeth = 15,
 	          backlash        = 0,
 	          twist           = 0,
 	          involute_facets = 0){
-	if(circular_pitch==false && diametral_pitch==false) 
+	if(circular_pitch==false && diametral_pitch==false)
 		echo("MCAD ERROR: gear module needs either a diametral_pitch or circular_pitch");
 
 	// Convert diametrial pitch to our native circular pitch
@@ -160,7 +160,7 @@ module gear(number_of_teeth = 15,
 		cylinder(r = bore_diameter/2,
 			       h = 2 + max(rim_thickness, hub_thickness, gear_thickness));
 		if(circles>0){
-			for(i=[0:circles-1])	
+			for(i=[0:circles-1])
 				rotate([0,0,i*360/circles])
 				  translate([circle_orbit_diameter/2, 0, -1])
 				    cylinder(r = circle_diameter/2, h = max(gear_thickness, rim_thickness) + 3);
@@ -172,7 +172,7 @@ module my_gear(teeth, height){
 	gear(number_of_teeth = teeth,
        // Increasing circular_pitch this makes gears larger
        // Should possibly be parameter in design_numbers.scad...
-			 circular_pitch  = Circular_pitch_top_gears, 
+			 circular_pitch  = Circular_pitch_top_gears,
 			 pressure_angle  = 30,
 			 clearance       = 0.2,
 			 gear_thickness  = height,
@@ -235,12 +235,12 @@ module small_extruder_gear(height=Small_extruder_gear_height){
 				twist=0,
 				involute_facets=0
 			);
-			
+
 			translate([Shaft_flat + 0.75,0,height/2])
 				cube([1.5,5,height],center=true);
 			//base
 			//difference(){
-			//	cylinder(r=6.3,h=1.0,$fn=64);			
+			//	cylinder(r=6.3,h=1.0,$fn=64);
 			//	cylinder(r=Nema17_motor_shaft/2,h=1.001,$fn=64);
 			//}
 		}
@@ -337,7 +337,7 @@ module motor_gear(height = Motor_protruding_shaft_length, letter){
           translate([0,0,height - swgh])
             my_gear(teeth, swgh);
           // Shaft cylinder
-          cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40); 
+          cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40);
         }
         // Center bore
         difference(){
@@ -392,26 +392,3 @@ module gear_friends(){
   sandwich();
 }
 //gear_friends();
-
-
-// D
-//    rotate([0,0,3*72])
-//      translate([0,Four_point_five_point_radius,
-//                   Line_contacts_abcd_z[D]+Motor_gear_height-1])
-//        mirror([0,0,1])
-//          motor_gear(letter="D");
-
-//    rotate([180,0,2*72])
-//      translate([0,Four_point_five_point_radius,
-//        Line_contacts_abcd_z[C]-Motor_gear_height+Sandwich_height + 2])
-//      motor_gear(letter="C");
-
-//    rotate([180,0,1*72])
-//      translate([0,Four_point_five_point_radius, 
-//    Line_contacts_abcd_z[B]-Motor_gear_height + 1])
-//      motor_gear(Motor_gear_height+Sandwich_height, letter="B");
-
-//    rotate([180,0,4*72])
-//      translate([0,Four_point_five_point_radius, 
-//       Line_contacts_abcd_z[A]-Motor_gear_height-Sandwich_height+ 1])
-//      motor_gear(Motor_gear_height+2*Sandwich_height, letter="A");

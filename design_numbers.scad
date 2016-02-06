@@ -52,7 +52,7 @@ Ceiling_action_point = [0, 0, 500];
 // printer. Preferrably near a corner.
 Line_contact_d_xy = [0, Full_tri_side/Sqrt3 - d_gatt_back, 0];
 // This is the three different z-heights of the three spools (snelles)
-Line_contacts_abcd_z = [Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 3*(Sandwich_height + Sandwich_gap), 
+Line_contacts_abcd_z = [Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 3*(Sandwich_height + Sandwich_gap),
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 2*(Sandwich_height + Sandwich_gap),
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 +    Sandwich_height + Sandwich_gap,
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2];    // D-lines have lowest contact point, maximizes build volume
@@ -114,3 +114,5 @@ Drive_support_height = Nema17_cube_width/3 +
 E3d_v6_support_height = 15;
 
 E_motor_z_offset = -0.8;
+
+Drive_support_towermove = 2;
