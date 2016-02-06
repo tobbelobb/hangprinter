@@ -95,7 +95,7 @@ module Nema17_damping_plate(){
 //Nema17_damping_plate();
 
 module Ramps(){
-  color("red")
+  color("tomato")
     cube([Ramps_length, Ramps_width, Ramps_depth]);
 }
 //Ramps();
@@ -136,6 +136,7 @@ module Bearing_623_vgroove(){
   h1 = Bearing_623_width;                  // Totoal height
   h2 = Bearing_623_vgroove_width;
   h_edge = (h1-h2)/2;
+  big = 100;
   difference(){
     for(k = [0,1]){
       translate([0,0,h1*k]){
@@ -150,7 +151,7 @@ module Bearing_623_vgroove(){
     }
     // Bore
     translate([0,0,-1])
-      cylinder(r=Bearing_623_bore_diameter/2, h=Big);
+      cylinder(r=Bearing_623_bore_diameter/2, h=big);
   }
 }
 //color("purple")

@@ -694,40 +694,42 @@ module parted_top_plate_piece2(){
 
 module side_plate2(height=15,th=7){
   s = Abc_xy_split + 2*6;
-  difference(){
-    translate([-s/2,-th,-height/2])
-      cube([s,th,height]);
-    // Wall screw holes
-    for(k=[1,0])
-      mirror([k,0,0])
-        translate([Abc_xy_split/2 - 10,-th-1,0])
-          rotate([-90,0,0]){
-            cylinder(r=M3_diameter/2, h=Big);
-            translate([0,0,th/2]) cylinder(r=M3_head_diameter/2,h=Big);
-          }
-    // Hook holes
-    for(k=[1,0])
-      mirror([k,0,0]){
-        translate([Abc_xy_split/2,-th-1,0])
-          rotate([-90,0,0])
-            cylinder(r=0.75, h=Big);
-        translate([-1 + Abc_xy_split/2, -th - th +2, -height])
-          cube([2, th, 2*height]);
-        // Holes for adjustment screws. Intentionally narrow
-        translate([20,-th/2,-Big/2])
-          cylinder(r=1.45,h=Big);
-      }
-    // Mark wall action point
-    rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
-    mirror([0,0,1])
+  translate([0,th,0]){
+    difference(){
+      translate([-s/2,-th,-height/2])
+        cube([s,th,height]);
+      // Wall screw holes
+      for(k=[1,0])
+        mirror([k,0,0])
+          translate([Abc_xy_split/2 - 10,-th-1,0])
+            rotate([-90,0,0]){
+              cylinder(r=M3_diameter/2, h=Big);
+              translate([0,0,th/2]) cylinder(r=M3_head_diameter/2,h=Big);
+            }
+      // Hook holes
+      for(k=[1,0])
+        mirror([k,0,0]){
+          translate([Abc_xy_split/2,-th-1,0])
+            rotate([-90,0,0])
+              cylinder(r=0.75, h=Big);
+          translate([-1 + Abc_xy_split/2, -th - th +2, -height])
+            cube([2, th, 2*height]);
+          // Holes for adjustment screws. Intentionally narrow
+          translate([20,-th/2,-Big/2])
+            cylinder(r=1.45,h=Big);
+        }
+      // Mark wall action point
       rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
-  }
-  // Pulleys to wind line around
-  for(k=[1,-1])
-    translate([k*(Abc_xy_split/2 - 8),0,0]){
-      translate([-4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
-      translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+      mirror([0,0,1])
+        rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
     }
+    // Pulleys to wind line around
+    for(k=[1,-1])
+      translate([k*(Abc_xy_split/2 - 8),0,0]){
+        translate([-4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+        translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+      }
+  }
 }
 //side_plate2();
 
