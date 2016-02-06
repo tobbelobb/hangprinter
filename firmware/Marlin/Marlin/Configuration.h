@@ -87,29 +87,32 @@
 // Make delta curves from many straight lines (linear interpolation).
 // This is a trade-off between visible corners (not enough segments)
 // and processor overload (too many expensive sqrt calls).
-#define DELTA_SEGMENTS_PER_SECOND 20
+#define DELTA_SEGMENTS_PER_SECOND 80
 
 // NOTE! all values here MUST be floating point, so always have a decimal point in them
 // These values are the difference between measurement stick top (along sides of Hangprinter when
 // placed in origo) and frame measurment point,
 // alternatively measure from one fish eye, along corresponding line to the lines anchor point.
-#define ANCHOR_A_X 887.0 // anchor point A's Carthesian x-coordinate. In mm
-#define ANCHOR_A_Y -575.0
-#define ANCHOR_A_Z -130.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_A_X 890.0 // anchor point A's Carthesian x-coordinate. In mm
+#define ANCHOR_A_Y -578.0
+#define ANCHOR_A_Z -117.0 // measured from print surface to frame middle. In mm (was 130 diff is 11)
+// Subtracted 2 mm because of double line configuration
 #define INITIAL_LENGTH_A sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z)
 // This gives A-length of sqrt(887^2 + 575^2 + 130^2) = 1065
 #define ANCHOR_B_X 0.0
-#define ANCHOR_B_Y 867.0
-#define ANCHOR_B_Z -119.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_B_Y 863.0
+#define ANCHOR_B_Z -100.0 // measured from print surface to frame middle. In mm (was -119. Diff is 17)
+// Subtracted 2 mm because of double line configuration
 #define INITIAL_LENGTH_B sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z)
 // This gives B-length of sqrt(867^2 + 119^2) = 875
-#define ANCHOR_C_X -1429.0
-#define ANCHOR_C_Y -1317.0
-#define ANCHOR_C_Z -141.0 // measured from print surface to frame middle. In mm
+#define ANCHOR_C_X -1426.0
+#define ANCHOR_C_Y -1320.0
+#define ANCHOR_C_Z -121.0 // measured from print surface to frame middle. In mm (was -141. Diff is 18)
+// Subtracted 2 mm because of double line configuration
 #define INITIAL_LENGTH_C sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z)
 // This gives C-length of sqrt(1429^2 + 1317^2 + 141^2) = 1948.4
 // It's important that middle of frame D is directly above (x,y) = (0,0)
-#define ANCHOR_D_Z 2286.0 // measured along vertical line, from fish eye to anchor point. In mm
+#define ANCHOR_D_Z 2295.0 // measured along vertical line, from fish eye to anchor point. In mm (was 2286 diff is 9)
 #define INITIAL_LENGTH_D ANCHOR_D_Z
 
 //===========================================================================
@@ -451,7 +454,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //  4*200 / ((33/42.22) * 2 * pi * 12.22) = 13.330
 //  8*200 / ((33/42.22) * 2 * pi * 12.22) = 26.661
 // 16*200 / ((33/42.22) * 2 * pi * 12.22) = 53.322
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {26.661, 26.661, 26.661, 53.322, 140.0}  // default steps per unit for Hangprinter
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {53.322, 53.322, 53.322, 53.322, 140.0}  // default steps per unit for Hangprinter
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
