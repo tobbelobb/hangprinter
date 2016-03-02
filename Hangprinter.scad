@@ -27,14 +27,14 @@ render_filament     = true;
 
 module full_render(){
   if(render_bottom_plate){
-    //bottom_plate();
+    bottom_plate();
     // For better rendering performance, precompile bottom_plate
-    precompiled("stl/bottom_plate_for_render.stl");
+    //precompiled("stl/bottom_plate_for_render.stl");
   }
   if(render_sandwich){
-    //placed_sandwich();
+    placed_sandwich();
     // For better rendering performance, precompile placed sandwich
-    precompiled("stl/complete_sandwich_for_render.stl");
+    //precompiled("stl/complete_sandwich_for_render.stl");
   }
   if(render_abc_motors){
     placed_abc_motors();
