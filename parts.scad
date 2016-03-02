@@ -156,21 +156,22 @@ module bottom_plate(){
       // Block to insert d stopper screw
       translate([Sandwich_radius+2,-20,0])
         rotate([0,0,25])
-          cube([9,7,th+Sandwich_height+Bottom_plate_sandwich_gap+3]);
+          translate([0,-0.5,0])
+          cube([11,8,th+Sandwich_height+Bottom_plate_sandwich_gap+3]);
     } // End union
 
 
     //*** ANTIMATERIA STARTS HERE ***//
 
     // Nyloc nut lock for d stopper screw
-    translate([Sandwich_radius+6,-17,th+1.5+Sandwich_edge_thickness+Snelle_height+0.5]){
+    translate([Sandwich_radius+6,-16.5,th+1.5+Sandwich_edge_thickness+Snelle_height+0.5]){
       rotate([-90,0,25])
-        translate([0,0,-10])
+        translate([1,0,-10])
         M3_screw(25);
         rotate([0,90,25])
           translate([-5.52/2,0,-5]){
           point_cube([5.52,4.1,12],120);
-          translate([3.53/2,0,0])
+          translate([3.53/2,0,-1])
             cube([2,4.1,12]);
           }
     }
@@ -237,7 +238,7 @@ module bottom_plate(){
     // Screw holes for abc Nema
     translate([0, 0, -1]){
       four_point_translate()
-        Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 20);
+        Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 18);
       four_point_translate()
         translate([0,0,th-3.5])
           Nema17_screw_holes(M3_head_diameter+0.1, th+2);

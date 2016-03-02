@@ -29,7 +29,7 @@ Bottom_plate_radius       = 82;
 
 
 // For rotating lines and gatts in place
-d_gatt_back = 14;
+d_gatt_back = 15;
 
 Sandwich_gear_height = Sandwich_height*3/8;
 Snelle_height        = Sandwich_height*5/8;
