@@ -44,8 +44,10 @@ Line_contact_abc_xy      = Line_action_point_abc_xy - [Abc_xy_split/2, 0, 0];
 Mirrored_line_contact_abc_xy = mirror_point_x(Line_contact_abc_xy);
 
 Wall_action_point_a  = [0, -400, -25];
-Wall_action_point_b  = [300, 100, -22];
-Wall_action_point_c  = [-350, 100, -12];
+Wall_action_point_b  = [ 400*sin(60), 400*cos(60), -25];
+Wall_action_point_c  = [-400*sin(60), 400*cos(60), -25];
+//Wall_action_point_b  = [300, 100, -22];
+//Wall_action_point_c  = [-350, 100, -12];
 Ceiling_action_point = [0, 0, 500];
 
 // This is the xy coordinate of one point where a D-line enters the
@@ -116,3 +118,6 @@ E3d_v6_support_height = 15;
 E_motor_z_offset = -0.8;
 
 Drive_support_towermove = 2;
+
+Printed_color_1 = "deepskyblue";
+Printed_color_2 = "sandybrown";

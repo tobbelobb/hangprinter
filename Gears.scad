@@ -301,7 +301,7 @@ module sandwich(){
   }
   //Bearing_608();
 }
-//sandwich();
+sandwich();
 
 // May not render correctly in preview...
 module sandwich_gear(){
@@ -323,7 +323,6 @@ module snelle(){
   }
 }
 //snelle();
-
 
 module motor_gear(height = Motor_protruding_shaft_length, letter){
   swgh  = Sandwich_gear_height  - 0.4;  // allow some space for easier printing
