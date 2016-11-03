@@ -43,9 +43,10 @@ Line_contact_abc_xy      = Line_action_point_abc_xy - [Abc_xy_split/2, 0, 0];
 // For left-right symmetry for pairs of wall/printer contact points
 Mirrored_line_contact_abc_xy = mirror_point_x(Line_contact_abc_xy);
 
-Wall_action_point_a  = [0, -400, -25];
-Wall_action_point_b  = [ 400*sin(60), 400*cos(60), -25];
-Wall_action_point_c  = [-400*sin(60), 400*cos(60), -25];
+// These should be called anchor points...
+Wall_action_point_a  = [0, -400, 0];
+Wall_action_point_b  = [ 440*sin(60), 390*cos(60), 0];
+Wall_action_point_c  = [-420*sin(60), 410*cos(60), 0];
 //Wall_action_point_b  = [300, 100, -22];
 //Wall_action_point_c  = [-350, 100, -12];
 Ceiling_action_point = [0, 0, 500];
