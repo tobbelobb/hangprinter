@@ -90,7 +90,13 @@ module placed_sandwich(){
  translate([0,0,(Line_contacts_abcd_z[C] - Snelle_height/2)*1]) bearing_filled_sandwich();
  translate([0,0,(Line_contacts_abcd_z[D] - Snelle_height/2)*1]) bearing_filled_sandwich();
 }
-placed_sandwich();
+//placed_sandwich();
+//intersection(){ // Intersection made to mark part of sandwich
+//  //import("stl/full_sandwich_for_render_21_sep_2016.stl");
+//  placed_sandwich();
+//  translate([34,-5,-5])
+//    cube([20,10,103]);
+//}
 //placed_fish_rings();
 
 // Used by support bearing in drive, only rendering

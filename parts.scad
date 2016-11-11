@@ -46,7 +46,7 @@ module fish_ring(){
       cylinder(r=lar_ri, h=lar_h*2, center=true);
   }
 }
-fish_ring();
+//fish_ring();
 
 module placed_fish_rings(){
   for(i=[0,1,2]){
@@ -695,7 +695,7 @@ module parted_top_plate_piece2(){
 
 module side_plate2(height=15,th=7){
   s = Abc_xy_split + 2*6;
-  translate([0,th,0]){
+  translate([0,0,0]){
     difference(){
       translate([-s/2,-th,-height/2])
         cube([s,th,height]);
@@ -732,71 +732,73 @@ module side_plate2(height=15,th=7){
       }
   }
 }
-//side_plate2();
+side_plate2();
 
 module side_plate3(height=15,th=7){
   s = Abc_xy_split + 2*6;
   d = 7;
   a = s/2 - Sqrt3*d/2;
-  difference(){
-    union(){
-      // Main cube (the one where lines enter)
-      translate([-s/2,-th,-height/2])
-        cube([s,th,height]);
-      // Short leg
-      translate([-s/2+Sqrt3*d,-1,-height/2])
-        cube([th, d+1, height]);
-      // Long leg
-      translate([s/2 - th - Sqrt3*d,-4,-height/2])
-        rotate([0,0,30])
-        cube([th, a+0, height]);
-      // Foot of short leg
-      translate([-s/2+Sqrt3*d+th/2,d-th*Sqrt3/2,-height/2])
-        rotate([0,0,30])
-        cube([15,th,height]);
-      // Foot of long leg
-      translate([-s/2+Sqrt3*d+th/2,d-th*Sqrt3/2,-height/2])
-        rotate([0,0,30])
-        translate([Sqrt3*a-2*d-14-1.5-th,0,0])
-        cube([16,th,height]);
-      // Pulleys to wind line around
-      for(k=[1,-1])
-        translate([k*(Abc_xy_split/2 - 8),0,0]){
-          translate([-4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
-          translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
-        }
-    }
-    // Hook holes (Where lines enter)
-    for(k=[1,0])
-      mirror([k,0,0]){
-        translate([Abc_xy_split/2,-th-1,0])
-          rotate([-90,0,0])
-            cylinder(r=0.75, h=Big);
-        translate([-1 + Abc_xy_split/2, -2, -height])
-          cube([2, th, 2*height]);
-        // Holes for adjustment screws. Intentionally narrow
-        translate([20,-th/2,-Big/2])
-          cylinder(r=1.45,h=Big);
+  translate([0,th,0]){
+    difference(){
+      union(){
+        // Main cube (the one where lines enter)
+        translate([-s/2,-th,-height/2])
+          cube([s,th,height]);
+        // Short leg
+        translate([-s/2+Sqrt3*d,-1,-height/2])
+          cube([th, d+1, height]);
+        // Long leg
+        translate([s/2 - th - Sqrt3*d,-4,-height/2])
+          rotate([0,0,30])
+          cube([th, a+0, height]);
+        // Foot of short leg
+        translate([-s/2+Sqrt3*d+th/2,d-th*Sqrt3/2,-height/2])
+          rotate([0,0,30])
+          cube([15,th,height]);
+        // Foot of long leg
+        translate([-s/2+Sqrt3*d+th/2,d-th*Sqrt3/2,-height/2])
+          rotate([0,0,30])
+          translate([Sqrt3*a-2*d-14-1.5-th,0,0])
+          cube([16,th,height]);
+        // Pulleys to wind line around
+        for(k=[1,-1])
+          translate([k*(Abc_xy_split/2 - 8),0,0]){
+            translate([-4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+            translate([ 4.5,-3,height/2-0.1]) cylinder(r=2.5, h=7);
+          }
       }
-    translate([-s/2+27,0,0])
-    rotate([-90,0,30]){
-      translate([0,0,-11]) cylinder(r=7/2,h=20);
-      cylinder(r=M3_diameter/2,h=42,center=true);
-    }
-
-    translate([s/2-29,0,0])
+      // Hook holes (Where lines enter)
+      for(k=[1,0])
+        mirror([k,0,0]){
+          translate([Abc_xy_split/2,-th-1,0])
+            rotate([-90,0,0])
+              cylinder(r=0.75, h=Big);
+          translate([-1 + Abc_xy_split/2, -2, -height])
+            cube([2, th, 2*height]);
+          // Holes for adjustment screws. Intentionally narrow
+          translate([20,-th/2,-Big/2])
+            cylinder(r=1.45,h=Big);
+        }
+      translate([-s/2+27,0,0])
       rotate([-90,0,30]){
-      translate([0,0,20]) cylinder(r=M3_diameter/2,h=54);
-      translate([0,0,20]) cylinder(r=7/2,h=40);
-      // A little space for a screwdriver along long leg
-      rotate([-7,0,0])
-      translate([0,-7,-11]) cylinder(r=7/2,h=44);
+        translate([0,0,-11]) cylinder(r=7/2,h=20);
+        cylinder(r=M3_diameter/2,h=42,center=true);
+      }
+
+      translate([s/2-29,0,0])
+        rotate([-90,0,30]){
+        translate([0,0,20]) cylinder(r=M3_diameter/2,h=54);
+        translate([0,0,20]) cylinder(r=7/2,h=40);
+        // A little space for a screwdriver along long leg
+        rotate([-7,0,0])
+        translate([0,-7,-11]) cylinder(r=7/2,h=44);
+      }
+      // Mark wall action point
+      for(k=[0,1])
+        mirror([0,0,k])
+        translate([0,-th,0])
+        rotate([-15,0,0]) translate([-1,-5,0]) cube([2,5,height]);
     }
-    // Mark wall action point
-    for(k=[0,1])
-      mirror([0,0,k])
-      translate([0,-th,0])
-      rotate([-15,0,0]) translate([-1,-5,0]) cube([2,5,height]);
   }
 }
 //mirror([1,0,0])
