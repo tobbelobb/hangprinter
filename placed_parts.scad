@@ -77,27 +77,48 @@ module placed_wall_vgrooves(){
   }
 }
 
-module bearing_filled_sandwich(){
-  color(Printed_color_2) sandwich();
+module bearing_filled_sandwich(worm=false, brim = Sandwich_radius){
+  if(worm){
+    color(Printed_color_2)
+    translate([0,0,Sandwich_height])
+    rotate([180,0,0])
+    sandwich(worm=true, brim=brim); // Have worm gear as far down as possible
+  } else {
+    color(Printed_color_2) sandwich(brim=brim);
+  }
   Bearing_608();
   translate([0,0,Bearing_608_width])
   color("gold") lock(Lock_radius_1, Lock_radius_2, Lock_height);
 }
 
-module placed_sandwich(){
- translate([0,0,(Line_contacts_abcd_z[A] - Snelle_height/2)*1]) bearing_filled_sandwich();
- translate([0,0,(Line_contacts_abcd_z[B] - Snelle_height/2)*1]) bearing_filled_sandwich();
- translate([0,0,(Line_contacts_abcd_z[C] - Snelle_height/2)*1]) bearing_filled_sandwich();
- translate([0,0,(Line_contacts_abcd_z[D] - Snelle_height/2)*1]) bearing_filled_sandwich();
+module placed_sandwich(a_render=true, b_render=true, c_render=true, d_render=true){
+  smallbrim = Sandwich_radius - 2.5;
+  if(a_render){
+    translate([0,0,Line_contacts_abcd_z[A] - Snelle_height/2])
+      bearing_filled_sandwich();
+  }
+  if(b_render){
+    translate([0,0,Line_contacts_abcd_z[B] - Snelle_height/2])
+      bearing_filled_sandwich();
+  }
+  if(c_render){
+    translate([0,0,Line_contacts_abcd_z[C] - Snelle_height/2])
+      bearing_filled_sandwich(brim = smallbrim);
+  }
+  if(d_render){
+    translate([0,0,Bottom_plate_thickness + Bottom_plate_sandwich_gap])
+      bearing_filled_sandwich(worm=true, brim = smallbrim);
+  }
 }
 //placed_sandwich();
-//intersection(){ // Intersection made to mark part of sandwich
-//  //import("stl/full_sandwich_for_render_21_sep_2016.stl");
-//  placed_sandwich();
-//  translate([34,-5,-5])
-//    cube([20,10,103]);
-//}
-//placed_fish_rings();
+
+module sandwich_marks(){
+  intersection(){ // Intersection made to mark part of sandwich
+    placed_sandwich();
+    translate([34,-5,-5])
+      cube([20,10,103]);
+  }
+}
 
 // Used by support bearing in drive, only rendering
 module support_bearing_translate(rotation){
@@ -182,28 +203,47 @@ module assembled_drive(){
 //}
 //assembled_drive(rotation=103);
 
-module placed_abc_motors(){
-    four_point_translate()
-      translate([0,0,-Nema17_cube_height - 2])
-        Nema17();
+// Motors and gears are placed out separately... Not optimal.
+module placed_abc_motors(motor_gear_render=true){
+  four_point_translate(d_object=false) // don't place out a d-motor
+    translate([0,0,-Nema17_cube_height])
+    Nema17();
+  if(motor_gear_render){
     color(Printed_color_2){
-      rotate([0,0,3*72])
-        translate([0,Four_point_five_point_radius, Bottom_plate_thickness ])
-            motor_gear_d();
-      rotate([0,0,2*72])
+      rotate([0,0,C_placement_angle])
         translate([0,Four_point_five_point_radius, Bottom_plate_thickness + 5])
         motor_gear_c();
-      rotate([0,0,1*72])
+      rotate([0,0,B_placement_angle])
         translate([0,Four_point_five_point_radius, Bottom_plate_thickness])
         motor_gear_b();
-      rotate([0,0,4*72])
+      rotate([0,0,A_placement_angle])
         translate([0,Four_point_five_point_radius, Bottom_plate_thickness])
         motor_gear_a();
     }
+  }
 }
 //placed_abc_motors();
 //placed_sandwich();
 //placed_lines();
+
+module placed_d_motor(with_worm=true){
+  pushdown_motor = 70;
+
+  rotate([0,0,D_placement_angle+24])
+  translate([0,Worm_plate_radius + Worm_radius,
+    Bottom_plate_thickness + Bottom_plate_sandwich_gap // Now at bottom of d-sandwich
+    + Sandwich_gear_height/2]) //
+  rotate([0,-90,0]){
+    translate([0,0,-pushdown_motor])
+     // rotate([0,0,45]) // rotate d motor around itself here
+      Nema17();
+    if(with_worm){
+      color(Printed_color_2)
+        worm(); // Keep worm in center to more easily adjust radius to worm_plate later
+    }
+  }
+}
+placed_d_motor();
 
 module placed_extruder(){
   extruder_motor_translate(Extruder_motor_twist){

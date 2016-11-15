@@ -222,3 +222,9 @@ module text_cube(v, text){
   }
 }
 //text_cube([10,2,40], "HEJ");
+
+// Use for better rendering performance while working on other part.
+module precompiled(s){
+    echo("Warning: using precompiled file", s);
+    import(s);
+}

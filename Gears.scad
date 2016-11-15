@@ -5,6 +5,14 @@ include <design_numbers.scad>
 include <util.scad>
 use <Nema17_and_Ramps_and_bearings.scad>
 
+// To make worm
+// Get these libs at
+// https://github.com/openscad/scad-utils
+// and
+// https://github.com/openscad/list-comprehension-demos
+use <scad-utils/transformations.scad>
+use <list-comprehension-demos/sweep.scad>
+
 //////////// Functions /////////////
 function mirror_point(coord) =
 [
@@ -256,20 +264,27 @@ module small_extruder_gear(height=Small_extruder_gear_height){
 // These are modelled together, then split up before printing to make a cleaner edge.
 
 // Sandwich height follows exactly 608 bearing thickness
-module sandwich(){
+module sandwich(worm=false, brim=Sandwich_radius){
   od              = Bearing_608_outer_diameter;
   bw              = Bearing_608_width;
   meltlength      = 0.1;
   difference(){
     union(){
       // sandwich gear
-      translate([0, 0, Snelle_height - meltlength])
-        my_gear(Sandwich_gear_teeth, Sandwich_gear_height);
+      if(worm){
+        translate([0, 0, Snelle_height - meltlength])
+          worm_gear();
+      }else{
+        translate([0, 0, Snelle_height - meltlength])
+          my_gear(Sandwich_gear_teeth, Sandwich_gear_height);
+      }
       // Snelle
       cylinder(r = Snelle_radius,   h = Snelle_height, $fn=150);
-      cylinder(r = Sandwich_radius, h = Sandwich_edge_thickness, $fn=150);
-      translate([0,0,Snelle_height - Sandwich_edge_thickness])
-        cylinder(r = Sandwich_radius, h = Sandwich_edge_thickness, $fn=150);
+      cylinder(r = brim, h = Sandwich_edge_thickness, $fn=150);
+      if(!worm){
+        translate([0,0,Snelle_height - Sandwich_edge_thickness])
+          cylinder(r = Sandwich_radius, h = Sandwich_edge_thickness, $fn=150);
+      }
     }
     // Dig out the right holes
     // Bearing hole
@@ -301,7 +316,13 @@ module sandwich(){
   }
   //Bearing_608();
 }
-sandwich();
+//translate([3*Snelle_radius,0,0])
+//sandwich();
+//sandwich(worm=true);
+
+//my_gear(Sandwich_gear_teeth, Sandwich_gear_height);
+//translate()
+//worm_gear();
 
 // May not render correctly in preview...
 module sandwich_gear(){
@@ -339,10 +360,8 @@ module motor_gear(height = Motor_protruding_shaft_length, letter){
           cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40);
         }
         // Center bore
-        difference(){
-          translate([0, 0, -1])
-            cylinder(r = 5.1/2, h = height + 2);
-        }
+        translate([0, 0, -1])
+          cylinder(r = 5.1/2, h = height + 2);
       }
       // D-wall in bore
       translate([-6/2, 1.83, 0])
@@ -391,3 +410,117 @@ module gear_friends(){
   sandwich();
 }
 //gear_friends();
+
+// A gear with 90 degree valleys
+// TODO: slightly twist
+//       and maybe throat around worm (diff with torus)
+//       to better fit the worm later
+// TODO: place back in centrum
+module worm_gear(){
+  gamma = 360/Sandwich_gear_teeth; // Degrees per tooth
+  r2 = Sandwich_radius;
+  r1 = r2*(1 - sqrt((1-cos(gamma))/2) - (1-cos(gamma/2)));
+  difference(){
+    cylinder(h=Sandwich_gear_height, r=r2-0.4, $fn=100); // don't make razor sharp teeth
+    for(i=[0:gamma:359.9]){
+      rotate([0,0,i])
+        translate([r1,0,-1])
+        rotate([0,0,-45])
+        cube([30,30,Sandwich_gear_height+2]);
+    }
+  }
+}
+//worm_gear();
+
+module placed_worm_gear(ang=0){
+  gamma = 360/Sandwich_gear_teeth; // Degrees per tooth
+  r2 = Sandwich_radius;
+  r1 = r2*(1 - sqrt((1-cos(gamma))/2) - (1-cos(gamma/2)));
+  r3 = 15.5;
+  translate([r1,0,0])
+    rotate([90,0,0])
+    translate([r3,0,-Sandwich_gear_height/2])
+    rotate([0,0,ang])
+    worm_gear();
+}
+//%placed_worm_gear();
+
+// This is the worm for the worm drive
+// TODO: These numbers should be stored in design_numbers.scad
+//       because they are needed to place parts right later
+module worm(){
+  gamma = 360/Sandwich_gear_teeth; // Degrees per tooth
+  r3 = 15.5;
+  r2 = Sandwich_radius;
+  echo("r2");
+  echo(r2);
+  r1 = r2*(1 - sqrt((1-cos(gamma))/2) - (1-cos(gamma/2)));
+  side = sqrt(2)*(r2-r1)+1; // Needed the extra 1 to not get very thin walls
+  //side = 16; // Needed to reach bottom of gear teeth
+  standing_square = [[-side*sqrt(2),0,0],
+                  [-side/sqrt(2),0,-side/sqrt(2)],
+                  [0,0,0],
+                  [-side/sqrt(2),0,side/sqrt(2)]];
+  step = 0.1;
+  turns = 4;
+  stop_angle=turns*gamma;
+
+  // Top spiral
+  last_round_completeness = 0.36;
+  path0 = [for (v=[gamma*last_round_completeness:-step:step])
+    rotation([0,0,-v*360/gamma]) *
+    translation([r3-side*1.0*v/gamma,0,+r1*sin(v)]) *
+    rotation([0,-v,0]) // Rotate square around own normal
+    ];
+
+  // Main path touching gear
+  path1 = [for (v=[0:step:stop_angle+step])
+    rotation([0,0,v*360/gamma]) *
+    translation([r3+r1*(1-cos(v)),0,-r1*sin(v)]) *
+    rotation([0,-v,0]) // Rotate square around own normal
+    ];
+
+  // Bottom spiral
+  path2 = [for (v=[stop_angle+step:step:stop_angle+gamma*last_round_completeness])
+    rotation([0,0,v*360/gamma]) *
+    translation([r3+r1*(1-cos(v))-side*(v-stop_angle)/6,0,-r1*sin(v)]) *
+    rotation([0,-v,0]) // Rotate square around own normal
+    ];
+
+  height_downwards = r1*sin(stop_angle)+side-1;
+  height_upwards = 5;
+
+  //translate([0,0,height_downwards])
+  difference(){
+    union(){
+      // Concatenate the three paths
+      sweep(standing_square, concat(path0, path1, path2));
+      translate([0,0,-r1*sin(stop_angle)-side])
+        cylinder(r=r3+r1*(1-cos(stop_angle))-1.2, h=3.7);
+      translate([0,0,-29])
+        cylinder(r=9, h=Nema17_shaft_height);
+      //  translate([0,0,-r1*sin(stop_angle)-side+1])
+      //    cylinder(r=r3-r2+r1-0.5, h=side/sqrt(2) + r1*sin(gamma*last_round_completeness)
+      //        + (r1*sin(stop_angle)+side-1));
+    }
+    translate([-50,-50,-100-height_downwards])
+      cube(100);
+    translate([-50,-50,height_upwards])
+      cube(100);
+    rotate([0,0,-360*last_round_completeness-13]) // Have flat side directly at and of spiral
+    difference(){
+      cylinder(r = 5.4/2, h = 100, center=true);
+      translate([55+2,0,0])
+      cube(110, center=true);
+    }
+  }
+}
+//worm();
+
+module placed_worm(){
+  ang = 20;
+  rotate([0,0,-ang*Sandwich_gear_teeth])
+  worm();
+  %placed_worm_gear(ang);
+}
+placed_worm();

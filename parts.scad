@@ -79,10 +79,28 @@ module placed_fish_rings(){
 // A little odd that reference translation is along y...
 // Used for XY and Z motors
 // Needed here to get screw holes right
-module four_point_translate(){
+// a, b, c, d and e does not lie in counterclockwise order
+// They are ordered to avoid obstructing line paths
+module four_point_translate(a_object=true,
+                            b_object=true,
+                            c_object=true,
+                            d_object=true,
+                            e_object=false){
   radius = Four_point_five_point_radius;
-  for(i=[72:72:359]){
-    rotate([0,0,i]) translate([0,radius,0]) children(0);
+  if(b_object){
+    rotate([0,0,B_placement_angle]) translate([0,radius,0]) children(0);
+  }
+  if(c_object){
+    rotate([0,0,C_placement_angle]) translate([0,radius,0]) children(0);
+  }
+  if(d_object){
+    rotate([0,0,D_placement_angle]) translate([0,radius,0]) children(0);
+  }
+  if(a_object){
+    rotate([0,0,A_placement_angle]) translate([0,radius,0]) children(0);
+  }
+  if(e_object){
+    rotate([0,0,E_placement_angle]) translate([0,radius,0]) children(0);
   }
 }
 
@@ -149,15 +167,11 @@ module bottom_plate(){
         }
       }
 
-      // Bluetooth mount (and autocooling while printing tower)
-      translate(Line_action_point_abc_xy)
-        cube([4,4,sandwich_stick_height]);
-
       // Block to insert d stopper screw
-      translate([Sandwich_radius+2,-20,0])
-        rotate([0,0,25])
-          translate([0,-0.5,0])
-          cube([11,8,th+Sandwich_height+Bottom_plate_sandwich_gap+3]);
+      //translate([Sandwich_radius+2,-20,0])
+      //  rotate([0,0,25])
+      //    translate([0,-0.5,0])
+      //    cube([11,8,th+Sandwich_height+Bottom_plate_sandwich_gap+3]);
     } // End union
 
 
@@ -227,9 +241,9 @@ module bottom_plate(){
       }
     }
 
-    // Middle hole for ABCD-motors
+    // Middle hole for ABC-motors
     // Large enough to get motor gears through
-      four_point_translate(){
+      four_point_translate(d_object=false){
         cylinder(r = Motor_gear_radius
                      + 2*(Motor_gear_radius-Motor_gear_pitch),
                      h=Big, center=true);
@@ -237,9 +251,9 @@ module bottom_plate(){
 
     // Screw holes for abc Nema
     translate([0, 0, -1]){
-      four_point_translate()
+      four_point_translate(d_object=false)
         Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 18);
-      four_point_translate()
+      four_point_translate(d_object=false)
         translate([0,0,th-3.5])
           Nema17_screw_holes(M3_head_diameter+0.1, th+2);
     }
@@ -803,3 +817,10 @@ module side_plate3(height=15,th=7){
 }
 //mirror([1,0,0])
 //side_plate3();
+
+module precompiled_worm(){
+  difference(){
+    precompiled("stl/OpenSCAD_generated_worm_drive_15_Nov_2016/Worm8.stl");
+    cylinder(r=100,h=100);
+  }
+}

@@ -23,9 +23,9 @@ Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
 Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
 Lock_radius_2 = Lock_radius_1 + 2;
 Bottom_plate_sandwich_gap = 1.5;
-Bottom_plate_thickness    = 7.3;
+Bottom_plate_thickness    = 5.0;
 Top_plate_thickness       = Bottom_plate_thickness;
-Bottom_plate_radius       = 82;
+Bottom_plate_radius       = Full_tri_side/sqrt(6); // Fit bed precisely: Full_tri_side/sqrt(6)
 
 
 // For rotating lines and gatts in place
@@ -58,7 +58,7 @@ Line_contact_d_xy = [0, Full_tri_side/Sqrt3 - d_gatt_back, 0];
 Line_contacts_abcd_z = [Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 3*(Sandwich_height + Sandwich_gap),
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 2*(Sandwich_height + Sandwich_gap),
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 +    Sandwich_height + Sandwich_gap,
-                        Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2];    // D-lines have lowest contact point, maximizes build volume
+                        Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + Sandwich_gear_height];    // D-lines have lowest contact point, maximizes build volume
 
 fish_ring_abc_rotation = -20;
 fish_ring_d_rotation   = 125;
@@ -110,15 +110,25 @@ Big_extruder_gear_pitch      = Big_extruder_gear_teeth*Circular_pitch_extruder_g
 Small_extruder_gear_pitch    = Small_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
 Pitch_difference_extruder    = Big_extruder_gear_pitch + Small_extruder_gear_pitch;
 Four_point_five_point_radius = Sandwich_gear_pitch+Motor_gear_pitch+0.1;
+Worm_plate_radius            = Sandwich_radius;
+Worm_radius                  = 11.5; // Used for movement of worm
 
 Drive_support_height = Nema17_cube_width/3 +
            Pitch_difference_extruder*cos(Big_extruder_gear_rotation)
            + 5.3;
 E3d_v6_support_height = 15;
 
-E_motor_z_offset = -0.8;
+E_motor_z_offset = -0;
 
 Drive_support_towermove = 2;
 
 Printed_color_1 = "deepskyblue";
 Printed_color_2 = "sandybrown";
+
+// Here it is decided in which order the motors are sorted
+// counterclockwise starting from y-axis
+A_placement_angle = 72*4;
+B_placement_angle = 72*1;
+C_placement_angle = 72*2;
+D_placement_angle = 72*3;
+E_placement_angle = 0;    // 0 here places E motor on y-axis

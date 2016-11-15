@@ -15,16 +15,17 @@ use <render_parts.scad>
 
 // Rendering control
 render_bottom_plate  = true;
-render_sandwich      = false;
-render_abc_motors    = false;
+render_sandwich      = true;
+render_abc_motors    = true;
 render_fish_rings    = false;
-render_lines         = false;
-render_extruder      = false;
+render_lines         = true;
+render_extruder      = true;
 render_hotend        = true;
 render_ramps         = false;
-render_plates        = true;
+render_plates        = false;
 render_filament      = false;
 render_wall_vgrooves = false;
+render_d_motor       = true;
 
 // Measure distance to hot end tip
 //mirror([0,0,1])
@@ -37,18 +38,21 @@ module full_render(){
 
   if(render_bottom_plate){
     color(Printed_color_1)
-    //bottom_plate();
+    bottom_plate();
     // For better rendering performance, precompile bottom_plate
-    precompiled("stl/bottom_plate_for_render.stl");
+    //precompiled("stl/bottom_plate_for_render.stl");
   }
   if(render_sandwich){
-    //placed_sandwich();
+    placed_sandwich(false, false, true, true);
     // For better rendering performance, precompile placed sandwich
-    color(Printed_color_2)
-    precompiled("stl/full_sandwich_for_render_21_sep_2016.stl");
+    //color(Printed_color_2)
+    //precompiled("stl/full_sandwich_for_render_21_sep_2016.stl");
   }
   if(render_abc_motors){
-    placed_abc_motors();
+    placed_abc_motors(motor_gear_render=false);
+  }
+  if(render_d_motor){
+    placed_d_motor();
   }
   if(render_fish_rings){
     placed_fish_rings();
@@ -76,11 +80,12 @@ module full_render(){
 }
 full_render();
 
-// Use for better rendering performance while working on other part.
-module precompiled(s){
-    echo("Warning: using precompiled file", s);
-    import(s);
+module check_if_bottom_plate_fits_print_bed(){
+  translate([-Full_tri_side/2,-Full_tri_side*sqrt(3)/6,0])
+    rotate([0,0,-15])
+    %cube([200,200,10]);
 }
+//check_if_bottom_plate_fits_print_bed();
 
 module demonstrate_line_length_calibration(){
   // Demonstrate calibration difficulty of point C
@@ -182,30 +187,35 @@ module measurments(){
 }
 //measurments();
 
-c_split = [Abc_xy_split/2*cos(60), Abc_xy_split/2*sin(60), 0];
-printer_c = [-Full_tri_side/(2*Sqrt3)*sin(120),
-            -Full_tri_side/(2*Sqrt3)*cos(120),
-            Line_contacts_abcd_z[C]]
-              + c_split;
-pline(printer_c, printer_c - 2*c_split);
-translate([-59.8*sqrt(3)/2, 59.8/2,0])
-  cylinder(r=2, h=50);
+module cross_hair_average_c_action_point(){
+  c_split = [Abc_xy_split/2*cos(60), Abc_xy_split/2*sin(60), 0];
+  printer_c = [-Full_tri_side/(2*Sqrt3)*sin(120),
+               -Full_tri_side/(2*Sqrt3)*cos(120),
+               Line_contacts_abcd_z[C]]
+             + c_split;
+  pline(printer_c, printer_c - 2*c_split);
+  translate([-59.8*sqrt(3)/2, 59.8/2,0])
+    cylinder(r=2, h=50);
+}
 
-echo("a = ", norm(Wall_action_point_a));
-echo("b = ", norm(Wall_action_point_b));
-echo("c = ", norm(Wall_action_point_c));
-echo("d = ", norm(Ceiling_action_point));
-echo("s = ", norm(Wall_action_point_a-Wall_action_point_b));
-echo("f = ", norm(Wall_action_point_a-Wall_action_point_c));
-echo("B_x = ", Wall_action_point_b[X]);
-echo("B_y = ", Wall_action_point_b[Y]);
-echo("C_x = ", Wall_action_point_c[X]);
-echo("C_y = ", Wall_action_point_c[Y]);
-echo("Line_action_point_abc_xy = ", Line_action_point_abc_xy);
-// Compute action points above print surface:
-echo("Line_contacts_abcd_z[A] = ", Line_contacts_abcd_z[A]);
-echo("ANCHOR_A_Z = ", Line_contacts_abcd_z[A] + 105.35);
-echo("ANCHOR_B_Z = ", Line_contacts_abcd_z[B] + 105.35);
-echo("ANCHOR_C_Z = ", Line_contacts_abcd_z[C] + 105.35);
-echo("ANCHOR_D_Z = ", Line_contacts_abcd_z[D] + 105.35);
-echo("z_diff = ", Line_contacts_abcd_z[A] - Line_contacts_abcd_z[B]);
+module echo_calibration_numbers(){
+  echo("a = ", norm(Wall_action_point_a));
+  echo("b = ", norm(Wall_action_point_b));
+  echo("c = ", norm(Wall_action_point_c));
+  echo("d = ", norm(Ceiling_action_point));
+  echo("s = ", norm(Wall_action_point_a-Wall_action_point_b));
+  echo("f = ", norm(Wall_action_point_a-Wall_action_point_c));
+  echo("B_x = ", Wall_action_point_b[X]);
+  echo("B_y = ", Wall_action_point_b[Y]);
+  echo("C_x = ", Wall_action_point_c[X]);
+  echo("C_y = ", Wall_action_point_c[Y]);
+  echo("Line_action_point_abc_xy = ", Line_action_point_abc_xy);
+  // Compute action points above print surface:
+  echo("Line_contacts_abcd_z[A] = ", Line_contacts_abcd_z[A]);
+  echo("ANCHOR_A_Z = ", Line_contacts_abcd_z[A] + 105.35);
+  echo("ANCHOR_B_Z = ", Line_contacts_abcd_z[B] + 105.35);
+  echo("ANCHOR_C_Z = ", Line_contacts_abcd_z[C] + 105.35);
+  echo("ANCHOR_D_Z = ", Line_contacts_abcd_z[D] + 105.35);
+  echo("z_diff = ", Line_contacts_abcd_z[A] - Line_contacts_abcd_z[B]);
+}
+
