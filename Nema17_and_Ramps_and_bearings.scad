@@ -70,7 +70,7 @@ module Nema17(){
       translate([0,0,1]) cylinder(r=8.76/2, h=ch+Nema17_ring_height);
     }
     color("silver")
-      cylinder(r=5/2, h=sh);
+      cylinder(r=5/2, h=sh); // Shaft...
   }
 }
 //Nema17();

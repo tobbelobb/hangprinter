@@ -230,7 +230,7 @@ module placed_d_motor(with_worm=true){
   pushdown_motor = 70;
 
   rotate([0,0,D_placement_angle+24])
-  translate([0,Worm_plate_radius + Worm_radius,
+  translate([0,Worm_disc_tooth_valley_r + Worm_radius,
     Bottom_plate_thickness + Bottom_plate_sandwich_gap // Now at bottom of d-sandwich
     + Sandwich_gear_height/2]) //
   rotate([0,-90,0]){
@@ -243,7 +243,7 @@ module placed_d_motor(with_worm=true){
     }
   }
 }
-placed_d_motor();
+//placed_d_motor();
 
 module placed_extruder(){
   extruder_motor_translate(Extruder_motor_twist){

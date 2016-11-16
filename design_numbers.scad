@@ -110,8 +110,17 @@ Big_extruder_gear_pitch      = Big_extruder_gear_teeth*Circular_pitch_extruder_g
 Small_extruder_gear_pitch    = Small_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
 Pitch_difference_extruder    = Big_extruder_gear_pitch + Small_extruder_gear_pitch;
 Four_point_five_point_radius = Sandwich_gear_pitch+Motor_gear_pitch+0.1;
-Worm_plate_radius            = Sandwich_radius;
-Worm_radius                  = 11.5; // Used for movement of worm
+
+// Worm parameters
+Degrees_per_worm_gear_tooth  = 360/Sandwich_gear_teeth;
+Worm_disc_radius            = Sandwich_radius; // Worm plate will be cut to this radius
+Worm_disc_virtual_radius    = Worm_disc_radius + 0.3; // Before cut it will have this radius
+Worm_disc_tooth_valley_r    = Worm_disc_virtual_radius*(1 // Shift inwards for 45 deg valleys
+                                                  - sqrt((1-cos(Degrees_per_worm_gear_tooth))/2)
+                                                  - (1-cos(Degrees_per_worm_gear_tooth/2)));
+Worm_edge_cut                = 0.3;
+Worm_spiral_turns            = 3;
+Worm_radius                  = 15.5; // Distance from origo to virtual worm edge in xy-plane
 
 Drive_support_height = Nema17_cube_width/3 +
            Pitch_difference_extruder*cos(Big_extruder_gear_rotation)

@@ -11,6 +11,7 @@ use <Nema17_and_Ramps_and_bearings.scad>
 // and
 // https://github.com/openscad/list-comprehension-demos
 use <scad-utils/transformations.scad>
+use <scad-utils/shapes.scad>
 use <list-comprehension-demos/sweep.scad>
 
 //////////// Functions /////////////
@@ -415,16 +416,21 @@ module gear_friends(){
 // TODO: slightly twist
 //       and maybe throat around worm (diff with torus)
 //       to better fit the worm later
-// TODO: place back in centrum
 module worm_gear(){
-  gamma = 360/Sandwich_gear_teeth; // Degrees per tooth
-  r2 = Sandwich_radius;
-  r1 = r2*(1 - sqrt((1-cos(gamma))/2) - (1-cos(gamma/2)));
   difference(){
-    cylinder(h=Sandwich_gear_height, r=r2-0.4, $fn=100); // don't make razor sharp teeth
-    for(i=[0:gamma:359.9]){
+    // There is a radius and a virtual radius for worm gears in design_numbers.scad
+    // Cutting off the outermost virtual band has the same effect as if
+    // it was never there in the first place
+    cylinder(h=Sandwich_gear_height, r=Worm_disc_radius, $fn=100);
+    //intersection(){
+    //  cylinder(h=Sandwich_gear_height, r=Worm_disc_virtual_radius, $fn=100);
+    //  translate([0,0,-1])
+    //    cylinder(h=Sandwich_gear_height+2, r=Worm_disc_radius, $fn=100);
+    //}
+    for(i=[0:Degrees_per_worm_gear_tooth:359.9]){
       rotate([0,0,i])
-        translate([r1,0,-1])
+        // Worm_disc_virtual_radius affects Worm_disc_tooth_valley_r
+        translate([Worm_disc_tooth_valley_r,0,-1])
         rotate([0,0,-45])
         cube([30,30,Sandwich_gear_height+2]);
     }
@@ -432,14 +438,10 @@ module worm_gear(){
 }
 //worm_gear();
 
+// TODO: change 15.5 with Worm_radius or something
 module placed_worm_gear(ang=0){
-  gamma = 360/Sandwich_gear_teeth; // Degrees per tooth
-  r2 = Sandwich_radius;
-  r1 = r2*(1 - sqrt((1-cos(gamma))/2) - (1-cos(gamma/2)));
-  r3 = 15.5;
-  translate([r1,0,0])
-    rotate([90,0,0])
-    translate([r3,0,-Sandwich_gear_height/2])
+  rotate([90,0,0])
+    translate([Worm_disc_tooth_valley_r+Worm_radius,0,-Sandwich_gear_height/2])
     rotate([0,0,ang])
     worm_gear();
 }
@@ -449,78 +451,121 @@ module placed_worm_gear(ang=0){
 // TODO: These numbers should be stored in design_numbers.scad
 //       because they are needed to place parts right later
 module worm(){
-  gamma = 360/Sandwich_gear_teeth; // Degrees per tooth
-  r3 = 15.5;
-  r2 = Sandwich_radius;
-  echo("r2");
-  echo(r2);
-  r1 = r2*(1 - sqrt((1-cos(gamma))/2) - (1-cos(gamma/2)));
-  side = sqrt(2)*(r2-r1)+1; // Needed the extra 1 to not get very thin walls
-  //side = 16; // Needed to reach bottom of gear teeth
-  standing_square = [[-side*sqrt(2),0,0],
-                  [-side/sqrt(2),0,-side/sqrt(2)],
-                  [0,0,0],
-                  [-side/sqrt(2),0,side/sqrt(2)]];
-  step = 0.1;
-  turns = 4;
-  stop_angle=turns*gamma;
+  module center_cylinder(h){
+    difference(){
+        cylinder(r = Worm_radius - virtual_side, h = h);
+        // D-shape hole for motor shaft
+    }
+  }
+  module fill_interior(){
+    function my_circle(r) = [for (i=[0:Worm_spiral_turns*step*360/stop_angle:359.9])
+      r * [cos(i), sin(i)]];
+    // Scale profile to fill interior
+    towerpath1 = [for (v=[-Degrees_per_worm_gear_tooth : step : stop_angle + 1.0*Degrees_per_worm_gear_tooth])
+      // Move downwards
+      translation([0, // x
+          0,
+          -Worm_disc_tooth_valley_r*sin(v)]) *
+      // Scale in xy to fill interior
+      scaling([(translate_main_xy(v)+virtual_side*(1 - cos(v)))/translate_main_xy(0),
+          (translate_main_xy(v)+virtual_side*(1 - cos(v)))/translate_main_xy(0),
+          0])
+      ];
+    // 0.60 super duper hand tuned for flat worm valley
+    sweep(my_circle(Worm_radius-(Worm_disc_virtual_radius-Worm_disc_tooth_valley_r)+0.37),
+        towerpath1);
+  }
+
+  // Worm gear tooth side including tip
+  virtual_side = sqrt(2)*(Worm_disc_virtual_radius - Worm_disc_tooth_valley_r);
+ // Extra sidelength needed to connect spiral with itself vertically
+  reduced_side = virtual_side-Worm_edge_cut; // might need hand tuning to compile
+  thread_profile = [
+                  //[-reduced_side*sqrt(2),0,0], // With this corner, it's essentially a square
+                  [-reduced_side/sqrt(2),0,-reduced_side/sqrt(2)],
+                  [-Worm_edge_cut,0,-Worm_edge_cut], // Round off outer edge
+                  [-Worm_edge_cut,0,+Worm_edge_cut], // Virtual valley-hitting point in origo
+                  [-reduced_side/sqrt(2),0,reduced_side/sqrt(2)]
+                  ];
+  //p = [translation([0,0,0]),translation([0,1,0])];
+  //sweep(thread_profile,p);
+  step = 0.2; // Shorter steps ==> like higher $fn for spiral
+  stop_angle = Worm_spiral_turns*Degrees_per_worm_gear_tooth; // where main path stops
+
+  // XY-Translations of top (phase in), main (touch gear) and bottom (phase out) spirals
+  function translate_top_xy(v)    = Worm_radius
+                  - virtual_side*v/Degrees_per_worm_gear_tooth;
+  function translate_main_xy(v)   = Worm_radius + Worm_disc_tooth_valley_r*(1 - cos(v));
+  function translate_bottom_xy(v) = Worm_radius
+                  + Worm_disc_tooth_valley_r*(1 - cos(v))
+                  - 6*(v - stop_angle)/(Degrees_per_worm_gear_tooth);
 
   // Top spiral
-  last_round_completeness = 0.36;
-  path0 = [for (v=[gamma*last_round_completeness:-step:step])
-    rotation([0,0,-v*360/gamma]) *
-    translation([r3-side*1.0*v/gamma,0,+r1*sin(v)]) *
-    rotation([0,-v,0]) // Rotate square around own normal
+  path0 = [for (v=[Degrees_per_worm_gear_tooth : -step : step])
+    rotation([0,0,-v*360/Degrees_per_worm_gear_tooth]) * // Rotate around z axis
+    translation([translate_top_xy(v), // x
+                 0,
+                 +Worm_disc_tooth_valley_r*sin(v)]) * // z
+    rotation([0,-v,0]) // Rotate shape around valley-hitting point
     ];
 
   // Main path touching gear
-  path1 = [for (v=[0:step:stop_angle+step])
-    rotation([0,0,v*360/gamma]) *
-    translation([r3+r1*(1-cos(v)),0,-r1*sin(v)]) *
-    rotation([0,-v,0]) // Rotate square around own normal
+  path1 = [for (v=[0 : step : stop_angle + step])
+    rotation([0,0,v*360/Degrees_per_worm_gear_tooth]) *
+    translation([translate_main_xy(v), // x
+                 0,
+                 -Worm_disc_tooth_valley_r*sin(v)]) * // z
+    rotation([0,-v,0])
     ];
 
   // Bottom spiral
-  path2 = [for (v=[stop_angle+step:step:stop_angle+gamma*last_round_completeness])
-    rotation([0,0,v*360/gamma]) *
-    translation([r3+r1*(1-cos(v))-side*(v-stop_angle)/6,0,-r1*sin(v)]) *
-    rotation([0,-v,0]) // Rotate square around own normal
+  path2 = [for (v=[stop_angle + 2*step : step : stop_angle
+                                              + Degrees_per_worm_gear_tooth])
+    rotation([0,0,v*360/Degrees_per_worm_gear_tooth]) *
+    translation([translate_bottom_xy(v), // x
+                 0,
+                 -Worm_disc_tooth_valley_r*sin(v)]) * // z
+    rotation([0,-v,0])
     ];
 
-  height_downwards = r1*sin(stop_angle)+side-1;
+  height_downwards = Worm_disc_tooth_valley_r*sin(stop_angle) + virtual_side;
   height_upwards = 5;
 
-  //translate([0,0,height_downwards])
+
+  //translate([0,0,height_downwards]) // Put bottom plane on z=0
   difference(){
     union(){
-      // Concatenate the three paths
-      sweep(standing_square, concat(path0, path1, path2));
-      translate([0,0,-r1*sin(stop_angle)-side])
-        cylinder(r=r3+r1*(1-cos(stop_angle))-1.2, h=3.7);
-      translate([0,0,-29])
-        cylinder(r=9, h=Nema17_shaft_height);
-      //  translate([0,0,-r1*sin(stop_angle)-side+1])
-      //    cylinder(r=r3-r2+r1-0.5, h=side/sqrt(2) + r1*sin(gamma*last_round_completeness)
-      //        + (r1*sin(stop_angle)+side-1));
+      // Spiral
+      sweep(thread_profile, concat(path0, path1, path2));
+      //sweep(thread_profile, concat(path2));
+      fill_interior();
     }
-    translate([-50,-50,-100-height_downwards])
+    // Cut in half, see interior
+    //translate([0,-25,-40])
+    //cube([30,50,50]);
+
+    // Motor shaft D-shaped bore
+    h = height_downwards + height_upwards + 2;
+    translate([0,0,-height_downwards - 1])
+    difference(){
+      cylinder(r = 5.4/2, h = h+2, $fn=40);
+      translate([2,-(h+4),-2])
+        cube(2*(h+4));
+    }
+    // Cut bottom
+    translate([-50,-50,-100 - height_downwards])
       cube(100);
+    // Cut top
     translate([-50,-50,height_upwards])
       cube(100);
-    rotate([0,0,-360*last_round_completeness-13]) // Have flat side directly at and of spiral
-    difference(){
-      cylinder(r = 5.4/2, h = 100, center=true);
-      translate([55+2,0,0])
-      cube(110, center=true);
-    }
   }
 }
 //worm();
 
-module placed_worm(){
-  ang = 20;
+// ang is angle of worm plate, not worm itself
+module placed_worm(ang = 0){
   rotate([0,0,-ang*Sandwich_gear_teeth])
   worm();
   %placed_worm_gear(ang);
 }
-placed_worm();
+//placed_worm(ang=-12);
