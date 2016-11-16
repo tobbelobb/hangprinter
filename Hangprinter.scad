@@ -17,14 +17,14 @@ use <render_parts.scad>
 render_bottom_plate  = true;
 render_sandwich      = true;
 render_abc_motors    = true;
-render_fish_rings    = false;
+render_fish_rings    = true;
 render_lines         = true;
 render_extruder      = true;
 render_hotend        = true;
-render_ramps         = false;
-render_plates        = false;
-render_filament      = false;
-render_wall_vgrooves = false;
+render_ramps         = true;
+render_plates        = true;
+render_filament      = true;
+render_wall_vgrooves = true;
 render_d_motor       = true;
 
 // Measure distance to hot end tip
@@ -43,13 +43,13 @@ module full_render(){
     //precompiled("stl/bottom_plate_for_render.stl");
   }
   if(render_sandwich){
-    placed_sandwich(false, false, true, true);
+    placed_sandwich(true, true, true, true);
     // For better rendering performance, precompile placed sandwich
     //color(Printed_color_2)
     //precompiled("stl/full_sandwich_for_render_21_sep_2016.stl");
   }
   if(render_abc_motors){
-    placed_abc_motors(motor_gear_render=false);
+    placed_abc_motors(motor_gear_render=true);
   }
   if(render_d_motor){
     placed_d_motor();

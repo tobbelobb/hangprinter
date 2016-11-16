@@ -23,7 +23,7 @@ Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
 Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
 Lock_radius_2 = Lock_radius_1 + 2;
 Bottom_plate_sandwich_gap = 1.5;
-Bottom_plate_thickness    = 5.0;
+Bottom_plate_thickness    = 6.0;
 Top_plate_thickness       = Bottom_plate_thickness;
 Bottom_plate_radius       = Full_tri_side/sqrt(6); // Fit bed precisely: Full_tri_side/sqrt(6)
 
@@ -119,7 +119,7 @@ Worm_disc_tooth_valley_r    = Worm_disc_virtual_radius*(1 // Shift inwards for 4
                                                   - sqrt((1-cos(Degrees_per_worm_gear_tooth))/2)
                                                   - (1-cos(Degrees_per_worm_gear_tooth/2)));
 Worm_edge_cut                = 0.3;
-Worm_spiral_turns            = 3;
+Worm_spiral_turns            = 2.5; // Shortened to make space for screw...
 Worm_radius                  = 15.5; // Distance from origo to virtual worm edge in xy-plane
 
 Drive_support_height = Nema17_cube_width/3 +
@@ -141,3 +141,6 @@ B_placement_angle = 72*1;
 C_placement_angle = 72*2;
 D_placement_angle = 72*3;
 E_placement_angle = 0;    // 0 here places E motor on y-axis
+
+Pushdown_d_motor = 70;
+D_motor_twist = 29;

@@ -227,18 +227,11 @@ module placed_abc_motors(motor_gear_render=true){
 //placed_lines();
 
 module placed_d_motor(with_worm=true){
-  pushdown_motor = 70;
-
-  rotate([0,0,D_placement_angle+24])
-  translate([0,Worm_disc_tooth_valley_r + Worm_radius,
-    Bottom_plate_thickness + Bottom_plate_sandwich_gap // Now at bottom of d-sandwich
-    + Sandwich_gear_height/2]) //
-  rotate([0,-90,0]){
-    translate([0,0,-pushdown_motor])
-     // rotate([0,0,45]) // rotate d motor around itself here
-      Nema17();
+  d_motor_move(){
+    Nema17();
     if(with_worm){
       color(Printed_color_2)
+        translate([0,0,Pushdown_d_motor])
         worm(); // Keep worm in center to more easily adjust radius to worm_plate later
     }
   }

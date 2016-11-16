@@ -5,6 +5,20 @@ use <Nema17_and_Ramps_and_bearings.scad>
 use <Gears.scad>
 use <render_parts.scad>
 
+module d_motor_move(){
+  rotate([0,0,D_placement_angle+24])
+    translate([0,Worm_disc_tooth_valley_r + Worm_radius,
+        Bottom_plate_thickness + Bottom_plate_sandwich_gap // Now at bottom of d-sandwich
+        + Sandwich_gear_height/2]) //
+    rotate([0,-90,0]){
+      translate([0,0,-Pushdown_d_motor])
+        rotate([0,0,D_motor_twist]) // rotate d motor around itself here
+        for(i=[0:$children-1]){
+          children(i);
+        }
+    }
+}
+
 module fish_ring(){
   $fn = 15;
   // Measured numbers
@@ -126,6 +140,7 @@ module lock(r1, r2, height){
 }
 //lock(Lock_radius_1, Lock_radius_2, Lock_height);
 
+
 module bottom_plate(){
   // Global variables renamed short
   cw  = Nema17_cube_width;
@@ -165,6 +180,14 @@ module bottom_plate(){
             }
           }
         }
+      }
+      // Mounting tower for D motor
+      d_motor_move(){
+        rotate([0,0,45]) translate([Nema17_screw_hole_width/2,0,0])
+          translate([-6,0,Nema17_cube_height])
+          rotate([90,0,D_motor_twist/2])
+          translate([0,0,-14])
+          cube([12,4,20]);
       }
     } // End union
 
@@ -237,6 +260,26 @@ module bottom_plate(){
       scale(1.015) // Leave 1.5% extra space, don't need tight fit
       Nema17();
 
+    // Hole for worm driving d-motor
+    // For some reason, OpenSCAD crashes if I call:
+    //placed_d_motor(worm=false);
+
+    d_motor_move(){
+      translate([0,0,-1.5])
+      scale(1.04) // Leave 4 percent gap for easy mounting
+      Nema17();
+      //scale([1.1,1.05,1.05])
+      //  worm(); // Keep worm in center to more easily adjust radius to worm_plate later
+      // Square hole for worm
+      rotate([90,0,90-D_motor_twist])
+        translate([0,-27+Pushdown_d_motor,-10])
+        linear_extrude(height=Bottom_plate_thickness+2)
+        polygon([[-Worm_radius-10, 0], [Worm_radius+6,0], [Worm_radius,36],[-Worm_radius-10,36]]);
+      // Screw holes for D motor
+      translate([0,0,-10])
+        Nema17_screw_holes(M3_diameter,20+Nema17_cube_height);
+    }// end d_motor_move
+
     // Screw holes for extruder motor mounting screws
     translate([0,0,E_motor_z_offset]){
     rotate([0,0,Extruder_motor_twist])
@@ -298,7 +341,8 @@ module bottom_plate(){
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-//bottom_plate();
+bottom_plate();
+
 
 //** bottom_plate end **//
 
@@ -720,7 +764,7 @@ module side_plate2(height=15,th=7){
       }
   }
 }
-side_plate2();
+//side_plate2();
 
 module side_plate3(height=15,th=7){
   s = Abc_xy_split + 2*6;
@@ -791,3 +835,6 @@ module side_plate3(height=15,th=7){
 }
 //mirror([1,0,0])
 //side_plate3();
+
+
+
