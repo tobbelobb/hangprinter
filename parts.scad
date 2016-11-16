@@ -166,36 +166,10 @@ module bottom_plate(){
           }
         }
       }
-
-      // Block to insert d stopper screw
-      //translate([Sandwich_radius+2,-20,0])
-      //  rotate([0,0,25])
-      //    translate([0,-0.5,0])
-      //    cube([11,8,th+Sandwich_height+Bottom_plate_sandwich_gap+3]);
     } // End union
 
 
     //*** ANTIMATERIA STARTS HERE ***//
-
-    // Nyloc nut lock for d stopper screw
-    translate([Sandwich_radius+6,-16.5,th+1.5+Sandwich_edge_thickness+Snelle_height+0.5]){
-      rotate([-90,0,25])
-        translate([1,0,-10])
-        M3_screw(25);
-        rotate([0,90,25])
-          translate([-5.52/2,0,-5]){
-          point_cube([5.52,4.1,12],120);
-          translate([3.53/2,0,-1])
-            cube([2,4.1,12]);
-          }
-    }
-
-
-    // top fastening sandwich stick
-    for(k=[1,-1])
-     translate([k*2,0,Line_contacts_abcd_z[A]+swh-Snelle_height/2+2.5])
-        rotate([90,0,0])
-        cylinder(r=1, h=10, center=true);
 
     // Tracks to put fish rings in
     placed_fish_rings();
@@ -817,10 +791,3 @@ module side_plate3(height=15,th=7){
 }
 //mirror([1,0,0])
 //side_plate3();
-
-module precompiled_worm(){
-  difference(){
-    precompiled("stl/OpenSCAD_generated_worm_drive_15_Nov_2016/Worm8.stl");
-    cylinder(r=100,h=100);
-  }
-}
