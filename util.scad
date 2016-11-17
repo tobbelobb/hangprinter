@@ -228,3 +228,9 @@ module precompiled(s){
     echo("Warning: using precompiled file", s);
     import(s);
 }
+
+module teardrop(r=10, h=10){
+  cylinder(r=r, h=h);
+  rotate([0,0,45])
+    cube([r,r,h]);
+}

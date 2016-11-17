@@ -122,7 +122,7 @@ module four_point_translate(a_object=true,
 // TODO: Remove part of Tble-struder
 module extruder_motor_translate(){
   translate([E_motor_x_offset,
-             Nema17_shaft_height/2 + Nema17_cube_height/2, // Middle of shaft (outside of cube)
+             Sstruder_filament_meets_shaft + Nema17_cube_height,
              -Nema17_screw_hole_dist/2 + Bottom_plate_thickness/2 + E_motor_z_offset])
     rotate([90,0,0])
     for(i=[0:$children-1]){
@@ -223,12 +223,6 @@ module bottom_plate(){
           Nema17_screw_holes(M3_head_diameter+0.1, th+2);
       }
 
-      // Hole for extruder motor
-      // TODO: Remove part of Tble-struder
-      extruder_motor_translate()
-        scale(1.015) // Leave 1.5% extra space, don't need tight fit
-        Nema17();
-
       // Hole for worm driving d-motor
       // For some reason, OpenSCAD crashes if I call:
       //placed_d_motor(worm=false);
@@ -259,6 +253,16 @@ module bottom_plate(){
 
       // Screw holes for extruder motor mounting screws
       extruder_motor_translate(){
+        // Hole for extruder motor
+        scale(1.015) // Leave 1.5% extra space, don't need tight fit
+        Nema17();
+        // Diff'ing sstruder directly here gives unwanted artifacts and details
+        translate([0,0,Nema17_cube_height])
+          translate([-Nema17_cube_width/2,
+              -Sstruder_height+Nema17_cube_width/2,
+              0]) // TODO: 0-->cube_height
+          cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness+0.2]);
+          //sstruder();
         for(i=[1,-1]){
           translate([i*Nema17_screw_hole_dist/2,Nema17_screw_hole_dist/2,0]){
             translate([0,0,-Big+Nema17_cube_height+10])
@@ -346,7 +350,7 @@ module bottom_plate(){
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-bottom_plate();
+//bottom_plate();
 
 
 //** bottom_plate end **//
@@ -842,4 +846,131 @@ module side_plate3(height=15,th=7){
 //side_plate3();
 
 
+// Only for rendering
+module hobbed_insert(){
+  color("grey")
+    cylinder(r=Hobbed_insert_diameter/2, h=Hobbed_insert_height);
+}
+//hobbed_insert();
 
+// We want to use small 623 bearings
+// but we also want to use two hobbs, bores equal to motor shaft diameter
+// Cut in half and lay down to print
+module hobbed_insert_shaft(){
+  // Inside lower bearing and arm
+  cylinder(d=Bearing_623_bore_diameter, h=Bearing_623_width+Sstruder_handle_height+0.1);
+  translate([0,0,Sstruder_handle_height + Bearing_623_width]){
+    // Inside hobb
+    cylinder(d=Nema17_motor_shaft, h=Hobbed_insert_height);
+    translate([0,0,Hobbed_insert_height]){
+      // Inside Sstruder gear
+      cylinder(d=Sstruder_gear_diameter, h=Sstruder_gear_thickness);
+      translate([0,0,Sstruder_gear_thickness]){
+        // Inside upper bearing and arm
+        cylinder(d=Bearing_623_bore_diameter, h=Bearing_623_width+Sstruder_handle_height+0.1);
+      }
+    }
+  }
+}
+hobbed_insert_shaft();
+
+module Sstruder_lever(){
+  module lever_arm(l){
+    difference(){
+      union(){
+        translate([-Bearing_623_outer_diameter/2-3/2, 0, 0])
+          cube([Bearing_623_outer_diameter+3, l, Bearing_623_width]);
+        cylinder(d=Bearing_623_outer_diameter+3, h = Bearing_623_width);
+      }
+      translate([0,0,-1])
+        cylinder(d=Bearing_623_outer_diameter, h = Bearing_623_width+2);
+    }
+  }
+  lever_arm(40);
+  difference(){
+    translate([-(Bearing_623_outer_diameter+3)/2,Hobbed_insert_diameter*2,0])
+      cube([Bearing_623_outer_diameter+3,
+            Bearing_623_width,
+            2*Bearing_623_width
+              + Hobbed_insert_height
+              + Sstruder_gear_thickness
+              + 2*Sstruder_handle_height]);
+  }
+  translate([0,0, // long line for z...
+   Bearing_623_width + Hobbed_insert_height + Sstruder_gear_thickness + 2*Sstruder_handle_height])
+    #lever_arm(Hobbed_insert_diameter*2+Bearing_623_width);
+}
+Sstruder_lever();
+
+module sstruder(hobb1=true, hobb2=true){
+  hot_end_fastening_h = 12;
+  ring_hole_d = (Nema17_ring_diameter+4);
+
+  difference(){
+    union(){
+      // Main flat block
+      translate([-Nema17_cube_width/2,
+          -Sstruder_height+Nema17_cube_width/2,
+          0]) // TODO: 0-->cube_height
+        cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness]);
+      // Make channel block lean in
+      difference(){
+        // Block for channel for tube
+        translate([-(Bowden_tube_diameter+4)/2 - E_motor_x_offset,
+            -(Sstruder_height-Nema17_cube_width/2 - hot_end_fastening_h),
+            0]) // TODO: 0-->cube_height
+          cube([Bowden_tube_diameter+4, // 2mm walls on each side of tube
+              Sstruder_height - Nema17_cube_width/2 - hot_end_fastening_h, // Tube cavety length
+              Sstruder_filament_meets_shaft  + 5]);
+        // Make channel_cube lean towards filament
+        translate([0,-ring_hole_d/2-Sstruder_thickness,0]) // Start cutting on edge
+          rotate([45,0,0])
+          translate([-10,0,-30])
+          cube(30);
+        // But cut it before it reaches the hobb
+        translate([-15,-Hobbed_insert_diameter/2-1,0])
+          cube(30);
+      }
+    }
+    // Screw holes
+    translate([0,0,-1])
+      Nema17_screw_holes(M3_diameter, Sstruder_thickness+2);
+    // Nema17 ring
+    translate([0,0,-1])
+      cylinder(d=ring_hole_d, h=Sstruder_thickness+1.01);
+    // tube channel
+    translate([-E_motor_x_offset,1,Sstruder_filament_meets_shaft])
+      rotate([90,0,0])
+      teardrop(Bowden_tube_diameter/2, Sstruder_height);
+
+  }
+
+  module hobb_towers(a=0){
+    // The hobbed insert itself
+    translate([a,
+               0,
+               Sstruder_filament_meets_shaft - Hobbed_insert_height/2]){
+      hobbed_insert();
+      // Only place insert shaft and bearings if not at center
+      if(a!=0){
+        // The insert shaft
+        translate([0, 0, - Sstruder_handle_height - Bearing_623_width - 0.1])
+          hobbed_insert_shaft();
+        // The bearings
+        translate([0, 0, - Bearing_623_width - 0.1])
+          Bearing_623();
+        translate([0, 0, 0.1 + Hobbed_insert_height + Sstruder_gear_thickness])
+          Bearing_623();
+      }
+    }
+  }
+  if(hobb2){
+    hobb_towers(Hobbed_insert_diameter + Extruder_filament_opening);
+  }
+  if(hobb1){
+    hobb_towers(0);
+  }
+}
+//sstruder();
+//translate([0,0,-Nema17_cube_height])
+// %Nema17();

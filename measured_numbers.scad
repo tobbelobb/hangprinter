@@ -43,3 +43,5 @@ Fish_ring_thinnest_outer_edge    = 0.67;   // Height of thinnest outer edge...
 E3d_heatsink_height = 42.7;
 E3d_mount_small_r   = 6;
 E3d_mount_big_r     = 8;
+
+Bowden_tube_diameter = 5;

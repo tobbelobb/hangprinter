@@ -93,6 +93,7 @@ E_motor_z_offset = -1; // Added to get E-motor below sandwich
 Hobbed_insert_height = 9;
 Extruder_filament_opening = 1.3;
 // Place E-motor away from D-motor to make spring loaded hobb accessible
+// Sstruder construction depends on this variable
 E_motor_x_offset = -(Hobbed_insert_diameter/2 + Extruder_filament_opening/2);
 
 // TODO: Remove part of Tble-struder
@@ -157,3 +158,10 @@ E_placement_angle = 0;    // 0 here places E motor on y-axis
 
 Pushdown_d_motor = 70;
 D_motor_twist = 29;
+
+Sstruder_thickness = 3;
+Sstruder_height = 55;
+Sstruder_handle_height = 0.2; // Length of shaft outside Bearing_623. TODO: rename...
+Sstruder_filament_meets_shaft = (Nema17_shaft_height-Nema17_cube_height)/2 + Sstruder_handle_height;
+Sstruder_gear_thickness = 3;
+Sstruder_gear_diameter = 5;

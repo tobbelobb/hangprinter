@@ -137,13 +137,6 @@ module support_bearing(rotation){
 //support_bearing(0);
 
 // Only for rendering
-module hobbed_insert(){
-  color("grey")
-    cylinder(r=Hobbed_insert_diameter/2, h=Hobbed_insert_height);
-}
-//hobbed_insert();
-
-// Only for rendering
 // TODO: Remove part of Tble-struder
 module translated_hobb_tower(){
   bearing_base_translation = Big_extruder_gear_height+1.2;
@@ -243,6 +236,9 @@ module placed_d_motor(with_worm=true){
 module placed_extruder(){
   extruder_motor_translate(){
     Nema17();
+    color(Printed_color_2)
+    translate([0,0,Nema17_cube_height])
+      sstruder();
     // Move drive up extruder motor shaft
     // TODO: Remove part of Tble-extruder
     //translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+0])
