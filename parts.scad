@@ -187,7 +187,7 @@ module bottom_plate(){
           translate([-6,0,Nema17_cube_height])
           rotate([90,0,D_motor_twist/2])
           translate([0,0,-14])
-          cube([12,4,20]);
+          cube([12,5.5,20]);
       }
     } // End union
 
@@ -266,7 +266,7 @@ module bottom_plate(){
 
     d_motor_move(){
       translate([0,0,-1.5])
-      scale(1.04) // Leave 4 percent gap for easy mounting
+      scale(1.02) // Leave 2 percent gap for easy mounting
       Nema17();
       //scale([1.1,1.05,1.05])
       //  worm(); // Keep worm in center to more easily adjust radius to worm_plate later
@@ -274,7 +274,14 @@ module bottom_plate(){
       rotate([90,0,90-D_motor_twist])
         translate([0,-27+Pushdown_d_motor,-10])
         linear_extrude(height=Bottom_plate_thickness+2)
-        polygon([[-Worm_radius-10, 0], [Worm_radius+6,0], [Worm_radius,36],[-Worm_radius-10,36]]);
+        polygon([[-Worm_radius - 10, 0],
+                 [-Worm_radius -  1, 0],
+                 [-Worm_radius -  1, 3],
+                 [+Worm_radius +  3.1, 3],
+                 [+Worm_radius +  3.6, 11],
+                 [+Worm_radius +  3.3, 14],
+                 [+Worm_radius -  1, 34],
+                 [-Worm_radius - 10, 34]]);
       // Screw holes for D motor
       translate([0,0,-10])
         Nema17_screw_holes(M3_diameter,20+Nema17_cube_height);
