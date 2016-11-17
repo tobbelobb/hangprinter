@@ -100,6 +100,47 @@ module Ramps(){
 }
 //Ramps();
 
+module Ramps_holder(){
+  floor_th = 2;
+  edge_height = 3;
+  solders_height = 5;
+  extra_height = edge_height+solders_height;
+  wall_th = 2;
+  edge = 1;
+  difference(){
+    union(){
+      // Main outer cube
+      difference(){
+        cube([Ramps_length, Ramps_depth+2*wall_th, Ramps_width+extra_height+floor_th]);
+        // Fit Ramps straight in
+        translate([-1,wall_th,floor_th])
+          cube([Ramps_length+2, Ramps_depth, Ramps_width+floor_th+extra_height+1]);
+      }
+      // Add edges
+      translate([0,-edge,floor_th+Ramps_width+solders_height])
+        cube([Ramps_length,wall_th+2*edge,edge_height]);
+      translate([0,Ramps_depth+wall_th-edge,floor_th+Ramps_width+solders_height])
+        cube([Ramps_length,wall_th+2*edge,edge_height]);
+    }
+    // Cut away parts of wall
+    translate([-1,-edge-1,floor_th])
+      cube([Ramps_length/5+1, Ramps_depth+2*edge+2*wall_th+2, Ramps_width+extra_height+1]);
+    translate([2*Ramps_length/5,-edge-1,floor_th])
+      cube([Ramps_length/5, Ramps_depth+2*edge+2*wall_th+2, Ramps_width+extra_height+1]);
+    translate([4*Ramps_length/5,-edge-1,floor_th])
+      cube([Ramps_length/5+1, Ramps_depth+2*edge+2*wall_th+2, Ramps_width+extra_height+1]);
+    // Nema17 screw holes
+    for(i=[2:6]){
+      translate([i*Ramps_length/8,Ramps_depth/2+wall_th,-1]){
+        rotate([0,0,45])
+          Nema17_screw_holes(M3_diameter,10);
+        Nema17_screw_holes(M3_diameter,10);
+      }
+    }
+  }
+}
+//Ramps_holder();
+
 module Bearing_623(){
   color("blue")
   difference(){

@@ -261,11 +261,20 @@ module placed_hotend(){
 }
 //placed_hotend();
 
+module Ramps_in_holder(){
+  Ramps();
+  translate([0,Ramps_width+2+5,-2])
+    rotate([90,0,0])
+    color(Printed_color_1)
+    Ramps_holder();
+}
+//Ramps_in_holder();
+
 module placed_ramps(){
   rotate([0,0,2*90+Extruder_motor_twist])
-    translate([-60,-18,-Nema17_cube_height - Ramps_width - 2])
+    translate([-60,-18,-Nema17_cube_height - Ramps_width - 7])
     rotate([90,0,0])
-    Ramps();
+    Ramps_in_holder();
 }
 //placed_ramps();
 
