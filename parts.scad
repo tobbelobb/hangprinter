@@ -28,36 +28,36 @@ module fish_ring(){
   lar_ri = 3.00/2;
   hol_r1 = 5.86/2;
   hol_r2 = 5.42/2;
-  trdist = cdist + lar_ro;
+  trdist = Fish_ring_holes_distance + Fish_ring_outer_radius_high_part;
   // Bring action point to origo
-  translate([0,-ins_ri,0])
+  translate([0,-Fish_ring_inner_radius,0])
   difference(){
     union(){
       color("black")
-        cylinder(r=ins_ro, h=ins_h, center=true);  // Inside ring (cheramic)
+        cylinder(r=ins_ro, h=Fish_ring_height, center=true);  // Inside ring (cheramic)
       color("grey")
-        cylinder(r=edg_r, h=edg_h, center=true);
-      translate([0,0,-edg_h/2])
+        cylinder(r=edg_r, h=Fish_ring_thinnest_outer_edge, center=true);
+      translate([0,0,-Fish_ring_thinnest_outer_edge/2])
       color("grey")
-      linear_extrude(height=edg_h, slices=1)
+      linear_extrude(height=Fish_ring_thinnest_outer_edge, slices=1)
         polygon(points = [tangent_point(edg_r, [0,-trdist]),
                           tangent_point_3(edg_r, [0,-trdist]),
                           [0,-trdist]],
                 paths = [[0,1,2]]);
-      translate([0,-cdist,0]){
+      translate([0,-Fish_ring_holes_distance,0]){
         color("black")
-          translate([0,0,lar_h/4])
-          cylinder(r=lar_ro, h=lar_h, center=true);
+          translate([0,0,Fish_ring_largest_height/4])
+          cylinder(r=Fish_ring_outer_radius_high_part, h=Fish_ring_largest_height, center=true);
         color("grey")
-          cylinder(r=hol_r1, h=edg_h, center=true);
+          cylinder(r=hol_r1, h=Fish_ring_thinnest_outer_edge, center=true);
         color("grey")
-          cylinder(r=hol_r2, h=hol_h-edg_h/2);
+          cylinder(r=hol_r2, h=hol_h-Fish_ring_thinnest_outer_edge/2);
       }
     }
     // The two holes (ceramic and lar ring)
-    cylinder(r=ins_ri, h=ins_h+2, center=true);
-    translate([0,-cdist,0])
-      cylinder(r=lar_ri, h=lar_h*2, center=true);
+    cylinder(r=Fish_ring_inner_radius, h=Fish_ring_height+2, center=true);
+    translate([0,-Fish_ring_holes_distance,0])
+      cylinder(r=lar_ri, h=Fish_ring_largest_height*2, center=true);
   }
 }
 //fish_ring();
@@ -68,9 +68,9 @@ module placed_fish_rings(){
       for(k=[0,1])
         mirror([k,0,0])
           translate(Line_contact_abc_xy
-            + [0,0, Line_contacts_abcd_z[i] + ins_ri + ins_ri/sqrt(2)])
+            + [0,0, Line_contacts_abcd_z[i] + Fish_ring_inner_radius + Fish_ring_inner_radius/sqrt(2)])
           rotate([90,0,fish_ring_abc_rotation])
-          translate([-ins_ri/sqrt(2),0,0])
+          translate([-Fish_ring_inner_radius/sqrt(2),0,0])
           mirror([0,0,1])
           fish_ring();
     }
@@ -190,13 +190,13 @@ module bottom_plate(){
         rotate([0,0,120*i]){
           translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]]){
             rotate([fish_ring_d_rotation-90,0,0])
-              translate([-3.3,-10 - edg_h/2 + 0.05,-big/2])
+              translate([-3.3,-10 - Fish_ring_thinnest_outer_edge/2 + 0.05,-big/2])
               cube([6.6,10,big]); // Block to put fish ring in
             rotate([fish_ring_d_rotation-180,0,0])
-              translate([0,ins_ri+cdist,0])
+              translate([0,Fish_ring_inner_radius+Fish_ring_holes_distance,0])
               cylinder(r=M3_diameter/2, h=big, center=true);//Hole for M3
             rotate([fish_ring_d_rotation-180,0,0])
-              translate([0,ins_ri+cdist,4])
+              translate([0,Fish_ring_inner_radius+Fish_ring_holes_distance,4])
               cylinder(r=M3_head_diameter/2, h=big);//M3 screw head hole
           }
           // Straight edge towards center of the d fish ring hole
@@ -314,8 +314,8 @@ module bottom_plate(){
             mirror([k,0,0]){
               translate(Line_contact_abc_xy)
                 rotate([0,0,fish_ring_abc_rotation])
-                translate([-6-ins_ri , -edg_h/2+0.01,0])
-                cube([12,5.5,Line_contacts_abcd_z[i] - ins_ri]);
+                translate([-6-Fish_ring_inner_radius , -Fish_ring_thinnest_outer_edge/2+0.01,0])
+                cube([12,5.5,Line_contacts_abcd_z[i] - Fish_ring_inner_radius]);
             }
           }
         }
@@ -327,10 +327,10 @@ module bottom_plate(){
           for(k=[0,1]){
             mirror([k,0,0]){
               translate(Line_contact_abc_xy
-                  +[0,0,Line_contacts_abcd_z[i] + ins_ri + ins_ri/sqrt(2)])
+                  +[0,0,Line_contacts_abcd_z[i] + Fish_ring_inner_radius + Fish_ring_inner_radius/sqrt(2)])
                 rotate([90,0,fish_ring_abc_rotation]){
-                  translate([-ins_ri/sqrt(2),0,0])
-                    translate([0,-cdist-ins_ri,0]){
+                  translate([-Fish_ring_inner_radius/sqrt(2),0,0])
+                    translate([0,-Fish_ring_holes_distance-Fish_ring_inner_radius,0]){
                       cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
                     }
                 }

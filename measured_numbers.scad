@@ -33,13 +33,13 @@ Bearing_623_vgroove_small_diameter = 12 - 1.7;
 Bearing_623_vgroove_width = 3;
 Hobbed_insert_diameter     = 8.8;
 
-ins_h  = 1.76;   // Height of cheramic fish ring
-ins_ri = 3.00/2; // Inner radius of cheramic fish ring
-cdist  = 6.80;   // Distance between holes in fish ring
-lar_h  = 4.00;   // Larges height of any part of fish ring
-lar_ro = 4.62/2; // Outer diameter of largest-height-part
-edg_h  = 0.67;   // Height of thinnest outer edge...
+Fish_ring_height                 = 1.76;   // Height of cheramic fish ring
+Fish_ring_inner_radius           = 3.00/2; // Inner radius of cheramic fish ring
+Fish_ring_holes_distance         = 6.80;   // Distance between holes in fish ring
+Fish_ring_largest_height         = 4.00;   // Larges height of any part of fish ring
+Fish_ring_outer_radius_high_part = 4.62/2; // Outer radius of largest-height-part
+Fish_ring_thinnest_outer_edge    = 0.67;   // Height of thinnest outer edge...
 
 E3d_heatsink_height = 42.7;
-E3d_mount_small_r = 6;
-E3d_mount_big_r = 8;
+E3d_mount_small_r   = 6;
+E3d_mount_big_r     = 8;
