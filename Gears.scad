@@ -192,6 +192,7 @@ module my_gear(teeth, height){
 }
 //my_gear(40,10);
 
+// TODO: Remove part of Tble-struder
 module big_extruder_gear(height=Big_extruder_gear_height){
   difference(){
     gear(
@@ -223,6 +224,7 @@ module big_extruder_gear(height=Big_extruder_gear_height){
 //rotate([180,0,0])
 //big_extruder_gear();
 
+// TODO: Remove part of Tble-struder
 module small_extruder_gear(height=Small_extruder_gear_height){
 	difference(){
 		union(){

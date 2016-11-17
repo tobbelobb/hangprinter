@@ -119,15 +119,15 @@ module four_point_translate(a_object=true,
 }
 
 // Needed here to get screw holes right
-module extruder_motor_translate(extruder_twist = 12){
-  radius = Four_point_five_point_radius + 5;
-  translate([0, radius, -Nema17_screw_hole_dist/2 // z-center screwhole
-                        +Bottom_plate_thickness/2
-                        +E_motor_z_offset])
-    rotate([0, 0, extruder_twist])
-      translate([0, -Nema17_cube_height, 0])
-        rotate([90,0,0])
-          translate([0, 0, -3*Nema17_cube_height/2 - 2]) children();
+// TODO: Remove part of Tble-struder
+module extruder_motor_translate(){
+  translate([E_motor_x_offset,
+             Nema17_shaft_height/2 + Nema17_cube_height/2, // Middle of shaft (outside of cube)
+             -Nema17_screw_hole_dist/2 + Bottom_plate_thickness/2 + E_motor_z_offset])
+    rotate([90,0,0])
+    for(i=[0:$children-1]){
+      children(i);
+    }
 }
 
 // The thing separating bearings on center axis of bottom plate
@@ -153,21 +153,160 @@ module bottom_plate(){
   sandwich_stick_height = Line_contacts_abcd_z[A]+swh-Snelle_height/2
                  + 5; // for putting some kind of top lock mechanism
 
+  // First add and subtract everything except fish ring towers
+  // Then construct fish ring towers, then add them
+  // To avoid accidentically cutting them near bottom
+  union(){
+    difference(){
+      union(){
+        // Largest possible triangular plate
+        eq_tri(Full_tri_side, th);
+        // Circular bottom plate
+        cylinder(r=bpr, h = th);
 
-  difference(){
-    union(){
-      // Largest possible triangular plate
-      eq_tri(Full_tri_side, th);
-      // Circular bottom plate
-      cylinder(r=bpr, h = th);
+        // Sandwich stick
+        cylinder(r=bd/2+0.16,
+            h=sandwich_stick_height);
 
-      // Sandwich stick
-      cylinder(r=bd/2+0.16,
-               h=sandwich_stick_height);
+        // The bottom lock
+        cylinder(r=Lock_radius_2, h=th + Bottom_plate_sandwich_gap);
 
-      // The bottom lock
-      cylinder(r=Lock_radius_2, h=th + Bottom_plate_sandwich_gap);
+        // Mounting tower for D motor
+        d_motor_move(){
+          rotate([0,0,45]) translate([Nema17_screw_hole_width/2,0,0])
+            translate([-6,0,Nema17_cube_height])
+            rotate([90,0,D_motor_twist/2])
+            translate([0,0,-14])
+            cube([12,5.5,20]);
+        }
+      } // End union
 
+
+      //*** ANTIMATERIA STARTS HERE ***//
+
+      // Mounting space for d fish_rings
+      big=5*th;
+      for(i=[0,1,2]){
+        rotate([0,0,120*i]){
+          translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]]){
+            rotate([fish_ring_d_rotation-90,0,0])
+              translate([-3.3,-10 - edg_h/2 + 0.05,-big/2])
+              cube([6.6,10,big]); // Block to put fish ring in
+            rotate([fish_ring_d_rotation-180,0,0])
+              translate([0,ins_ri+cdist,0])
+              cylinder(r=M3_diameter/2, h=big, center=true);//Hole for M3
+            rotate([fish_ring_d_rotation-180,0,0])
+              translate([0,ins_ri+cdist,4])
+              cylinder(r=M3_head_diameter/2, h=big);//M3 screw head hole
+          }
+          // Straight edge towards center of the d fish ring hole
+          translate(Line_contact_d_xy)
+            translate([-3.3,-9.5,-big+th+1])
+            cube([6.6,7,big]); // Block to put fish ring in
+        }
+      }
+
+      // Middle hole for ABC-motors
+      // Large enough to get motor gears through
+      four_point_translate(d_object=false){
+        cylinder(r = Motor_gear_radius
+            + 2*(Motor_gear_radius-Motor_gear_pitch),
+            h=Big, center=true);
+      }
+
+      // Screw holes for abc Nema
+      translate([0, 0, -1]){
+        four_point_translate(d_object=false)
+          Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 18);
+        four_point_translate(d_object=false)
+          translate([0,0,th-3.5])
+          Nema17_screw_holes(M3_head_diameter+0.1, th+2);
+      }
+
+      // Hole for extruder motor
+      // TODO: Remove part of Tble-struder
+      extruder_motor_translate()
+        scale(1.015) // Leave 1.5% extra space, don't need tight fit
+        Nema17();
+
+      // Hole for worm driving d-motor
+      // For some reason, OpenSCAD crashes if I call:
+      //placed_d_motor(worm=false);
+
+      d_motor_move(){
+        translate([0,0,-1.5])
+          scale(1.02) // Leave 2 percent gap for easy mounting
+          Nema17();
+        //scale([1.1,1.05,1.05])
+        //  worm(); // Keep worm in center to more easily adjust radius to worm_plate later
+        // Square hole for worm
+        rotate([90,0,90-D_motor_twist])
+          translate([0,-27+Pushdown_d_motor,
+              -Sandwich_gear_height/2-Bottom_plate_sandwich_gap-Bottom_plate_thickness-1])
+          linear_extrude(height=Bottom_plate_thickness+2)
+          polygon([[-Worm_radius - 10, 0],
+              [-Worm_radius -  1, 0],
+              [-Worm_radius -  1, 3],
+              [+Worm_radius +  3.1, 3],
+              [+Worm_radius +  3.6, 11],
+              [+Worm_radius +  3.3, 14],
+              [+Worm_radius -  1, 34],
+              [-Worm_radius - 10, 34]]);
+        // Screw holes for D motor
+        translate([0,0,-10])
+          Nema17_screw_holes(M3_diameter,20+Nema17_cube_height);
+      }// end d_motor_move
+
+      // Screw holes for extruder motor mounting screws
+      extruder_motor_translate(){
+        for(i=[1,-1]){
+          translate([i*Nema17_screw_hole_dist/2,Nema17_screw_hole_dist/2,0]){
+            translate([0,0,-Big+Nema17_cube_height+10])
+              cylinder(h=Big, d=M3_diameter+0.2);
+            translate([-9/2,-(Bottom_plate_thickness+2)/2,Nema17_cube_height+7])
+              // Rectangular hole to reach in with hex key
+              cube([9,Bottom_plate_thickness+3,30]);
+            if(i==-1){
+              translate([-9/2,-(Bottom_plate_thickness+2)/2,-31-7])
+                // Rectangular hole to reach in with hex key
+                cube([9,Bottom_plate_thickness+3,31]);
+            }
+          }
+        }
+      }
+
+
+      // Dig out filament hole in sandwich stick and base.
+      // Note that bowden tube should fit in this from below
+      translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
+
+      // Letters for easier identification
+      translate([0,0,-1]){
+        rotate([0,0,120*A+7])
+          translate(Line_action_point_abc_xy + [0,-8,th])
+          scale([1,1,1.5])
+          linear_extrude(height=2)
+          text("A",halign="center",valign="center");
+        rotate([0,0,120*B+7])
+          translate(Line_action_point_abc_xy + [0,-8,th])
+          scale([1,1,1.5])
+          linear_extrude(height=2)
+          text("B",halign="center",valign="center");
+        rotate([0,0,120*C+7])
+          translate(Line_action_point_abc_xy + [0,-16,th])
+          scale([1,1,1.5])
+          linear_extrude(height=2)
+          text("C",halign="center",valign="center");
+      }
+      // Funnel shape for easier bowden tube fit
+      translate([0,0,-0.1])
+        cylinder(h=3, r1=3, r2=2);
+
+    }// end difference
+
+    //*** Fish ring towers start here ***//
+
+    difference(){
       // Mounting towers for abc fish rings
       for(i=[0,1,2]){
         rotate([0,0,120*i]){
@@ -181,169 +320,27 @@ module bottom_plate(){
           }
         }
       }
-      // Mounting tower for D motor
-      d_motor_move(){
-        rotate([0,0,45]) translate([Nema17_screw_hole_width/2,0,0])
-          translate([-6,0,Nema17_cube_height])
-          rotate([90,0,D_motor_twist/2])
-          translate([0,0,-14])
-          cube([12,5.5,20]);
-      }
-    } // End union
-
-
-    //*** ANTIMATERIA STARTS HERE ***//
-
-    // Tracks to put fish rings in
-    placed_fish_rings();
-
-    // Mounting space for d fish_rings
-    big=5*th;
-    for(i=[0,1,2]){
-      rotate([0,0,120*i]){
-        translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]]){
-          rotate([fish_ring_d_rotation-90,0,0])
-            translate([-3.3,-10 - edg_h/2 + 0.05,-big/2])
-            cube([6.6,10,big]); // Block to put fish ring in
-          rotate([fish_ring_d_rotation-180,0,0])
-            translate([0,ins_ri+cdist,0])
-            cylinder(r=M3_diameter/2, h=big, center=true);//Hole for M3
-          rotate([fish_ring_d_rotation-180,0,0])
-            translate([0,ins_ri+cdist,4])
-            cylinder(r=M3_head_diameter/2, h=big);//M3 screw head hole
-        }
-        // Straight edge towards center of the d fish ring hole
-        translate(Line_contact_d_xy)
-          translate([-3.3,-9.5,-big+th+1])
-            cube([6.6,7,big]); // Block to put fish ring in
-      }
-    }
-
-    // Mounting holes for abc fish rings
-    // rotations and translations synced with placed_fish_rings
-    for(i=[0,1,2]){
-      rotate([0,0,120*i]){
-        for(k=[0,1]){
-          mirror([k,0,0]){
-            translate(Line_contact_abc_xy
-              +[0,0,Line_contacts_abcd_z[i] + ins_ri + ins_ri/sqrt(2)])
-              rotate([90,0,fish_ring_abc_rotation]){
-                translate([-ins_ri/sqrt(2),0,0])
-                  translate([0,-cdist-ins_ri,0]){
-                    cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
-                  }
-              }
+      // Mounting holes for abc fish rings
+      // rotations and translations synced with placed_fish_rings
+      for(i=[0,1,2]){
+        rotate([0,0,120*i]){
+          for(k=[0,1]){
+            mirror([k,0,0]){
+              translate(Line_contact_abc_xy
+                  +[0,0,Line_contacts_abcd_z[i] + ins_ri + ins_ri/sqrt(2)])
+                rotate([90,0,fish_ring_abc_rotation]){
+                  translate([-ins_ri/sqrt(2),0,0])
+                    translate([0,-cdist-ins_ri,0]){
+                      cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
+                    }
+                }
+            }
           }
         }
       }
-    }
-
-    // Middle hole for ABC-motors
-    // Large enough to get motor gears through
-      four_point_translate(d_object=false){
-        cylinder(r = Motor_gear_radius
-                     + 2*(Motor_gear_radius-Motor_gear_pitch),
-                     h=Big, center=true);
-      }
-
-    // Screw holes for abc Nema
-    translate([0, 0, -1]){
-      four_point_translate(d_object=false)
-        Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 18);
-      four_point_translate(d_object=false)
-        translate([0,0,th-3.5])
-          Nema17_screw_holes(M3_head_diameter+0.1, th+2);
-    }
-
-    // Hole for extruder motor
-    extruder_motor_translate(Extruder_motor_twist)
-      scale(1.015) // Leave 1.5% extra space, don't need tight fit
-      Nema17();
-
-    // Hole for worm driving d-motor
-    // For some reason, OpenSCAD crashes if I call:
-    //placed_d_motor(worm=false);
-
-    d_motor_move(){
-      translate([0,0,-1.5])
-      scale(1.02) // Leave 2 percent gap for easy mounting
-      Nema17();
-      //scale([1.1,1.05,1.05])
-      //  worm(); // Keep worm in center to more easily adjust radius to worm_plate later
-      // Square hole for worm
-      rotate([90,0,90-D_motor_twist])
-        translate([0,-27+Pushdown_d_motor,
-          -Sandwich_gear_height/2-Bottom_plate_sandwich_gap-Bottom_plate_thickness-1])
-        linear_extrude(height=Bottom_plate_thickness+2)
-        polygon([[-Worm_radius - 10, 0],
-                 [-Worm_radius -  1, 0],
-                 [-Worm_radius -  1, 3],
-                 [+Worm_radius +  3.1, 3],
-                 [+Worm_radius +  3.6, 11],
-                 [+Worm_radius +  3.3, 14],
-                 [+Worm_radius -  1, 34],
-                 [-Worm_radius - 10, 34]]);
-      // Screw holes for D motor
-      translate([0,0,-10])
-        Nema17_screw_holes(M3_diameter,20+Nema17_cube_height);
-    }// end d_motor_move
-
-    // Screw holes for extruder motor mounting screws
-    translate([0,0,E_motor_z_offset]){
-    rotate([0,0,Extruder_motor_twist])
-      translate([-18.5,77,Bottom_plate_thickness/2])
-      rotate([-90,0,0])
-      cylinder(h=Big, r=2.0);
-    rotate([0,0,Extruder_motor_twist])
-      translate([-50,77,Bottom_plate_thickness/2])
-      rotate([-90,0,0])
-      cylinder(h=Big, r=2.0);
-    rotate([0,0,Extruder_motor_twist])
-      translate([-18.5,7,Bottom_plate_thickness/2])
-      rotate([-90,0,0])
-      cylinder(h=Big, r=M3_diameter/2+0.1);
-    rotate([0,0,Extruder_motor_twist])
-      translate([-50,7,Bottom_plate_thickness/2])
-      rotate([-90,0,0])
-      cylinder(h=Big, r=M3_diameter/2+0.1);
-    }
-
-    rotate([0,0,Extruder_motor_twist])
-      translate([-18.5,11,Bottom_plate_thickness/2])
-      rotate([-90,0,0])
-      cube([9,Bottom_plate_thickness+2,30], center=true);
-
-    rotate([0,0,Extruder_motor_twist])
-      translate([-50,11,Bottom_plate_thickness/2])
-      rotate([-90,0,0])
-      cube([9,Bottom_plate_thickness+2,30], center=true);
-
-    // Dig out filament hole in sandwich stick and base.
-    // Note that bowden tube should fit in this from below
-    translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
-
-    // Letters for easier identification
-    translate([0,0,-1]){
-      rotate([0,0,120*A+7])
-        translate(Line_action_point_abc_xy + [0,-8,th])
-        scale([1,1,1.5])
-        linear_extrude(height=2)
-        text("A",halign="center",valign="center");
-      rotate([0,0,120*B+7])
-        translate(Line_action_point_abc_xy + [0,-8,th])
-        scale([1,1,1.5])
-        linear_extrude(height=2)
-        text("B",halign="center",valign="center");
-      rotate([0,0,120*C+7])
-        translate(Line_action_point_abc_xy + [0,-16,th])
-        scale([1,1,1.5])
-        linear_extrude(height=2)
-        text("C",halign="center",valign="center");
-    }
-    // Funnel shape for easier bowden tube fit
-    translate([0,0,-0.1])
-      cylinder(h=3, r1=3, r2=2);
-
+      // Tracks to put fish rings in
+      placed_fish_rings();
+    } // End difference
   }
 }
 // The rotate is for easier fitting print bed when printing

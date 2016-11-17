@@ -144,6 +144,7 @@ module hobbed_insert(){
 //hobbed_insert();
 
 // Only for rendering
+// TODO: Remove part of Tble-struder
 module translated_hobb_tower(){
   bearing_base_translation = Big_extruder_gear_height+1.2;
   hobbed_insert_placement = bearing_base_translation +
@@ -165,7 +166,8 @@ module translated_hobb_tower(){
 // Support and big extruder gear are translated to fit around
 // a non-translated small extruder gear.
 // rotation is around the small gear
-module assembled_drive(){
+// TODO: Remove part of Tble-struder
+module tble_struder(){
   // Height adapted so support always get high enough
   // no matter the Big_extruder_gear_rotation
   rotate([0,0,Big_extruder_gear_rotation]){
@@ -201,7 +203,7 @@ module assembled_drive(){
 //  e3d_v6_volcano_hotend();
 //  color("purple") cylinder(r=1.75/2, h=60);
 //}
-//assembled_drive(rotation=103);
+//tble_struder(rotation=103);
 
 // Motors and gears are placed out separately... Not optimal.
 module placed_abc_motors(motor_gear_render=true){
@@ -239,11 +241,12 @@ module placed_d_motor(with_worm=true){
 //placed_d_motor();
 
 module placed_extruder(){
-  extruder_motor_translate(Extruder_motor_twist){
+  extruder_motor_translate(){
     Nema17();
     // Move drive up extruder motor shaft
-    translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+0])
-      assembled_drive(Big_extruder_gear_rotation);
+    // TODO: Remove part of Tble-extruder
+    //translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+0])
+    //  tble_struder(Big_extruder_gear_rotation);
   }
 }
 //placed_extruder();
@@ -271,7 +274,7 @@ module Ramps_in_holder(){
 //Ramps_in_holder();
 
 module placed_ramps(){
-  rotate([0,0,2*90+Extruder_motor_twist])
+  rotate([0,0,2*90])
     translate([-60,-18,-Nema17_cube_height - Ramps_width - 7])
     rotate([90,0,0])
     Ramps_in_holder();
