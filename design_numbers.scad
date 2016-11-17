@@ -23,7 +23,7 @@ Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
 Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.25;
 Lock_radius_2 = Lock_radius_1 + 2;
 Bottom_plate_sandwich_gap = 1.5;
-Bottom_plate_thickness    = 6.0;
+Bottom_plate_thickness    = 8.0;
 Top_plate_thickness       = Bottom_plate_thickness;
 Bottom_plate_radius       = Full_tri_side/sqrt(6); // Fit bed precisely: Full_tri_side/sqrt(6)
 
@@ -128,7 +128,7 @@ Drive_support_height = Nema17_cube_width/3 +
            + 5.3;
 E3d_v6_support_height = 15;
 
-E_motor_z_offset = -0;
+E_motor_z_offset = -1; // Added to get E-motor below sandwich
 
 Drive_support_towermove = 2;
 

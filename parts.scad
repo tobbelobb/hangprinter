@@ -272,7 +272,8 @@ module bottom_plate(){
       //  worm(); // Keep worm in center to more easily adjust radius to worm_plate later
       // Square hole for worm
       rotate([90,0,90-D_motor_twist])
-        translate([0,-27+Pushdown_d_motor,-10])
+        translate([0,-27+Pushdown_d_motor,
+          -Sandwich_gear_height/2-Bottom_plate_sandwich_gap-Bottom_plate_thickness-1])
         linear_extrude(height=Bottom_plate_thickness+2)
         polygon([[-Worm_radius - 10, 0],
                  [-Worm_radius -  1, 0],
