@@ -113,8 +113,9 @@ Four_point_five_point_radius = Sandwich_gear_pitch+Motor_gear_pitch+0.1;
 
 // Worm parameters
 Degrees_per_worm_gear_tooth  = 360/Sandwich_gear_teeth;
+Worm_disc_tooth_cutoff      = 0.37;
 Worm_disc_radius            = Sandwich_radius; // Worm plate will be cut to this radius
-Worm_disc_virtual_radius    = Worm_disc_radius + 0.3; // Before cut it will have this radius
+Worm_disc_virtual_radius    = Worm_disc_radius + Worm_disc_tooth_cutoff; // Also affects worm
 Worm_disc_tooth_valley_r    = Worm_disc_virtual_radius*(1 // Shift inwards for 45 deg valleys
                                                   - sqrt((1-cos(Degrees_per_worm_gear_tooth))/2)
                                                   - (1-cos(Degrees_per_worm_gear_tooth/2)));

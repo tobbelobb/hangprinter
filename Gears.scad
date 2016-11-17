@@ -472,7 +472,8 @@ module worm(){
           0])
       ];
     // 0.60 super duper hand tuned for flat worm valley
-    sweep(my_circle(Worm_radius-(Worm_disc_virtual_radius-Worm_disc_tooth_valley_r)+0.37),
+    sweep(my_circle(Worm_radius - (Worm_disc_virtual_radius - Worm_disc_tooth_valley_r)
+                    + Worm_disc_tooth_cutoff),
         towerpath1);
   }
 
@@ -537,7 +538,6 @@ module worm(){
     union(){
       // Spiral
       sweep(thread_profile, concat(path0, path1, path2));
-      //sweep(thread_profile, concat(path2));
       fill_interior();
     }
     // Cut in half, see interior
@@ -546,6 +546,7 @@ module worm(){
 
     // Motor shaft D-shaped bore
     h = height_downwards + height_upwards + 2;
+    rotate([0,0,45])
     translate([0,0,-height_downwards - 1])
     difference(){
       cylinder(r = 5.4/2, h = h+2, $fn=40);
@@ -558,9 +559,29 @@ module worm(){
     // Cut top
     translate([-50,-50,height_upwards])
       cube(100);
+    // Screw hole and nut lock
+    translate([0,0,-height_downwards+4.6]){
+      rotate([0,90,45]){
+        scale([1.05,1.05,3])
+          M3_screw(6,true);
+        rotate([0,0,90])
+          translate([0,4,5])
+          rotate([90,0,0])
+          translate([-5.5/2,0,0])
+          point_cube([5.5,2.4,10],120);
+        //point_cube();
+      }
+    }
   }
 }
-//worm();
+worm();
+
+//scale([1,1,3])
+//#M3_screw(6,true);
+//translate([0,5,3])
+//rotate([90,0,0])
+//translate([-5.5/2,0,0])
+//#point_cube([5.5,2.4,2+Bottom_plate_thickness],120);
 
 // ang is angle of worm plate, not worm itself
 module placed_worm(ang = 0){
