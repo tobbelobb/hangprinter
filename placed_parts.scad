@@ -250,7 +250,7 @@ module placed_hotend(){
     // Manually placed.
     // For exact placement look in the difference
     // that creates groove in drive_support
-    translate([-1.1,0.9,-83]) // TODO: make this depend on parameters so it always hits bore
+    translate([0,0,-E3d_heatsink_height + Sstruder_hot_end_bore_z])
       rotate([0,0,56]){
         e3d_v6_volcano_hotend(fan=0);
         // filament following placed hotend
@@ -260,7 +260,9 @@ module placed_hotend(){
 //placed_hotend();
 
 module Ramps_in_holder(){
-  Ramps();
+  translate([-0.1,-0.1,-0.1]) // Just prevent the Z-fighting
+    scale(1.01)
+    Ramps();
   translate([0,Ramps_width+2+5,-2])
     rotate([90,0,0])
     color(Printed_color_1)

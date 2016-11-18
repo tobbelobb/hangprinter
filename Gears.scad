@@ -576,7 +576,7 @@ module worm(){
     }
   }
 }
-worm();
+//worm();
 
 //scale([1,1,3])
 //#M3_screw(6,true);
@@ -592,3 +592,41 @@ module placed_worm(ang = 0){
   %placed_worm_gear(ang);
 }
 //placed_worm(ang=-12);
+
+module sstruder_gear(){
+	difference(){
+		union(){
+      translate([0,0,0.1])
+			gear(
+				number_of_teeth = Sstruder_gear_teeth,
+				circular_pitch  = Sstruder_gear_circular_pitch,
+        diametral_pitch = false,
+				pressure_angle  = 30,
+				clearance       = 0.2,
+				gear_thickness  = Sstruder_gear_thickness,
+        rim_thickness   = Sstruder_gear_thickness,
+				rim_width       = 5,
+				hub_thickness   = Sstruder_gear_thickness,
+				hub_diameter    = 15,
+				bore_diameter   = Nema17_motor_shaft,
+				circles         = 0,
+				backlash        = 0,
+				twist           = 0,
+				involute_facets = 0
+			);
+
+			translate([Shaft_flat + 0.75,0,Sstruder_gear_thickness/2+0.15])
+				cube([1.5,5,Sstruder_gear_thickness-0.1],center=true);
+			//base
+			//difference(){
+			//	cylinder(r=6.3,h=1.0,$fn=64);
+			//	cylinder(r=Nema17_motor_shaft/2,h=1.001,$fn=64);
+			//}
+		}
+		//lead in
+		//translate([0,0,-0.01])
+			cylinder(r1=Nema17_motor_shaft/2+0.25,
+               r2=Nema17_motor_shaft/2-2,h=4,$fn=64);
+	}
+}
+//sstruder_gear();
