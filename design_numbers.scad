@@ -35,7 +35,7 @@ Sandwich_gear_height = Sandwich_height*3/8;
 Snelle_height        = Sandwich_height*5/8;
 
 // Distance between parallell contact points on one side of printer
-Abc_xy_split = Full_tri_side - 2*30;
+Abc_xy_split = Full_tri_side - 2*35;
 
 // This is the xy coordinate of one wall/printer contact point
 Line_action_point_abc_xy = [0, -Full_tri_side/(2*Sqrt3), 0];
