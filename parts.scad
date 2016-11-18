@@ -183,6 +183,14 @@ module bottom_plate(){
             translate([0,0,-14])
             cube([12,5.5,20]);
         }
+
+        // Mounting towers for D fish rings
+        little_r = 15;
+        for(i=[0,1,2]){
+          rotate([0,0,120*i])
+            translate([0, Full_tri_side/Sqrt3 - little_r/Sqrt3, 1])
+            eq_tri(little_r, Line_contacts_abcd_z[D]-3);
+        }
       } // End union
 
 
@@ -194,7 +202,9 @@ module bottom_plate(){
         rotate([0,0,120*i]){
           translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]]){
             rotate([fish_ring_d_rotation-90,0,0])
-              translate([-3.3,-10 - Fish_ring_thinnest_outer_edge/2 + 0.05,-big/2])
+              translate([-3.3,
+                         -10 - Fish_ring_thinnest_outer_edge/2 + 0.05,
+                         -2*Fish_ring_holes_distance])
               cube([6.6,10,big]); // Block to put fish ring in
             rotate([fish_ring_d_rotation-180,0,0])
               translate([0,Fish_ring_inner_radius+Fish_ring_holes_distance,0])
@@ -206,7 +216,7 @@ module bottom_plate(){
           // Straight edge towards center of the d fish ring hole
           translate(Line_contact_d_xy)
             translate([-3.3,-9.5,-big+th+1])
-            cube([6.6,7,big]); // Block to put fish ring in
+            cube([6.6,8,big]); // Block to put fish ring in
         }
       }
 
