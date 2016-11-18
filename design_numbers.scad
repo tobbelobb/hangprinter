@@ -160,8 +160,13 @@ Pushdown_d_motor = 70;
 D_motor_twist = 29;
 
 Sstruder_thickness = 3;
-Sstruder_height = 55;
+Sstruder_lever_thickness = 3;
+Sstruder_height = 64;
 Sstruder_handle_height = 0.2; // Length of shaft outside Bearing_623. TODO: rename...
 Sstruder_filament_meets_shaft = (Nema17_shaft_height-Nema17_cube_height)/2 + Sstruder_handle_height;
 Sstruder_gear_thickness = 3;
 Sstruder_gear_diameter = 5;
+Sstruder_fork_length = Hobbed_insert_diameter/2 + Extruder_filament_opening + 3;
+Sstruder_hinge_length = Nema17_cube_width/2 + M3_diameter; // Length from center of bearing down to center of hinge along x axis
+Sstruder_edge_around_bearing = 1.5;
+Sstruder_pressblock_thickness = 4.5;

@@ -234,3 +234,18 @@ module teardrop(r=10, h=10){
   rotate([0,0,45])
     cube([r,r,h]);
 }
+
+// Specialized to work with Sstruder construction...
+module spiraled_cube(v=[10,10,2]){
+  spiral_length = 50;
+  difference(){
+    cube(v);
+    translate([v[0]/2,-9,v[2]/2])
+      rotate([90,90,0])
+      scale([2,2,2*spiral_length])
+    #sweep(square(0.5),
+    [for(t = [0.001:0.001:0.32])
+    rotation(log(t)*146) * translation([0.5+5*t,0,0])
+    * rotation([90,0,0])]);
+  }
+}

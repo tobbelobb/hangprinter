@@ -236,7 +236,6 @@ module placed_d_motor(with_worm=true){
 module placed_extruder(){
   extruder_motor_translate(){
     Nema17();
-    color(Printed_color_2)
     translate([0,0,Nema17_cube_height])
       sstruder();
     // Move drive up extruder motor shaft
@@ -245,13 +244,13 @@ module placed_extruder(){
     //  tble_struder(Big_extruder_gear_rotation);
   }
 }
-//placed_extruder();
+placed_extruder();
 
 module placed_hotend(){
     // Manually placed.
     // For exact placement look in the difference
     // that creates groove in drive_support
-    translate([-1.1,0.9,-78.3])
+    translate([-1.1,0.9,-83]) // TODO: make this depend on parameters so it always hits bore
       rotate([0,0,56]){
         e3d_v6_volcano_hotend(fan=0);
         // filament following placed hotend
