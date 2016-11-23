@@ -10,9 +10,10 @@ use <Nema17_and_Ramps_and_bearings.scad>
 // https://github.com/openscad/scad-utils
 // and
 // https://github.com/openscad/list-comprehension-demos
-use <scad-utils/transformations.scad>
-use <scad-utils/shapes.scad>
-use <list-comprehension-demos/sweep.scad>
+//use <scad-utils/transformations.scad>
+//use <scad-utils/shapes.scad>
+//use <list-comprehension-demos/sweep.scad>
+use <sweep.scad>
 
 //////////// Functions /////////////
 function mirror_point(coord) =
