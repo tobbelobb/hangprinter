@@ -3,14 +3,6 @@ Hangprinter
 
 A RepRap hanging from the ceiling.
 
-Dependencies
-============
-
-The worm screw requires the library [scad-utils](https://github.com/openscad/scad-utils)
-and the function sweep() from [list-comprehension-demos](https://github.com/openscad/list-comprehension-demos).
-
-
-
 Media
 ======
 
@@ -47,5 +39,11 @@ List of blog posts is complete as of 15 Nov 2016. Check [blog](https://vitana.se
 for newer updates.
 
 See videos via my [vimeo user](https://vimeo.com/user23166500).
+
+Credits
+============
+
+screw.scad contains code copied from [scad-utils](https://github.com/openscad/scad-utils)
+and [list-comprehension-demos](https://github.com/openscad/list-comprehension-demos).
 
 /tobbelobb
