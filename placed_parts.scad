@@ -9,6 +9,7 @@ use <Nema17_and_Ramps_and_bearings.scad>
 // All modules in here can be rendered through the
 // full_render module in Hangprinter.scad
 
+// TODO: it is the lines that are wrong, not top_plate and bottom_plate
 module placed_lines(){
   th  = Bottom_plate_thickness;
   // Lines from sandwich out to gatts
@@ -225,7 +226,8 @@ module placed_d_motor(with_worm=true){
   d_motor_move(){
     Nema17();
     if(with_worm){
-      color(Printed_color_2)
+      //color(Printed_color_2)
+      color("lightGrey")
         translate([0,0,Pushdown_d_motor])
         worm(); // Keep worm in center to more easily adjust radius to worm_plate later
     }

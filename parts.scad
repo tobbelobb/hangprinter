@@ -5,12 +5,8 @@ use <Nema17_and_Ramps_and_bearings.scad>
 use <Gears.scad>
 use <render_parts.scad>
 
-// For spiraled_cube
-include <list-comprehension-demos/sweep.scad>
-include <scad-utils/shapes.scad>
-
 module d_motor_move(){
-  rotate([0,0,D_placement_angle+24])
+  rotate([0,0,D_placement_angle+24]) // TODO: parametrize 24 here
     translate([0,Worm_disc_tooth_valley_r + Worm_radius,
         Bottom_plate_thickness + Bottom_plate_sandwich_gap // Now at bottom of d-sandwich
         + Sandwich_gear_height/2]) //
@@ -66,26 +62,39 @@ module fish_ring(){
 }
 //fish_ring();
 
+module d_fish_ring_move(){
+  for(i=[0,1,2]){
+    rotate([0,0,120*i])
+      translate(Line_contact_d_xy
+         + [0,-Bearing_623_outer_diameter/2,Line_contacts_abcd_z[D]])
+      rotate([fish_ring_d_rotation,0,0])
+      children();
+  }
+}
+
+// D-lines' fish rings
+// Mirror([0,0,1]) here??
+module placed_d_rings(){
+  d_fish_ring_move()
+      fish_ring();
+}
+
 module placed_fish_rings(){
   for(i=[0,1,2]){
     rotate([0,0,120*i]){
       for(k=[0,1])
         mirror([k,0,0])
           translate(Line_contact_abc_xy
-            + [0,0, Line_contacts_abcd_z[i] + Fish_ring_inner_radius + Fish_ring_inner_radius/sqrt(2)])
+            + [0,0, Line_contacts_abcd_z[i]
+            + Fish_ring_inner_radius
+            + Fish_ring_inner_radius/sqrt(2)])
           rotate([90,0,fish_ring_abc_rotation])
           translate([-Fish_ring_inner_radius/sqrt(2),0,0])
           mirror([0,0,1])
           fish_ring();
     }
   }
-  // D-lines' fish rings
-  for(i=[0,1,2]){
-    rotate([0,0,120*i])
-      translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]])
-      rotate([fish_ring_d_rotation,0,0])
-      fish_ring();
-  }
+  placed_d_rings();
 }
 //placed_fish_rings();
 
@@ -156,6 +165,23 @@ module bottom_plate(){
   gap = Sandwich_gap;
   sandwich_stick_height = Line_contacts_abcd_z[A]+swh-Snelle_height/2
                  + 5; // for putting some kind of top lock mechanism
+  big=5*th;
+
+  // A star with 5 round arms
+  module enclose_motors_2d(){
+    r_save = 10;
+    polygon([for (i=[0:2:359.9])
+     (bpr-r_save)*[cos(i), sin(i)] + r_save*sin(5*i)*[cos(i),sin(i)]]);
+  }
+
+  module material_saving_triangle(){
+    r_save = Full_tri_side/sqrt(12);
+    polygon([for (i=[0:2:359.9])
+     (Full_tri_side/Sqrt3-r_save)*[cos(i), sin(i)]
+                + (sin(3*i)>0 ?
+       r_save*sin(3*i)*sin(3*i)*sin(3*i)*sin(3*i)*[cos(i),sin(i)] :
+       [cos(i),sin(i)])]);
+  }
 
   // First add and subtract everything except fish ring towers
   // Then construct fish ring towers, then add them
@@ -164,9 +190,18 @@ module bottom_plate(){
     difference(){
       union(){
         // Largest possible triangular plate
-        eq_tri(Full_tri_side, th);
+        rotate([0,0,60])
+        linear_extrude(height=th, convexity=10)
+          material_saving_triangle();
+        //eq_tri(Full_tri_side, th);
         // Circular bottom plate
-        cylinder(r=bpr, h = th);
+        //cylinder(r=bpr, h = th);
+        linear_extrude(height=th, convexity=10)
+          enclose_motors_2d();
+        // Get behind d motors back
+        translate([7,-bpr/2+1,0])
+          rotate([0,0,D_placement_angle+24]) // TODO: 24.parametrize
+          cube([Nema17_cube_height+5, 14, th]);
 
         // Sandwich stick
         cylinder(r=bd/2+0.16,
@@ -180,16 +215,25 @@ module bottom_plate(){
           rotate([0,0,45]) translate([Nema17_screw_hole_width/2,0,0])
             translate([-6,0,Nema17_cube_height])
             rotate([90,0,D_motor_twist/2])
-            translate([0,0,-14])
-            cube([12,5.5,20]);
+            // TODO: make this translation and cube height automatic
+            translate([0,0,-15.7])
+            cube([12,5.5,21]);
         }
 
         // Mounting towers for D fish rings
-        little_r = 15;
-        for(i=[0,1,2]){
-          rotate([0,0,120*i])
-            translate([0, Full_tri_side/Sqrt3 - little_r/Sqrt3, 1])
-            eq_tri(little_r, Line_contacts_abcd_z[D]-3);
+        for(i=[0,120,240]){
+          rotate([0,0,i]){
+            translate(Line_contact_d_xy + [0, 0, 1]){
+              cube_x1 = 10;
+              cube_y1 = 6;
+              translate([-cube_x1/2,0,0])
+                cube([cube_x1,cube_y1,Line_contacts_abcd_z[D]]);
+              // Block to put d fish ring in
+              translate([-cube_x1/2,-0.5,0])
+                rotate([fish_ring_d_rotation-90,0,0])
+                cube([cube_x1,cube_y1,Line_contacts_abcd_z[D]-1]);
+            }
+          }
         }
       } // End union
 
@@ -197,26 +241,53 @@ module bottom_plate(){
       //*** ANTIMATERIA STARTS HERE ***//
 
       // Mounting space for d fish_rings
-      big=5*th;
-      for(i=[0,1,2]){
-        rotate([0,0,120*i]){
-          translate(Line_contact_d_xy + [0, 0, Line_contacts_abcd_z[D]]){
-            rotate([fish_ring_d_rotation-90,0,0])
-              translate([-3.3,
-                         -10 - Fish_ring_thinnest_outer_edge/2 + 0.05,
-                         -2*Fish_ring_holes_distance])
-              cube([6.6,10,big]); // Block to put fish ring in
-            rotate([fish_ring_d_rotation-180,0,0])
-              translate([0,Fish_ring_inner_radius+Fish_ring_holes_distance,0])
-              cylinder(r=M3_diameter/2, h=big, center=true);//Hole for M3
-            rotate([fish_ring_d_rotation-180,0,0])
-              translate([0,Fish_ring_inner_radius+Fish_ring_holes_distance,4])
-              cylinder(r=M3_head_diameter/2, h=big);//M3 screw head hole
-          }
-          // Straight edge towards center of the d fish ring hole
-          translate(Line_contact_d_xy)
-            translate([-3.3,-9.5,-big+th+1])
-            cube([6.6,8,big]); // Block to put fish ring in
+      for(i=[0,120,240]){
+        rotate([0,0,i]){
+          cube_x2 = 6.6;
+          cube_y2 = 6;
+          channel_length = 9;
+          translate(Line_contact_d_xy){
+            translate([0,0,Line_contacts_abcd_z[D]]){
+              translate([0,Bearing_623_outer_diameter/2,0])
+                rotate([0,0,-20])
+                translate([0,0,1])
+                rotate([0,-45,0])
+                // Channel for d line
+                #cylinder(r=0.7, h=2*channel_length,center=true);
+              translate([0,0,-1.5]){
+                rotate([0,-90,0])
+                  // Hole for d line length adjusting screw
+                  cylinder(d=M3_diameter, h=15,center=true);
+                M3_nyloc_trap();
+              }
+            } // Above this is translated Line_contacts_abcd_z[D]
+            // Cut bottom plate triangle tip
+            translate([-10, Bearing_623_outer_diameter/2 + 1.05, -1])
+              cube([20,20,Line_contacts_abcd_z[D]-2]);
+
+            // Mounting space for d fish_rings
+            translate([0, 0, 1]){
+              translate([-cube_x2/2,-cube_y2,0])
+                rotate([fish_ring_d_rotation-90,0,0])
+                translate([0,-0.8,1.5])
+                cube([cube_x2,cube_y2,Line_contacts_abcd_z[D]-1]);
+            }
+
+            // Straight edge towards center of the d fish ring hole
+            translate([-cube_x2/2,-15,-big+th+1])
+              cube([cube_x2,10,big]); // Block to put fish ring in
+          } // Above this is translated Line_contact_d_xy
+        }
+      }
+      // Holes for M3 fastening d_fish_rings
+      d_fish_ring_move(){
+        translate([0,
+            -Fish_ring_inner_radius - Fish_ring_holes_distance,0]){
+          translate([0,0,-big+5])
+            cylinder(d=M3_diameter, h=big);
+          //M3 screw headhole
+          translate([0,0,-big - 3])
+            cylinder(r=M3_head_diameter/2,h=big);
         }
       }
 
@@ -320,6 +391,10 @@ module bottom_plate(){
       translate([0,0,-0.1])
         cylinder(h=3, r1=3, r2=2);
 
+      // Tracks to put fish rings in
+      // TODO: structure is now such that placed_fish_rings()
+      //       is required in two differences...
+      placed_fish_rings();
     }// end difference
 
     //*** Fish ring towers start here ***//
@@ -340,14 +415,14 @@ module bottom_plate(){
       }
       // Mounting holes for abc fish rings
       // rotations and translations synced with placed_fish_rings
-      for(i=[0,1,2]){
-        rotate([0,0,120*i]){
+      for(i=[0,120,240]){
+        rotate([0,0,i]){
           for(k=[0,1]){
             mirror([k,0,0]){
               translate(Line_contact_abc_xy
-                  +[0,0,Line_contacts_abcd_z[i] + Fish_ring_inner_radius + Fish_ring_inner_radius/sqrt(2)])
+                  +[0,0,Line_contacts_abcd_z[i] + Fish_ring_inner_radius + Fish_ring_inner_radius/Sqrt2])
                 rotate([90,0,fish_ring_abc_rotation]){
-                  translate([-Fish_ring_inner_radius/sqrt(2),0,0])
+                  translate([-Fish_ring_inner_radius/Sqrt2,0,0])
                     translate([0,-Fish_ring_holes_distance-Fish_ring_inner_radius,0]){
                       cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
                     }
@@ -359,12 +434,24 @@ module bottom_plate(){
       // Tracks to put fish rings in
       placed_fish_rings();
     } // End difference
+    // Bluetooth mount (and autocooling while printing tower)
+    rotate([0,0,150])
+    translate(Line_action_point_abc_xy)
+      cube([4.2,4.2,sandwich_stick_height]);
   }
 }
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-//bottom_plate();
+bottom_plate();
+
+module material_saving_circle(){
+  bpr = Bottom_plate_radius;
+  linear_extrude(height=Bottom_plate_thickness, convexity=10)
+  polygon([for (i=[0:1:359.9])
+           bpr*[cos(i), sin(i)] + 10*sin(5*i)*[cos(i),sin(i)]]);
+}
+//material_saving_circle();
 
 
 //** bottom_plate end **//
@@ -374,13 +461,6 @@ module bottom_plate(){
 
 
 //** extruder start **//
-
-// A better way to match holes:
-// make bottom_plate take two flags:
-//   render_plate?
-//   render_drive?
-// make diff holes outside the if-statement, so
-// holes always align anyway.
 
 module fan(width=30, height=10){
   linear_extrude(height=height, twist=-40)
@@ -481,177 +561,8 @@ module e3d_v6_mount_bore(d = 5){
 
 //e3d_v6_volcano_hotend();
 
-// towermove moves materia but not antimateria of drive_support
-// height of the tower depends on big extruder gear rotation
-// Used in assembled_drive in placed_parts.scad
-module drive_support_helper(non_motor_side,towermove=0){
-  th = Drive_support_thickness;
-
-  difference(){
-    union(){
-      // Cube to make hotend mounting possible
-      //mount_th = 3;
-      //translate([0,-14,-mount_th])
-      //  cube([Drive_support_v[0],14,th+mount_th]);
-      translate([towermove,-E3d_v6_support_height,0]){
-        cube([Drive_support_v[0],
-            Drive_support_height + E3d_v6_support_height,
-            th]);
-      }
-    }
-    // Hole for bearings supporting hobbed insert screw
-    translate([Bearing_623_outer_diameter,Hobb_from_edge,-Big/2])
-      M3_screw(Big);
-    translate([Bearing_623_outer_diameter/2 + 5,
-        Hobb_from_edge,
-        +1])
-      cylinder(r=Bearing_623_outer_diameter/2, h=Big);
-    // Somewhat prolonged hole
-    // Put something rubber-like in hole for suspension against
-    // filament.
-    for(i=[0:0.5:1])
-    translate([Bearing_623_outer_diameter/2+5 // Center of hobb x-dir
-               + Hobbed_insert_diameter/2
-               + Extruder_filament_opening
-               + Bearing_623_outer_diameter/2 - i,
-        Hobb_from_edge,-1])
-      M3_screw(Big, $fn=6);
-  }
-
-  // Foot to screw on to bottom_plate
-  difference(){
-    translate([towermove,Drive_support_height,
-        -Drive_support_v[2]+th])
-      // TODO
-      // Rewrite drive stuff...
-      cube([Drive_support_v[0]+8,
-            Drive_support_v[1],
-            Drive_support_v[2]]);
-    // Screw holes...
-    // This hole punching should really be done in bottom_plate module
-    // Marking all hole punches with "punch" for easier removal later
-    translate([Drive_support_v[0]+8-3,0,-Drive_support_v[2]+th+3])
-      rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
-    translate([Drive_support_v[0]+8-3,0,th-3])
-      rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
-
-    if(!non_motor_side){
-      // Make space for big extruder gear
-      // 2 inserted here to get alignment with extruder motor
-      // screw holes in bottom_plate
-      translate([Bearing_623_outer_diameter - 2,
-                 Hobb_from_edge,
-                 -Big_extruder_gear_height-4-0.02])
-        cylinder(r= Drive_support_height
-            -Hobb_from_edge
-            +Drive_support_v[1] + 1.4,
-            h=Big_extruder_gear_height+4, $fn = 50);
-    // Screw hole
-    translate([3+towermove,0,-Drive_support_v[2]+th+3])
-      rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
-    }else{
-      translate([Drive_support_v[0]/2,0,-Drive_support_v[2]+th+6])
-        rotate([-90,0,0]) cylinder(r=3/2 + 0.1, h=Big); // punch
-    }
-  }
-}
-//rotate([0,3*90,0])
-//drive_support_helper(1,Drive_support_towermove);
-//rotate([0,3*90,0])
-//  drive_support_helper(0,Drive_support_towermove);
-
-// towermove moves materia but not antimateria of drive_support
-module drive_support(towermove=Drive_support_towermove){
-  e3d_x_center = Bearing_623_outer_diameter/2 +5 //Center of hobb x-dir
-               + Hobbed_insert_diameter/2
-               + Extruder_filament_opening/2
-               + 0.7; // Add 0.7 because hobb pushes that way
-
-  // This difference makes e3d mount
-  difference(){
-    for(k = [0,2*Drive_support_thickness // Bring supports to same z
-        + 0.2 // 623 |.2mm| Hobb |.2mm| 623
-        + Hobbed_insert_height
-        + 0.0])
-      // 2 inserted here to get alignment with extruder
-      // motors screw holes in bottom_plate
-      translate([0,0, k])
-        mirror([0,0,k])
-        drive_support_helper(k,towermove);
-
-    //translate([14.7+1.5,-42.8,8.5]) rotate([-90,0,0]){
-    translate([e3d_x_center, // Add 0.7 because hobb pushes that way
-               - E3d_heatsink_height,
-               Drive_support_thickness+(0.2+Hobbed_insert_height)/2])
-      rotate([-90,0,0]){
-        e3d_v6_volcano_hotend(fan=0);
-        // Render some purple filament
-        //color("purple") cylinder(r=1.75/2, h=80);
-    }
-    translate([e3d_x_center-1.6-E3d_mount_small_r+0.2,-7,-Big/2]) cylinder(r=1.6, h=Big);
-    translate([e3d_x_center+1.6+E3d_mount_small_r-0.2,-7,-Big/2]) cylinder(r=1.6, h=Big);
-  }
-}
-//rotate([0,-90,0])
-//drive_support(2);
-// Some dividing and stuff for printing
-// == Extruder gear side ==
-//rotate([0,90,0])
-//rotate([0,180,0])
-//intersection(){
-//  drive_support();
-//  translate([-1,-16,-23])
-//  cube([50,60,30]);
-//}
-
-// == Not extruder gear side ==
-//rotate([0,90,0])
-//rotate([0,0,180])
-//difference(){
-//  drive_support();
-//  translate([-1,-16,-23])
-//  cube([50,60,30]);
-//}
-
-
 //** Plates start **//
 
-// An upside down hook that can be printed without support structure
-module hook(height=10){
-  line_radius = 0.90;
-  big=30;
-  difference(){
-    // Main cube
-    translate([-3,-4,0])
-      cube([6,8,height]);
-    // Hole
-    translate([0,-line_radius/2,height])
-      rotate([30,0,0])
-        cylinder(r=line_radius, h=15.5, center=true);
-    translate([0,4.1,4.7])
-    // Bent end of channel
-    difference(){
-      rotate([0,90,0])
-        rotate_extrude(convexity=4, $fn=20)
-          translate([1.3,0,0])
-            circle(r=line_radius, $fn=25);
-      rotate([30,0,0])
-        translate([-big/2,-big/2,0])
-          cube(big);
-    }
-    //translate([10,-1,height-4])
-    //  rotate([0,-90,0])
-    //    M3_screw(20);
-  }
-}
-//hook();
-
-module top_flerp(side_length){
-  difference(){
-    eq_tri(side_length,Top_plate_thickness);
-    translate([0,0,0]) cylinder(r=M3_diameter/2,h=Big,center=true);
-  }
-}
 
 // Translation, iterating and rotating modules
 module z_gatt_translate(back = 0){
@@ -664,38 +575,96 @@ module z_gatt_translate(back = 0){
 // Flip before printing
 module top_plate(){
   th = Top_plate_thickness;
-  flerp_side=23;
-  height = 17;
+  flerp_side=24;
+  height = 20;
   melt=0.1;
+  line_radius = 0.90;
+
+  // An upside down hook, printable without support structure
+  module hook(height=10){
+    big=30;
+    difference(){
+      // Main cube
+      translate([-3,-4,0])
+        cube([6,8,height]);
+      // Hole
+      translate([0,-line_radius/2,height])
+        rotate([30,0,0])
+        cylinder(r=line_radius, h=15.5, center=true);
+      translate([0,4.1,4.7])
+        // Bent end of channel
+        difference(){
+          rotate([0,90,0])
+            rotate_extrude(convexity=4, $fn=20)
+            translate([1.3,0,0])
+            circle(r=line_radius, $fn=25);
+          rotate([30,0,0])
+            translate([-big/2,-big/2,0])
+            cube(big);
+        }
+    }
+  }
+  //hook();
+
+  module top_flerp(side_length){
+    difference(){
+      eq_tri(side_length,Top_plate_thickness);
+      cylinder(d=M3_diameter,h=Big,center=true);
+      translate([0,0,3])
+        cylinder(d=M3_head_diameter,h=Top_plate_thickness);
+    }
+  }
+
   translate([0,0,height])
     mirror([0,0,1]){
-  // Base plate
-  difference(){
-    eq_tri(Full_tri_side, th);
-    translate([0,0,-1])
-      eq_tri(Full_tri_side-15, th+2);
-  }
-  for(i=[0,120,240])
-    // Screw holes
-    rotate([0,0,i]){
-      translate(Line_contact_d_xy)
-        translate([0,-7.5,0])
-        top_flerp(flerp_side);
-      // Hook holes for line
-      translate(Line_contact_d_xy)
-        translate([0,0,th-melt])
-        hook(height-th+melt);
-    }
-  // Mark action point d
-  cylinder(r=2, h=height);
-  rotate([0,0,60])
-    for(i=[0,120,240]) rotate([0,0,i])
+      // Base plate
       difference(){
-        translate([-1.5,0,0])
-          cube([3,Full_tri_side*Sqrt3/6,height]);
-        translate([-2.5,0,height])
-          rotate([-10,0,0])
-          cube([5,Full_tri_side*Sqrt3/6+3,height]);
+        eq_tri(Full_tri_side, th);
+        translate([0,0,-1]){
+          eq_tri(Full_tri_side-15, th+2);
+          // Cut tip so printing gets easier
+          for(i = [0,120,240])
+            rotate([0,0,i])
+              translate([-10,Full_tri_side/sqrt(3) - 8,0])
+              cube([20,20,th+2]);
+        }
+
+      }
+      for(i=[0,120,240])
+        // Screw holes
+        rotate([0,0,i]){
+          translate(Line_contact_d_xy)
+            translate([0,-7.5,0])
+            top_flerp(flerp_side);
+          // Hook holes for line
+          translate(Line_contact_d_xy)
+            translate([0,0,th-melt])
+            hook(height-th+melt);
+        }
+      // Mark action point d
+      difference(){
+        union(){
+          // Radial walls
+          for(i=[0,120,240])
+            rotate([0,0,i+60])
+              translate([-1.5,0,0])
+              cube([3,Full_tri_side*Sqrt3/6,height]);
+          // Middle cylinder
+          cylinder(r=4, h=height);
+        }
+        // Hole for line in middle
+        translate([0,0,-1])
+          cylinder(r=line_radius, h=height+2);
+        // Opening between ceiling and center hole
+        translate([0,0,-1])
+          cylinder(r1=10, r2=0, h=12);
+          // Make radial walls slant
+          for(i=[0,120,240])
+            rotate([0,0,i+60])
+              translate([-2.5,0,height])
+              //rotate([-11,0,0])
+              rotate([-90+atan((Full_tri_side/sqrt(12))/(height-Top_plate_thickness)),0,0])
+              cube([5,Full_tri_side*Sqrt3/6+3,height]);
       }
     }
 }

@@ -5,14 +5,10 @@ include <design_numbers.scad>
 include <util.scad>
 use <Nema17_and_Ramps_and_bearings.scad>
 
-// To make worm
-// Get these libs at
+// Sweep.scad contains code from
 // https://github.com/openscad/scad-utils
 // and
 // https://github.com/openscad/list-comprehension-demos
-//use <scad-utils/transformations.scad>
-//use <scad-utils/shapes.scad>
-//use <list-comprehension-demos/sweep.scad>
 use <sweep.scad>
 
 //////////// Functions /////////////
@@ -30,8 +26,8 @@ function rotate_point(rotate, coord) =
 
 function involute(base_radius, involute_angle) =
 [
-	base_radius*(cos(involute_angle) + involute_angle*pi/180*sin(involute_angle)),
-	base_radius*(sin(involute_angle) - involute_angle*pi/180*cos(involute_angle)),
+	base_radius*(cos(involute_angle) + involute_angle*PI/180*sin(involute_angle)),
+	base_radius*(sin(involute_angle) - involute_angle*PI/180*cos(involute_angle)),
 ];
 
 function rotated_involute(rotate, base_radius, involute_angle) =
@@ -40,7 +36,7 @@ function rotated_involute(rotate, base_radius, involute_angle) =
 	cos(rotate)*involute(base_radius, involute_angle)[1] - sin(rotate)*involute(base_radius, involute_angle)[0]
 ];
 
-function involute_intersect_angle(base_radius, radius) = sqrt(pow(radius/base_radius, 2) - 1)*180/pi;
+function involute_intersect_angle(base_radius, radius) = sqrt(pow(radius/base_radius, 2) - 1)*180/PI;
 
 
 //////////// Modules /////////////
@@ -131,7 +127,7 @@ module gear(number_of_teeth = 15,
 
 	// Root diameter: Diameter of bottom of tooth spaces.
 	root_radius                = pitch_radius - dedendum;
-	backlash_angle             = backlash/pitch_radius*180/pi;
+	backlash_angle             = backlash/pitch_radius*180/PI;
 	half_thick_angle           = (360/number_of_teeth - backlash_angle)/4;
 
 	// Variables controlling the rim.
@@ -139,7 +135,7 @@ module gear(number_of_teeth = 15,
 
 	// Variables controlling the circular holes in the gear.
 	circle_orbit_diameter      = hub_diameter/2 + rim_radius;
-	circle_orbit_curcumference = pi*circle_orbit_diameter;
+	circle_orbit_curcumference = PI*circle_orbit_diameter;
 
 	// Limit the circle size to 90% of the gear face.
 	circle_diameter            = min(0.70*circle_orbit_curcumference/circles,
@@ -486,10 +482,10 @@ module worm(){
   reduced_side = virtual_side-Worm_edge_cut; // might need hand tuning to compile
   thread_profile = [
                   //[-reduced_side*sqrt(2),0,0], // With this corner, it's essentially a square
-                  [-reduced_side/sqrt(2),0,-reduced_side/sqrt(2)],
+                  [-reduced_side/Sqrt2,0,-reduced_side/Sqrt2],
                   [-Worm_edge_cut,0,-Worm_edge_cut], // Round off outer edge
                   [-Worm_edge_cut,0,+Worm_edge_cut], // Virtual valley-hitting point in origo
-                  [-reduced_side/sqrt(2),0,reduced_side/sqrt(2)]
+                  [-reduced_side/Sqrt2,0,reduced_side/Sqrt2]
                   ];
   //p = [translation([0,0,0]),translation([0,1,0])];
   //sweep(thread_profile,p);
@@ -553,9 +549,14 @@ module worm(){
     translate([0,0,-height_downwards - 1])
     difference(){
       cylinder(r = 5.4/2, h = h+2, $fn=40);
-      translate([2,-(h+4),-2])
+      translate([2.2,-(h+4),-2])
         cube(2*(h+4));
     }
+    // Phase in the D-shape
+    translate([0,0,-height_downwards - 1]){
+      cylinder(d1=8, d2=5, h=3);
+    }
+
     // Cut bottom
     translate([-50,-50,-100 - height_downwards])
       cube(100);
@@ -565,14 +566,19 @@ module worm(){
     // Screw hole and nut lock
     translate([0,0,-height_downwards+4.6]){
       rotate([0,90,45]){
-        scale([1.05,1.05,3])
+        scale([1.06,1.06,3])
           M3_screw(6,true);
         rotate([0,0,90])
           translate([0,4,5])
           rotate([90,0,0])
-          translate([-5.5/2,0,0])
-          point_cube([5.5,2.4,10],120);
-        //point_cube();
+          translate([-5.6/2,0,0]){
+          point_cube([5.6,2.5,10],120);
+          // Phase in nutlock
+          translate([5.6/2,2.5/2, 7.1])
+            linear_extrude(height=3,convexity=3,scale=[2.4, 2.7])
+            translate([-(5.6/1.5)/2,-(2.5/1.5)/2])
+            square([5.6/1.5,2.5/1.5]);
+          }
       }
     }
   }

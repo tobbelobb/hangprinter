@@ -1,7 +1,9 @@
+use <sweep.scad>
+
 //////////// Utility numbers //////////////
 Big   = 300;
+Sqrt2 = sqrt(2);
 Sqrt3 = sqrt(3);
-pi    = 3.1415926535897932384626433832795;
 
 function mirror_point_x(coord) =
 [
@@ -249,3 +251,38 @@ module spiraled_cube(v=[10,10,2]){
     * rotation([90,0,0])]);
   }
 }
+
+module M3_nyloc_trap(){
+  rotate([0,0,90])
+  translate([-5.6/2, -4/2, -3.5])
+    point_cube([5.6,4,10],120);
+}
+
+module angled_cylinder(d, h, angle=45){
+  difference(){
+  translate([0,0,d*sin(angle)/2])
+  cylinder(d=d, h=h+d*sin(angle),center=true);
+  translate([-d/2,-d/2,h/2+d*sin(angle)])
+    rotate([-angle,0,0])
+    translate([-d,-d,0])
+    cube(3*d);
+  }
+}
+//angled_cylinder(5,33,angle=20);
+//translate([9,0,0])
+//cylinder(d=5,h=33,center=true);
+
+// Quarter torus extending downwards from origo
+// ending in a horizontal cylinder of length l
+module bent_path(r1=10,r2=1, l=10){
+  function my_circle(r) = [for (i=[0:40:359.9])
+    r * [cos(i), sin(i)]];
+  path = [for (v=[0: 8 : 97.99])
+    translation([v <= 90 ? 0 : l, 0, 0])
+    * rotation([0, v <= 90 ? -v : -90, 0])
+    * translation([-r1, 0, 0])
+    ];
+  translate([r1,0,0])
+    sweep(my_circle(r2), path);
+}
+//bent_path();

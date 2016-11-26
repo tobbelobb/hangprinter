@@ -29,7 +29,7 @@ Bottom_plate_radius       = Full_tri_side/sqrt(6); // Fit bed precisely: Full_tr
 
 
 // For rotating lines and gatts in place
-d_gatt_back = 15;
+d_action_to_extrema = 15;
 
 Sandwich_gear_height = Sandwich_height*3/8;
 Snelle_height        = Sandwich_height*5/8;
@@ -51,9 +51,12 @@ Wall_action_point_c  = [-420*sin(60), 410*cos(60), 0];
 //Wall_action_point_c  = [-350, 100, -12];
 Ceiling_action_point = [0, 0, 500];
 
+// TODO: rename Line_contact_d_xy to something?
+// ... since that axis is geared down
+
 // This is the xy coordinate of one point where a D-line enters the
 // printer. Preferrably near a corner.
-Line_contact_d_xy = [0, Full_tri_side/Sqrt3 - d_gatt_back, 0];
+Line_contact_d_xy = [0, Full_tri_side/Sqrt3 - d_action_to_extrema, 0];
 // This is the three different z-heights of the three spools (snelles)
 Line_contacts_abcd_z = [Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 3*(Sandwich_height + Sandwich_gap),
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + 2*(Sandwich_height + Sandwich_gap),
@@ -61,7 +64,7 @@ Line_contacts_abcd_z = [Bottom_plate_thickness + Bottom_plate_sandwich_gap + Sne
                         Bottom_plate_thickness + Bottom_plate_sandwich_gap + Snelle_height/2 + Sandwich_gear_height];    // D-lines have lowest contact point, maximizes build volume
 
 fish_ring_abc_rotation = -20;
-fish_ring_d_rotation   = 125;
+fish_ring_d_rotation   = 107;
 
 
 //** Gear parameters **//
@@ -83,6 +86,7 @@ Small_extruder_gear_height = 6;
 
 Motor_gear_shaft_radius = 7;
 Snelle_radius = 33; // This is the radius the line will wind around.
+// TODO: worm should use this
 Shaft_flat = 2; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//
