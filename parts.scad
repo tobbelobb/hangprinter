@@ -183,47 +183,23 @@ module bottom_plate(){
        [cos(i),sin(i)])]);
   }
 
-  // First add and subtract everything except fish ring towers
-  // Then construct fish ring towers, then add them
-  // To avoid accidentically cutting them near bottom
-  union(){
+  // Every non-planar part of bottom_plate()
+  module towers(){
     difference(){
       union(){
-        // Largest possible triangular plate
-        rotate([0,0,60])
-        linear_extrude(height=th, convexity=10)
-          material_saving_triangle();
-        //eq_tri(Full_tri_side, th);
-        // Circular bottom plate
-        //cylinder(r=bpr, h = th);
-        linear_extrude(height=th, convexity=10)
-          enclose_motors_2d();
-        // Get behind d motors back
-        translate([7,-bpr/2+1,0])
-          rotate([0,0,D_placement_angle+24]) // TODO: 24.parametrize
-          cube([Nema17_cube_height+5, 14, th]);
-
         // Sandwich stick
         cylinder(r=bd/2+0.16,
             h=sandwich_stick_height);
-
+        // Bluetooth mount (and autocooling while printing tower)
+        rotate([0,0,150])
+          translate(Line_action_point_abc_xy)
+          cube([4.2,4.2,sandwich_stick_height]);
         // The bottom lock
         cylinder(r=Lock_radius_2, h=th + Bottom_plate_sandwich_gap);
-
-        // Mounting tower for D motor
-        d_motor_move(){
-          rotate([0,0,45]) translate([Nema17_screw_hole_width/2,0,0])
-            translate([-6,0,Nema17_cube_height])
-            rotate([90,0,D_motor_twist/2])
-            // TODO: make this translation and cube height automatic
-            translate([0,0,-15.7])
-            cube([12,5.5,21]);
-        }
-
         // Mounting towers for D fish rings
         for(i=[0,120,240]){
           rotate([0,0,i]){
-            translate(Line_contact_d_xy + [0, 0, 1]){
+            translate(Line_contact_d_xy){
               cube_x1 = 10;
               cube_y1 = 6;
               translate([-cube_x1/2,0,0])
@@ -235,12 +211,21 @@ module bottom_plate(){
             }
           }
         }
-      } // End union
-
-
-      //*** ANTIMATERIA STARTS HERE ***//
-
-      // Mounting space for d fish_rings
+        // Mounting towers for abc fish rings
+        for(i=[0,1,2]){ // i used for rotation and indexing
+          rotate([0,0,i*120]){
+            for(k = [0, 1]){
+              mirror([k,0,0]){
+                translate(Line_contact_abc_xy)
+                  rotate([0,0,fish_ring_abc_rotation])
+                  translate([-6-Fish_ring_inner_radius , -Fish_ring_thinnest_outer_edge/2+0.01,0])
+                  cube([12,5.5,Line_contacts_abcd_z[i] - Fish_ring_inner_radius]);
+              }
+            }
+          }
+        }
+      }// end union
+      // Holes in d line towers
       for(i=[0,120,240]){
         rotate([0,0,i]){
           cube_x2 = 6.6;
@@ -253,32 +238,18 @@ module bottom_plate(){
                 translate([0,0,1])
                 rotate([0,-45,0])
                 // Channel for d line
-                #cylinder(r=0.7, h=2*channel_length,center=true);
-              translate([0,0,-1.5]){
+                cylinder(r=0.7, h=2*channel_length,center=true);
+              translate([0,0,-2.5]){
                 rotate([0,-90,0])
                   // Hole for d line length adjusting screw
                   cylinder(d=M3_diameter, h=15,center=true);
                 M3_nyloc_trap();
               }
-            } // Above this is translated Line_contacts_abcd_z[D]
-            // Cut bottom plate triangle tip
-            translate([-10, Bearing_623_outer_diameter/2 + 1.05, -1])
-              cube([20,20,Line_contacts_abcd_z[D]-2]);
-
-            // Mounting space for d fish_rings
-            translate([0, 0, 1]){
-              translate([-cube_x2/2,-cube_y2,0])
-                rotate([fish_ring_d_rotation-90,0,0])
-                translate([0,-0.8,1.5])
-                cube([cube_x2,cube_y2,Line_contacts_abcd_z[D]-1]);
-            }
-
-            // Straight edge towards center of the d fish ring hole
-            translate([-cube_x2/2,-15,-big+th+1])
-              cube([cube_x2,10,big]); // Block to put fish ring in
-          } // Above this is translated Line_contact_d_xy
+            } // end translate Line_contacts_abcd_z[D]
+          } // end translate Line_contact_d_xy
         }
       }
+      // Mounting space for d fish_rings
       // Holes for M3 fastening d_fish_rings
       d_fish_ring_move(){
         translate([0,
@@ -290,6 +261,98 @@ module bottom_plate(){
             cylinder(r=M3_head_diameter/2,h=big);
         }
       }
+      // Dig out filament hole in sandwich stick
+      // Note that bowden tube should fit in this from below
+      translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
+      // Mounting holes for abc fish rings
+      // rotations and translations synced with placed_fish_rings
+      for(i=[0,1,2]){ // Used both for rotation and indexing
+        rotate([0,0,i*120]){
+          for(k=[0,1]){
+            mirror([k,0,0]){
+              translate(Line_contact_abc_xy
+                  +[0,0,Line_contacts_abcd_z[i] + Fish_ring_inner_radius + Fish_ring_inner_radius/Sqrt2])
+                rotate([90,0,fish_ring_abc_rotation]){
+                  translate([-Fish_ring_inner_radius/Sqrt2,0,0])
+                    translate([0,-Fish_ring_holes_distance-Fish_ring_inner_radius,0]){
+                      cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
+                    }
+                }
+            }
+          }
+        }
+      }
+      // Tracks to put fish rings in
+      placed_fish_rings();
+    }// end difference
+  }// end module towers
+
+  union(){
+    difference(){
+      union(){
+        // Largest possible triangular plate
+        //eq_tri(Full_tri_side, th);
+        //... swapped out with a material saving variant:
+        rotate([0,0,60])
+        linear_extrude(height=th, convexity=10)
+          material_saving_triangle();
+        // Circular bottom plate
+        //cylinder(r=bpr, h = th);
+        //... swapped out with a more fitting shape:
+        linear_extrude(height=th, convexity=10)
+          enclose_motors_2d();
+        // Get behind d motors back
+        translate([7,-bpr/2+1,0])
+          rotate([0,0,D_placement_angle+24]) // TODO: 24.parametrize
+          cube([Nema17_cube_height+10, 20, th]);
+        // Mounting tower for D motor and connectorblock
+        // Really a tower but put here because
+        // Screw hole need to be synced with d motor screw holes
+        // in bottom plate
+        d_motor_move(){
+          rotate([0,0,45]) translate([Nema17_screw_hole_width/2,0,0])
+            translate([-6,0,Nema17_cube_height])
+            rotate([90,0,45-D_motor_twist])
+            translate([-1,0,
+                M3_diameter+1.08
+                -sin(45-D_motor_twist)*Nema17_screw_hole_width/2
+                -Snelle_height/2
+                -Lock_height
+                -Bottom_plate_thickness]){
+              // Mounting tower
+              cube([13,5.5,21]);
+              // Connectorblock
+              cube([13,25,th]);
+            }
+        }
+
+      } // End union
+
+      //*** ANTIMATERIA STARTS HERE ***//
+
+      for(i=[0,120,240]){
+        rotate([0,0,i]){
+          cube_x2 = 6.6;
+          cube_y2 = 7;
+          channel_length = 9;
+          translate(Line_contact_d_xy){
+            // Cut bottom plate triangle tip
+            translate([-10, Bearing_623_outer_diameter/2 + 1.05, -1])
+              cube([20,20,Line_contacts_abcd_z[D]-2]);
+            // Mounting space for d fish_rings
+            translate([0, 0, 1]){
+            //  translate([-cube_x2/2,-cube_y2,0])
+            //    rotate([fish_ring_d_rotation-90,0,0])
+            //    translate([0,1,1.5])
+            //    cube([cube_x2,cube_y2,Line_contacts_abcd_z[D]-1]);
+            // Straight edge towards center of the d fish ring hole
+            // Cut some room for d ring tower
+            translate([-cube_x2/2,-15,-big+th+1])
+              cube([cube_x2,25,big]); // Block to put fish ring in
+            }
+          }// end translate Line_contact_d_xy
+        }
+      }
 
       // Middle hole for ABC-motors
       // Large enough to get motor gears through
@@ -298,7 +361,6 @@ module bottom_plate(){
             + 2*(Motor_gear_radius-Motor_gear_pitch),
             h=Big, center=true);
       }
-
       // Screw holes for abc Nema
       translate([0, 0, -1]){
         four_point_translate(d_object=false)
@@ -307,11 +369,7 @@ module bottom_plate(){
           translate([0,0,th-3.5])
           Nema17_screw_holes(M3_head_diameter+0.1, th+2);
       }
-
       // Hole for worm driving d-motor
-      // For some reason, OpenSCAD crashes if I call:
-      //placed_d_motor(worm=false);
-
       d_motor_move(){
         translate([0,0,-1.5])
           scale(1.02) // Leave 2 percent gap for easy mounting
@@ -335,7 +393,6 @@ module bottom_plate(){
         translate([0,0,-10])
           Nema17_screw_holes(M3_diameter,20+Nema17_cube_height);
       }// end d_motor_move
-
       // Screw holes for extruder motor mounting screws
       extruder_motor_translate(){
         // Hole for extruder motor
@@ -362,12 +419,7 @@ module bottom_plate(){
             }
           }
         }
-      }
-
-
-      // Dig out filament hole in sandwich stick and base.
-      // Note that bowden tube should fit in this from below
-      translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
+      }// end extruder_motor_translate()
 
       // Letters for easier identification
       translate([0,0,-1]){
@@ -390,69 +442,16 @@ module bottom_plate(){
       // Funnel shape for easier bowden tube fit
       translate([0,0,-0.1])
         cylinder(h=3, r1=3, r2=2);
-
-      // Tracks to put fish rings in
-      // TODO: structure is now such that placed_fish_rings()
-      //       is required in two differences...
-      placed_fish_rings();
+      // Filament hole up to sandwich stick
+      translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
     }// end difference
-
-    //*** Fish ring towers start here ***//
-
-    difference(){
-      // Mounting towers for abc fish rings
-      for(i=[0,1,2]){
-        rotate([0,0,120*i]){
-          for(k = [0, 1]){
-            mirror([k,0,0]){
-              translate(Line_contact_abc_xy)
-                rotate([0,0,fish_ring_abc_rotation])
-                translate([-6-Fish_ring_inner_radius , -Fish_ring_thinnest_outer_edge/2+0.01,0])
-                cube([12,5.5,Line_contacts_abcd_z[i] - Fish_ring_inner_radius]);
-            }
-          }
-        }
-      }
-      // Mounting holes for abc fish rings
-      // rotations and translations synced with placed_fish_rings
-      for(i=[0,120,240]){
-        rotate([0,0,i]){
-          for(k=[0,1]){
-            mirror([k,0,0]){
-              translate(Line_contact_abc_xy
-                  +[0,0,Line_contacts_abcd_z[i] + Fish_ring_inner_radius + Fish_ring_inner_radius/Sqrt2])
-                rotate([90,0,fish_ring_abc_rotation]){
-                  translate([-Fish_ring_inner_radius/Sqrt2,0,0])
-                    translate([0,-Fish_ring_holes_distance-Fish_ring_inner_radius,0]){
-                      cylinder(r=M3_diameter/2+0.3, h = 25, center=true);
-                    }
-                }
-            }
-          }
-        }
-      }
-      // Tracks to put fish rings in
-      placed_fish_rings();
-    } // End difference
-    // Bluetooth mount (and autocooling while printing tower)
-    rotate([0,0,150])
-    translate(Line_action_point_abc_xy)
-      cube([4.2,4.2,sandwich_stick_height]);
-  }
+    towers();
+  }// end union
 }
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-bottom_plate();
-
-module material_saving_circle(){
-  bpr = Bottom_plate_radius;
-  linear_extrude(height=Bottom_plate_thickness, convexity=10)
-  polygon([for (i=[0:1:359.9])
-           bpr*[cos(i), sin(i)] + 10*sin(5*i)*[cos(i),sin(i)]]);
-}
-//material_saving_circle();
-
+//bottom_plate();
 
 //** bottom_plate end **//
 
@@ -770,8 +769,16 @@ module side_plate2(height=15,th=7){
           translate([-1 + Abc_xy_split/2, -th - th +2, -height])
             cube([2, th, 2*height]);
           // Holes for adjustment screws. Intentionally narrow
-          translate([20,-th/2,-Big/2])
-            cylinder(r=1.45,h=Big);
+          translate([20,-th/2,0]){
+            translate([0,0,-Big/2])
+              cylinder(d=M3_diameter, h=Big);
+            // Nut traps for adjustment screws
+            translate([0,-0.1,2.5])
+              rotate([90,0,0])
+              rotate([0,0,90])
+              M3_nyloc_trap();
+          }
+
         }
       // Mark wall action point
       rotate([15,0,0]) translate([-1,0,0]) cube([2,5,height]);
@@ -829,9 +836,17 @@ module side_plate3(height=15,th=7){
               cylinder(r=0.75, h=Big);
           translate([-1 + Abc_xy_split/2, -2, -height])
             cube([2, th, 2*height]);
-          // Holes for adjustment screws. Intentionally narrow
-          translate([20,-th/2,-Big/2])
-            cylinder(r=1.45,h=Big);
+          // Holes for adjustment screws.
+          translate([20,-th/2,0]){
+            translate([0,0,-Big/2])
+              cylinder(d=M3_diameter,h=Big);
+            // Nut traps for adjustment screws
+            mirror([0,1,0])
+              translate([0,-0.1,2.5])
+              rotate([90,0,0])
+              rotate([0,0,90])
+              #M3_nyloc_trap();
+          }
         }
       translate([-s/2+27,0,0])
       rotate([-90,0,30]){
@@ -855,8 +870,8 @@ module side_plate3(height=15,th=7){
     }
   }
 }
-//mirror([1,0,0])
-//side_plate3();
+mirror([1,0,0])
+side_plate3();
 
 
 // Only for rendering
@@ -1021,8 +1036,8 @@ module sstruder(){
     translate([Sstruder_hinge_length,Sstruder_fork_length,0])
     rotate([0,0,0]) // rotate around hinge
     translate([-Sstruder_hinge_length,-Sstruder_fork_length,0])
-    sstruder_lever();
-  sstruder_plate();
+    sstruder_lever(false);
+  sstruder_plate(false);
   //translate([0,0,-Nema17_cube_height])
   //  Nema17();
 }
@@ -1032,19 +1047,41 @@ module sstruder_plate(hobb=true){
   hot_end_fastening_h = 16;
   ring_hole_d = (Nema17_ring_diameter+4);
   extra_width_for_lever = 10;
-
+  // Interface between sstruder block and lever
+  pressblock_edge = Nema17_cube_width/2 + extra_width_for_lever - Sstruder_pressblock_thickness;
+  lever_edge = Hobbed_insert_diameter
+               + Extruder_filament_opening
+               + Sstruder_fork_length
+               + Sstruder_lever_thickness;
 
   color(Printed_color_2)
   difference(){
-    // Main flat block
-    translate([-Nema17_cube_width/2, -Sstruder_height+Nema17_cube_width/2, 0])
-      cube([Nema17_cube_width+extra_width_for_lever, Sstruder_height, Sstruder_thickness]);
-    // Interface between sstruder block and lever
-    pressblock_edge = Nema17_cube_width/2 + extra_width_for_lever - Sstruder_pressblock_thickness;
-    lever_edge = Hobbed_insert_diameter
-                 + Extruder_filament_opening
-                 + Sstruder_fork_length
-                 + Sstruder_lever_thickness;
+    union(){
+      // Main flat block
+      translate([-Nema17_cube_width/2,
+                 -Sstruder_height+Nema17_cube_width/2, 0])
+        cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness]);
+      // Make space for pressblock
+      translate([-Nema17_cube_width/2,
+                 -Sstruder_height+Nema17_cube_width/2, 0])
+        cube([Nema17_cube_width + extra_width_for_lever,
+            Sstruder_pressblock_height,
+            Sstruder_thickness]);
+      // Tower for securing hinge screw
+      translate([-5 + lever_edge - Sstruder_lever_thickness,
+                 -3 -Sstruder_hinge_length - 3,0])
+        cube([8,10,34]);
+    }
+    // Dig out space for lever hinge
+    translate([-E_motor_x_offset +(E3d_mount_big_r*2+4)/2,
+               -3 -Sstruder_hinge_length, Sstruder_thickness]){
+      cube([8,10,22]);
+      translate([0, 0, 17+5])
+        rotate([45,0,0])
+        translate([0,0,-5])
+        cube([6.9,10,5]);
+    }
+
     // Screw holes for spring holding screws
     for(i=[-5:10:16])
     translate([(pressblock_edge + lever_edge)/2,
@@ -1061,6 +1098,7 @@ module sstruder_plate(hobb=true){
     translate([lever_edge - Sstruder_lever_thickness,-Sstruder_hinge_length,-1])
       cylinder(d=M3_diameter, h = 38);
   }
+
   // Block to press springs against
   // This is the interface between sstruder and sstruder_lever modules
   color(Printed_color_2)
@@ -1072,6 +1110,7 @@ module sstruder_plate(hobb=true){
               - M3_diameter/2,
             1])
     difference(){
+      // Sstruder pressblock
       cube([Sstruder_pressblock_thickness,
             Sstruder_pressblock_height,
             Nema17_shaft_height-Nema17_cube_height-1]);
