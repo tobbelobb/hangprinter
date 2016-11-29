@@ -26,7 +26,8 @@ module placed_lines(){
       // inner d-lines (onboard printer)
       translate([0,0, Line_contacts_abcd_z[3]])
         pline(tangent_point_3(Snelle_radius, Line_contact_d_xy),
-            Line_contact_d_xy, 0.8);
+            Line_contact_d_xy
+            + [0,-Bearing_623_outer_diameter/2,0] , 0.8);
     }
   }
   // Double them all up (gearing down ABC by half)
@@ -50,8 +51,8 @@ module placed_lines(){
   // d-lines
   for(i=[0,1,2])
     rotate([0,0,i*120]){
-      eline(Line_contact_d_xy + [0,-0.4*Bearing_623_outer_diameter,Line_contacts_abcd_z[D]], Line_contact_d_xy + Ceiling_action_point);
-      eline(Line_contact_d_xy + [0,0.4*Bearing_623_outer_diameter,Line_contacts_abcd_z[D]-6], Line_contact_d_xy + [0,0.8*Bearing_623_outer_diameter,0] + Ceiling_action_point);
+      eline(Line_contact_d_xy + [0,-0.4*Bearing_623_outer_diameter,Line_contacts_abcd_z[D]], Line_contact_d_xy + [0,-Bearing_623_outer_diameter/2,0] + Ceiling_action_point);
+      eline(Line_contact_d_xy + [0,0.5*Bearing_623_outer_diameter,Line_contacts_abcd_z[D]], Line_contact_d_xy+ [0,-Bearing_623_outer_diameter/2,0] + [0,1.0*Bearing_623_outer_diameter,0] + Ceiling_action_point);
     }
 }
 //placed_lines();
@@ -78,14 +79,15 @@ module placed_wall_vgrooves(){
   }
 }
 
-module bearing_filled_sandwich(worm=false, brim = Sandwich_radius){
+module bearing_filled_sandwich(worm=false){
   if(worm){
-    color(Printed_color_2)
-    translate([0,0,Sandwich_height])
-    rotate([180,0,0])
-    sandwich(worm=true, brim=brim); // Have worm gear as far down as possible
+    //color(Printed_color_2)
+      translate([0,0,Sandwich_height])
+      rotate([180,0,0])
+      sandwich(worm=true); // Have worm gear as far down as possible
   } else {
-    color(Printed_color_2) sandwich(brim=brim);
+    //color(Printed_color_2)
+      sandwich();
   }
   Bearing_608();
   translate([0,0,Bearing_608_width])
@@ -93,7 +95,6 @@ module bearing_filled_sandwich(worm=false, brim = Sandwich_radius){
 }
 
 module placed_sandwich(a_render=true, b_render=true, c_render=true, d_render=true){
-  smallbrim = Sandwich_radius - 2.5;
   if(a_render){
     translate([0,0,Line_contacts_abcd_z[A] - Snelle_height/2])
       bearing_filled_sandwich();
@@ -104,11 +105,13 @@ module placed_sandwich(a_render=true, b_render=true, c_render=true, d_render=tru
   }
   if(c_render){
     translate([0,0,Line_contacts_abcd_z[C] - Snelle_height/2])
-      bearing_filled_sandwich(brim = smallbrim);
+      // Brim must not collide with d motor
+      bearing_filled_sandwich();
   }
   if(d_render){
     translate([0,0,Bottom_plate_thickness + Bottom_plate_sandwich_gap])
-      bearing_filled_sandwich(worm=true, brim = smallbrim);
+      // Brim must not collide with d motor
+      bearing_filled_sandwich(worm=true);
   }
 }
 //placed_sandwich();
@@ -261,22 +264,13 @@ module placed_hotend(){
 }
 //placed_hotend();
 
-module Ramps_in_holder(){
-  translate([-0.1,-0.1,-0.1]) // Just prevent the Z-fighting
-    scale(1.01)
-    Ramps();
-  translate([0,Ramps_width+2+5,-2])
-    rotate([90,0,0])
-    color(Printed_color_1)
-    Ramps_holder();
-}
-//Ramps_in_holder();
-
 module placed_ramps(){
   rotate([0,0,2*90])
     translate([-60,-18,-Nema17_cube_height - Ramps_width - 7])
     rotate([90,0,0])
-    Ramps_in_holder();
+    Ramps();
+  color(Printed_color_1)
+    Fancy_Ramps_holder();
 }
 //placed_ramps();
 
