@@ -1,3 +1,4 @@
+include <design_numbers.scad>
 include <measured_numbers.scad>
 use <util.scad>
 
@@ -101,7 +102,7 @@ module Ramps(){
 //Ramps();
 
 module Ramps_holder(){
-  floor_th = 2;
+  floor_th = 1;
   edge_height = 3;
   solders_height = 5;
   extra_height = edge_height+solders_height;
@@ -129,17 +130,99 @@ module Ramps_holder(){
       cube([Ramps_length/5, Ramps_depth+2*edge+2*wall_th+2, Ramps_width+extra_height+1]);
     translate([4*Ramps_length/5,-edge-1,floor_th])
       cube([Ramps_length/5+1, Ramps_depth+2*edge+2*wall_th+2, Ramps_width+extra_height+1]);
-    // Nema17 screw holes
-    for(i=[2:6]){
-      translate([i*Ramps_length/8,Ramps_depth/2+wall_th,-1]){
-        rotate([0,0,45])
-          Nema17_screw_holes(M3_diameter,10);
+    // Straight Nema17 screw holes
+    for(i=[0:9]){
+      translate([0.5*Nema17_screw_hole_dist + 6
+                 +i*Nema17_screw_hole_dist/5,
+                 Ramps_depth/2+wall_th,
+                 -1]){
         Nema17_screw_holes(M3_diameter,10);
+        translate([0,10,0])
+          Nema17_screw_holes(M3_diameter,10);
+        translate([0,-10,0])
+          Nema17_screw_holes(M3_diameter,10);
       }
     }
+    //    rotate([0,0,45])
+    //      Nema17_screw_holes(M3_diameter,10);
   }
 }
 //Ramps_holder();
+
+module Fancy_Ramps_holder(){
+  th = 1.5;
+  bones = 2;
+  push_y = 16;
+
+  // A cross used for a Nema17 mount later
+  module cross(){
+    rotate([0,0,0])
+    polygon([for (i=[0:2:359.9])
+     9*[cos(i), sin(i)]
+     + 17*pow(sin(4/2*i),4)*[cos(i),sin(i)]]);
+  }
+  // Mount on A and B motor...
+  difference(){
+  for(i=[B_placement_angle, A_placement_angle])
+    rotate([0,0,i])
+      translate([0,
+                 Four_point_five_point_radius,
+                 -Nema17_cube_height-bones])
+      difference(){
+        union(){
+          linear_extrude(height=th, convexity=6)
+            cross();
+          Nema17_screw_holes(7,bones+th);
+        }
+        translate([0,0,-bones])
+          Nema17_screw_holes(3.2,3*bones);
+      }
+    // Remove cross from Ramps area
+    translate([-Ramps_length/2+1,push_y+1,
+                 -Nema17_cube_height-bones-1])
+    cube([Ramps_length-2, Ramps_depth-2, 3*th+bones]);
+  }
+    // Naming corners in this fancy polygon...
+    a = 4;
+    b = 13;
+    c = 24;
+    d = 16.5;
+    e = 24.7;
+    f = 8;
+    g = 13;
+    translate([-Ramps_length/2,16,-Nema17_cube_height-bones])
+    difference(){
+      linear_extrude(height=th, convexity=10)
+        polygon([[-a,0],
+                 [f, -g],
+                 [f, 0],
+                 [Ramps_length-f, 0],
+                 [Ramps_length-f, -g],
+                 [Ramps_length+a, 0],
+                 [Ramps_length+b, c],
+                 [Ramps_length+d, e],
+                 [Ramps_length, Ramps_depth],
+                 [0, Ramps_depth],
+                 [-d, e],
+                 [-b, c],
+                 [-a, 0]
+                 ]);
+      // Straight Nema17 screw holes
+      for(i=[0:8]){
+        translate([0.5*Nema17_screw_hole_dist + 6
+                   +i*Nema17_screw_hole_dist/4,
+                   Ramps_depth/2,
+                   -1]){
+          Nema17_screw_holes(M3_diameter,10);
+          translate([0,9,0])
+            Nema17_screw_holes(M3_diameter,10);
+          translate([0,-9,0])
+            Nema17_screw_holes(M3_diameter,10);
+        }
+      }
+    }
+}
+Fancy_Ramps_holder();
 
 module Bearing_623(){
   color("blue")
