@@ -252,10 +252,10 @@ module spiraled_cube(v=[10,10,2]){
   }
 }
 
-module M3_nyloc_trap(){
+module M3_nyloc_trap(th=4, h=10){
   rotate([0,0,90])
-  translate([-5.6/2, -4/2, -3.5])
-    point_cube([5.6,4,10],120);
+  translate([-5.6/2, -th/2, -3.5])
+    point_cube([5.6,th,h],120);
 }
 
 module angled_cylinder(d, h, angle=45){
