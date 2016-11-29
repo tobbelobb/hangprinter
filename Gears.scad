@@ -189,101 +189,34 @@ module my_gear(teeth, height){
 }
 //my_gear(40,10);
 
-// TODO: Remove part of Tble-struder
-module big_extruder_gear(height=Big_extruder_gear_height){
-  difference(){
-    gear(
-        number_of_teeth=Big_extruder_gear_teeth,
-        circular_pitch=Circular_pitch_extruder_gears,
-        diametral_pitch=false,
-        pressure_angle=28,
-        clearance = 0.2,
-        gear_thickness=height,
-        rim_thickness=height,
-        rim_width=3,
-        hub_thickness=0,
-        hub_diameter=4,
-        bore_diameter=1,
-        circles=0,
-        backlash=0,
-        twist=0,
-        involute_facets=0);
-    for(i=[0:60:359])
-      rotate([0,0,i])
-        translate([Big_extruder_gear_pitch/2+2,0,-1])
-        cylinder(r=5,h=Big);
-    // Hex head
-    translate([0,0,-0.01]) cylinder(h=Big_extruder_gear_screw_head_depth + 0.01, r=5.4/sqrt(3),$fn=6);
-    // Screw hole
-    cylinder(r=2.95/sqrt(3),h=Big,center=true,$fn=6);
-  }
-}
-//rotate([180,0,0])
-//big_extruder_gear();
-
-// TODO: Remove part of Tble-struder
-module small_extruder_gear(height=Small_extruder_gear_height){
-	difference(){
-		union(){
-      translate([0,0,0.1])
-			gear(
-				number_of_teeth=Small_extruder_gear_teeth,
-				circular_pitch=Circular_pitch_extruder_gears,
-        diametral_pitch=false,
-				pressure_angle=28,
-				clearance = 0.2,
-				gear_thickness=5,
-				rim_thickness=height - 0.1,
-				rim_width=6,
-				hub_thickness=4,
-				hub_diameter=13,
-				bore_diameter=Nema17_motor_shaft,
-				circles=0,
-				backlash=0,
-				twist=0,
-				involute_facets=0
-			);
-
-			translate([Shaft_flat + 0.75,0,height/2])
-				cube([1.5,5,height],center=true);
-			//base
-			//difference(){
-			//	cylinder(r=6.3,h=1.0,$fn=64);
-			//	cylinder(r=Nema17_motor_shaft/2,h=1.001,$fn=64);
-			//}
-		}
-		//lead in
-		translate([0,0,-0.01])
-			cylinder(r1=Nema17_motor_shaft/2+0.25,
-               r2=Nema17_motor_shaft/2-2,h=4,$fn=64);
-	}
-}
-//small_extruder_gear();
-
 // Sandwich is a sandwich gear on top of a snelle.
 // These are modelled together, then split up before printing to make a cleaner edge.
 
 // Sandwich height follows exactly 608 bearing thickness
-module sandwich(worm=false, brim=Sandwich_radius){
+module sandwich(worm=false, brim=Snelle_brim){
   od              = Bearing_608_outer_diameter;
   bw              = Bearing_608_width;
   meltlength      = 0.1;
   difference(){
     union(){
       // sandwich gear
+      color(Printed_color_2)
       if(worm){
-        translate([0, 0, Snelle_height - meltlength])
+        translate([0, 0, Snelle_height])
           worm_gear();
+          //worm_gear_by_diff();
       }else{
-        translate([0, 0, Snelle_height - meltlength])
+        translate([0, 0, Snelle_height])
           my_gear(Sandwich_gear_teeth, Sandwich_gear_height);
       }
+      color(Printed_color_1){
       // Snelle
-      cylinder(r = Snelle_radius,   h = Snelle_height, $fn=150);
+      cylinder(r = Snelle_radius,   h = Snelle_height + meltlength, $fn=150);
       cylinder(r = brim, h = Sandwich_edge_thickness, $fn=150);
-      if(!worm){
-        translate([0,0,Snelle_height - Sandwich_edge_thickness])
-          cylinder(r = Sandwich_radius, h = Sandwich_edge_thickness, $fn=150);
+      //if(!worm){
+      //  translate([0,0,Snelle_height - Sandwich_edge_thickness])
+      //    cylinder(r = brim, h = Sandwich_edge_thickness, $fn=150);
+      //}
       }
     }
     // Dig out the right holes
@@ -316,21 +249,18 @@ module sandwich(worm=false, brim=Sandwich_radius){
   }
   //Bearing_608();
 }
-//translate([3*Snelle_radius,0,0])
-//sandwich();
+//sandwich(brim=Snelle_radius+7);
 //sandwich(worm=true);
-
-//my_gear(Sandwich_gear_teeth, Sandwich_gear_height);
-//translate()
-//worm_gear();
+//sandwich(worm=true);
+worm();
 
 // May not render correctly in preview...
-module sandwich_gear(){
+module sandwich_gear(worm=false){
   rotate([180,0,0])
     difference(){
-      sandwich();
+      sandwich(worm=worm);
       translate([0,0,-1])
-        cylinder(r=Big, h=Snelle_height - Sandwich_edge_thickness + 1);
+        cylinder(r=Big, h=Snelle_height + 1);
     }
 }
 //sandwich_gear();
@@ -339,7 +269,7 @@ module sandwich_gear(){
 module snelle(){
   difference(){
     sandwich();
-    translate([0,0,Snelle_height - Sandwich_edge_thickness])
+    translate([0,0,Snelle_height])
       cylinder(r=Big, h=Big);
   }
 }
@@ -347,33 +277,44 @@ module snelle(){
 
 module motor_gear(height = Motor_protruding_shaft_length, letter){
   swgh  = Sandwich_gear_height  - 0.4;  // allow some space for easier printing
-
   melt = 0.1;
   teeth = Motor_gear_teeth;
-  difference(){
-    union(){
-      difference(){
-        union(){
-          translate([0,0,height - swgh])
-            my_gear(teeth, swgh);
-          // Shaft cylinder
-          cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40);
-        }
-        // Center bore
-        translate([0, 0, -1])
-          cylinder(r = 5.1/2, h = height + 2);
-      }
+
+  module the_bore(){
+    difference(){
+      translate([0, 0, -1])
+        cylinder(r = Nema17_motor_shaft/2 + 0.21, h = height + 2);
       // D-wall in bore
-      translate([-6/2, 1.83, 0])
+      translate([-6/2, Nema17_motor_shaft/2 - Shaft_flat, 0])
         cube([6,3,height]);
     }
     // Phase in
     translate([0,0,-0.1])
-      cylinder(r1=5/2+0.8, r2=1.6, h=3.0);
+      cylinder(r1=Nema17_motor_shaft/2+0.8, r2=1.6, h=3.0);
     translate([0,0,height - 2.9])
-     cylinder(r2=5/2+0.8, r1=1.6, h=3.0);
+     cylinder(r2=Nema17_motor_shaft/2+0.8, r1=1.6, h=3.0);
+  }
 
-    translate([5/2,0,height-1])
+  // Wedge nut between gear and shaft. No screw needed
+  module the_trap(h=16.5){
+    nut_thickness = 3;
+    translate([-Motor_gear_shaft_radius + nut_thickness,
+               Nema17_motor_shaft/2 - Shaft_flat - 0.1,
+               5.6 + nut_thickness])
+      rotate([0,90,0])
+      point_cube([5.6, nut_thickness, h],120);
+  }
+
+  difference(){
+    union(){
+      translate([0,0,height - swgh])
+        my_gear(teeth, swgh);
+      // Shaft cylinder
+      cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40);
+    }
+    the_bore();
+    the_trap();
+    translate([Nema17_motor_shaft/2,0,height-1])
       linear_extrude(height=2)
       text(letter,halign="left",valign="center", size=8);
   }
@@ -398,12 +339,6 @@ module motor_gear_c(){
 //rotate([180,0,0])
 //motor_gear_c();
 
-module motor_gear_d(){
-  motor_gear(Motor_gear_d_height ,"D");
-}
-//rotate([180,0,0])
-//motor_gear_d();
-
 // Visualization only
 module gear_friends(){
   translate([Four_point_five_point_radius,0,-5]) motor_gear();
@@ -412,9 +347,6 @@ module gear_friends(){
 //gear_friends();
 
 // A gear with 90 degree valleys
-// TODO: slightly twist
-//       and maybe throat around worm (diff with torus)
-//       to better fit the worm later
 module worm_gear(){
   difference(){
     // There is a radius and a virtual radius for worm gears in design_numbers.scad
@@ -437,6 +369,50 @@ module worm_gear(){
 }
 //worm_gear();
 
+// Creates throated worm gear.
+// No need as long as worm disc is thin
+module worm_gear_by_diff(){
+  module toothed_out_cylinder(){
+    difference(){
+      cylinder(h=Sandwich_gear_height,
+          r=Worm_disc_radius,
+          $fn=Sandwich_gear_teeth);
+      for(i=[0:60:360]){
+        rotate([0,0,(i/360)*Degrees_per_worm_gear_tooth])
+          translate([Worm_disc_tooth_valley_r+Worm_radius,
+              0,
+              Sandwich_gear_height/2])
+          rotate([90,0,0])
+          rotate([0,0,i])
+            worm(0.06, false);
+      }
+    }
+  }
+  module tooth(){
+    difference(){
+      toothed_out_cylinder();
+      rotate([0,0,2.51*Degrees_per_worm_gear_tooth])
+        translate([-Sandwich_radius*1.5,
+            0,
+            -Sandwich_height*1.5])
+        cube([Sandwich_radius*3,
+            Sandwich_radius*3,
+            Sandwich_height*3]);
+      rotate([0,0,1.49*Degrees_per_worm_gear_tooth])
+        translate([-Sandwich_radius*1.5,
+            -Sandwich_radius*3,
+            -Sandwich_height*1.5])
+        cube([Sandwich_radius*3,
+            Sandwich_radius*3,
+            Sandwich_height*3]);
+    }
+  }
+  for(i=[0:Sandwich_gear_teeth])
+    rotate([0,0,i*Degrees_per_worm_gear_tooth])
+    tooth();
+}
+//worm_gear_by_diff();
+
 // TODO: change 15.5 with Worm_radius or something
 module placed_worm_gear(ang=0){
   rotate([90,0,0])
@@ -447,15 +423,7 @@ module placed_worm_gear(ang=0){
 //%placed_worm_gear();
 
 // This is the worm for the worm drive
-// TODO: These numbers should be stored in design_numbers.scad
-//       because they are needed to place parts right later
-module worm(){
-  module center_cylinder(h){
-    difference(){
-        cylinder(r = Worm_radius - virtual_side, h = h);
-        // D-shape hole for motor shaft
-    }
-  }
+module worm(step=0.2, with_details=true){
   module fill_interior(){
     function my_circle(r) = [for (i=[0:Worm_spiral_turns*step*360/stop_angle:359.9])
       r * [cos(i), sin(i)]];
@@ -489,7 +457,6 @@ module worm(){
                   ];
   //p = [translation([0,0,0]),translation([0,1,0])];
   //sweep(thread_profile,p);
-  step = 0.2; // Shorter steps ==> like higher $fn for spiral
   stop_angle = Worm_spiral_turns*Degrees_per_worm_gear_tooth; // where main path stops
 
   // XY-Translations of top (phase in), main (touch gear) and bottom (phase out) spirals
@@ -536,49 +503,55 @@ module worm(){
   difference(){
     union(){
       // Spiral
-      sweep(thread_profile, concat(path0, path1, path2));
-      fill_interior();
+      if(with_details){
+        sweep(thread_profile, concat(path0, path1, path2));
+        fill_interior();
+      }else{
+        sweep(thread_profile, path1);
+      }
     }
     // Cut in half, see interior
     //translate([0,-25,-40])
     //cube([30,50,50]);
 
-    // Motor shaft D-shaped bore
-    h = height_downwards + height_upwards + 2;
-    rotate([0,0,45])
-    translate([0,0,-height_downwards - 1])
-    difference(){
-      cylinder(r = 5.4/2, h = h+2, $fn=40);
-      translate([2.2,-(h+4),-2])
-        cube(2*(h+4));
-    }
-    // Phase in the D-shape
-    translate([0,0,-height_downwards - 1]){
-      cylinder(d1=8, d2=5, h=3);
-    }
+    if(with_details){
+      // Motor shaft D-shaped bore
+      h = height_downwards + height_upwards + 2;
+      rotate([0,0,45])
+      translate([0,0,-height_downwards - 1])
+      difference(){
+        cylinder(r = 5.4/2, h = h+2, $fn=40);
+        translate([2.2,-(h+4),-2])
+          cube(2*(h+4));
+      }
+      // Phase in the D-shape
+      translate([0,0,-height_downwards - 1]){
+        cylinder(d1=8, d2=5, h=3);
+      }
 
-    // Cut bottom
-    translate([-50,-50,-100 - height_downwards])
-      cube(100);
-    // Cut top
-    translate([-50,-50,height_upwards])
-      cube(100);
-    // Screw hole and nut lock
-    translate([0,0,-height_downwards+4.6]){
-      rotate([0,90,45]){
-        scale([1.06,1.06,3])
-          M3_screw(6,true);
-        rotate([0,0,90])
-          translate([0,4,5])
-          rotate([90,0,0])
-          translate([-5.6/2,0,0]){
-          point_cube([5.6,2.5,10],120);
-          // Phase in nutlock
-          translate([5.6/2,2.5/2, 7.1])
-            linear_extrude(height=3,convexity=3,scale=[2.4, 2.7])
-            translate([-(5.6/1.5)/2,-(2.5/1.5)/2])
-            square([5.6/1.5,2.5/1.5]);
-          }
+      // Cut bottom
+      translate([-50,-50,-100 - height_downwards])
+        cube(100);
+      // Cut top
+      translate([-50,-50,height_upwards])
+        cube(100);
+      // Screw hole and nut lock
+      translate([0,0,-height_downwards+4.6]){
+        rotate([0,90,45]){
+          scale([1.06,1.06,3])
+            M3_screw(6,true);
+          rotate([0,0,90])
+            translate([0,4,5])
+            rotate([90,0,0])
+            translate([-5.6/2,0,0]){
+            point_cube([5.6,2.5,10],120);
+            // Phase in nutlock
+            translate([5.6/2,2.5/2, 7.1])
+              linear_extrude(height=3,convexity=3,scale=[2.4, 2.7])
+              translate([-(5.6/1.5)/2,-(2.5/1.5)/2])
+              square([5.6/1.5,2.5/1.5]);
+            }
+        }
       }
     }
   }
@@ -603,7 +576,6 @@ module placed_worm(ang = 0){
 module sstruder_gear(){
 	difference(){
 		union(){
-      translate([0,0,0.1])
 			gear(
 				number_of_teeth = Sstruder_gear_teeth,
 				circular_pitch  = Sstruder_gear_circular_pitch,
@@ -622,8 +594,8 @@ module sstruder_gear(){
 				involute_facets = 0
 			);
 
-			translate([Shaft_flat + 0.75,0,Sstruder_gear_thickness/2+0.15])
-				cube([1.5,5,Sstruder_gear_thickness-0.1],center=true);
+			translate([Nema17_motor_shaft/2 - Shaft_flat,-5/2,0])
+				cube([1.5,5,Sstruder_gear_thickness]);
 			//base
 			//difference(){
 			//	cylinder(r=6.3,h=1.0,$fn=64);
@@ -631,9 +603,9 @@ module sstruder_gear(){
 			//}
 		}
 		//lead in
-		//translate([0,0,-0.01])
+		translate([0,0,-0.01])
 			cylinder(r1=Nema17_motor_shaft/2+0.25,
-               r2=Nema17_motor_shaft/2-2,h=4,$fn=64);
+               r2=Nema17_motor_shaft/2-1,h=2,$fn=64);
 	}
 }
 //sstruder_gear();
