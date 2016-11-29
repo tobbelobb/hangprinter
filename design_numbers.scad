@@ -69,8 +69,10 @@ fish_ring_d_rotation   = 107;
 
 //** Gear parameters **//
 Circular_pitch_top_gears = 400;
-Motor_gear_teeth = 11;
-Sandwich_gear_teeth = 38;
+//Motor_gear_teeth = 11;
+Motor_gear_teeth = 9;
+//Sandwich_gear_teeth = 38;
+Sandwich_gear_teeth = 43;
 Circular_pitch_extruder_gears = 180;
 Small_extruder_gear_teeth = 15;
 // 1/3 is sweetspot ratio
@@ -86,15 +88,16 @@ Small_extruder_gear_height = 6;
 
 Motor_gear_shaft_radius = 7;
 Snelle_radius = 33; // This is the radius the line will wind around.
+Snelle_brim   = Snelle_radius + 12;
 // TODO: worm should use this
-Shaft_flat = 2; // Determines D-shape of motor shaft
+// How much motor shaft is flattened away (in radial direction)?
+Shaft_flat = 0.5; // Determines D-shape of motor shaft
 
 //** Extruder numbers **//
 Big_extruder_gear_rotation = 69; // Rotate around z-axis
 // TODO: Remove part of Tble-struder
 //Extruder_motor_twist = 0; // Manually adjusted to center hobb
 E_motor_z_offset = -1; // Added to get E-motor below sandwich
-Hobbed_insert_height = 9;
 Extruder_filament_opening = 1.3;
 // Place E-motor away from D-motor to make spring loaded hobb accessible
 // Sstruder construction depends on this variable
@@ -123,8 +126,10 @@ Drive_support_v = [Bearing_623_outer_diameter + 16,
 
 //** Derived parameters **//
 Motor_gear_pitch             = Motor_gear_teeth*Circular_pitch_top_gears/360;
+echo(Motor_gear_pitch);
 Motor_gear_radius            = Motor_gear_pitch + Motor_gear_pitch*2/Motor_gear_teeth;
 Sandwich_gear_pitch          = Sandwich_gear_teeth*Circular_pitch_top_gears/360;
+echo(Sandwich_gear_pitch);
 Sandwich_radius              = Sandwich_gear_pitch + Sandwich_gear_pitch*2/Sandwich_gear_teeth;
 Big_extruder_gear_pitch      = Big_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
 Small_extruder_gear_pitch    = Small_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
@@ -160,7 +165,7 @@ C_placement_angle = 72*2;
 D_placement_angle = 72*3;
 E_placement_angle = 0;    // 0 here places E motor on y-axis
 
-Pushdown_d_motor = 70;
+Pushdown_d_motor = 75;
 D_motor_twist = 29;
 
 Sstruder_thickness = 3;

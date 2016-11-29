@@ -32,8 +32,9 @@ Bearing_608_bore_diameter  = 8;
 Bearing_608_outer_diameter = 22;
 Bearing_623_vgroove_big_diameter = 12;
 Bearing_623_vgroove_small_diameter = 12 - 1.7;
-Bearing_623_vgroove_width = 3;
-Hobbed_insert_diameter     = 8.8;
+Bearing_623_vgroove_width  = 3;
+Hobbed_insert_diameter     = 8.0; // E3d hobb goblin
+Hobbed_insert_height       = 11;  // E3d hobb goblin
 
 Fish_ring_height                 = 1.76;   // Height of cheramic fish ring
 Fish_ring_inner_radius           = 3.00/2; // Inner radius of cheramic fish ring
