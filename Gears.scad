@@ -252,7 +252,6 @@ module sandwich(worm=false, brim=Snelle_brim){
 //sandwich(brim=Snelle_radius+7);
 //sandwich(worm=true);
 //sandwich(worm=true);
-worm();
 
 // May not render correctly in preview...
 module sandwich_gear(worm=false){
@@ -263,7 +262,9 @@ module sandwich_gear(worm=false){
         cylinder(r=Big, h=Snelle_height + 1);
     }
 }
-//sandwich_gear();
+// Give space to worm so it doesn't lock up
+//scale(0.99)
+//sandwich_gear(true);
 
 // May not render correctly in preview...
 module snelle(){
@@ -556,14 +557,13 @@ module worm(step=0.2, with_details=true){
     }
   }
 }
+// Mirror to make it turn counterclockwise when it retracts line
+// This will be the direction of heaviest load,
+// and we want to push gear _down_ towards bottom plate
+// to avoid pushing disc up onto the other sandwich snelles and gears
+// TODO: Claims above untested as of 29 Nov 2016
+//mirror([1,0,0])
 //worm();
-
-//scale([1,1,3])
-//#M3_screw(6,true);
-//translate([0,5,3])
-//rotate([90,0,0])
-//translate([-5.5/2,0,0])
-//#point_cube([5.5,2.4,2+Bottom_plate_thickness],120);
 
 // ang is angle of worm plate, not worm itself
 module placed_worm(ang = 0){
