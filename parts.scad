@@ -427,17 +427,17 @@ module bottom_plate(){
       // Letters for easier identification
       translate([0,0,-1]){
         rotate([0,0,120*A+7])
-          translate(Line_action_point_abc_xy + [0,-8,th])
+          translate(Line_action_point_abc_xy + [-11,4,th])
           scale([1,1,1.5])
           linear_extrude(height=2)
           text("A",halign="center",valign="center");
         rotate([0,0,120*B+7])
-          translate(Line_action_point_abc_xy + [0,-8,th])
+          translate(Line_action_point_abc_xy + [10,2,th])
           scale([1,1,1.5])
           linear_extrude(height=2)
           text("B",halign="center",valign="center");
         rotate([0,0,120*C+7])
-          translate(Line_action_point_abc_xy + [0,-16,th])
+          translate(Line_action_point_abc_xy + [-24,7,th])
           scale([1,1,1.5])
           linear_extrude(height=2)
           text("C",halign="center",valign="center");
@@ -454,7 +454,7 @@ module bottom_plate(){
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-bottom_plate();
+//bottom_plate();
 
 //** bottom_plate end **//
 
