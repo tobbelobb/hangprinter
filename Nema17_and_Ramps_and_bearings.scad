@@ -2,18 +2,18 @@ include <design_numbers.scad>
 include <measured_numbers.scad>
 use <util.scad>
 
-module Nema17_screw_translate(){
-  for (i=[0:90:359]){
+module Nema17_screw_translate(corners){
+  for (i=[0:90:90*corners - 1]){
     rotate([0,0,i+45]) translate([Nema17_screw_hole_width/2,0,0]) children(0);
   }
 }
 
-module Nema17_screw_holes(d, h){
-  Nema17_screw_translate() cylinder(r=d/2, h=h);
+module Nema17_screw_holes(d, h, corners=4){
+  Nema17_screw_translate(corners) cylinder(r=d/2,h=h);
 }
 //Nema17_screw_holes(M3_diameter, 15);
 
-module Nema17_schwung_screw_holes(d, h, schwung_length){
+module Nema17_schwung_screw_holes(d, h, schwung_length, corners=3){
   // Tight/still screw
   rotate([0,0,-45])
     translate([Nema17_screw_hole_width/2,0,0]) cylinder(r=d/2, h=h);
@@ -23,10 +23,11 @@ module Nema17_schwung_screw_holes(d, h, schwung_length){
     rotate([0,0,90+45])
     cyl_wall_2(d,Nema17_screw_hole_dist+d/2, h,30);
   // Nearest screw in x-direction
-    rotate([0,0,-45])
-    translate([Nema17_screw_hole_width/2,0,0])
-    rotate([0,0,2*90+45])
-    cyl_wall_2(d,Nema17_screw_hole_dist+d/2, h,30);
+  // Removed because it is under worm disc
+  //  rotate([0,0,-45])
+  //  translate([Nema17_screw_hole_width/2,0,0])
+  //  rotate([0,0,2*90+45])
+  //  cyl_wall_2(d,Nema17_screw_hole_dist+d/2, h,30);
   // diametral opposite screw
     rotate([0,0,-45])
     translate([Nema17_screw_hole_width/2,0,0])
@@ -222,7 +223,7 @@ module Fancy_Ramps_holder(){
       }
     }
 }
-Fancy_Ramps_holder();
+//Fancy_Ramps_holder();
 
 module Bearing_623(){
   color("blue")

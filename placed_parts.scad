@@ -206,6 +206,7 @@ module tble_struder(){
 module placed_abc_motors(motor_gear_render=true){
   four_point_translate(d_object=false) // don't place out a d-motor
     translate([0,0,-Nema17_cube_height])
+    rotate([0,0,45])
     Nema17();
   if(motor_gear_render){
     color(Printed_color_2){
@@ -238,11 +239,13 @@ module placed_d_motor(with_worm=true){
 }
 //placed_d_motor();
 
-module placed_extruder(){
+module placed_extruder(plastic_parts=true){
   extruder_motor_translate(){
     Nema17();
-    translate([0,0,Nema17_cube_height])
-      sstruder();
+    if(plastic_parts){
+      translate([0,0,Nema17_cube_height])
+        sstruder();
+    }
     // Move drive up extruder motor shaft
     // TODO: Remove part of Tble-extruder
     //translate([0,0,Nema17_shaft_height - Small_extruder_gear_height+0])

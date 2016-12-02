@@ -144,6 +144,7 @@ module extruder_motor_translate(){
 }
 
 // The thing separating bearings on center axis of bottom plate
+// TODO: Rename to sandwich_spacer
 module lock(r1, r2, height){
   difference(){
     cylinder(r=r2, h=height);
@@ -364,10 +365,12 @@ module bottom_plate(){
       // Screw holes for abc Nema
       translate([0, 0, -1]){
         four_point_translate(d_object=false)
+          rotate([0,0,45])
           Nema17_schwung_screw_holes(M3_diameter+0.2, th+2, 18);
         four_point_translate(d_object=false)
           translate([0,0,th-3.5])
-          Nema17_screw_holes(M3_head_diameter+0.1, th+2);
+          rotate([0,0,270+45])
+          Nema17_screw_holes(M3_head_diameter+0.1, th+2, 3);
       }
       // Hole for worm driving d-motor
       d_motor_move(){
@@ -451,7 +454,7 @@ module bottom_plate(){
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-//bottom_plate();
+bottom_plate();
 
 //** bottom_plate end **//
 
@@ -870,8 +873,8 @@ module side_plate3(height=15,th=7){
     }
   }
 }
-mirror([1,0,0])
-side_plate3();
+//mirror([1,0,0])
+//side_plate3();
 
 
 // Only for rendering
@@ -956,15 +959,19 @@ module sstruder_lever(hobb=true){
            + Hobbed_insert_height
            + Sstruder_gear_thickness
            + 2*Sstruder_handle_height;
+
   module bearing_holder(l){
     difference(){
       union(){
         translate([-width/2-Sstruder_edge_around_bearing, 0, 0])
           cube([width+3, l, Sstruder_lever_thickness]);
-        cylinder(d=Bearing_623_outer_diameter+2*Sstruder_edge_around_bearing, h = Sstruder_lever_thickness);
+        rotate([0,0,180])
+        teardrop(r=Bearing_623_outer_diameter/2+Sstruder_edge_around_bearing, h = Sstruder_lever_thickness);
       }
-      translate([0,0,-1])
-        cylinder(d=Bearing_623_outer_diameter, h = Sstruder_lever_thickness+2);
+      translate([0,0,-1]){
+        rotate([0,0,180])
+        teardrop(r=Bearing_623_outer_diameter/2, h = Sstruder_lever_thickness+2);
+      }
     }
   }
 
@@ -1017,13 +1024,15 @@ module sstruder_lever(hobb=true){
       cylinder(d=height-2*Sstruder_lever_thickness, h=Sstruder_lever_thickness+2);
     // Hole for hinge screw
     translate([Sstruder_hinge_length,Sstruder_fork_length,-1])
-      cylinder(d=M3_diameter+0.1, h=height+2);
+      cylinder(d=M3_diameter+0.3, h=height+2);
   }
   if(hobb){
     hobb_towers([0,0,0],true);
   }
 }
-//sstruder_lever();
+// TODO: Print a more robust one without teardrop shape
+//rotate([-90,0,0])
+//sstruder_lever(false);
 
 module sstruder(){
   translate([Hobbed_insert_diameter + Extruder_filament_opening,
