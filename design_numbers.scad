@@ -154,8 +154,10 @@ Worm_spiral_turns            = 2.5; // Shortened to make space for screw...
 Worm_radius                  = 15.5; // Distance from origo to virtual worm edge in xy-plane
 
 
-Printed_color_1 = "deepskyblue";
-Printed_color_2 = "sandybrown";
+//Printed_color_1 = "deepskyblue";
+Printed_color_1 = [0.05,0.05,0.05,1];
+//Printed_color_2 = "sandybrown";
+Printed_color_2 = "lime";
 
 // Here it is decided in which order the motors are sorted
 // counterclockwise starting from y-axis
@@ -176,7 +178,8 @@ Sstruder_filament_meets_shaft = (Nema17_shaft_height-Nema17_cube_height)/2 + Sst
 Sstruder_gear_thickness = 3;
 Sstruder_gear_diameter = 5;
 Sstruder_fork_length = Hobbed_insert_diameter/2 + Extruder_filament_opening + 3;
-Sstruder_edge_around_bearing = 1.5;
+Sstruder_edge_around_bearing = 2;
+Sstruder_press_angle = 90; // TODO: only used in sstruder() for rendering. Use in sstruder_plate as well
 //Sstruder_hinge_length = Nema17_cube_width/2 + M3_diameter; // As short as possible
 Sstruder_hinge_length = Sstruder_height
                         - Nema17_cube_height/2

@@ -541,9 +541,14 @@ module e3d_v6_mount_bore(d = 5){
   translate([-(Bowden_tube_diameter+2.6)/2,0,0])
     cube([Bowden_tube_diameter+2.6,d,14]);
   // Downmost
+  translate([0,0,-1-3])
+    #cylinder(h=3, r=E3d_mount_big_r);
+  translate([-E3d_mount_big_r,0,-4.0])
+    cube([2*E3d_mount_big_r,d,3+0.1]);
+  // Next Downmost
   cylinder(h=3, r=E3d_mount_big_r);
-  translate([-E3d_mount_big_r,0,-0.025]) // Stop Z-fighting and give some more space
-    cube([2*E3d_mount_big_r,d,3+0.05]);
+  translate([-E3d_mount_big_r,0,-0.0]) // Stop Z-fighting and give some more space
+    cube([2*E3d_mount_big_r,d,3+0.0]);
   // Middle
   translate([0,0,2.9]) cylinder(h=6.2, r=E3d_mount_small_r); // 0.1 melt zone...
   translate([-E3d_mount_small_r,0,3]) cube([2*E3d_mount_small_r,d,6]);
@@ -1034,19 +1039,19 @@ module sstruder_lever(hobb=true){
 //rotate([-90,0,0])
 //sstruder_lever(false);
 
-module sstruder(){
+module sstruder(hobb=false){
   translate([Hobbed_insert_diameter + Extruder_filament_opening,
       0,
       Sstruder_filament_meets_shaft // Involved but safe way to say Sstruder_thickness
       - Hobbed_insert_height/2
       - Sstruder_handle_height
       - Bearing_623_width])
-    rotate([0,0,-90]) // rotate around hobb
+    rotate([0,0,-Sstruder_press_angle]) // rotate around hobb
     translate([Sstruder_hinge_length,Sstruder_fork_length,0])
     rotate([0,0,0]) // rotate around hinge
     translate([-Sstruder_hinge_length,-Sstruder_fork_length,0])
-    sstruder_lever(false);
-  sstruder_plate(false);
+    sstruder_lever(hobb);
+  sstruder_plate(hobb);
   //translate([0,0,-Nema17_cube_height])
   //  Nema17();
 }
@@ -1077,18 +1082,23 @@ module sstruder_plate(hobb=true){
             Sstruder_pressblock_height,
             Sstruder_thickness]);
       // Tower for securing hinge screw
-      translate([-5 + lever_edge - Sstruder_lever_thickness,
+      translate([0 + lever_edge - Sstruder_lever_thickness,
                  -3 -Sstruder_hinge_length - 3,0])
+        rotate([0,-5,0])
         cube([8,10,34]);
+      translate([Nema17_cube_width/2
+                 + extra_width_for_lever - 15,
+                 -3 -Sstruder_hinge_length - 3,0])
+        cube([15,10,Nema17_shaft_height-Nema17_cube_height]);
     }
     // Dig out space for lever hinge
     translate([-E_motor_x_offset +(E3d_mount_big_r*2+4)/2,
                -3 -Sstruder_hinge_length, Sstruder_thickness]){
-      cube([8,10,22]);
+      cube([14,10,22]);
       translate([0, 0, 17+5])
         rotate([45,0,0])
         translate([0,0,-5])
-        cube([6.9,10,5]);
+        cube([14,10,5]);
     }
 
     // Screw holes for spring holding screws
@@ -1177,7 +1187,8 @@ module sstruder_plate(hobb=true){
     hobb_towers([0,0,Sstruder_filament_meets_shaft - Hobbed_insert_height/2]);
   }
 }
-//sstruder_plate(false);
+sstruder_plate(false);
+//sstruder_plate();
 //sstruder();
 //translate([0,0,-Nema17_cube_height])
 // %Nema17();
