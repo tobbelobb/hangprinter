@@ -9,7 +9,7 @@
 //===========================================================================
 /*
    Here are some standard links for getting your machine calibrated:
- * http://reprap.org/wiki/Calibration 
+ * http://reprap.org/wiki/Calibration
  * http://youtu.be/wAL9d7FgInk
  * http://calculator.josefprusa.cz
  * http://reprap.org/wiki/Triffid_Hunter%27s_Calibration_Guide
@@ -93,26 +93,26 @@
 // These values are the difference between measurement stick top (along sides of Hangprinter when
 // placed in origo) and frame measurment point,
 // alternatively measure from one fish eye, along corresponding line to the lines anchor point.
-#define ANCHOR_A_X 890.0 // anchor point A's Carthesian x-coordinate. In mm
-#define ANCHOR_A_Y -578.0
-#define ANCHOR_A_Z -117.0 // measured from print surface to frame middle. In mm (was 130 diff is 11)
+#define ANCHOR_A_X 0.0 // anchor point A's Carthesian x-coordinate. In mm
+#define ANCHOR_A_Y -1014.2
+#define ANCHOR_A_Z -144.4 // measured from print surface to frame middle. In mm (was 130 diff is 11)
 // Subtracted 2 mm because of double line configuration
 #define INITIAL_LENGTH_A sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z)
 // This gives A-length of sqrt(887^2 + 575^2 + 130^2) = 1065
-#define ANCHOR_B_X 0.0
-#define ANCHOR_B_Y 863.0
-#define ANCHOR_B_Z -100.0 // measured from print surface to frame middle. In mm (was -119. Diff is 17)
+#define ANCHOR_B_X 886.5
+#define ANCHOR_B_Y 690.6
+#define ANCHOR_B_Z -134.6 // measured from print surface to frame middle. In mm (was -119. Diff is 17)
 // Subtracted 2 mm because of double line configuration
 #define INITIAL_LENGTH_B sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z)
 // This gives B-length of sqrt(867^2 + 119^2) = 875
-#define ANCHOR_C_X -1426.0
-#define ANCHOR_C_Y -1320.0
-#define ANCHOR_C_Z -121.0 // measured from print surface to frame middle. In mm (was -141. Diff is 18)
+#define ANCHOR_C_X -877.6
+#define ANCHOR_C_Y 628.6
+#define ANCHOR_C_Z -124.8 // measured from print surface to frame middle. In mm (was -141. Diff is 18)
 // Subtracted 2 mm because of double line configuration
 #define INITIAL_LENGTH_C sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z)
 // This gives C-length of sqrt(1429^2 + 1317^2 + 141^2) = 1948.4
 // It's important that middle of frame D is directly above (x,y) = (0,0)
-#define ANCHOR_D_Z 2295.0 // measured along vertical line, from fish eye to anchor point. In mm (was 2286 diff is 9)
+#define ANCHOR_D_Z 2084 // measured along vertical line, from fish eye to anchor point. In mm (was 2286 diff is 9)
 #define INITIAL_LENGTH_D ANCHOR_D_Z
 
 //===========================================================================
@@ -138,7 +138,7 @@
 // 10 is 100k RS thermistor 198-961 (4.7k pullup)
 // 11 is 100k beta 3950 1% thermistor (4.7k pullup)
 // 12 is 100k 0603 SMD Vishay NTCS0603E3104FXT (4.7k pullup) (calibrated for Makibox hot bed)
-// 13 is 100k Hisens 3950  1% up to 300°C for hotend "Simple ONE " & "Hotend "All In ONE" 
+// 13 is 100k Hisens 3950  1% up to 300°C for hotend "Simple ONE " & "Hotend "All In ONE"
 // 20 is the PT100 circuit found in the Ultimainboard V2.x
 // 60 is 100k Maker's Tool Works Kapton Bed Thermistor beta=3950
 //
@@ -297,15 +297,15 @@
    The system will turn the heater on forever, burning up the filament and anything
    else around.
 
-   After the temperature reaches the target for the first time, this feature will 
-   start measuring for how long the current temperature stays below the target 
+   After the temperature reaches the target for the first time, this feature will
+   start measuring for how long the current temperature stays below the target
    minus _HYSTERESIS (set_temperature - THERMAL_RUNAWAY_PROTECTION_HYSTERESIS).
 
    If it stays longer than _PERIOD, it means the thermistor temperature
    cannot catch up with the target, so something *may be* wrong. Then, to be on the
    safe side, the system will he halt.
 
-   Bear in mind the count down will just start AFTER the first time the 
+   Bear in mind the count down will just start AFTER the first time the
    thermistor temperature is over the target, so you will have no problem if
    your extruder heater takes 2 minutes to hit the target on heating.
 
@@ -447,14 +447,25 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // Sandwich pitch radius: 41.11
 // Motor gear pitch radius: 13.33
 //
-//  4*200 / ((34.25/41.11) * 2 * pi * 13.33) = 11.465 
-//  8*200 / ((34.25/41.11) * 2 * pi * 13.33) = 22.930 
+//  4*200 / ((34.25/41.11) * 2 * pi * 13.33) = 11.465
+//  8*200 / ((34.25/41.11) * 2 * pi * 13.33) = 22.930
 // 16*200 / ((34.25/41.11) * 2 * pi * 13.33) = 45.859
 //
 //  4*200 / ((33/42.22) * 2 * pi * 12.22) = 13.330
 //  8*200 / ((33/42.22) * 2 * pi * 12.22) = 26.661
 // 16*200 / ((33/42.22) * 2 * pi * 12.22) = 53.322
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {53.322, 53.322, 53.322, 53.322, 140.0}  // default steps per unit for Hangprinter
+//
+//Motor gear teeth = 9
+//Sandwich gear teeth = 43
+//Snelle revs per motor rev = 9/43
+//Length per snelle rev = 33*2*pi
+//Steps per motor rev = 16*200
+//Steps per snelle rev = 16*200*43/9
+//Length per step = (33*2*pi)/(16*200*43/9)
+//Steps per mm = (16*200*43/9)/(33*2*pi) = 73.74
+//For worm gear: (16*200*43)/(33*2*pi) = 663.63
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   {53.322, 53.322, 53.322, 53.322, 140.0}  // default steps per unit for Hangprinter
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {73.747, 73.747, 73.747, 663.7, 140.0}  // default steps per unit for Hangprinter
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 

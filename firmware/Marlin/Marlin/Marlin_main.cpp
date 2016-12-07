@@ -776,11 +776,18 @@ void process_commands(){
         if(code_seen('C')) tmp_delta[C_AXIS] += code_value();
         if(code_seen('D')) tmp_delta[D_AXIS] += code_value();
         if(code_seen('E')) destination[E_CARTH] += code_value();
+        if(code_seen('F')){
+          next_feedrate = code_value();
+          if(next_feedrate > 0.0){
+            saved_feedrate = feedrate;
+            feedrate = next_feedrate;
+          }
+        }
         plan_buffer_line(tmp_delta[A_AXIS],
                          tmp_delta[B_AXIS],
                          tmp_delta[C_AXIS],
                          tmp_delta[D_AXIS],
-                         destination[E_CARTH], homing_feedrate[A_AXIS]/100.0/60.0, active_extruder, false);
+                         destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
       case 90: // G90
         relative_mode = false;
