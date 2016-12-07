@@ -152,12 +152,15 @@ Worm_disc_tooth_valley_r    = Worm_disc_virtual_radius*(1 // Shift inwards for 4
 Worm_edge_cut                = 0.3;
 Worm_spiral_turns            = 2.5; // Shortened to make space for screw...
 Worm_radius                  = 15.5; // Distance from origo to virtual worm edge in xy-plane
+Worm_smallest_radius         = Worm_radius - (Worm_disc_virtual_radius - Worm_disc_tooth_valley_r)
+                               + Worm_disc_tooth_cutoff; // fill_interior inside this
+Worm_largest_angle           = atan(2*(Worm_disc_virtual_radius - Worm_disc_tooth_valley_r)/(2*PI*Worm_smallest_radius));
 
 
-//Printed_color_1 = "deepskyblue";
-Printed_color_1 = [0.05,0.05,0.05,1];
-//Printed_color_2 = "sandybrown";
-Printed_color_2 = "lime";
+Printed_color_1 = "deepskyblue";
+//Printed_color_1 = [0.05,0.05,0.05,1];
+Printed_color_2 = "sandybrown";
+//Printed_color_2 = "lime";
 
 // Here it is decided in which order the motors are sorted
 // counterclockwise starting from y-axis
