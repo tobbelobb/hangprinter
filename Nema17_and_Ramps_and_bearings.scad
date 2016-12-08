@@ -150,6 +150,7 @@ module Ramps_holder(){
 }
 //Ramps_holder();
 
+// TODO: motors are rotated 45 deg compared to this
 module Fancy_Ramps_holder(){
   th = 1.5;
   bones = 2;
@@ -158,62 +159,71 @@ module Fancy_Ramps_holder(){
   // A cross used for a Nema17 mount later
   module cross(){
     rotate([0,0,0])
-    polygon([for (i=[0:2:359.9])
-     9*[cos(i), sin(i)]
-     + 17*pow(sin(4/2*i),4)*[cos(i),sin(i)]]);
+      polygon([for (i=[0:2:359.9])
+          9*[cos(i), sin(i)]
+          + 17*pow(sin(4/2*i),4)*[cos(i),sin(i)]]);
   }
-  // Mount on A and B motor...
+
+  module bones_place(){
+      rotate([0,0,B_placement_angle])
+        translate([0,
+            Four_point_five_point_radius,
+            -Nema17_cube_height-bones])
+        rotate([0,0,45])
+          Nema17_screw_translate(3)
+            children(0);
+      rotate([0,0,A_placement_angle])
+        translate([0,
+          Four_point_five_point_radius,
+          -Nema17_cube_height-bones])
+        rotate([0,0,45])
+          rotate([0,0,180])
+            Nema17_screw_translate(3)
+              children(0);
+  }
+
   difference(){
-  for(i=[B_placement_angle, A_placement_angle])
-    rotate([0,0,i])
-      translate([0,
-                 Four_point_five_point_radius,
-                 -Nema17_cube_height-bones])
-      difference(){
-        union(){
-          linear_extrude(height=th, convexity=6)
-            cross();
-          Nema17_screw_holes(7,bones+th);
-        }
-        translate([0,0,-bones])
-          Nema17_screw_holes(3.2,3*bones);
-      }
-    // Remove cross from Ramps area
-    translate([-Ramps_length/2+1,push_y+1,
-                 -Nema17_cube_height-bones-1])
-    cube([Ramps_length-2, Ramps_depth-2, 3*th+bones]);
-  }
-    // Naming corners in this fancy polygon...
-    a = 4;
-    b = 13;
-    c = 24;
-    d = 16.5;
-    e = 24.7;
-    f = 8;
-    g = 13;
+    union(){
+      bones_place()
+        cylinder(d=7, h=bones+th);
+      for(i=[B_placement_angle, A_placement_angle])
+        rotate([0,0,i])
+          translate([0,
+              Four_point_five_point_radius,
+              -Nema17_cube_height-bones])
+          rotate([0,0,45]){
+            linear_extrude(height=th, convexity=6)
+              cross();
+          }
+      // Naming corners in this fancy polygon...
+      a = -20.6;
+      d = 28.75;
+      e = 10.3;
+      j = 6;
+      translate([-Ramps_length/2,16,-Nema17_cube_height-bones])
+        linear_extrude(height=th, convexity=10)
+        polygon([[-a,-j],
+            [-a,0],
+            [Ramps_length+a,0],
+            [Ramps_length+a, -j],
+            [Ramps_length+d, e],
+            [Ramps_length, Ramps_depth],
+            [0, Ramps_depth],
+            [-d, e]
+            ]);
+    } // end union
+
+    bones_place()
+      translate([0,0,-bones])
+      cylinder(d=3.2,h=3*bones);
+
     translate([-Ramps_length/2,16,-Nema17_cube_height-bones])
-    difference(){
-      linear_extrude(height=th, convexity=10)
-        polygon([[-a,0],
-                 [f, -g],
-                 [f, 0],
-                 [Ramps_length-f, 0],
-                 [Ramps_length-f, -g],
-                 [Ramps_length+a, 0],
-                 [Ramps_length+b, c],
-                 [Ramps_length+d, e],
-                 [Ramps_length, Ramps_depth],
-                 [0, Ramps_depth],
-                 [-d, e],
-                 [-b, c],
-                 [-a, 0]
-                 ]);
       // Straight Nema17 screw holes
       for(i=[0:8]){
         translate([0.5*Nema17_screw_hole_dist + 6
-                   +i*Nema17_screw_hole_dist/4,
-                   Ramps_depth/2,
-                   -1]){
+            +i*Nema17_screw_hole_dist/4,
+            Ramps_depth/2,
+            -1]){
           Nema17_screw_holes(M3_diameter,10);
           translate([0,9,0])
             Nema17_screw_holes(M3_diameter,10);
@@ -221,9 +231,9 @@ module Fancy_Ramps_holder(){
             Nema17_screw_holes(M3_diameter,10);
         }
       }
-    }
+  }
 }
-//Fancy_Ramps_holder();
+Fancy_Ramps_holder();
 
 module Bearing_623(){
   color("blue")

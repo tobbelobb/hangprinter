@@ -542,24 +542,23 @@ module e3d_v6_mount_bore(d = 5){
     cube([Bowden_tube_diameter+2.6,d,14]);
   // Downmost
   translate([0,0,-1-3])
-    #cylinder(h=3, r=E3d_mount_big_r);
-  translate([-E3d_mount_big_r,0,-4.0])
-    cube([2*E3d_mount_big_r,d,3+0.1]);
+    cylinder(h=3.1, r=E3d_mount_big_r+0.25);
+  translate([-E3d_mount_big_r-0.25,0,-4])
+    cube([2*E3d_mount_big_r+0.5,d,3.1]);
   // Next Downmost
   cylinder(h=3, r=E3d_mount_big_r);
   translate([-E3d_mount_big_r,0,-0.0]) // Stop Z-fighting and give some more space
     cube([2*E3d_mount_big_r,d,3+0.0]);
   // Middle
   translate([0,0,2.9]) cylinder(h=6.2, r=E3d_mount_small_r); // 0.1 melt zone...
-  translate([-E3d_mount_small_r,0,3]) cube([2*E3d_mount_small_r,d,6]);
+  translate([-E3d_mount_small_r,0,2.9]) cube([2*E3d_mount_small_r,d,6.2]);
   // Uppermost
   translate([0,0,3+6]){
-    cylinder(h=3.7, r=E3d_mount_big_r);
-    translate([0,0,-0.025]) // Stop Z-fighting and give some more space
+    cylinder(h=3.7+0.05, r=E3d_mount_big_r);
     translate([-E3d_mount_big_r,0,0]) cube([2*E3d_mount_big_r,d,3.7+0.05]);
   }
   // Hot end continues downwards
-  translate([0,0,-10]){
+  translate([0,0,-9.9]){
     cylinder(r=4.2, h=10.1);
     translate([-4.2,0,0]) cube([4.2*2,d,10]);
   }
@@ -957,7 +956,6 @@ module sstruder_reffles(){
 
 
 module sstruder_lever(hobb=true){
-  // Needs to make place for sstruder_gear
   thickness = 3; // Of material. Leave enough for stiffness
   width = Bearing_623_outer_diameter; // Of rectangular part of arms...
   height = 2*Bearing_623_width
@@ -969,7 +967,7 @@ module sstruder_lever(hobb=true){
     difference(){
       union(){
         translate([-width/2-Sstruder_edge_around_bearing, 0, 0])
-          cube([width+3, l, Sstruder_lever_thickness]);
+          cube([width+2*Sstruder_edge_around_bearing, l, Sstruder_lever_thickness]);
         rotate([0,0,180])
         teardrop(r=Bearing_623_outer_diameter/2+Sstruder_edge_around_bearing, h = Sstruder_lever_thickness);
       }
@@ -977,10 +975,13 @@ module sstruder_lever(hobb=true){
         rotate([0,0,180])
         teardrop(r=Bearing_623_outer_diameter/2, h = Sstruder_lever_thickness+2);
       }
+      // Cut tip of teardrops to avoid interfering with motor shaft
+      translate([-5,-10-Bearing_623_outer_diameter/2,-1])
+        cube([10,10,Sstruder_lever_thickness+2]);
     }
   }
 
-  // The two bering holding arms
+  // The two bearing holding arms
   color(Printed_color_1)
     bearing_holder(Sstruder_fork_length + Sstruder_lever_thickness);
   color(Printed_color_1)
@@ -1035,27 +1036,8 @@ module sstruder_lever(hobb=true){
     hobb_towers([0,0,0],true);
   }
 }
-// TODO: Print a more robust one without teardrop shape
 //rotate([-90,0,0])
 //sstruder_lever(false);
-
-module sstruder(hobb=false){
-  translate([Hobbed_insert_diameter + Extruder_filament_opening,
-      0,
-      Sstruder_filament_meets_shaft // Involved but safe way to say Sstruder_thickness
-      - Hobbed_insert_height/2
-      - Sstruder_handle_height
-      - Bearing_623_width])
-    rotate([0,0,-Sstruder_press_angle]) // rotate around hobb
-    translate([Sstruder_hinge_length,Sstruder_fork_length,0])
-    rotate([0,0,0]) // rotate around hinge
-    translate([-Sstruder_hinge_length,-Sstruder_fork_length,0])
-    sstruder_lever(hobb);
-  sstruder_plate(hobb);
-  //translate([0,0,-Nema17_cube_height])
-  //  Nema17();
-}
-//sstruder();
 
 module sstruder_plate(hobb=true){
   hot_end_fastening_h = 16;
@@ -1187,8 +1169,26 @@ module sstruder_plate(hobb=true){
     hobb_towers([0,0,Sstruder_filament_meets_shaft - Hobbed_insert_height/2]);
   }
 }
-sstruder_plate(false);
+//sstruder_plate(false);
 //sstruder_plate();
-//sstruder();
 //translate([0,0,-Nema17_cube_height])
 // %Nema17();
+
+module sstruder(hobb=false){
+  translate([Hobbed_insert_diameter + Extruder_filament_opening,
+      0,
+      Sstruder_filament_meets_shaft // Involved but safe way to say Sstruder_thickness
+      - Hobbed_insert_height/2
+      - Sstruder_handle_height
+      - Bearing_623_width])
+    rotate([0,0,-Sstruder_press_angle]) // rotate around hobb
+    translate([Sstruder_hinge_length,Sstruder_fork_length,0])
+    rotate([0,0,0]) // rotate around hinge
+    translate([-Sstruder_hinge_length,-Sstruder_fork_length,0])
+    sstruder_lever(hobb);
+  sstruder_plate(hobb);
+  //translate([0,0,-Nema17_cube_height])
+  //  Nema17();
+}
+//sstruder();
+sstruder(true);

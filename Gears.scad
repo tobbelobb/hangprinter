@@ -347,28 +347,38 @@ module gear_friends(){
 }
 //gear_friends();
 
-// A gear with 90 degree valleys
-module worm_gear(){
-  difference(){
-    // There is a radius and a virtual radius for worm gears in design_numbers.scad
-    // Cutting off the outermost virtual band has the same effect as if
-    // it was never there in the first place
-    cylinder(h=Sandwich_gear_height, r=Worm_disc_radius, $fn=100);
-    //intersection(){
-    //  cylinder(h=Sandwich_gear_height, r=Worm_disc_virtual_radius, $fn=100);
-    //  translate([0,0,-1])
-    //    cylinder(h=Sandwich_gear_height+2, r=Worm_disc_radius, $fn=100);
-    //}
-    for(i=[0:Degrees_per_worm_gear_tooth:359.9]){
-      rotate([0,0,i])
-        // Worm_disc_virtual_radius affects Worm_disc_tooth_valley_r
-        translate([Worm_disc_tooth_valley_r,0,-1])
-        rotate([0,0,-45])
-        cube([30,30,Sandwich_gear_height+2]);
+// A gear with 90 degree valleys and a twist
+module worm_gear(angle=Worm_largest_angle){
+  // phi_length = twist*(PI/180)*Worm_disc_radius
+  // angle = atan(phi_length/Sandwich_gear_height)
+  // tan(angle) = phi_length/Sandwich_gear_height
+  //            = twist*(PI/180)*(Worm_disc_radius/Sandwich_gear_height)
+  // twist      = tan(angle)*(180/PI)*(Sandwich_gear_height/Worm_disc_radius)
+
+  // twist = tan(angle)*Sandwich_gear_height
+  //echo(Worm_disc_radius);
+  //echo((PI/180));
+  //echo((PI/180)*Worm_disc_radius);
+  linear_extrude(height    = Sandwich_gear_height,
+                 convexity = 10,
+                 twist     = tan(angle)*(180/PI)*(Sandwich_gear_height/Worm_disc_radius))
+    difference(){
+      // There is a radius and a virtual radius for worm gears in design_numbers.scad
+      // Cutting off the outermost virtual band has the same effect as if
+      // it was never there in the first place
+      circle(r=Worm_disc_radius, $fn=Sandwich_gear_teeth);
+      for(i=[0:Degrees_per_worm_gear_tooth:359.9]){
+        rotate([0,0,i])
+          // Worm_disc_virtual_radius affects Worm_disc_tooth_valley_r
+          translate([Worm_disc_tooth_valley_r,0])
+          rotate([0,0,-45])
+          square([30,30]);
+      }
     }
-  }
 }
-//worm_gear();
+//worm_gear(61);
+//translate([0,Worm_disc_radius,0])
+//rotate([0,61,0]) cylinder(r=2, h=10, center=true);
 
 // Creates throated worm gear.
 // No need as long as worm disc is thin
@@ -414,7 +424,6 @@ module worm_gear_by_diff(){
 }
 //worm_gear_by_diff();
 
-// TODO: change 15.5 with Worm_radius or something
 module placed_worm_gear(ang=0){
   rotate([90,0,0])
     translate([Worm_disc_tooth_valley_r+Worm_radius,0,-Sandwich_gear_height/2])
@@ -425,11 +434,19 @@ module placed_worm_gear(ang=0){
 
 // This is the worm for the worm drive
 module worm(step=0.2, with_details=true){
+  // XY-Translations of top (phase in), main (touch gear) and bottom (phase out) spirals
+  function translate_top_xy(v)    = Worm_radius
+                  - virtual_side*v/Degrees_per_worm_gear_tooth;
+  function translate_main_xy(v)   = Worm_radius + Worm_disc_tooth_valley_r*(1 - cos(v));
+  function translate_bottom_xy(v) = Worm_radius
+                  + Worm_disc_tooth_valley_r*(1 - cos(v))
+                  - 6*(v - stop_angle)/(Degrees_per_worm_gear_tooth);
+
   module fill_interior(){
     function my_circle(r) = [for (i=[0:Worm_spiral_turns*step*360/stop_angle:359.9])
       r * [cos(i), sin(i)]];
     // Scale profile to fill interior
-    towerpath1 = [for (v=[-Degrees_per_worm_gear_tooth : step : stop_angle + 1.0*Degrees_per_worm_gear_tooth])
+    towerpath1 = [for (v=[-Degrees_per_worm_gear_tooth : step : stop_angle + Degrees_per_worm_gear_tooth])
       // Move downwards
       translation([0, // x
           0,
@@ -439,9 +456,7 @@ module worm(step=0.2, with_details=true){
           (translate_main_xy(v)+virtual_side*(1 - cos(v)))/translate_main_xy(0),
           0])
       ];
-    // 0.60 super duper hand tuned for flat worm valley
-    sweep(my_circle(Worm_radius - (Worm_disc_virtual_radius - Worm_disc_tooth_valley_r)
-                    + Worm_disc_tooth_cutoff),
+    sweep(my_circle(Worm_smallest_radius), // Smallest radius at z=0
         towerpath1);
   }
 
@@ -459,14 +474,6 @@ module worm(step=0.2, with_details=true){
   //p = [translation([0,0,0]),translation([0,1,0])];
   //sweep(thread_profile,p);
   stop_angle = Worm_spiral_turns*Degrees_per_worm_gear_tooth; // where main path stops
-
-  // XY-Translations of top (phase in), main (touch gear) and bottom (phase out) spirals
-  function translate_top_xy(v)    = Worm_radius
-                  - virtual_side*v/Degrees_per_worm_gear_tooth;
-  function translate_main_xy(v)   = Worm_radius + Worm_disc_tooth_valley_r*(1 - cos(v));
-  function translate_bottom_xy(v) = Worm_radius
-                  + Worm_disc_tooth_valley_r*(1 - cos(v))
-                  - 6*(v - stop_angle)/(Degrees_per_worm_gear_tooth);
 
   // Top spiral
   path0 = [for (v=[Degrees_per_worm_gear_tooth : -step : step])
@@ -505,10 +512,12 @@ module worm(step=0.2, with_details=true){
     union(){
       // Spiral
       if(with_details){
-        sweep(thread_profile, concat(path0, path1, path2));
+        mirror([1,0,0]) // Right-handed threading to push with greatest force _down_ into bottom_plate
+          sweep(thread_profile, concat(path0, path1, path2));
         fill_interior();
       }else{
-        sweep(thread_profile, path1);
+        mirror([1,0,0]) // Right-handed threading to push with greatest force _down_ into bottom_plate
+          sweep(thread_profile, path1);
       }
     }
     // Cut in half, see interior
@@ -561,7 +570,6 @@ module worm(step=0.2, with_details=true){
 // This will be the direction of heaviest load,
 // and we want to push gear _down_ towards bottom plate
 // to avoid pushing disc up onto the other sandwich snelles and gears
-// TODO: Claims above untested as of 29 Nov 2016
 //mirror([1,0,0])
 //worm();
 
