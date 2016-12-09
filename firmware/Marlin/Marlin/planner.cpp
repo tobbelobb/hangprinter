@@ -63,7 +63,27 @@
 
 unsigned long minsegmenttime;
 float max_feedrate[NUM_AXIS]; // set the max speeds
-float axis_steps_per_unit[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
+
+// Initial distances to anchor point needed for dynamic step/mm calculations
+const float INITIAL_DISTANCES[DIRS] = {sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z),
+                                       sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z),
+                                       sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z),
+                                       ANCHOR_D_Z};
+
+
+// steps per mm calculations
+const float steps_per_unit_times_r[DIRS] = {(float)MECHANICAL_ADVANTAGE_A*STEPS_PER_SPOOL_RADIAN[A_AXIS],
+                                            (float)MECHANICAL_ADVANTAGE_B*STEPS_PER_SPOOL_RADIAN[B_AXIS],
+                                            (float)MECHANICAL_ADVANTAGE_C*STEPS_PER_SPOOL_RADIAN[C_AXIS],
+                                            (float)MECHANICAL_ADVANTAGE_D*STEPS_PER_SPOOL_RADIAN[D_AXIS]};
+
+// Two double lines means founr lines
+const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*POINTS_A,
+                                            MECHANICAL_ADVANTAGE_B*POINTS_B,
+                                            MECHANICAL_ADVANTAGE_C*POINTS_C,
+                                            MECHANICAL_ADVANTAGE_D*POINTS_D};
+
+
 unsigned long max_acceleration_units_per_sq_second[NUM_AXIS]; // Use M201 to override by software
 float minimumfeedrate;
 float acceleration;         // Normal acceleration mm/s^2  THIS IS THE DEFAULT ACCELERATION for all moves. M204 SXXXX
@@ -75,10 +95,14 @@ float mintravelfeedrate;
 unsigned long axis_steps_per_sqr_second[NUM_AXIS];
 
 // The current position of the tool in absolute steps
-long position[NUM_AXIS] = {INITIAL_LENGTH_A*axis_steps_per_unit[A_AXIS],
-                           INITIAL_LENGTH_B*axis_steps_per_unit[B_AXIS],
-                           INITIAL_LENGTH_C*axis_steps_per_unit[C_AXIS],
-                           INITIAL_LENGTH_D*axis_steps_per_unit[D_AXIS], 0};
+// Not sure how to treat this dynamically. May it be initializet to zero?
+//long position[NUM_AXIS] = {INITIAL_LENGTH_A*axis_steps_per_unit[A_AXIS],
+//                           INITIAL_LENGTH_B*axis_steps_per_unit[B_AXIS],
+//                           INITIAL_LENGTH_C*axis_steps_per_unit[C_AXIS],
+//                           INITIAL_LENGTH_D*axis_steps_per_unit[D_AXIS], 0};
+//
+float axis_steps_per_unit[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
+long position[NUM_AXIS] = {0, 0, 0, 0, 0};
 static float previous_speed[NUM_AXIS]; // Speed of previous path line segment
 static float previous_nominal_speed; // Nominal speed of previous path line segment
 
@@ -135,6 +159,22 @@ static int8_t prev_block_index(int8_t block_index) {
 //===========================================================================
 //=============================functions         ============================
 //===========================================================================
+
+// TODO: Move dynamic line length stuff to more sensible file/line
+// Destructively update ABCD values of the array axis_steps_per_unit
+//float axis_steps_per_unit[DIRS] = {0};
+// Prefer huge duplicated object code rather than function calls and iteration variables
+void update_axis_steps_per_unit(const float* d){  // d is absolute ABCD distances to anchors
+  // Divide by new radius to find new steps/mm
+  axis_steps_per_unit[A_AXIS] =
+    steps_per_unit_times_r[A_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(d[A_AXIS] - INITIAL_DISTANCES[A_AXIS])) + SPOOL_RADIUS2);
+  axis_steps_per_unit[B_AXIS] =
+    steps_per_unit_times_r[B_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(d[B_AXIS] - INITIAL_DISTANCES[B_AXIS])) + SPOOL_RADIUS2);
+  axis_steps_per_unit[C_AXIS] =
+    steps_per_unit_times_r[C_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(d[C_AXIS] - INITIAL_DISTANCES[C_AXIS])) + SPOOL_RADIUS2);
+  axis_steps_per_unit[D_AXIS] =
+    steps_per_unit_times_r[D_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(d[D_AXIS] - INITIAL_DISTANCES[D_AXIS])) + SPOOL_RADIUS2);
+}
 
 // Calculates the distance (not time) it takes to accelerate from initial_rate to target_rate using the
 // given acceleration:
@@ -364,10 +404,14 @@ void plan_init() {
   block_buffer_tail = 0;
   memset(position, 0, sizeof(position)); // clear position
 // Assume printer is started in origo
-  position[A_AXIS] = INITIAL_LENGTH_A*axis_steps_per_unit[A_AXIS];
-  position[B_AXIS] = INITIAL_LENGTH_B*axis_steps_per_unit[B_AXIS];
-  position[C_AXIS] = INITIAL_LENGTH_C*axis_steps_per_unit[C_AXIS];
-  position[D_AXIS] = INITIAL_LENGTH_D*axis_steps_per_unit[D_AXIS];
+// Not sure how to treat this with dynamic steps/mm. May it be initialized to zero? (done above)
+//  position[A_AXIS] = INITIAL_LENGTH_A*axis_steps_per_unit[A_AXIS];
+//  position[B_AXIS] = INITIAL_LENGTH_B*axis_steps_per_unit[B_AXIS];
+//  position[C_AXIS] = INITIAL_LENGTH_C*axis_steps_per_unit[C_AXIS];
+//  position[D_AXIS] = INITIAL_LENGTH_D*axis_steps_per_unit[D_AXIS];
+//
+// Initialize steps per unit
+  update_axis_steps_per_unit(INITIAL_DISTANCES);
   previous_speed[A_AXIS] = 0.0;
   previous_speed[B_AXIS] = 0.0;
   previous_speed[C_AXIS] = 0.0;

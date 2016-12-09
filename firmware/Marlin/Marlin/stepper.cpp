@@ -80,10 +80,12 @@ static bool old_z_max_endstop=false;
 
 static bool check_endstops = true;
 float tmp_def_ax_st_p_u[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
-volatile long count_position[NUM_AXIS] = { INITIAL_LENGTH_A*tmp_def_ax_st_p_u[A_AXIS],
-                                           INITIAL_LENGTH_B*tmp_def_ax_st_p_u[B_AXIS],
-                                           INITIAL_LENGTH_C*tmp_def_ax_st_p_u[C_AXIS],
-                                           INITIAL_LENGTH_D*tmp_def_ax_st_p_u[D_AXIS], 0 }; // Assume we start in origo. Only used for checking position with M114? tobben 10 sep 2015
+// Zeroed because it doesn't take dynamic steps/mm into account
+//volatile long count_position[NUM_AXIS] = { INITIAL_LENGTH_A*tmp_def_ax_st_p_u[A_AXIS],
+//                                           INITIAL_LENGTH_B*tmp_def_ax_st_p_u[B_AXIS],
+//                                           INITIAL_LENGTH_C*tmp_def_ax_st_p_u[C_AXIS],
+//                                           INITIAL_LENGTH_D*tmp_def_ax_st_p_u[D_AXIS], 0 }; // Assume we start in origo.
+volatile long count_position[NUM_AXIS] = {0,0,0,0,0};
 volatile signed char count_direction[NUM_AXIS] = { 1, 1, 1, 1, 1};
 
 //===========================================================================
@@ -447,7 +449,7 @@ ISR(TIMER1_COMPA_vect)
                          "nop\n\t");
         WRITE(Z_STEP_PIN, INVERT_Z_STEP_PIN);
       }
-      
+
       // D motor should be connected to E1_STEP_PIN
       counter_d += current_block->steps_d;
       if (counter_d > 0) {
@@ -786,14 +788,14 @@ void babystep(const uint8_t axis,const bool direction)
   {
     case X_AXIS:
       {
-        enable_x();   
+        enable_x();
         uint8_t old_x_dir_pin= READ(X_DIR_PIN);  //if dualzstepper, both point to same direction.
 
         //setup new step
         WRITE(X_DIR_PIN,(INVERT_X_DIR)^direction);
 
-        //perform step 
-        WRITE(X_STEP_PIN, !INVERT_X_STEP_PIN); 
+        //perform step
+        WRITE(X_STEP_PIN, !INVERT_X_STEP_PIN);
 
         _delay_us(1U); // wait 1 microsecond
 
@@ -805,7 +807,7 @@ void babystep(const uint8_t axis,const bool direction)
       break;
     case Y_AXIS:
       {
-        enable_y();   
+        enable_y();
         uint8_t old_y_dir_pin= READ(Y_DIR_PIN);  //if dualzstepper, both point to same direction.
 
         //setup new step
@@ -814,8 +816,8 @@ void babystep(const uint8_t axis,const bool direction)
         WRITE(Y2_DIR_PIN,(INVERT_Y_DIR)^direction);
 #endif
 
-        //perform step 
-        WRITE(Y_STEP_PIN, !INVERT_Y_STEP_PIN); 
+        //perform step
+        WRITE(Y_STEP_PIN, !INVERT_Y_STEP_PIN);
 #ifdef DUAL_Y_CARRIAGE
         WRITE(Y2_STEP_PIN, !INVERT_Y_STEP_PIN);
 #endif
@@ -846,8 +848,8 @@ void babystep(const uint8_t axis,const bool direction)
 #ifdef Z_DUAL_STEPPER_DRIVERS
         WRITE(Z2_DIR_PIN,(INVERT_Z_DIR)^direction^BABYSTEP_INVERT_Z);
 #endif
-        //perform step 
-        WRITE(Z_STEP_PIN, !INVERT_Z_STEP_PIN); 
+        //perform step
+        WRITE(Z_STEP_PIN, !INVERT_Z_STEP_PIN);
 #ifdef Z_DUAL_STEPPER_DRIVERS
         WRITE(Z2_STEP_PIN, !INVERT_Z_STEP_PIN);
 #endif
@@ -873,23 +875,23 @@ void babystep(const uint8_t axis,const bool direction)
         enable_x();
         enable_y();
         enable_z();
-        uint8_t old_x_dir_pin= READ(X_DIR_PIN);  
-        uint8_t old_y_dir_pin= READ(Y_DIR_PIN);  
-        uint8_t old_z_dir_pin= READ(Z_DIR_PIN);  
+        uint8_t old_x_dir_pin= READ(X_DIR_PIN);
+        uint8_t old_y_dir_pin= READ(Y_DIR_PIN);
+        uint8_t old_z_dir_pin= READ(Z_DIR_PIN);
         //setup new step
         WRITE(X_DIR_PIN,(INVERT_X_DIR)^direction^BABYSTEP_INVERT_Z);
         WRITE(Y_DIR_PIN,(INVERT_Y_DIR)^direction^BABYSTEP_INVERT_Z);
         WRITE(Z_DIR_PIN,(INVERT_Z_DIR)^direction^BABYSTEP_INVERT_Z);
 
-        //perform step 
-        WRITE(X_STEP_PIN, !INVERT_X_STEP_PIN); 
-        WRITE(Y_STEP_PIN, !INVERT_Y_STEP_PIN); 
-        WRITE(Z_STEP_PIN, !INVERT_Z_STEP_PIN); 
+        //perform step
+        WRITE(X_STEP_PIN, !INVERT_X_STEP_PIN);
+        WRITE(Y_STEP_PIN, !INVERT_Y_STEP_PIN);
+        WRITE(Z_STEP_PIN, !INVERT_Z_STEP_PIN);
 
         _delay_us(1U); // wait 1 microsecond
 
-        WRITE(X_STEP_PIN, INVERT_X_STEP_PIN); 
-        WRITE(Y_STEP_PIN, INVERT_Y_STEP_PIN); 
+        WRITE(X_STEP_PIN, INVERT_X_STEP_PIN);
+        WRITE(Y_STEP_PIN, INVERT_Y_STEP_PIN);
         WRITE(Z_STEP_PIN, INVERT_Z_STEP_PIN);
 
         //get old pin state back.
@@ -959,12 +961,12 @@ void microstep_init()
 
 #if defined(E1_MS1_PIN) && E1_MS1_PIN > -1
   pinMode(E1_MS1_PIN,OUTPUT);
-  pinMode(E1_MS2_PIN,OUTPUT); 
+  pinMode(E1_MS2_PIN,OUTPUT);
 #endif
 
 #if defined(X_MS1_PIN) && X_MS1_PIN > -1
   pinMode(X_MS1_PIN,OUTPUT);
-  pinMode(X_MS2_PIN,OUTPUT);  
+  pinMode(X_MS2_PIN,OUTPUT);
   pinMode(Y_MS1_PIN,OUTPUT);
   pinMode(Y_MS2_PIN,OUTPUT);
   pinMode(Z_MS1_PIN,OUTPUT);

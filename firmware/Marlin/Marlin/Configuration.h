@@ -16,6 +16,7 @@
  * http://www.thingiverse.com/thing:5573
  * https://sites.google.com/site/repraplogphase/calibration-of-your-reprap
  * http://www.thingiverse.com/thing:298812
+ * https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
  */
 
 // This configuration file contains the basic settings.
@@ -33,7 +34,7 @@
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION "1.0.2.tobbelobb"
+#define STRING_VERSION "1.1.0.tobbelobb"
 #define STRING_URL "github.com/tobbelobb/hangprinter"
 #define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
 #define STRING_CONFIG_H_AUTHOR "tobbelobb" // Who made the changes.
@@ -90,30 +91,21 @@
 #define DELTA_SEGMENTS_PER_SECOND 80
 
 // NOTE! all values here MUST be floating point, so always have a decimal point in them
-// These values are the difference between measurement stick top (along sides of Hangprinter when
-// placed in origo) and frame measurment point,
-// alternatively measure from one fish eye, along corresponding line to the lines anchor point.
+// Measure from fish eye to anchor point along Carthesian axis
+// Or do other measurments and calculate Carthesian axis lengths by trigonometry
+// See Hangprinter calibration manual for help:
+// https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
 #define ANCHOR_A_X 0.0 // anchor point A's Carthesian x-coordinate. In mm
 #define ANCHOR_A_Y -1014.2
 #define ANCHOR_A_Z -144.4 // measured from print surface to frame middle. In mm (was 130 diff is 11)
-// Subtracted 2 mm because of double line configuration
-#define INITIAL_LENGTH_A sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z)
-// This gives A-length of sqrt(887^2 + 575^2 + 130^2) = 1065
 #define ANCHOR_B_X 886.5
 #define ANCHOR_B_Y 690.6
 #define ANCHOR_B_Z -134.6 // measured from print surface to frame middle. In mm (was -119. Diff is 17)
-// Subtracted 2 mm because of double line configuration
-#define INITIAL_LENGTH_B sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z)
-// This gives B-length of sqrt(867^2 + 119^2) = 875
 #define ANCHOR_C_X -877.6
 #define ANCHOR_C_Y 628.6
 #define ANCHOR_C_Z -124.8 // measured from print surface to frame middle. In mm (was -141. Diff is 18)
-// Subtracted 2 mm because of double line configuration
-#define INITIAL_LENGTH_C sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z)
-// This gives C-length of sqrt(1429^2 + 1317^2 + 141^2) = 1948.4
-// It's important that middle of frame D is directly above (x,y) = (0,0)
+// It's assumed that ceiling frame part is directly above origo
 #define ANCHOR_D_Z 2084 // measured along vertical line, from fish eye to anchor point. In mm (was 2286 diff is 9)
-#define INITIAL_LENGTH_D ANCHOR_D_Z
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -314,7 +306,7 @@
 // uncomment the 2 defines below:
 
 // Parameters for all extruder heaters
-#define THERMAL_RUNAWAY_PROTECTION_PERIOD 100 //in seconds
+#define THERMAL_RUNAWAY_PROTECTION_PERIOD 120 //in seconds
 #define THERMAL_RUNAWAY_PROTECTION_HYSTERESIS 4 // in degree Celsius
 
 // If you want to enable this feature for your bed heater,
@@ -379,8 +371,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define INVERT_Y_DIR false
 #define INVERT_Z_DIR false
 
-#define INVERT_E0_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E0_DIR true   // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E1_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
 // ENDSTOP SETTINGS:
@@ -418,11 +410,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //============================= Bed Auto Leveling ===========================
 //===========================================================================
 
-//Bed Auto Leveling is still not compatible with Delta Kinematics
-
-
-
-
 // The position of the homing switches
 //#define MANUAL_HOME_POSITIONS  // If defined, MANUAL_*_HOME_POS below will be used
 //#define BED_CENTER_AT_0_0  // If defined, the center of the bed is at (X=0, Y=0)
@@ -441,33 +428,46 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // delta homing speeds must be the same on xyz
 #define HOMING_FEEDRATE {200*60, 200*60, 200*60, 200*60, 0}  // set the homing speeds (mm/min)
 
-// default settings
-// Steps per revolution: m*200 (factor m from microstepping)
-// Snelle radius: 34.25
-// Sandwich pitch radius: 41.11
-// Motor gear pitch radius: 13.33
-//
-//  4*200 / ((34.25/41.11) * 2 * pi * 13.33) = 11.465
-//  8*200 / ((34.25/41.11) * 2 * pi * 13.33) = 22.930
-// 16*200 / ((34.25/41.11) * 2 * pi * 13.33) = 45.859
-//
-//  4*200 / ((33/42.22) * 2 * pi * 12.22) = 13.330
-//  8*200 / ((33/42.22) * 2 * pi * 12.22) = 26.661
-// 16*200 / ((33/42.22) * 2 * pi * 12.22) = 53.322
-//
-//Motor gear teeth = 9
-//Sandwich gear teeth = 43
-//Snelle revs per motor rev = 9/43
-//Length per snelle rev = 33*2*pi
-//Steps per motor rev = 16*200
-//Steps per snelle rev = 16*200*43/9
-//Length per step = (33*2*pi)/(16*200*43/9)
-//Steps per mm = (16*200*43/9)/(33*2*pi) = 73.74
-//For worm gear: (16*200*43)/(33*2*pi) = 663.63
-//#define DEFAULT_AXIS_STEPS_PER_UNIT   {53.322, 53.322, 53.322, 53.322, 140.0}  // default steps per unit for Hangprinter
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {73.747, 73.747, 73.747, 663.7, 140.0}  // default steps per unit for Hangprinter
+//===========================================================================
+//============================= Steps per unit ==============================
+//===========================================================================
+// Mechanical advantage in each direction needed for dynamic step/mm calculations
+// One pulley along each line gives halved forces and doubled distances
+#define MECHANICAL_ADVANTAGE_A 2
+#define MECHANICAL_ADVANTAGE_B 2
+#define MECHANICAL_ADVANTAGE_C 2
+#define MECHANICAL_ADVANTAGE_D 2
+
+// Action points in each direction needed for dynamic step/mm calculations
+#define POINTS_A 2
+#define POINTS_B 2
+#define POINTS_C 2
+#define POINTS_D 3
+
+// This comes from spool height and line diameter.
+// diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
+// 0.39*0.39/(pi*4.6) = 0.010525
+#define SPOOL_BUILDUP_FACTOR 0.010525
+
+// Measure the total length of lines on each spool when printer is in origo
+// Two A-lines, each of length 150.0 gives total length 300.0
+const float LINE_ON_SPOOL_ORIGO[DIRS] = {300.0,400.0,500.0,800.0};
+
+// Squared spool radius. 33.0^2 = 1089.0
+// Assumes A, B, C and D radiuses are the same.
+#define SPOOL_RADIUS2 1089.0
+
+// Motor gear teeth: 9
+// Sandwich gear teeth: 43
+// Steps per motor revolution: 3200
+// ==> Steps per spool radian = 3200/(2*pi*9/43) = 2433.302
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302, 2433.302, 2433.302, 21899.720};
+
+// The A, B, C and D values no longer used. Dynamic values used instead.
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {73.747, 73.747, 73.747, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
+
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
+#define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves.
 
 #define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts

@@ -811,6 +811,7 @@ void process_commands(){
                   delta[C_AXIS],
                   delta[D_AXIS],
                   destination[E_CARTH]);
+              update_axis_steps_per_unit(delta);
             }
           }
         }
@@ -1220,6 +1221,7 @@ void process_commands(){
           SERIAL_PROTOCOL(current_position[E_CARTH]);
 
           SERIAL_PROTOCOLPGM("\nStep count along each motor abcd-axis:\nA:");
+          SERIAL_PROTOCOLPGM(" A:");
           SERIAL_PROTOCOL(st_get_position(A_AXIS));
           SERIAL_PROTOCOLPGM(" B:");
           SERIAL_PROTOCOL(st_get_position(B_AXIS));
@@ -1229,13 +1231,18 @@ void process_commands(){
           SERIAL_PROTOCOL(st_get_position(D_AXIS));
 
           SERIAL_PROTOCOLPGM("\n Absolute line lengths:\n");
-          SERIAL_PROTOCOL(float(st_get_position(A_AXIS))/axis_steps_per_unit[A_AXIS]);
+          SERIAL_PROTOCOLPGM(" A:");
+          SERIAL_PROTOCOL(delta[A_AXIS]);
+          //SERIAL_PROTOCOL(float(st_get_position(A_AXIS))/axis_steps_per_unit[A_AXIS]);
           SERIAL_PROTOCOLPGM(" B:");
-          SERIAL_PROTOCOL(float(st_get_position(B_AXIS))/axis_steps_per_unit[B_AXIS]);
+          SERIAL_PROTOCOL(delta[B_AXIS]);
+          //SERIAL_PROTOCOL(float(st_get_position(B_AXIS))/axis_steps_per_unit[B_AXIS]);
           SERIAL_PROTOCOLPGM(" C:");
-          SERIAL_PROTOCOL(float(st_get_position(C_AXIS))/axis_steps_per_unit[C_AXIS]);
+          SERIAL_PROTOCOL(delta[C_AXIS]);
+          //SERIAL_PROTOCOL(float(st_get_position(C_AXIS))/axis_steps_per_unit[C_AXIS]);
           SERIAL_PROTOCOLPGM(" D:");
-          SERIAL_PROTOCOL(float(st_get_position(D_AXIS))/axis_steps_per_unit[D_AXIS]);
+          SERIAL_PROTOCOL(delta[D_AXIS]);
+          //SERIAL_PROTOCOL(float(st_get_position(D_AXIS))/axis_steps_per_unit[D_AXIS]);
 
           SERIAL_PROTOCOLLN("");
           break;
@@ -1761,6 +1768,8 @@ void process_commands(){
     // SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
     // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
     // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
+    // Calculate new steps per unit
+
     for (int s = 1; s <= steps; s++){ // Here lines are split into segments. tobben 20. may 2015
       float fraction = float(s) / float(steps);
       for(int8_t i=0; i < 4; i++){
@@ -1779,6 +1788,8 @@ void process_commands(){
           destination[E_CARTH], feedrate*feedmultiply/60/100.0,
           active_extruder, true);
     }
+    // Dynamic update of steps per unit to compensate line buildup on spool
+    update_axis_steps_per_unit(delta);
 
     for(int8_t i=0; i < 4; i++){
       current_position[i] = destination[i];
