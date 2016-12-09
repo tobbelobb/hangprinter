@@ -94,14 +94,14 @@ float mintravelfeedrate;
 unsigned long axis_steps_per_sqr_second[NUM_AXIS];
 
 // The current position of the tool in absolute steps
-// Not sure how to treat this dynamically. May it be initializet to zero?
-//long position[NUM_AXIS] = {INITIAL_LENGTH_A*axis_steps_per_unit[A_AXIS],
-//                           INITIAL_LENGTH_B*axis_steps_per_unit[B_AXIS],
-//                           INITIAL_LENGTH_C*axis_steps_per_unit[C_AXIS],
-//                           INITIAL_LENGTH_D*axis_steps_per_unit[D_AXIS], 0};
-//
+// Not sure how to treat this dynamically. May it be initialized to zero?
+long position[NUM_AXIS] = {INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS],
+                           INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS],
+                           INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS],
+                           INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS], 0};
+
+//long position[NUM_AXIS] = {0, 0, 0, 0, 0};
 float axis_steps_per_unit[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
-long position[NUM_AXIS] = {0, 0, 0, 0, 0};
 static float previous_speed[NUM_AXIS]; // Speed of previous path line segment
 static float previous_nominal_speed; // Nominal speed of previous path line segment
 
@@ -173,6 +173,12 @@ void update_axis_steps_per_unit(const float* d){  // d is absolute ABCD distance
     steps_per_unit_times_r[C_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(d[C_AXIS] - INITIAL_DISTANCES[C_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[D_AXIS] =
     steps_per_unit_times_r[D_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(d[D_AXIS] - INITIAL_DISTANCES[D_AXIS])) + SPOOL_RADIUS2);
+
+  // Uglyhack test. Can we fool printer to think it got here with the new steps per unit?
+  position[A_AXIS] = d[A_AXIS]*axis_steps_per_unit[A_AXIS];
+  position[B_AXIS] = d[B_AXIS]*axis_steps_per_unit[B_AXIS];
+  position[C_AXIS] = d[C_AXIS]*axis_steps_per_unit[C_AXIS];
+  position[D_AXIS] = d[D_AXIS]*axis_steps_per_unit[D_AXIS];
 }
 
 // Calculates the distance (not time) it takes to accelerate from initial_rate to target_rate using the
@@ -403,12 +409,12 @@ void plan_init() {
   block_buffer_tail = 0;
   memset(position, 0, sizeof(position)); // clear position
 // Assume printer is started in origo
+// Why is this done again? Seems it does same as line 98...
 // Not sure how to treat this with dynamic steps/mm. May it be initialized to zero? (done above)
-//  position[A_AXIS] = INITIAL_LENGTH_A*axis_steps_per_unit[A_AXIS];
-//  position[B_AXIS] = INITIAL_LENGTH_B*axis_steps_per_unit[B_AXIS];
-//  position[C_AXIS] = INITIAL_LENGTH_C*axis_steps_per_unit[C_AXIS];
-//  position[D_AXIS] = INITIAL_LENGTH_D*axis_steps_per_unit[D_AXIS];
-//
+  position[A_AXIS] = INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS];
+  position[B_AXIS] = INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS];
+  position[C_AXIS] = INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS];
+  position[D_AXIS] = INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS];
 // Initialize steps per unit
   update_axis_steps_per_unit(INITIAL_DISTANCES);
   previous_speed[A_AXIS] = 0.0;
@@ -519,7 +525,9 @@ float junction_deviation = 0.1;
 // calculation the caller must also provide the physical length of the line in millimeters.
 //
 // Help, why does this comment contradict comments in planner.h?
-// I'm quite sure steps_a, _b, ... are absolute step count along each axis, and that a, b, c, d are absolute positions in mm that we plan on taking. tobben 9 sep 2015
+// I'm quite sure steps_a, _b, ... are absolute step count along each axis,
+// and that a, b, c, d are absolute positions in mm that we plan on taking. tobben 9 sep 2015
+// TODO: target must be set using be relative movements, not absolute ones...
 void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e,
                      float feed_rate, const uint8_t &extruder, unsigned char count_it){
   // Calculate the buffer head after we push this byte
@@ -557,7 +565,6 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
   block->count_it = count_it;
 
   // Number of steps for each axis
-  // TODO: Why do we get crazy jerky movements if we remove these serials?
   //SERIAL_ECHO("position[A_AXIS]: ");
   //SERIAL_ECHOLN(position[A_AXIS]);
   block->steps_a = labs(target[A_AXIS]-position[A_AXIS]);
