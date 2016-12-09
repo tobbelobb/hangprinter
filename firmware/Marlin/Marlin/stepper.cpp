@@ -81,11 +81,11 @@ static bool old_z_max_endstop=false;
 static bool check_endstops = true;
 float tmp_def_ax_st_p_u[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
 // Zeroed because it doesn't take dynamic steps/mm into account
-//volatile long count_position[NUM_AXIS] = { INITIAL_LENGTH_A*tmp_def_ax_st_p_u[A_AXIS],
-//                                           INITIAL_LENGTH_B*tmp_def_ax_st_p_u[B_AXIS],
-//                                           INITIAL_LENGTH_C*tmp_def_ax_st_p_u[C_AXIS],
-//                                           INITIAL_LENGTH_D*tmp_def_ax_st_p_u[D_AXIS], 0 }; // Assume we start in origo.
-volatile long count_position[NUM_AXIS] = {0,0,0,0,0};
+volatile long count_position[NUM_AXIS] = { INITIAL_DISTANCES[A_AXIS]*tmp_def_ax_st_p_u[A_AXIS],
+                                           INITIAL_DISTANCES[B_AXIS]*tmp_def_ax_st_p_u[B_AXIS],
+                                           INITIAL_DISTANCES[C_AXIS]*tmp_def_ax_st_p_u[C_AXIS],
+                                           INITIAL_DISTANCES[D_AXIS]*tmp_def_ax_st_p_u[D_AXIS], 0 }; // Assume we start in origo.
+//volatile long count_position[NUM_AXIS] = {0,0,0,0,0};
 volatile signed char count_direction[NUM_AXIS] = { 1, 1, 1, 1, 1};
 
 //===========================================================================

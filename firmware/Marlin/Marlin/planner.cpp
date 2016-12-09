@@ -64,18 +64,17 @@
 unsigned long minsegmenttime;
 float max_feedrate[NUM_AXIS]; // set the max speeds
 
-// Initial distances to anchor point needed for dynamic step/mm calculations
-const float INITIAL_DISTANCES[DIRS] = {sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z),
-                                       sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z),
-                                       sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z),
-                                       ANCHOR_D_Z};
 
 
 // steps per mm calculations
-const float steps_per_unit_times_r[DIRS] = {(float)MECHANICAL_ADVANTAGE_A*STEPS_PER_SPOOL_RADIAN[A_AXIS],
-                                            (float)MECHANICAL_ADVANTAGE_B*STEPS_PER_SPOOL_RADIAN[B_AXIS],
-                                            (float)MECHANICAL_ADVANTAGE_C*STEPS_PER_SPOOL_RADIAN[C_AXIS],
-                                            (float)MECHANICAL_ADVANTAGE_D*STEPS_PER_SPOOL_RADIAN[D_AXIS]};
+const float steps_per_unit_times_r[DIRS] = {STEPS_PER_SPOOL_RADIAN[A_AXIS],
+                                            STEPS_PER_SPOOL_RADIAN[B_AXIS],
+                                            STEPS_PER_SPOOL_RADIAN[C_AXIS],
+                                            STEPS_PER_SPOOL_RADIAN[D_AXIS]};
+//const float steps_per_unit_times_r[DIRS] = {(float)MECHANICAL_ADVANTAGE_A*STEPS_PER_SPOOL_RADIAN[A_AXIS],
+//                                            (float)MECHANICAL_ADVANTAGE_B*STEPS_PER_SPOOL_RADIAN[B_AXIS],
+//                                            (float)MECHANICAL_ADVANTAGE_C*STEPS_PER_SPOOL_RADIAN[C_AXIS],
+//                                            (float)MECHANICAL_ADVANTAGE_D*STEPS_PER_SPOOL_RADIAN[D_AXIS]};
 
 // Two double lines means founr lines
 const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*POINTS_A,

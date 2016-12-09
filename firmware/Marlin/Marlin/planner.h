@@ -61,6 +61,12 @@ extern void update_axis_steps_per_unit(const float* d);
 // Initialize the motion plan subsystem
 void plan_init();
 
+// Initial distances to anchor point needed for dynamic step/mm calculations
+const float INITIAL_DISTANCES[DIRS] = {sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z),
+                                       sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z),
+                                       sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z),
+                                       ANCHOR_D_Z};
+
 // Add a new linear movement to the buffer. x, y and z is the signed, absolute target position in
 // millimeters. Feed rate specifies the speed of the motion.
 void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e,
