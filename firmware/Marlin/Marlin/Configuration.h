@@ -459,9 +459,9 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {300.0,400.0,500.0,800.0};
 
 // Motor gear teeth: 9
 // Sandwich gear teeth: 43
-// Steps per motor revolution: 3200
-// ==> Steps per spool radian = 3200/(2*pi*9/43) = 2433.302
-const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302, 2433.302, 2433.302, 21899.720};
+// Steps per motor revolution: 1600
+// ==> Steps per spool radian = 1600/(2*pi*9/43) = 1216.651
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
 
 // The A, B, C and D values no longer used. Dynamic values used instead.
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {73.747, 73.747, 73.747, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter

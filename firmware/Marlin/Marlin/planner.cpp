@@ -67,14 +67,10 @@ float max_feedrate[NUM_AXIS]; // set the max speeds
 
 
 // steps per mm calculations
-const float steps_per_unit_times_r[DIRS] = {STEPS_PER_SPOOL_RADIAN[A_AXIS],
-                                            STEPS_PER_SPOOL_RADIAN[B_AXIS],
-                                            STEPS_PER_SPOOL_RADIAN[C_AXIS],
-                                            STEPS_PER_SPOOL_RADIAN[D_AXIS]};
-//const float steps_per_unit_times_r[DIRS] = {(float)MECHANICAL_ADVANTAGE_A*STEPS_PER_SPOOL_RADIAN[A_AXIS],
-//                                            (float)MECHANICAL_ADVANTAGE_B*STEPS_PER_SPOOL_RADIAN[B_AXIS],
-//                                            (float)MECHANICAL_ADVANTAGE_C*STEPS_PER_SPOOL_RADIAN[C_AXIS],
-//                                            (float)MECHANICAL_ADVANTAGE_D*STEPS_PER_SPOOL_RADIAN[D_AXIS]};
+const float steps_per_unit_times_r[DIRS] = {(float)MECHANICAL_ADVANTAGE_A*STEPS_PER_SPOOL_RADIAN[A_AXIS],
+                                            (float)MECHANICAL_ADVANTAGE_B*STEPS_PER_SPOOL_RADIAN[B_AXIS],
+                                            (float)MECHANICAL_ADVANTAGE_C*STEPS_PER_SPOOL_RADIAN[C_AXIS],
+                                            (float)MECHANICAL_ADVANTAGE_D*STEPS_PER_SPOOL_RADIAN[D_AXIS]};
 
 // Two double lines means founr lines
 const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*POINTS_A,
@@ -166,13 +162,13 @@ static int8_t prev_block_index(int8_t block_index) {
 void update_axis_steps_per_unit(const float* d){  // d is absolute ABCD distances to anchors
   // Divide by new radius to find new steps/mm
   axis_steps_per_unit[A_AXIS] =
-    steps_per_unit_times_r[A_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(d[A_AXIS] - INITIAL_DISTANCES[A_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[A_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - d[A_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[B_AXIS] =
-    steps_per_unit_times_r[B_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(d[B_AXIS] - INITIAL_DISTANCES[B_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[B_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - d[B_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[C_AXIS] =
-    steps_per_unit_times_r[C_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(d[C_AXIS] - INITIAL_DISTANCES[C_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[C_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - d[C_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[D_AXIS] =
-    steps_per_unit_times_r[D_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(d[D_AXIS] - INITIAL_DISTANCES[D_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[D_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - d[D_AXIS])) + SPOOL_RADIUS2);
 
   // Uglyhack test. Can we fool printer to think it got here with the new steps per unit?
   position[A_AXIS] = d[A_AXIS]*axis_steps_per_unit[A_AXIS];
