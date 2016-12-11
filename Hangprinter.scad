@@ -3,6 +3,7 @@ include <design_numbers.scad>
 use <parts.scad>
 use <placed_parts.scad>
 use <render_parts.scad>
+use <Nema17_and_Ramps_and_bearings.scad>
 
 // Style:
 //  - Global parameters starts with capital letter, others don't
@@ -14,18 +15,19 @@ use <render_parts.scad>
 //    might be worth it...
 
 // Rendering control
-render_bottom_plate  = true;
-render_sandwich      = true;
-render_abc_motors    = true;
-render_fish_rings    = true;
-render_lines         = true;
+// TODO: move _all_ rendering control back up here
+render_bottom_plate  = false;
+render_sandwich      = false;
+render_abc_motors    = false;
+render_fish_rings    = false;
+render_lines         = false;
 render_extruder      = true;
 render_hotend        = true;
-render_ramps         = true;
-render_plates        = true;
-render_filament      = true;
-render_wall_vgrooves = true;
-render_d_motor       = true;
+render_ramps         = false;
+render_plates        = false;
+render_filament      = false;
+render_wall_vgrooves = false;
+render_d_motor       = false;
 
 // Measure distance to hot end tip
 //mirror([0,0,1])
@@ -40,13 +42,15 @@ module full_render(){
     color(Printed_color_1)
     bottom_plate();
     // For better rendering performance, precompile bottom_plate
-    //precompiled("stl/bottom_plate_for_render.stl");
+    //precompiled("stl/Complete_printer_26_nov_2016/Bottom_plate_qty_1.stl");
+    //precompiled("stl/Complete_printer_24_nov_2016/Sparser_bottom_plate_qty_1.stl");
   }
   if(render_sandwich){
-    placed_sandwich(true, true, true, true);
     // For better rendering performance, precompile placed sandwich
+    //placed_sandwich(false, false, false, true);
+    placed_sandwich(true, true, true, true);
     //color(Printed_color_2)
-    //precompiled("stl/full_sandwich_for_render_21_sep_2016.stl");
+    //precompiled("stl/Sandwich_25_Nov_2016.stl");
   }
   if(render_abc_motors){
     placed_abc_motors(motor_gear_render=true);
@@ -62,7 +66,7 @@ module full_render(){
     placed_lines();
   }
   if(render_extruder){
-    placed_extruder();
+    placed_extruder(true, true);
   }
   if(render_hotend){
     placed_hotend();
@@ -81,7 +85,7 @@ module full_render(){
 full_render();
 
 module check_if_bottom_plate_fits_print_bed(){
-  translate([-Full_tri_side/2,-Full_tri_side*sqrt(3)/6,0])
+  translate([-Full_tri_side/2 - 4,-Full_tri_side*sqrt(3)/6 - 4,0])
     rotate([0,0,-15])
     %cube([200,200,10]);
 }
@@ -219,3 +223,24 @@ module echo_calibration_numbers(){
   echo("z_diff = ", Line_contacts_abcd_z[A] - Line_contacts_abcd_z[B]);
 }
 
+
+// To render/show how d line length adjustment is done...
+//for(i=[0,120,240]){
+//  rotate([0,0,i]){
+//    translate(Line_contact_d_xy){
+//      translate([0,0,Line_contacts_abcd_z[D]]){
+//        translate([0,Bearing_623_outer_diameter/2,0])
+//          rotate([0,0,-20])
+//          translate([0,0,1])
+//          rotate([0,-45,0])
+//          // Channel for d line
+//          translate([0,0,-11])
+//          color("yellow")
+//cylinder(r=0.7, h=11);
+//          translate([0,0,-1.5]){
+//            rotate([0,-90,0])
+//              // Hole for d line length adjusting screw
+//              color("grey")
+//translate([0,0,-9])
+//M3_screw(20,true);
+//          }}}}}
