@@ -176,7 +176,7 @@ void FlushSerialRequestResend();
 void ClearToSend();
 
 void get_coordinates();
-void calculate_delta(float cartesian[3]);
+void calculate_delta(float cartesian[3], float delta[4]);
 extern float delta[DIRS];
 void prepare_move();
 void kill();

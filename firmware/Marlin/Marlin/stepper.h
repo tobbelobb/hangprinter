@@ -19,7 +19,7 @@
    */
 
 #ifndef stepper_h
-#define stepper_h 
+#define stepper_h
 
 #include "planner.h"
 

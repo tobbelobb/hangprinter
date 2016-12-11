@@ -413,7 +413,7 @@ enable_x();
 enable_y();
 enable_z();
 enable_e1();
-calculate_delta(current_position);
+calculate_delta(current_position, delta);
 #endif
 }
 
@@ -805,13 +805,13 @@ void process_commands(){
               plan_set_e_position(current_position[E_CARTH]);
             }else {
               current_position[i] = code_value();//+add_homing[i]; mixture of carthesian and hp-coord arrays. tobben 10 sep 2015
-              calculate_delta(current_position);
+              calculate_delta(current_position, delta);
               plan_set_position(delta[A_AXIS],
                   delta[B_AXIS],
                   delta[C_AXIS],
                   delta[D_AXIS],
                   destination[E_CARTH]);
-              update_axis_steps_per_unit(delta);
+              update_axis_steps_per_unit(delta, delta);
             }
           }
         }
@@ -1206,7 +1206,7 @@ void process_commands(){
               }
             }
           }
-          calculate_delta(current_position);
+          calculate_delta(current_position, delta);
           plan_set_position(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS], destination[E_CARTH]); // Update step-count, keep old carth-position
           break;
           case 114: // M114
@@ -1694,24 +1694,8 @@ void process_commands(){
   }
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  void calculate_delta(float cartesian[3]) // array destination[3] filled with absolute coordinates is fed into this. tobben 20. may 2015
+// array destination[3] filled with absolute coordinates is fed into this. tobben 20. may 2015
+  void calculate_delta(float cartesian[3], float delta[4])
   {
     // With current calculations delta will contain the new absolute coordinate
     // Geometry of hangprinter makes sq(anchor_ABC_Z - carthesian[Z_AXIS]) the smallest term in the sum.
@@ -1768,28 +1752,29 @@ void process_commands(){
     // SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
     // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
     // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
-    // Calculate new steps per unit
+    //
+    // Use steps per unit that fits middle of g1 line
+    float halfway_delta[4];
+    float halfway[3];
+    for(int8_t i=0; i < 3; i++){
+      halfway[i] = current_position[i] + 0.5*difference[i];
+    }
+    calculate_delta(halfway, halfway_delta);
+    update_axis_steps_per_unit(delta, halfway_delta);
 
     for (int s = 1; s <= steps; s++){ // Here lines are split into segments. tobben 20. may 2015
       float fraction = float(s) / float(steps);
       for(int8_t i=0; i < 4; i++){
         destination[i] = current_position[i] + difference[i] * fraction;
       }
-      //SERIAL_ECHO(destination[0]);
-      //SERIAL_ECHO("\n");
-      //SERIAL_ECHO(destination[1]);
-      //SERIAL_ECHO("\n");
-      //SERIAL_ECHO(destination[2]);
-      //SERIAL_ECHO("\n");
-      //SERIAL_ECHO(destination[3]);
-      //SERIAL_ECHO("\n");
-      calculate_delta(destination); // delta will be in hangprinter abcde coords
+      calculate_delta(destination, delta); // delta will be in hangprinter abcde coords
       plan_buffer_line(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS],
           destination[E_CARTH], feedrate*feedmultiply/60/100.0,
           active_extruder, true);
     }
-    // Dynamic update of steps per unit to compensate line buildup on spool
-    update_axis_steps_per_unit(delta);
+    // Correct steps per unit after move
+    // During series of G1 moves, this will never have effect
+    //update_axis_steps_per_unit(delta);
 
     for(int8_t i=0; i < 4; i++){
       current_position[i] = destination[i];
