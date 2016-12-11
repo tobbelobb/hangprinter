@@ -954,6 +954,19 @@ module sstruder_reffles(){
       point_cube([1,15+2,2],90);
 }
 
+module sstruder_lever_move(){
+  translate([Hobbed_insert_diameter + Extruder_filament_opening,
+      0,
+      Sstruder_filament_meets_shaft // Involved but safe way to say Sstruder_thickness
+      - Hobbed_insert_height/2
+      - Sstruder_handle_height
+      - Bearing_623_width])
+    rotate([0,0,-Sstruder_press_angle]) // rotate around hobb
+    translate([Sstruder_hinge_length,Sstruder_fork_length,0])
+    rotate([0,0,0]) // rotate around hinge
+    translate([-Sstruder_hinge_length,-Sstruder_fork_length,0])
+      children(0);
+}
 
 module sstruder_lever(hobb=true){
   thickness = 3; // Of material. Leave enough for stiffness
@@ -1050,6 +1063,23 @@ module sstruder_plate(hobb=true){
                + Sstruder_fork_length
                + Sstruder_lever_thickness;
 
+  module hinge_digger(){
+    // Make space for the hinge
+    height = 2*Bearing_623_width
+      + Hobbed_insert_height
+      + Sstruder_gear_thickness
+      + 2*Sstruder_handle_height;
+    sstruder_lever_move()
+      translate([Sstruder_hinge_length,Sstruder_fork_length,0.3]){
+        cylinder(d=M3_diameter+2*Sstruder_edge_around_bearing+1, h=height);
+        translate([-M3_diameter/2-Sstruder_edge_around_bearing,0,0])
+          cube([M3_diameter+2*Sstruder_edge_around_bearing,
+              (M3_diameter+2*Sstruder_edge_around_bearing)/2,
+              height]);
+      }
+
+  }
+
   color(Printed_color_2)
   difference(){
     union(){
@@ -1097,7 +1127,8 @@ module sstruder_plate(hobb=true){
       cylinder(d=ring_hole_d, h=Sstruder_thickness+1.01);
     // Hole for hinge screw. This must only be moved in perfect sync with lever hinge module...
     translate([lever_edge - Sstruder_lever_thickness,-Sstruder_hinge_length,-1])
-      cylinder(d=M3_diameter, h = 38);
+      cylinder(d=M3_diameter+0.5, h = 38);
+    hinge_digger();
   }
 
   // Block to press springs against
@@ -1161,6 +1192,8 @@ module sstruder_plate(hobb=true){
       rotate([-90,0,0])
       rotate([0,0,180])
       e3d_v6_mount_bore(10);
+
+      hinge_digger();
   }
 
 
@@ -1175,16 +1208,7 @@ module sstruder_plate(hobb=true){
 // %Nema17();
 
 module sstruder(hobb=false){
-  translate([Hobbed_insert_diameter + Extruder_filament_opening,
-      0,
-      Sstruder_filament_meets_shaft // Involved but safe way to say Sstruder_thickness
-      - Hobbed_insert_height/2
-      - Sstruder_handle_height
-      - Bearing_623_width])
-    rotate([0,0,-Sstruder_press_angle]) // rotate around hobb
-    translate([Sstruder_hinge_length,Sstruder_fork_length,0])
-    rotate([0,0,0]) // rotate around hinge
-    translate([-Sstruder_hinge_length,-Sstruder_fork_length,0])
+  sstruder_lever_move()
     sstruder_lever(hobb);
   sstruder_plate(hobb);
   //translate([0,0,-Nema17_cube_height])
