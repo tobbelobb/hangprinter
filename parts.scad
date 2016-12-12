@@ -1215,4 +1215,111 @@ module sstruder(hobb=false){
   //  Nema17();
 }
 //sstruder();
-sstruder(true);
+//sstruder(true);
+
+module bearing_housing(){
+  walls = 1.5;
+  axis_gap = 0.3;
+  diametral_gap = 1;
+  depth = Bearing_623_vgroove_big_diameter + 1;
+  hole = depth - walls - diametral_gap
+               - Bearing_623_vgroove_big_diameter/2;
+
+
+  // Shape occuring twice
+  module housing_starter(d, h, th){
+    difference(){
+      translate([0,0,h-d/2])
+        rotate([90,0,0])
+        cylinder(d=d, h=th, center=true);
+      translate([0,0,-d])
+        cube(2*d, center=true);
+    }
+    translate([-d/2, -th/2, 0])
+      cube([d, th, h-d/2]);
+  }
+  module standing_housing(){
+    difference(){
+      difference(){
+        // Main subject
+        housing_starter(Bearing_623_vgroove_big_diameter + 2*diametral_gap + 2*walls,
+            depth,
+            Bearing_623_width + 2*walls + 2*axis_gap, $fn=40);
+      }
+      difference(){
+        // Diggin out space for bearing
+        translate([0,0,-walls-diametral_gap])
+          housing_starter(Bearing_623_vgroove_big_diameter + 2*diametral_gap,
+              depth + diametral_gap,
+              Bearing_623_width + 2*axis_gap, $fn=40);
+        //Cylinders touching bearing
+        for(i=[0,1])
+          mirror([0,i,0])
+            translate([0, -Bearing_623_width/2, hole])
+            rotate([90,0,0])
+            cylinder(d=5, h=walls + axis_gap);
+      }
+      // Hole for M3 screw
+      translate([0,0,hole])
+        rotate([90,0,0])
+        cylinder(d=3.2, h=Bearing_623_width+2*walls+2, center=true);
+    }
+    hookring_gap = 2.001;
+    hookring_diameter = 4;
+    hookring_to_edge = (Bearing_623_width
+                     + 2*walls + 2*axis_gap + hookring_gap)/2;
+    difference(){
+      for(i=[0,1])
+        mirror([0,i,0])
+          translate([0,
+              -hookring_to_edge/2,
+              depth - walls])
+          housing_starter(hookring_diameter, 5,
+              hookring_to_edge - hookring_gap, $fn=10);
+      translate([0,0,
+          depth - walls + 5 -hookring_diameter/2])
+        rotate([90,0,0])
+        cylinder(d=1.5,
+                 h=hookring_to_edge + hookring_gap + 2,
+                 center=true);
+    }
+  }
+  module differencer(extra=0){
+    default_arm_thickness = 6;
+    translate([-25,1,-1])
+      cube(50);
+    for(i=[15:-210/2:-210])
+      translate([0,0,hole])
+      rotate([0,i,0])
+        translate([0,
+               -1,
+               -default_arm_thickness/2-extra/2])
+        cube([20,5,default_arm_thickness+extra]);
+  }
+
+  module bearing_for_standing_housing(){
+    translate([0,0,hole])
+      rotate([90,0,0])
+      translate([0,0,-Bearing_623_width/2])
+      Bearing_623_vgroove($fn=40);
+  }
+
+  module print(){
+    translate([0,-1,0])
+    rotate([90,0,0])
+    difference(){
+      standing_housing();
+      differencer(0.2);
+    }
+    translate([0,1,0])
+    rotate([-90,0,0])
+    intersection(){
+      standing_housing();
+      differencer(-0.2);
+    }
+  }
+  //color("purple") bearing_for_standing_housing();
+  //%standing_housing();
+  print();
+}
+bearing_housing();
