@@ -765,10 +765,17 @@ void process_commands(){
           //ClearToSend();
         }
         break;
-      // G3 tighten Hangprinter lines.
+      //case 4: // G4 P100 means dwell for 100 milliseconds
+      //  long dwell_ms = 0;
+      //  if (code_seen('P')) dwell_ms = code_value_millis(); // milliseconds to wait
+      //  stepper.synchronize();
+      //  refresh_cmd_timeout();
+      //  dwell_ms += previous_cmd_ms;  // keep track of when we started waiting
+      //  break;
+      // G6 tighten Hangprinter lines.
       // Make moves without altering position variables.
       // Speed variables for planning are modified.
-      case 3:
+      case 6:
         double tmp_delta[DIRS];
         memcpy(tmp_delta, delta, sizeof(delta));
         if(code_seen('A')) tmp_delta[A_AXIS] += code_value();
@@ -789,6 +796,8 @@ void process_commands(){
                          tmp_delta[D_AXIS],
                          destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
+
+  while (PENDING(millis(), dwell_ms)) idle();
       case 90: // G90
         relative_mode = false;
         break;
@@ -2201,3 +2210,5 @@ void process_commands(){
     for (int i=0; i<EXTRUDERS; i++)
       volumetric_multiplier[i] = calculate_volumetric_multiplier(filament_size[i]);
   }
+
+}
