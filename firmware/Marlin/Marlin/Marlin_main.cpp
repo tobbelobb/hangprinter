@@ -189,10 +189,6 @@ float anchor_D_z = ANCHOR_D_Z;
 float delta_segments_per_second = DELTA_SEGMENTS_PER_SECOND;
 float delta[DIRS] = { 0 }; // TODO: should this be static?
 
-
-
-
-
 #ifdef SCARA
 float axis_scaling[3] = { 1, 1, 1 };    // Build size scaling, default to 1
 #endif
@@ -229,7 +225,7 @@ const int sensitive_pins[] = SENSITIVE_PINS; ///< Sensitive pin list for M42
 
 // Inactivity shutdown
 static unsigned long previous_millis_cmd = 0;
-static unsigned long max_inactive_time = 0;
+//static unsigned long max_inactive_time = 0;
 static unsigned long stepper_inactive_time = DEFAULT_STEPPER_DEACTIVE_TIME*1000l;
 
 unsigned long starttime = 0; ///< Print job start time
@@ -553,70 +549,16 @@ void get_command(){
 #endif //SDSUPPORT
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 float code_value(){
   return (strtod(&cmdbuffer[bufindr][strchr_pointer - cmdbuffer[bufindr] + 1], NULL));
 }
 
 long code_value_long(){
   return (strtol(&cmdbuffer[bufindr][strchr_pointer - cmdbuffer[bufindr] + 1], NULL, 10));
+}
+
+inline unsigned long code_value_ulong(){
+  return strtoul(strchr_pointer + 1, NULL, 10);
 }
 
 bool code_seen(char code){
@@ -654,19 +596,8 @@ static void axis_is_at_home(int axis){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 // TODO: Homing procedure goes here. tobben 8. sep 2015
-static void homeaxis(int axis){}
+static void homeaxis(int axis) { }
 //#define HOMEAXIS_DO(LETTER) \
 //  ((LETTER##_MIN_PIN > -1 && LETTER##_HOME_DIR==-1) || (LETTER##_MAX_PIN > -1 && LETTER##_HOME_DIR==1))
 //
@@ -738,16 +669,6 @@ static void homeaxis(int axis){}
 //}
 //#define HOMEAXIS(LETTER) homeaxis(LETTER##_AXIS)
 
-
-
-
-
-
-
-
-
-
-
 void refresh_cmd_timeout(void){
   previous_millis_cmd = millis();
 }
@@ -765,13 +686,17 @@ void process_commands(){
           //ClearToSend();
         }
         break;
-      //case 4: // G4 P100 means dwell for 100 milliseconds
-      //  long dwell_ms = 0;
-      //  if (code_seen('P')) dwell_ms = code_value_millis(); // milliseconds to wait
-      //  stepper.synchronize();
-      //  refresh_cmd_timeout();
-      //  dwell_ms += previous_cmd_ms;  // keep track of when we started waiting
-      //  break;
+      // G4 P100 means dwell for 100 milliseconds
+      case 4:
+        if (code_seen('P')){
+          unsigned long dwell_ms = 0;
+          dwell_ms = code_value_ulong(); // milliseconds to wait
+          st_synchronize();
+          refresh_cmd_timeout(); // Set previous_millis_cmd = millis();
+          dwell_ms += previous_millis_cmd;  // keep track of when we started waiting
+          while((long)(millis() - dwell_ms) < 0) manage_inactivity();
+        }
+        break;
       // G6 tighten Hangprinter lines.
       // Make moves without altering position variables.
       // Speed variables for planning are modified.
@@ -796,8 +721,6 @@ void process_commands(){
                          tmp_delta[D_AXIS],
                          destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
-
-  while (PENDING(millis(), dwell_ms)) idle();
       case 90: // G90
         relative_mode = false;
         break;
@@ -1959,7 +1882,7 @@ void process_commands(){
   }
 #endif
 
-  void manage_inactivity(bool ignore_stepper_queue/*=false*/) //default argument set in Marlin.h
+  void manage_inactivity(bool ignore_stepper_queue) //default argument false set in Marlin.h
   {
 
 #if defined(KILL_PIN) && KILL_PIN > -1
@@ -1976,20 +1899,23 @@ void process_commands(){
     if(buflen < (BUFSIZE-1))
       get_command();
 
-    if( (millis() - previous_millis_cmd) >  max_inactive_time )
-      if(max_inactive_time)
-        kill();
-    if(stepper_inactive_time){
-      if( (millis() - previous_millis_cmd) >  stepper_inactive_time ){
-        if(blocks_queued() == false && ignore_stepper_queue == false){
-          disable_x();
-          disable_y();
-          disable_z();
-          disable_e0();
-          disable_e1();
-        }
-      }
-    }
+    // G4 dwell uses this function. Don't kill. Never kill.
+    //if( (millis() - previous_millis_cmd) >  max_inactive_time )
+    //  if(max_inactive_time)
+    //    kill();
+    //
+    // Hangprinter needs to keep lines tight at all times. Never disable.
+    //if(stepper_inactive_time){
+    //  if( (millis() - previous_millis_cmd) >  stepper_inactive_time ){
+    //    if(blocks_queued() == false && ignore_stepper_queue == false){
+    //      disable_x();
+    //      disable_y();
+    //      disable_z();
+    //      disable_e0();
+    //      disable_e1();
+    //    }
+    //  }
+    //}
 
 #ifdef CHDK //Check if pin should be set to LOW after M240 set it to HIGH
     if(chdkActive && (millis() - chdkHigh > CHDK_DELAY)){
@@ -2202,7 +2128,6 @@ void process_commands(){
     }else {
       area = M_PI * pow(radius, 2);
     }
-
     return 1.0 / area;
   }
 
@@ -2210,5 +2135,3 @@ void process_commands(){
     for (int i=0; i<EXTRUDERS; i++)
       volumetric_multiplier[i] = calculate_volumetric_multiplier(filament_size[i]);
   }
-
-}
