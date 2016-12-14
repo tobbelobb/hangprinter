@@ -694,7 +694,10 @@ void process_commands(){
           st_synchronize();
           refresh_cmd_timeout(); // Set previous_millis_cmd = millis();
           dwell_ms += previous_millis_cmd;  // keep track of when we started waiting
-          while((long)(millis() - dwell_ms) < 0) manage_inactivity();
+          while((long)(millis() - dwell_ms) < 0){
+            manage_heater();
+            manage_inactivity();
+          }
         }
         break;
       // G6 tighten Hangprinter lines.
@@ -1699,6 +1702,7 @@ void process_commands(){
       for(int8_t i=0; i < 4; i++){
         destination[i] = current_position[i] + difference[i] * fraction;
       }
+
       calculate_delta(destination, delta); // delta will be in hangprinter abcde coords
       plan_buffer_line(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS],
           destination[E_CARTH], feedrate*feedmultiply/60/100.0,

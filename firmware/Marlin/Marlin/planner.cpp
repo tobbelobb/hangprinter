@@ -190,11 +190,11 @@ void update_axis_steps_per_unit(const float* coming_from_delta, const float* poi
   */
 
   // Uglyhack test. Can we fool printer to think it got here with the new steps per unit?
-  position[A_AXIS] = coming_from_delta[A_AXIS]*axis_steps_per_unit[A_AXIS];
-  position[B_AXIS] = coming_from_delta[B_AXIS]*axis_steps_per_unit[B_AXIS];
-  position[C_AXIS] = coming_from_delta[C_AXIS]*axis_steps_per_unit[C_AXIS];
-  position[D_AXIS] = coming_from_delta[D_AXIS]*axis_steps_per_unit[D_AXIS];
-
+  position[A_AXIS] = lround(coming_from_delta[A_AXIS]*axis_steps_per_unit[A_AXIS]);
+  position[B_AXIS] = lround(coming_from_delta[B_AXIS]*axis_steps_per_unit[B_AXIS]);
+  position[C_AXIS] = lround(coming_from_delta[C_AXIS]*axis_steps_per_unit[C_AXIS]);
+  position[D_AXIS] = lround(coming_from_delta[D_AXIS]*axis_steps_per_unit[D_AXIS]);
+  st_set_position(position[A_AXIS], position[B_AXIS], position[C_AXIS], position[D_AXIS], position[E_AXIS]);
 }
 
 // Calculates the distance (not time) it takes to accelerate from initial_rate to target_rate using the

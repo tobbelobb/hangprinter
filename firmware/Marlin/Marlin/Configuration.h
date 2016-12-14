@@ -96,16 +96,16 @@
 // See Hangprinter calibration manual for help:
 // https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
 #define ANCHOR_A_X 0.0 // anchor point A's Carthesian x-coordinate. In mm
-#define ANCHOR_A_Y -1014.2
-#define ANCHOR_A_Z -144.4 // measured from print surface to frame middle. In mm (was 130 diff is 11)
-#define ANCHOR_B_X 886.5
-#define ANCHOR_B_Y 690.6
-#define ANCHOR_B_Z -134.6 // measured from print surface to frame middle. In mm (was -119. Diff is 17)
-#define ANCHOR_C_X -877.6
-#define ANCHOR_C_Y 628.6
-#define ANCHOR_C_Z -124.8 // measured from print surface to frame middle. In mm (was -141. Diff is 18)
+#define ANCHOR_A_Y -1420.0
+#define ANCHOR_A_Z -150.0 // measured from print surface to frame middle. In mm (was 130 diff is 11)
+#define ANCHOR_B_X 911.00
+#define ANCHOR_B_Y 818.53
+#define ANCHOR_B_Z -127.0 // measured from print surface to frame middle. In mm (was -119. Diff is 17)
+#define ANCHOR_C_X -1026.0
+#define ANCHOR_C_Y 521.82
+#define ANCHOR_C_Z -128.0 // measured from print surface to frame middle. In mm (was -141. Diff is 18)
 // It's assumed that ceiling frame part is directly above origo
-#define ANCHOR_D_Z 2084 // measured along vertical line, from fish eye to anchor point. In mm (was 2286 diff is 9)
+#define ANCHOR_D_Z 2295.0 // measured along vertical line, from fish eye to anchor point. In mm (was 2286 diff is 9)
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -448,13 +448,16 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
 // 0.39*0.39/(pi*4.6) = 0.010525
 #define SPOOL_BUILDUP_FACTOR 0.010525
+//#define SPOOL_BUILDUP_FACTOR 0.0
 
 // Measure the total length of lines on each spool when printer is in origo
 // Two A-lines, each of length 150.0 gives total length 300.0
-const float LINE_ON_SPOOL_ORIGO[DIRS] = {300.0,400.0,500.0,800.0};
+const float LINE_ON_SPOOL_ORIGO[DIRS] = {4920.0,5200.0,5600.0,6000.0};
+//const float LINE_ON_SPOOL_ORIGO[DIRS] = {2460.0,2600.0,2800.0,3000.0};
+//const float LINE_ON_SPOOL_ORIGO[DIRS] = {0.0,0.0,0.0,0.0};
 
 // Squared spool radius. 33.0^2 = 1089.0
-// Assumes A, B, C and D radiuses are the same.
+// Assumes equal A, B, C and D radii.
 #define SPOOL_RADIUS2 1089.0
 
 // Motor gear teeth: 9
