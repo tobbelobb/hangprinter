@@ -432,7 +432,8 @@ void plan_init() {
   position[C_AXIS] = INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS];
   position[D_AXIS] = INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS];
 // Initialize steps per unit
-  update_axis_steps_per_unit(INITIAL_DISTANCES,INITIAL_DISTANCES);
+  if(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+    update_axis_steps_per_unit(INITIAL_DISTANCES,INITIAL_DISTANCES);
   previous_speed[A_AXIS] = 0.0;
   previous_speed[B_AXIS] = 0.0;
   previous_speed[C_AXIS] = 0.0;

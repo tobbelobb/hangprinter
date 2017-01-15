@@ -746,7 +746,8 @@ void process_commands(){
                   delta[C_AXIS],
                   delta[D_AXIS],
                   destination[E_CARTH]);
-              update_axis_steps_per_unit(delta, delta);
+              if(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+                update_axis_steps_per_unit(delta, delta);
             }
           }
         }
@@ -1689,13 +1690,15 @@ void process_commands(){
     // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
     //
     // Use steps per unit that fits middle of g1 line
-    float halfway_delta[4];
-    float halfway[3];
-    for(int8_t i=0; i < 3; i++){
-      halfway[i] = current_position[i] + 0.5*difference[i];
+    if(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE){
+      float halfway_delta[4];
+      float halfway[3];
+      for(int8_t i=0; i < 3; i++){
+        halfway[i] = current_position[i] + 0.5*difference[i];
+      }
+      calculate_delta(halfway, halfway_delta);
+      update_axis_steps_per_unit(delta, halfway_delta);
     }
-    calculate_delta(halfway, halfway_delta);
-    update_axis_steps_per_unit(delta, halfway_delta);
 
     for (int s = 1; s <= steps; s++){ // Here lines are split into segments. tobben 20. may 2015
       float fraction = float(s) / float(steps);

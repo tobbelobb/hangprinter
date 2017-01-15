@@ -431,6 +431,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //===========================================================================
 //============================= Steps per unit ==============================
 //===========================================================================
+// If you want the experimental line buildup compensation feature, set this to 1.
+#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE 0
+
 // Mechanical advantage in each direction needed for dynamic step/mm calculations
 // One pulley along each line gives halved forces and doubled distances
 #define MECHANICAL_ADVANTAGE_A 2
