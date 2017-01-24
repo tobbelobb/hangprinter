@@ -95,17 +95,17 @@
 // Or do other measurments and calculate Carthesian axis lengths by trigonometry
 // See Hangprinter calibration manual for help:
 // https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
-#define ANCHOR_A_X 0.0 // anchor point A's Carthesian x-coordinate. In mm
-#define ANCHOR_A_Y -1420.0
-#define ANCHOR_A_Z -150.0 // measured from print surface to frame middle. In mm (was 130 diff is 11)
-#define ANCHOR_B_X 911.00
-#define ANCHOR_B_Y 818.53
-#define ANCHOR_B_Z -127.0 // measured from print surface to frame middle. In mm (was -119. Diff is 17)
-#define ANCHOR_C_X -1026.0
-#define ANCHOR_C_Y 521.82
-#define ANCHOR_C_Z -128.0 // measured from print surface to frame middle. In mm (was -141. Diff is 18)
+#define ANCHOR_A_X -573.0 // anchor point A's Carthesian x-coordinate. In mm
+#define ANCHOR_A_Y -1331.0
+#define ANCHOR_A_Z -162.5 // measured from print surface to frame middle.
+#define ANCHOR_B_X 1548.0
+#define ANCHOR_B_Y 0.0
+#define ANCHOR_B_Z -148.0 // measured from print surface to frame middle.
+#define ANCHOR_C_X -609.0
+#define ANCHOR_C_Y 1209.0
+#define ANCHOR_C_Z -133.5 // measured from print surface to frame middle.
 // It's assumed that ceiling frame part is directly above origo
-#define ANCHOR_D_Z 2295.0 // measured along vertical line, from fish eye to anchor point. In mm (was 2286 diff is 9)
+#define ANCHOR_D_Z 2295.0 // measured along vertical line, from fish eye to anchor point.
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -432,13 +432,13 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //============================= Steps per unit ==============================
 //===========================================================================
 // If you want the experimental line buildup compensation feature, set this to 1.
-#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE 0
+#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE 1
 
 // Mechanical advantage in each direction needed for dynamic step/mm calculations
 // One pulley along each line gives halved forces and doubled distances
-#define MECHANICAL_ADVANTAGE_A 2
-#define MECHANICAL_ADVANTAGE_B 2
-#define MECHANICAL_ADVANTAGE_C 2
+#define MECHANICAL_ADVANTAGE_A 1
+#define MECHANICAL_ADVANTAGE_B 1
+#define MECHANICAL_ADVANTAGE_C 1
 #define MECHANICAL_ADVANTAGE_D 2
 
 // Action points in each direction needed for dynamic step/mm calculations
@@ -450,7 +450,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // This comes from spool height and line diameter.
 // diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
 // 0.39*0.39/(pi*4.6) = 0.010525
-#define SPOOL_BUILDUP_FACTOR 0.010525
+//#define SPOOL_BUILDUP_FACTOR 0.010525
+#define SPOOL_BUILDUP_FACTOR 0.002
 //#define SPOOL_BUILDUP_FACTOR 0.0
 
 // Measure the total length of lines on each spool when printer is in origo
@@ -470,10 +471,11 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {4920.0,5200.0,5600.0,6000.0};
 const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
 
 // The A, B, C and D values no longer used. Dynamic values used instead.
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {73.747, 73.747, 73.747, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   {73.747, 73.747, 73.747, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {36.87, 36.87, 36.87, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
 
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {3000,3000,3000,3000,10000}    // X, Y, Z, E maximum start speed for accelerated moves.
+#define DEFAULT_MAX_ACCELERATION      {2000,2000,2000,2000,10000}    // X, Y, Z, E maximum start speed for accelerated moves.
 
 #define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
