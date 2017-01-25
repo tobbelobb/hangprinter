@@ -88,7 +88,7 @@
 // Make delta curves from many straight lines (linear interpolation).
 // This is a trade-off between visible corners (not enough segments)
 // and processor overload (too many expensive sqrt calls).
-#define DELTA_SEGMENTS_PER_SECOND 80
+#define DELTA_SEGMENTS_PER_SECOND 40
 
 // NOTE! all values here MUST be floating point, so always have a decimal point in them
 // Measure from fish eye to anchor point along Carthesian axis
@@ -451,8 +451,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
 // 0.39*0.39/(pi*4.6) = 0.010525
 //#define SPOOL_BUILDUP_FACTOR 0.010525
-#define SPOOL_BUILDUP_FACTOR 0.002
-//#define SPOOL_BUILDUP_FACTOR 0.0
+#define SPOOL_BUILDUP_FACTOR 0.006
 
 // Measure the total length of lines on each spool when printer is in origo
 // Two A-lines, each of length 150.0 gives total length 300.0
