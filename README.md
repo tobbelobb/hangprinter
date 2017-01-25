@@ -6,6 +6,8 @@ A RepRap hanging from the ceiling.
 ![Hangprinter Portrait](https://vitana.se/opr3d/tbear/bilder/Sideview_rot_liten.JPG)
 
 See [tobbelobb's vimeo user](https://vimeo.com/user23166500) for demonstation videos and [dev blog](https://vitana.se/opr3d/tbear) for technical updates.
+The Hangprinter Project also has a [Bountysource Salt campaign](https://salt.bountysource.com/teams/hangprinter) where you can support it economically.
+
 
 Quick start guide
 ======
@@ -15,7 +17,7 @@ This guide is up to date as of Jan 25 2017.
 * Follow the (slightly outdated) build instructions [here](https://vitana.se/opr3d/tbear/index.html#Clerck_assembly_manual)
 * Follow the calibration manual [here](https://github.com/tobbelobb/hangprinter/tree/calibration_manual_0)
 * Upload what you find in firmare/Marlin/Marlin via Arduino IDE
-* If you want a quick and dirty anchor point, i suggest the following:
+* If you want a quick and dirty anchor point, I suggest the following:
 ![Quick and dirty anchor point solution](https://vitana.se/opr3d/tbear/bilder/quick_and_dirty_anchor_point_liten.JPG)
 * Create a Github issue of send me an email if you get stuck!
 
