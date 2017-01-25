@@ -23,11 +23,12 @@
 #include "stepper.h"
 #include "planner.h"
 
-// The arc is approximated by generating a huge number of tiny, linear segments. The length of each 
-// segment is configured in settings.mm_per_arc_segment.  
-void mc_arc(float *position, float *target, float *offset, uint8_t axis_0, uint8_t axis_1, 
+#ifndef HANGPRINTER
+// The arc is approximated by generating a huge number of tiny, linear segments. The length of each
+// segment is configured in settings.mm_per_arc_segment.
+void mc_arc(float *position, float *target, float *offset, uint8_t axis_0, uint8_t axis_1,
     uint8_t axis_linear, float feed_rate, float radius, uint8_t isclockwise, uint8_t extruder)
-{      
+{
   //   int acceleration_manager_was_enabled = plan_is_acceleration_manager_enabled();
   //   plan_set_acceleration_manager_enabled(false); // disable acceleration management for the duration of the arc
   float center_axis0 = position[axis_0] + offset[axis_0];
@@ -57,9 +58,9 @@ void mc_arc(float *position, float *target, float *offset, uint8_t axis_0, uint8
   uint16_t segments = floor(millimeters_of_travel/MM_PER_ARC_SEGMENT);
   if(segments == 0) segments = 1;
 
-  /*  
+  /*
   // Multiply inverse feed_rate to compensate for the fact that this movement is approximated
-  // by a number of discrete segments. The inverse feed_rate should be correct for the sum of 
+  // by a number of discrete segments. The inverse feed_rate should be correct for the sum of
   // all segments.
   if (invert_feed_rate) { feed_rate *= segments; }
   */
@@ -72,25 +73,25 @@ void mc_arc(float *position, float *target, float *offset, uint8_t axis_0, uint8
      r_T = [cos(phi) -sin(phi);
      sin(phi)  cos(phi] * r ;
 
-     For arc generation, the center of the circle is the axis of rotation and the radius vector is 
+     For arc generation, the center of the circle is the axis of rotation and the radius vector is
      defined from the circle center to the initial position. Each line segment is formed by successive
      vector rotations. This requires only two cos() and sin() computations to form the rotation
      matrix for the duration of the entire arc. Error may accumulate from numerical round-off, since
      all double numbers are single precision on the Arduino. (True double precision will not have
      round off issues for CNC applications.) Single precision error can accumulate to be greater than
-     tool precision in some cases. Therefore, arc path correction is implemented. 
+     tool precision in some cases. Therefore, arc path correction is implemented.
 
      Small angle approximation may be used to reduce computation overhead further. This approximation
      holds for everything, but very small circles and large mm_per_arc_segment values. In other words,
      theta_per_segment would need to be greater than 0.1 rad and N_ARC_CORRECTION would need to be large
-     to cause an appreciable drift error. N_ARC_CORRECTION~=25 is more than small enough to correct for 
+     to cause an appreciable drift error. N_ARC_CORRECTION~=25 is more than small enough to correct for
      numerical drift error. N_ARC_CORRECTION may be on the order a hundred(s) before error becomes an
      issue for CNC machines with the single precision Arduino calculations.
 
-     This approximation also allows mc_arc to immediately insert a line segment into the planner 
+     This approximation also allows mc_arc to immediately insert a line segment into the planner
      without the initial overhead of computing cos() or sin(). By the time the arc needs to be applied
-     a correction, the planner should have caught up to the lag caused by the initial mc_arc overhead. 
-     This is important when there are successive arc motions. 
+     a correction, the planner should have caught up to the lag caused by the initial mc_arc overhead.
+     This is important when there are successive arc motions.
      */
   // Vector rotation matrix values
   float cos_T = 1-0.5*theta_per_segment*theta_per_segment; // Small angle approximation
@@ -112,7 +113,7 @@ void mc_arc(float *position, float *target, float *offset, uint8_t axis_0, uint8
   for (i = 1; i<segments; i++) { // Increment (segments-1)
 
     if (count < N_ARC_CORRECTION) {
-      // Apply vector rotation matrix 
+      // Apply vector rotation matrix
       r_axisi = r_axis0*sin_T + r_axis1*cos_T;
       r_axis0 = r_axis0*cos_T - r_axis1*sin_T;
       r_axis1 = r_axisi;
@@ -149,4 +150,4 @@ void mc_arc(float *position, float *target, float *offset, uint8_t axis_0, uint8
 
   //   plan_set_acceleration_manager_enabled(acceleration_manager_was_enabled);
 }
-
+#endif

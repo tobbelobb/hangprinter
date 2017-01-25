@@ -704,7 +704,7 @@ void process_commands(){
       // Make moves without altering position variables.
       // Speed variables for planning are modified.
       case 6:
-        double tmp_delta[DIRS];
+        float tmp_delta[DIRS];
         memcpy(tmp_delta, delta, sizeof(delta));
         if(code_seen('A')) tmp_delta[A_AXIS] += code_value();
         if(code_seen('B')) tmp_delta[B_AXIS] += code_value();
@@ -718,10 +718,7 @@ void process_commands(){
             feedrate = next_feedrate;
           }
         }
-        plan_buffer_line(tmp_delta[A_AXIS],
-                         tmp_delta[B_AXIS],
-                         tmp_delta[C_AXIS],
-                         tmp_delta[D_AXIS],
+        plan_buffer_line(delta, tmp_delta,
                          destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
       case 90: // G90
@@ -1689,19 +1686,25 @@ void process_commands(){
     // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
     // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
 
+    // TODO: Make compensation optional again...
+    // Start the pointerdance to avoid having to copy data
+    float old_delta[DIRS];
+    float *delta_ptr, *tmp_delta_ptr, *old_delta_ptr;
+    delta_ptr = delta;
+    old_delta_ptr = old_delta;
+
     for (int s = 1; s <= steps; s++){ // Here lines are split into segments. tobben 20. may 2015
       float fraction = float(s) / float(steps);
       for(int8_t i=0; i < 4; i++){
         destination[i] = current_position[i] + difference[i] * fraction;
       }
+      tmp_delta_ptr = delta_ptr;
+      delta_ptr = old_delta_ptr;
+      old_delta_ptr = tmp_delta_ptr;
 
-      calculate_delta(destination, delta); // delta will be in hangprinter abcde coords
-      if(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-        update_axis_steps_per_unit(delta, delta);
+      calculate_delta(destination, delta_ptr); // delta will be in absolute hangprinter abcde coords
 
-      plan_buffer_line(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS],
-          destination[E_CARTH], feedrate*feedmultiply/60/100.0,
-          active_extruder, true);
+      plan_buffer_line(old_delta_ptr, delta_ptr, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
     }
     // Correct steps per unit after move
     // During series of G1 moves, this will never have effect

@@ -543,12 +543,26 @@ float junction_deviation = 0.1;
 //
 // Help, why does this comment contradict comments in planner.h?
 // I'm quite sure steps_a, _b, ... are absolute step count along each axis,
-// and that a, b, c, d are absolute positions in mm that we plan on taking. tobben 9 sep 2015
-// TODO: target must be set using be relative movements, not absolute ones...
-void plan_buffer_line(const float &a, const float &b, const float &c, const float &d, const float &e,
+// and that a, b, c, d are relative positions in mm that we plan on taking. tobben 9 sep 2015
+void plan_buffer_line(const float* coming_from_delta, const float* going_to_delta, const float &e,
                      float feed_rate, const uint8_t &extruder, unsigned char count_it){
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
+
+  static const float k2a = -(float)nr_of_lines_in_direction[A_AXIS]*SPOOL_BUILDUP_FACTOR;
+  static const float k2b = -(float)nr_of_lines_in_direction[B_AXIS]*SPOOL_BUILDUP_FACTOR;
+  static const float k2c = -(float)nr_of_lines_in_direction[C_AXIS]*SPOOL_BUILDUP_FACTOR;
+  static const float k2d = -(float)nr_of_lines_in_direction[D_AXIS]*SPOOL_BUILDUP_FACTOR;
+
+  static const float k0a = 2*steps_per_unit_times_r[A_AXIS]/k2a;
+  static const float k0b = 2*steps_per_unit_times_r[B_AXIS]/k2b;
+  static const float k0c = 2*steps_per_unit_times_r[C_AXIS]/k2c;
+  static const float k0d = 2*steps_per_unit_times_r[D_AXIS]/k2c;
+
+  static const float k1a = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[A_AXIS]*(float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS] + SPOOL_RADIUS2;
+  static const float k1b = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[B_AXIS]*(float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS] + SPOOL_RADIUS2;
+  static const float k1c = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[C_AXIS]*(float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS] + SPOOL_RADIUS2;
+  static const float k1d = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[D_AXIS]*(float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS] + SPOOL_RADIUS2;
 
   // If the buffer is full: good! That means we are well ahead of the robot.
   // Rest here until there is room in the buffer.
@@ -557,20 +571,6 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
     manage_heater();
     manage_inactivity();
   }
-
-  // The target position of the tool in absolute steps
-  // Calculate target position in absolute steps
-  //this should be done after the wait, because otherwise a M92 code within the gcode disrupts this calculation somehow
-  long target[NUM_AXIS];
-  target[A_AXIS] = lround(a*axis_steps_per_unit[A_AXIS]);
-  //SERIAL_ECHO("a:");
-  //SERIAL_ECHOLN(a);
-  //SERIAL_ECHO("axis_steps_per_unit[A_AXIS]: ");
-  //SERIAL_ECHOLN(axis_steps_per_unit[A_AXIS]);
-  target[B_AXIS] = lround(b*axis_steps_per_unit[B_AXIS]);
-  target[C_AXIS] = lround(c*axis_steps_per_unit[C_AXIS]);
-  target[D_AXIS] = lround(d*axis_steps_per_unit[D_AXIS]);
-  target[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
 
   // Prepare to set up new block
   block_t *block = &block_buffer[block_buffer_head];
@@ -581,6 +581,18 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
   // Mark if this is a move that will have its steps counted or not
   block->count_it = count_it;
 
+  // The target position of the tool in absolute steps
+  // Calculate target position in absolute steps
+  //this should be done after the wait, because otherwise a M92 code within the gcode disrupts this calculation somehow
+  //
+  // Integrate steps per mm function a/sqrt(c0 + c1*x) over interval, and add found number of steps to position
+  long target[NUM_AXIS];
+  target[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*going_to_delta[A_AXIS]) - sqrt(k1a + k2a*coming_from_delta[A_AXIS])) + position[A_AXIS]);
+  target[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*going_to_delta[B_AXIS]) - sqrt(k1b + k2b*coming_from_delta[B_AXIS])) + position[B_AXIS]);
+  target[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*going_to_delta[C_AXIS]) - sqrt(k1c + k2c*coming_from_delta[C_AXIS])) + position[C_AXIS]);
+  target[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*going_to_delta[D_AXIS]) - sqrt(k1d + k2d*coming_from_delta[D_AXIS])) + position[D_AXIS]);
+  target[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
+
   // Number of steps for each axis
   //SERIAL_ECHO("position[A_AXIS]: ");
   //SERIAL_ECHOLN(position[A_AXIS]);
@@ -588,12 +600,7 @@ void plan_buffer_line(const float &a, const float &b, const float &c, const floa
   block->steps_b = labs(target[B_AXIS]-position[B_AXIS]);
   block->steps_c = labs(target[C_AXIS]-position[C_AXIS]);
   block->steps_d = labs(target[D_AXIS]-position[D_AXIS]);
-  //SERIAL_ECHO("block->steps_a: ");
-  //SERIAL_ECHOLN(block->steps_a);
-  //SERIAL_ECHO("block->steps_b: ");
-  //SERIAL_ECHOLN(block->steps_b);
-  //SERIAL_ECHO("block->steps_c: ");
-  //SERIAL_ECHOLN(block->steps_c);
+
   //SERIAL_ECHO("block->steps_d: ");
   //SERIAL_ECHOLN(block->steps_d);
 
