@@ -375,8 +375,12 @@ module bottom_plate(){
       // Hole for worm driving d-motor
       d_motor_move(){
         translate([0,0,-1.5])
-          scale(1.02) // Leave 2 percent gap for easy mounting
-          Nema17();
+          scale(1.02){ // Leave 2 percent gap for easy mounting
+            translate(([-Nema17_cube_width/2, -Nema17_cube_width/2, 0]))
+              cube([Nema17_cube_width, Nema17_cube_width, Nema17_cube_height]);
+            cylinder(d=Nema17_ring_diameter, h=Nema17_cube_height+Nema17_ring_height);
+            //Nema17();
+          }
         //scale([1.1,1.05,1.05])
         //  worm(); // Keep worm in center to more easily adjust radius to worm_plate later
         // Square hole for worm
@@ -399,14 +403,18 @@ module bottom_plate(){
       // Screw holes for extruder motor mounting screws
       extruder_motor_translate(){
         // Hole for extruder motor
-        scale(1.015) // Leave 1.5% extra space, don't need tight fit
-        Nema17();
+        scale(1.015){ // Leave 1.5% extra space, don't need tight fit
+          translate(([-Nema17_cube_width/2, -Nema17_cube_width/2, 0]))
+            cube([Nema17_cube_width, Nema17_cube_width, Nema17_cube_height
+             + Sstruder_thickness]); // Make space for sstruder_plate
+          //Nema17();
+        }
         // Diff'ing sstruder directly here gives unwanted artifacts and details
-        translate([0,0,Nema17_cube_height])
-          translate([-Nema17_cube_width/2,
-              -Sstruder_height+Nema17_cube_width/2,
-              0])
-          cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness+0.2]);
+        //translate([0,0,Nema17_cube_height])
+        //  translate([-Nema17_cube_width/2,
+        //      -Sstruder_height+Nema17_cube_width/2,
+        //      0])
+        //  cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness+0.2]);
           //sstruder_plate();
         for(i=[1,-1]){
           translate([i*Nema17_screw_hole_dist/2,Nema17_screw_hole_dist/2,0]){
@@ -453,8 +461,8 @@ module bottom_plate(){
 }
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
-//rotate([0,0,15])
-//bottom_plate();
+rotate([0,0,15])
+bottom_plate();
 
 //** bottom_plate end **//
 
@@ -1322,4 +1330,4 @@ module bearing_housing(){
   //%standing_housing();
   print();
 }
-bearing_housing();
+//bearing_housing();
