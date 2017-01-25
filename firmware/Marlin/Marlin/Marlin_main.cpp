@@ -1688,17 +1688,6 @@ void process_commands(){
     // SERIAL_ECHOPGM("mm="); SERIAL_ECHO(cartesian_mm);
     // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
     // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
-    //
-    // Use steps per unit that fits middle of g1 line
-    if(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE){
-      float halfway_delta[4];
-      float halfway[3];
-      for(int8_t i=0; i < 3; i++){
-        halfway[i] = current_position[i] + 0.5*difference[i];
-      }
-      calculate_delta(halfway, halfway_delta);
-      update_axis_steps_per_unit(delta, halfway_delta);
-    }
 
     for (int s = 1; s <= steps; s++){ // Here lines are split into segments. tobben 20. may 2015
       float fraction = float(s) / float(steps);
@@ -1707,6 +1696,9 @@ void process_commands(){
       }
 
       calculate_delta(destination, delta); // delta will be in hangprinter abcde coords
+      if(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+        update_axis_steps_per_unit(delta, delta);
+
       plan_buffer_line(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS],
           destination[E_CARTH], feedrate*feedmultiply/60/100.0,
           active_extruder, true);
