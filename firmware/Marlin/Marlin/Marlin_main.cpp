@@ -1689,22 +1689,17 @@ void process_commands(){
     // TODO: Make compensation optional again...
     // Start the pointerdance to avoid having to copy data
     float old_delta[DIRS];
-    float *delta_ptr, *tmp_delta_ptr, *old_delta_ptr;
-    delta_ptr = delta;
-    old_delta_ptr = old_delta;
 
     for (int s = 1; s <= steps; s++){ // Here lines are split into segments. tobben 20. may 2015
       float fraction = float(s) / float(steps);
       for(int8_t i=0; i < 4; i++){
         destination[i] = current_position[i] + difference[i] * fraction;
       }
-      tmp_delta_ptr = delta_ptr;
-      delta_ptr = old_delta_ptr;
-      old_delta_ptr = tmp_delta_ptr;
 
-      calculate_delta(destination, delta_ptr); // delta will be in absolute hangprinter abcde coords
+      memcpy(old_delta, delta, sizeof(delta));
+      calculate_delta(destination, delta); // delta will be in absolute hangprinter abcde coords
 
-      plan_buffer_line(old_delta_ptr, delta_ptr, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
+      plan_buffer_line(old_delta, delta, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
     }
     // Correct steps per unit after move
     // During series of G1 moves, this will never have effect
