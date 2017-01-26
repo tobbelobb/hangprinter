@@ -306,7 +306,7 @@
 // uncomment the 2 defines below:
 
 // Parameters for all extruder heaters
-#define THERMAL_RUNAWAY_PROTECTION_PERIOD 120 //in seconds
+#define THERMAL_RUNAWAY_PROTECTION_PERIOD 180 //in seconds
 #define THERMAL_RUNAWAY_PROTECTION_HYSTERESIS 4 // in degree Celsius
 
 // If you want to enable this feature for your bed heater,
@@ -450,12 +450,12 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // This comes from spool height and line diameter.
 // diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
 // 0.39*0.39/(pi*4.6) = 0.010525
-//#define SPOOL_BUILDUP_FACTOR 0.010525
-#define SPOOL_BUILDUP_FACTOR 0.006
+#define SPOOL_BUILDUP_FACTOR 0.010525
+//#define SPOOL_BUILDUP_FACTOR 0.006
 
 // Measure the total length of lines on each spool when printer is in origo
 // Two A-lines, each of length 150.0 gives total length 300.0
-const float LINE_ON_SPOOL_ORIGO[DIRS] = {4920.0,5200.0,5600.0,6000.0};
+const float LINE_ON_SPOOL_ORIGO[DIRS] = {7240.0,6260.0,6900.0,18000.0};
 //const float LINE_ON_SPOOL_ORIGO[DIRS] = {2460.0,2600.0,2800.0,3000.0};
 //const float LINE_ON_SPOOL_ORIGO[DIRS] = {0.0,0.0,0.0,0.0};
 
