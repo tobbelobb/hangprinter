@@ -557,12 +557,12 @@ void plan_buffer_line(const float* coming_from_delta, const float* going_to_delt
   static const float k0a = 2*steps_per_unit_times_r[A_AXIS]/k2a;
   static const float k0b = 2*steps_per_unit_times_r[B_AXIS]/k2b;
   static const float k0c = 2*steps_per_unit_times_r[C_AXIS]/k2c;
-  static const float k0d = 2*steps_per_unit_times_r[D_AXIS]/k2c;
+  static const float k0d = 2*steps_per_unit_times_r[D_AXIS]/k2d;
 
-  static const float k1a = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[A_AXIS]*(float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS] + SPOOL_RADIUS2;
-  static const float k1b = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[B_AXIS]*(float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS] + SPOOL_RADIUS2;
-  static const float k1c = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[C_AXIS]*(float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS] + SPOOL_RADIUS2;
-  static const float k1d = SPOOL_BUILDUP_FACTOR*LINE_ON_SPOOL_ORIGO[D_AXIS]*(float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS] + SPOOL_RADIUS2;
+  static const float k1a = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + SPOOL_RADIUS2;
+  static const float k1b = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + SPOOL_RADIUS2;
+  static const float k1c = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + SPOOL_RADIUS2;
+  static const float k1d = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + SPOOL_RADIUS2;
 
   // If the buffer is full: good! That means we are well ahead of the robot.
   // Rest here until there is room in the buffer.
