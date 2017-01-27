@@ -602,10 +602,17 @@ void plan_buffer_line(const float* delta, const float &e,
   // To find target position of stepper motor:
   // Integrate steps per mm function a/sqrt(c0 + c1*x) from 0 to delta[ABCD_AXIS]
   long target[NUM_AXIS];
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
   target[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*delta[A_AXIS]) - sqrtk1a));
   target[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*delta[B_AXIS]) - sqrtk1b));
   target[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*delta[C_AXIS]) - sqrtk1c));
   target[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*delta[D_AXIS]) - sqrtk1d));
+#else
+  target[A_AXIS] = lround(delta[A_AXIS]*axis_steps_per_unit[A_AXIS]);
+  target[B_AXIS] = lround(delta[B_AXIS]*axis_steps_per_unit[B_AXIS]);
+  target[C_AXIS] = lround(delta[C_AXIS]*axis_steps_per_unit[C_AXIS]);
+  target[D_AXIS] = lround(delta[D_AXIS]*axis_steps_per_unit[D_AXIS]);
+#endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   target[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
 
   // Number of steps for each axis
@@ -662,16 +669,6 @@ void plan_buffer_line(const float* delta, const float &e,
   delta_mm[B_AXIS] = (target[B_AXIS]-position[B_AXIS])/axis_steps_per_unit[B_AXIS];
   delta_mm[C_AXIS] = (target[C_AXIS]-position[C_AXIS])/axis_steps_per_unit[C_AXIS];
   delta_mm[D_AXIS] = (target[D_AXIS]-position[D_AXIS])/axis_steps_per_unit[D_AXIS];
-  //SERIAL_ECHO("delta_mm[A_AXIS]: ");
-  //SERIAL_ECHOLN(delta_mm[A_AXIS]);
-  //SERIAL_ECHO("delta_mm[B_AXIS]: ");
-  //SERIAL_ECHOLN(delta_mm[B_AXIS]);
-  //SERIAL_ECHO("delta_mm[C_AXIS]: ");
-  //SERIAL_ECHOLN(delta_mm[C_AXIS]);
-  //SERIAL_ECHO("delta_mm[D_AXIS]: ");
-  //SERIAL_ECHOLN(delta_mm[D_AXIS]);
-  //SERIAL_ECHO("delta_mm[E_AXIS]: ");
-  //SERIAL_ECHOLN(delta_mm[E_AXIS]);
   delta_mm[E_AXIS] =((target[E_AXIS]-position[E_AXIS])/axis_steps_per_unit[E_AXIS])*volumetric_multiplier[active_extruder]*extrudemultiply/100.0;
 
   if (block->steps_a <=dropsegments && block->steps_b <=dropsegments && block->steps_c <=dropsegments && block->steps_d <=dropsegments ){
