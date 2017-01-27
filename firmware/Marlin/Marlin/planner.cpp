@@ -66,6 +66,8 @@ float max_feedrate[NUM_AXIS]; // set the max speeds
 
 
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+float spool_buildup_factor = DEFAULT_SPOOL_BUILDUP_FACTOR;
+
 // steps per mm calculations
 const float steps_per_unit_times_r[DIRS] = {(float)MECHANICAL_ADVANTAGE_A*STEPS_PER_SPOOL_RADIAN[A_AXIS],
                                             (float)MECHANICAL_ADVANTAGE_B*STEPS_PER_SPOOL_RADIAN[B_AXIS],
@@ -77,18 +79,18 @@ const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*POINTS_A,
                                             MECHANICAL_ADVANTAGE_C*POINTS_C,
                                             MECHANICAL_ADVANTAGE_D*POINTS_D};
 
-const float k2a = -(float)nr_of_lines_in_direction[A_AXIS]*SPOOL_BUILDUP_FACTOR;
-const float k2b = -(float)nr_of_lines_in_direction[B_AXIS]*SPOOL_BUILDUP_FACTOR;
-const float k2c = -(float)nr_of_lines_in_direction[C_AXIS]*SPOOL_BUILDUP_FACTOR;
-const float k2d = -(float)nr_of_lines_in_direction[D_AXIS]*SPOOL_BUILDUP_FACTOR;
+const float k2a = -(float)nr_of_lines_in_direction[A_AXIS]*spool_buildup_factor;
+const float k2b = -(float)nr_of_lines_in_direction[B_AXIS]*spool_buildup_factor;
+const float k2c = -(float)nr_of_lines_in_direction[C_AXIS]*spool_buildup_factor;
+const float k2d = -(float)nr_of_lines_in_direction[D_AXIS]*spool_buildup_factor;
 const float k0a = 2*steps_per_unit_times_r[A_AXIS]/k2a;
 const float k0b = 2*steps_per_unit_times_r[B_AXIS]/k2b;
 const float k0c = 2*steps_per_unit_times_r[C_AXIS]/k2c;
 const float k0d = 2*steps_per_unit_times_r[D_AXIS]/k2d;
-const float k1a = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + SPOOL_RADIUS2;
-const float k1b = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + SPOOL_RADIUS2;
-const float k1c = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + SPOOL_RADIUS2;
-const float k1d = SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + SPOOL_RADIUS2;
+const float k1a = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + SPOOL_RADIUS2;
+const float k1b = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + SPOOL_RADIUS2;
+const float k1c = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + SPOOL_RADIUS2;
+const float k1d = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + SPOOL_RADIUS2;
 const float sqrtk1a = sqrt(k1a);
 const float sqrtk1b = sqrt(k1b);
 const float sqrtk1c = sqrt(k1c);
@@ -184,19 +186,19 @@ static int8_t prev_block_index(int8_t block_index) {
 void update_axis_steps_per_unit(const float* coming_from_delta, const float* point_of_correct_steps_per_unit){  // d is absolute ABCD distances to anchors
   // Divide by new radius to find new steps/mm
   axis_steps_per_unit[A_AXIS] =
-    steps_per_unit_times_r[A_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - point_of_correct_steps_per_unit[A_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - point_of_correct_steps_per_unit[A_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[B_AXIS] =
-    steps_per_unit_times_r[B_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - point_of_correct_steps_per_unit[B_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - point_of_correct_steps_per_unit[B_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[C_AXIS] =
-    steps_per_unit_times_r[C_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - point_of_correct_steps_per_unit[C_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - point_of_correct_steps_per_unit[C_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[D_AXIS] =
-    steps_per_unit_times_r[D_AXIS]/sqrt(SPOOL_BUILDUP_FACTOR*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - point_of_correct_steps_per_unit[D_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - point_of_correct_steps_per_unit[D_AXIS])) + SPOOL_RADIUS2);
 
   /*
   SERIAL_ECHO("steps_per_unit_times_r[D_AXIS]: ");
   SERIAL_ECHOLN(steps_per_unit_times_r[D_AXIS]);
-  SERIAL_ECHO("SPOOL_BUILDUP_FACTOR: ");
-  SERIAL_ECHOLN(SPOOL_BUILDUP_FACTOR);
+  SERIAL_ECHO("spool_buildup_factor: ");
+  SERIAL_ECHOLN(spool_buildup_factor);
   SERIAL_ECHO("LINE_ON_SPOOL_ORIGO[D_AXIS]: ");
   SERIAL_ECHOLN(LINE_ON_SPOOL_ORIGO[D_AXIS]);
   SERIAL_ECHO("(float)nr_of_lines_in_direction[D_AXIS]: ");

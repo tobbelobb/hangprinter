@@ -55,6 +55,10 @@ typedef struct {
   unsigned char count_it;
 } block_t;
 
+#ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+extern float spool_buildup_factor;
+#endif
+
 extern float axis_steps_per_unit[NUM_AXIS];
 extern void update_axis_steps_per_unit(const float* coming_from_delta, const float* point_of_correct_steps_per_unit);
 

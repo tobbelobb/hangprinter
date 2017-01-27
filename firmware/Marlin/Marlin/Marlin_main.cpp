@@ -187,7 +187,7 @@ float anchor_C_y = ANCHOR_C_Y;
 float anchor_C_z = ANCHOR_C_Z;
 float anchor_D_z = ANCHOR_D_Z;
 float delta_segments_per_second = DELTA_SEGMENTS_PER_SECOND;
-float delta[DIRS] = { 0 }; // TODO: should this be static?
+float delta[DIRS] = { 0 };
 
 #ifdef SCARA
 float axis_scaling[3] = { 1, 1, 1 };    // Build size scaling, default to 1
@@ -743,8 +743,6 @@ void process_commands(){
                   delta[C_AXIS],
                   delta[D_AXIS],
                   destination[E_CARTH]);
-              if(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-                update_axis_steps_per_unit(delta, delta);
             }
           }
         }
@@ -1119,6 +1117,11 @@ void process_commands(){
           break;
 
           case 92: // M92
+#ifdef HANGPRINTER && EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+          if(code_seen('S')){
+            spool_buildup_factor = code_value();
+          }
+#else
           for(int8_t i=0; i < NUM_AXIS; i++){
             if(code_seen(axis_codes[i])){
               if(i == E_AXIS){ // E
@@ -1139,8 +1142,10 @@ void process_commands(){
               }
             }
           }
+#endif // HANGPRINTER && EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+          // Update step-count, keep old carth-position
           calculate_delta(current_position, delta);
-          plan_set_position(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS], destination[E_CARTH]); // Update step-count, keep old carth-position
+          plan_set_position(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS], destination[E_CARTH]);
           break;
           case 114: // M114
           SERIAL_ECHOLN("Current position in Carthesian system:");

@@ -431,8 +431,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //===========================================================================
 //============================= Steps per unit ==============================
 //===========================================================================
-// If you want the experimental line buildup compensation feature, set this to 1.
-#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE 1
+// If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
+#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 
 // Mechanical advantage in each direction needed for dynamic step/mm calculations
 // One pulley along each line gives halved forces and doubled distances
@@ -450,7 +450,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // This comes from spool height and line diameter.
 // diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
 // 0.39*0.39/(pi*4.6) = 0.010525
-#define SPOOL_BUILDUP_FACTOR 0.010525
+#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.010525
 //#define SPOOL_BUILDUP_FACTOR 0.006
 
 // Measure the total length of lines on each spool when printer is in origo
