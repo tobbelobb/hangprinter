@@ -75,7 +75,7 @@
 // M42  - Change pin status via gcode Use M42 Px Sy to set pin x to value y, when omitting Px the onboard led will be used.
 // M82  - Set E codes absolute (default)
 // M83  - Set E codes relative while in Absolute Coordinates (G90) mode
-// M92  - Set axis_steps_per_unit - same syntax as G92
+// M92  - Set axis_steps_per_unit or spool_buildup_factor
 // M104 - Set extruder target temp
 // M105 - Read current temp
 // M106 - Fan on
@@ -1092,16 +1092,12 @@ void process_commands(){
           SERIAL_PROTOCOLPGM("\n Absolute line lengths:\n");
           SERIAL_PROTOCOLPGM(" A:");
           SERIAL_PROTOCOL(delta[A_AXIS]);
-          //SERIAL_PROTOCOL(float(st_get_position(A_AXIS))/axis_steps_per_unit[A_AXIS]);
           SERIAL_PROTOCOLPGM(" B:");
           SERIAL_PROTOCOL(delta[B_AXIS]);
-          //SERIAL_PROTOCOL(float(st_get_position(B_AXIS))/axis_steps_per_unit[B_AXIS]);
           SERIAL_PROTOCOLPGM(" C:");
           SERIAL_PROTOCOL(delta[C_AXIS]);
-          //SERIAL_PROTOCOL(float(st_get_position(C_AXIS))/axis_steps_per_unit[C_AXIS]);
           SERIAL_PROTOCOLPGM(" D:");
           SERIAL_PROTOCOL(delta[D_AXIS]);
-          //SERIAL_PROTOCOL(float(st_get_position(D_AXIS))/axis_steps_per_unit[D_AXIS]);
 
           SERIAL_PROTOCOLLN("");
           break;

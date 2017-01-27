@@ -108,6 +108,8 @@ float max_e_jerk;
 float mintravelfeedrate;
 unsigned long axis_steps_per_sqr_second[NUM_AXIS];
 
+float axis_steps_per_unit[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
+
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 long position[NUM_AXIS] = {lround(k0a*(sqrt(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a)),
                            lround(k0b*(sqrt(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b)),
@@ -121,7 +123,6 @@ long position[NUM_AXIS] = {INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS]
                            INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS], 0};
 #endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 
-float axis_steps_per_unit[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
 static float previous_speed[NUM_AXIS]; // Speed of previous path line segment
 static float previous_nominal_speed; // Nominal speed of previous path line segment
 
@@ -410,6 +411,8 @@ void plan_init() {
 // Why is this done again? Seems it does same as line 98...
 // Not sure how to treat this with dynamic steps/mm. May it be initialized to zero? (done above)
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+  // axis_steps_per_unit is used for acceleration planning
+  calculate_axis_steps_per_unit(INITIAL_DISTANCES);
   position[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a));
   position[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b));
   position[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c));
@@ -824,8 +827,26 @@ void set_extrude_min_temp(float temp)
 }
 #endif
 
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+void calculate_axis_steps_per_unit(const float* delta){
+  // Divide by new radius to find new steps/mm
+  axis_steps_per_unit[A_AXIS] =
+    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - delta[A_AXIS])) + SPOOL_RADIUS2);
+  axis_steps_per_unit[B_AXIS] =
+    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - delta[B_AXIS])) + SPOOL_RADIUS2);
+  axis_steps_per_unit[C_AXIS] =
+    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - delta[C_AXIS])) + SPOOL_RADIUS2);
+  axis_steps_per_unit[D_AXIS] =
+    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - delta[D_AXIS])) + SPOOL_RADIUS2);
+}
+#endif
+
+
 // Calculate the steps/s^2 acceleration rates, based on the mm/s^s
 void reset_acceleration_rates(){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  calculate_axis_steps_per_unit(delta);
+#endif
   for(int8_t i=0; i < NUM_AXIS; i++)
     axis_steps_per_sqr_second[i] = max_acceleration_units_per_sq_second[i] * axis_steps_per_unit[i];
 }

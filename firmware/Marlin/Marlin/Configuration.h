@@ -451,7 +451,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
 // 0.39*0.39/(pi*4.6) = 0.010525
 #define DEFAULT_SPOOL_BUILDUP_FACTOR 0.010525
-//#define SPOOL_BUILDUP_FACTOR 0.006
 
 // Measure the total length of lines on each spool when printer is in origo
 // Two A-lines, each of length 150.0 gives total length 300.0
@@ -469,9 +468,13 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {7240.0,6260.0,6900.0,18000.0};
 // ==> Steps per spool radian = 1600/(2*pi*9/43) = 1216.651
 const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
 
-// The A, B, C and D values no longer used. Dynamic values used instead.
-//#define DEFAULT_AXIS_STEPS_PER_UNIT   {73.747, 73.747, 73.747, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
+// If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
+// then constant ABCD values are calculated on the fly and used only used to calculate accelerations
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, 134.0}
+#else
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {36.87, 36.87, 36.87, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
+#endif
 
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {2000,2000,2000,2000,10000}    // X, Y, Z, E maximum start speed for accelerated moves.

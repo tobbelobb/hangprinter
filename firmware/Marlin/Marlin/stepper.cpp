@@ -79,13 +79,18 @@ static bool old_z_min_endstop=false;
 static bool old_z_max_endstop=false;
 
 static bool check_endstops = true;
+#ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+volatile long count_position[NUM_AXIS] = { lround(k0a*(sqrt(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a)),
+                                           lround(k0b*(sqrt(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b)),
+                                           lround(k0c*(sqrt(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c)),
+                                           lround(k0d*(sqrt(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d)), 0 }; // Assume we start in origo.
+#else
 float tmp_def_ax_st_p_u[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
-// Zeroed because it doesn't take dynamic steps/mm into account
 volatile long count_position[NUM_AXIS] = { INITIAL_DISTANCES[A_AXIS]*tmp_def_ax_st_p_u[A_AXIS],
                                            INITIAL_DISTANCES[B_AXIS]*tmp_def_ax_st_p_u[B_AXIS],
                                            INITIAL_DISTANCES[C_AXIS]*tmp_def_ax_st_p_u[C_AXIS],
                                            INITIAL_DISTANCES[D_AXIS]*tmp_def_ax_st_p_u[D_AXIS], 0 }; // Assume we start in origo.
-//volatile long count_position[NUM_AXIS] = {0,0,0,0,0};
+#endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 volatile signed char count_direction[NUM_AXIS] = { 1, 1, 1, 1, 1};
 
 //===========================================================================
