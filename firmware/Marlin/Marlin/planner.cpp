@@ -828,10 +828,17 @@ void plan_buffer_line(const float* delta, const float &e,
 
 void plan_set_position(const float &a, const float &b, const float &c, const float &d, const float &e)
 {
+#ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+  position[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*a) - sqrtk1a));
+  position[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*b) - sqrtk1b));
+  position[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*c) - sqrtk1c));
+  position[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*d) - sqrtk1d));
+#else
   position[A_AXIS] = lround(a*axis_steps_per_unit[A_AXIS]);
   position[B_AXIS] = lround(b*axis_steps_per_unit[B_AXIS]);
   position[C_AXIS] = lround(c*axis_steps_per_unit[C_AXIS]);
   position[D_AXIS] = lround(d*axis_steps_per_unit[D_AXIS]);
+#endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   position[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
   st_set_position(position[A_AXIS], position[B_AXIS], position[C_AXIS], position[D_AXIS], position[E_AXIS]);
   previous_nominal_speed = 0.0; // Resets planner junction speeds. Assumes start from rest.
