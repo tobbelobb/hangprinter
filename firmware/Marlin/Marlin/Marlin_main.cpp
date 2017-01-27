@@ -718,7 +718,7 @@ void process_commands(){
             feedrate = next_feedrate;
           }
         }
-        plan_buffer_line(delta, tmp_delta,
+        plan_buffer_line(tmp_delta,
                          destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
       case 90: // G90
@@ -1686,20 +1686,13 @@ void process_commands(){
     // SERIAL_ECHOPGM(" seconds="); SERIAL_ECHO(seconds);
     // SERIAL_ECHOPGM(" steps="); SERIAL_ECHOLN(steps);
 
-    // TODO: Make compensation optional again...
-    // Start the pointerdance to avoid having to copy data
-    float old_delta[DIRS];
-
     for (int s = 1; s <= steps; s++){ // Here lines are split into segments. tobben 20. may 2015
       float fraction = float(s) / float(steps);
       for(int8_t i=0; i < 4; i++){
         destination[i] = current_position[i] + difference[i] * fraction;
       }
-
-      memcpy(old_delta, delta, sizeof(delta));
       calculate_delta(destination, delta); // delta will be in absolute hangprinter abcde coords
-
-      plan_buffer_line(old_delta, delta, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
+      plan_buffer_line(delta, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
     }
     // Correct steps per unit after move
     // During series of G1 moves, this will never have effect
