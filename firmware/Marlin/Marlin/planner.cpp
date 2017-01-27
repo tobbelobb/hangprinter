@@ -179,48 +179,6 @@ static int8_t prev_block_index(int8_t block_index) {
 //=============================functions         ============================
 //===========================================================================
 
-// TODO: Move dynamic line length stuff to more sensible file/line
-// Destructively update ABCD values of the array axis_steps_per_unit
-//float axis_steps_per_unit[DIRS] = {0};
-// Prefer huge duplicated object code rather than function calls and iteration variables
-void update_axis_steps_per_unit(const float* coming_from_delta, const float* point_of_correct_steps_per_unit){  // d is absolute ABCD distances to anchors
-  // Divide by new radius to find new steps/mm
-  axis_steps_per_unit[A_AXIS] =
-    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - point_of_correct_steps_per_unit[A_AXIS])) + SPOOL_RADIUS2);
-  axis_steps_per_unit[B_AXIS] =
-    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - point_of_correct_steps_per_unit[B_AXIS])) + SPOOL_RADIUS2);
-  axis_steps_per_unit[C_AXIS] =
-    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - point_of_correct_steps_per_unit[C_AXIS])) + SPOOL_RADIUS2);
-  axis_steps_per_unit[D_AXIS] =
-    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - point_of_correct_steps_per_unit[D_AXIS])) + SPOOL_RADIUS2);
-
-  /*
-  SERIAL_ECHO("steps_per_unit_times_r[D_AXIS]: ");
-  SERIAL_ECHOLN(steps_per_unit_times_r[D_AXIS]);
-  SERIAL_ECHO("spool_buildup_factor: ");
-  SERIAL_ECHOLN(spool_buildup_factor);
-  SERIAL_ECHO("LINE_ON_SPOOL_ORIGO[D_AXIS]: ");
-  SERIAL_ECHOLN(LINE_ON_SPOOL_ORIGO[D_AXIS]);
-  SERIAL_ECHO("(float)nr_of_lines_in_direction[D_AXIS]: ");
-  SERIAL_ECHOLN((float)nr_of_lines_in_direction[D_AXIS]);
-  SERIAL_ECHO("INITIAL_DISTANCES[D_AXIS]: ");
-  SERIAL_ECHOLN(INITIAL_DISTANCES[D_AXIS]);
-  SERIAL_ECHO("point_of_correct_steps_per_unit[D_AXIS]: ");
-  SERIAL_ECHOLN(point_of_correct_steps_per_unit[D_AXIS]);
-  SERIAL_ECHO("SPOOL_RADIUS2: ");
-  SERIAL_ECHOLN(SPOOL_RADIUS2);
-  SERIAL_ECHO("axis_steps_per_unit[D_AXIS]: ");
-  SERIAL_ECHOLN(axis_steps_per_unit[D_AXIS]);
-  */
-
-  // Uglyhack test. Can we fool printer to think it got here with the new steps per unit?
-  position[A_AXIS] = lround(coming_from_delta[A_AXIS]*axis_steps_per_unit[A_AXIS]);
-  position[B_AXIS] = lround(coming_from_delta[B_AXIS]*axis_steps_per_unit[B_AXIS]);
-  position[C_AXIS] = lround(coming_from_delta[C_AXIS]*axis_steps_per_unit[C_AXIS]);
-  position[D_AXIS] = lround(coming_from_delta[D_AXIS]*axis_steps_per_unit[D_AXIS]);
-  st_set_position(position[A_AXIS], position[B_AXIS], position[C_AXIS], position[D_AXIS], position[E_AXIS]);
-}
-
 // Calculates the distance (not time) it takes to accelerate from initial_rate to target_rate using the
 // given acceleration:
 FORCE_INLINE float estimate_acceleration_distance(float initial_rate, float target_rate, float acceleration)

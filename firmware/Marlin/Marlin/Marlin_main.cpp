@@ -1700,9 +1700,6 @@ void process_commands(){
       calculate_delta(destination, delta); // delta will be in absolute hangprinter abcde coords
       plan_buffer_line(delta, prev_delta, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
     }
-    // Correct steps per unit after move
-    // During series of G1 moves, this will never have effect
-    //update_axis_steps_per_unit(delta);
 
     for(int8_t i=0; i < 4; i++){
       current_position[i] = destination[i];
