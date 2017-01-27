@@ -70,13 +70,13 @@ const float INITIAL_DISTANCES[DIRS] = {sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*A
                                        sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z),
                                        ANCHOR_D_Z};
 
-// Add a new linear movement to the buffer. x, y and z is the signed, absolute target position in
+// Add a new linear movement to the buffer. delta contains the absolute target position in
 // millimeters. Feed rate specifies the speed of the motion.
 void plan_buffer_line(const float* delta, const float* prev_delta, const float &e,
                      float feed_rate, const uint8_t &extruder, unsigned char count_it);
 
 // Set position. Used for G92 instructions.
-void plan_set_position(const float &a, const float &b, const float &c, const float &d, const float &e);
+void plan_set_position(const float* delta, const float &e);
 
 void plan_set_e_position(const float &e);
 

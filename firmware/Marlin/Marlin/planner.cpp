@@ -783,18 +783,18 @@ void plan_buffer_line(const float* delta, const float* prev_delta, const float &
   st_wake_up();
 }
 
-void plan_set_position(const float &a, const float &b, const float &c, const float &d, const float &e)
+void plan_set_position(const float* delta, const float &e)
 {
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
-  position[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*a) - sqrtk1a));
-  position[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*b) - sqrtk1b));
-  position[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*c) - sqrtk1c));
-  position[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*d) - sqrtk1d));
+  position[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*delta[A_AXIS]) - sqrtk1a));
+  position[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*delta[B_AXIS]) - sqrtk1b));
+  position[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*delta[C_AXIS]) - sqrtk1c));
+  position[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*delta[D_AXIS]) - sqrtk1d));
 #else
-  position[A_AXIS] = lround(a*axis_steps_per_unit[A_AXIS]);
-  position[B_AXIS] = lround(b*axis_steps_per_unit[B_AXIS]);
-  position[C_AXIS] = lround(c*axis_steps_per_unit[C_AXIS]);
-  position[D_AXIS] = lround(d*axis_steps_per_unit[D_AXIS]);
+  position[A_AXIS] = lround(delta[A_AXIS]*axis_steps_per_unit[A_AXIS]);
+  position[B_AXIS] = lround(delta[B_AXIS]*axis_steps_per_unit[B_AXIS]);
+  position[C_AXIS] = lround(delta[C_AXIS]*axis_steps_per_unit[C_AXIS]);
+  position[D_AXIS] = lround(delta[D_AXIS]*axis_steps_per_unit[D_AXIS]);
 #endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   position[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
   st_set_position(position[A_AXIS], position[B_AXIS], position[C_AXIS], position[D_AXIS], position[E_AXIS]);

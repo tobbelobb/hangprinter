@@ -591,82 +591,8 @@ static void axis_is_at_home(int axis){
   max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
 }
 
-
-
-
-
 // TODO: Homing procedure goes here. tobben 8. sep 2015
 static void homeaxis(int axis) { }
-//#define HOMEAXIS_DO(LETTER) \
-//  ((LETTER##_MIN_PIN > -1 && LETTER##_HOME_DIR==-1) || (LETTER##_MAX_PIN > -1 && LETTER##_HOME_DIR==1))
-//
-//  if( axis==X_AXIS ? HOMEAXIS_DO(X) :
-//      axis==Y_AXIS ? HOMEAXIS_DO(Y) :
-//      axis==Z_AXIS ? HOMEAXIS_DO(Z) :
-//      0){
-//    int axis_home_dir = home_dir(axis);
-//
-//    current_position[axis] = 0;
-//    calculate_delta(current_position);
-//    plan_set_position(delta[A_AXIS],
-//                      delta[B_AXIS],
-//                      delta[C_AXIS],
-//                      delta[D_AXIS],
-//                      destination[E_CARTH]);
-//
-//    destination[axis] = 1.5 * max_length(axis) * axis_home_dir;
-//    feedrate = homing_feedrate[axis];
-//    plan_buffer_line(destination[X_AXIS],
-//                     destination[Y_AXIS],
-//                     destination[Z_AXIS],
-//                     destination[E_CARTH], feedrate/60, active_extruder);
-//    st_synchronize();
-//
-//    current_position[axis] = 0;
-//    calculate_delta(current_position);
-//    plan_set_position(delta[A_AXIS],
-//                      delta[B_AXIS],
-//                      delta[C_AXIS],
-//                      delta[D_AXIS],
-//                      destination[E_CARTH]);
-//
-//    destination[axis] = -home_retract_mm(axis) * axis_home_dir;
-//    plan_buffer_line(destination[X_AXIS],
-//                     destination[Y_AXIS],
-//                     destination[Z_AXIS],
-//                     destination[E_CARTH], feedrate/60, active_extruder);
-//    st_synchronize();
-//
-//    destination[axis] = 2*home_retract_mm(axis) * axis_home_dir;
-//    feedrate = homing_feedrate[axis]/10;
-//    plan_buffer_line(destination[X_AXIS],
-//                     destination[Y_AXIS],
-//                     destination[Z_AXIS],
-//                     destination[E_CARTH], feedrate/60, active_extruder);
-//    st_synchronize();
-//    // retrace by the amount specified in endstop_adj
-//    if(endstop_adj[axis] * axis_home_dir < 0){
-//      calculate_delta(current_position);
-//      plan_set_position(delta[A_AXIS],
-//                        delta[B_AXIS],
-//                        delta[C_AXIS],
-//                        delta[D_AXIS],
-//                        destination[E_CARTH]);
-//      destination[axis] = endstop_adj[axis];
-//      plan_buffer_line(destination[X_AXIS],
-//                       destination[Y_AXIS],
-//                       destination[Z_AXIS],
-//                       destination[E_CARTH], feedrate/60, active_extruder);
-//      st_synchronize();
-//    }
-//    axis_is_at_home(axis);
-//    destination[axis] = current_position[axis];
-//    feedrate = 0.0;
-//    endstops_hit_on_purpose();
-//    axis_known_position[axis] = true;
-//  }
-//}
-//#define HOMEAXIS(LETTER) homeaxis(LETTER##_AXIS)
 
 void refresh_cmd_timeout(void){
   previous_millis_cmd = millis();
@@ -737,11 +663,7 @@ void process_commands(){
             }else {
               current_position[i] = code_value();
               calculate_delta(current_position, delta);
-              plan_set_position(delta[A_AXIS],
-                  delta[B_AXIS],
-                  delta[C_AXIS],
-                  delta[D_AXIS],
-                  destination[E_CARTH]);
+              plan_set_position(delta, destination[E_CARTH]);
             }
           }
         }
@@ -1144,7 +1066,7 @@ void process_commands(){
 #endif // HANGPRINTER && EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
           // Update step-count, keep old carth-position
           calculate_delta(current_position, delta);
-          plan_set_position(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], delta[D_AXIS], destination[E_CARTH]);
+          plan_set_position(delta, destination[E_CARTH]);
           break;
           case 114: // M114
           SERIAL_ECHOLN("Current position in Carthesian system:");
