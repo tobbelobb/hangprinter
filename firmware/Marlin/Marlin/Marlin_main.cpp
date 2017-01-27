@@ -32,7 +32,6 @@
 #include "planner.h"
 #include "stepper.h"
 #include "temperature.h"
-#include "motion_control.h"
 #include "cardreader.h"
 #include "watchdog.h"
 #include "ConfigurationStore.h"
@@ -718,7 +717,7 @@ void process_commands(){
             feedrate = next_feedrate;
           }
         }
-        plan_buffer_line(tmp_delta,
+        plan_buffer_line(tmp_delta, delta,
                          destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
       case 90: // G90
@@ -736,7 +735,7 @@ void process_commands(){
               current_position[i] = code_value();
               plan_set_e_position(current_position[E_CARTH]);
             }else {
-              current_position[i] = code_value();//+add_homing[i]; mixture of carthesian and hp-coord arrays. tobben 10 sep 2015
+              current_position[i] = code_value();
               calculate_delta(current_position, delta);
               plan_set_position(delta[A_AXIS],
                   delta[B_AXIS],
@@ -1696,8 +1695,10 @@ void process_commands(){
       for(int8_t i=0; i < 4; i++){
         destination[i] = current_position[i] + difference[i] * fraction;
       }
+      float prev_delta[DIRS];
+      memcpy(prev_delta, delta, sizeof(delta));
       calculate_delta(destination, delta); // delta will be in absolute hangprinter abcde coords
-      plan_buffer_line(delta, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
+      plan_buffer_line(delta, prev_delta, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
     }
     // Correct steps per unit after move
     // During series of G1 moves, this will never have effect
@@ -1706,21 +1707,6 @@ void process_commands(){
     for(int8_t i=0; i < 4; i++){
       current_position[i] = destination[i];
     }
-  }
-
-  void prepare_arc_move(char isclockwise){
-    float r = hypot(offset[X_AXIS], offset[Y_AXIS]); // Compute arc radius for mc_arc
-
-    // Trace the arc
-    mc_arc(current_position, destination, offset, X_AXIS, Y_AXIS, Z_AXIS, feedrate*feedmultiply/60/100.0, r, isclockwise, active_extruder);
-
-    // As far as the parser is concerned, the position is now == target. In reality the
-    // motion control system might still be processing the action and the real tool position
-    // in any intermediate location.
-    for(int8_t i=0; i < 4; i++){
-      current_position[i] = destination[i];
-    }
-    previous_millis_cmd = millis();
   }
 
 #if defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1
@@ -1955,24 +1941,6 @@ void process_commands(){
 
 #if defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1
     controllerFan(); //Check if fan should be turned on to cool stepper drivers down
-#endif
-#ifdef EXTRUDER_RUNOUT_PREVENT
-    if( (millis() - previous_millis_cmd) >  EXTRUDER_RUNOUT_SECONDS*1000 )
-      if(degHotend(active_extruder)>EXTRUDER_RUNOUT_MINTEMP){
-        bool oldstatus=READ(E0_ENABLE_PIN);
-        enable_e0();
-        float oldepos=current_position[E_CARTH];
-        float oldedes=destination[E_CARTH];
-        plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS],
-            destination[E_CARTH]+EXTRUDER_RUNOUT_EXTRUDE*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS],
-            EXTRUDER_RUNOUT_SPEED/60.*EXTRUDER_RUNOUT_ESTEPS/axis_steps_per_unit[E_AXIS], active_extruder, true);
-        current_position[E_CARTH]=oldepos;
-        destination[E_CARTH]=oldedes;
-        plan_set_e_position(oldepos);
-        previous_millis_cmd=millis();
-        st_synchronize();
-        WRITE(E0_ENABLE_PIN,oldstatus);
-      }
 #endif
 #ifdef TEMP_STAT_LEDS
     handle_status_leds();

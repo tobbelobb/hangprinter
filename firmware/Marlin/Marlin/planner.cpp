@@ -573,7 +573,7 @@ float junction_deviation = 0.1;
 // Help, why does this comment contradict comments in planner.h?
 // I'm quite sure steps_a, _b, ... are absolute step count along each axis,
 // and that a, b, c, d are relative positions in mm that we plan on taking. tobben 9 sep 2015
-void plan_buffer_line(const float* delta, const float &e,
+void plan_buffer_line(const float* delta, const float* prev_delta, const float &e,
                      float feed_rate, const uint8_t &extruder, unsigned char count_it){
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
@@ -665,10 +665,10 @@ void plan_buffer_line(const float* delta, const float &e,
   }
 
   float delta_mm[NUM_AXIS];
-  delta_mm[A_AXIS] = (target[A_AXIS]-position[A_AXIS])/axis_steps_per_unit[A_AXIS];
-  delta_mm[B_AXIS] = (target[B_AXIS]-position[B_AXIS])/axis_steps_per_unit[B_AXIS];
-  delta_mm[C_AXIS] = (target[C_AXIS]-position[C_AXIS])/axis_steps_per_unit[C_AXIS];
-  delta_mm[D_AXIS] = (target[D_AXIS]-position[D_AXIS])/axis_steps_per_unit[D_AXIS];
+  delta_mm[A_AXIS] = delta[A_AXIS] - prev_delta[A_AXIS];
+  delta_mm[B_AXIS] = delta[B_AXIS] - prev_delta[B_AXIS];
+  delta_mm[C_AXIS] = delta[C_AXIS] - prev_delta[C_AXIS];
+  delta_mm[D_AXIS] = delta[D_AXIS] - prev_delta[D_AXIS];
   delta_mm[E_AXIS] =((target[E_AXIS]-position[E_AXIS])/axis_steps_per_unit[E_AXIS])*volumetric_multiplier[active_extruder]*extrudemultiply/100.0;
 
   if (block->steps_a <=dropsegments && block->steps_b <=dropsegments && block->steps_c <=dropsegments && block->steps_d <=dropsegments ){
