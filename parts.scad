@@ -461,8 +461,8 @@ module bottom_plate(){
 }
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
-rotate([0,0,15])
-bottom_plate();
+//rotate([0,0,15])
+//bottom_plate();
 
 //** bottom_plate end **//
 
@@ -945,22 +945,6 @@ module hobb_towers(v=[0,0,0], bearings_and_shaft=false){
 
 // TODO: reffles placement is quite arbitrary...
 //       should depend on Sstruder pressblock height everywhere it is placed out
-module sstruder_reffles(){
-  // Vertical grooves in block to press spring against
-  v_steps = 5;
-  v_step = 1/(v_steps+1);
-  for(i = [v_step:v_step:0.999])
-    translate([-0.5,i*(15) - 0.5,-0.5])
-      cube([1.2,1,Nema17_shaft_height-Nema17_cube_height+1]);
-
-  // Vertical grooves in block to press spring against
-  h_steps = 6;
-  h_step = 1/(h_steps+1);
-  for(i = [h_step:h_step:0.999])
-    translate([0.5,-1,i*(Nema17_shaft_height-Nema17_cube_height-1) - 0.5])
-      rotate([0,-90,0])
-      point_cube([1,15+2,2],90);
-}
 
 module sstruder_lever_move(){
   translate([Hobbed_insert_diameter + Extruder_filament_opening,
@@ -979,10 +963,7 @@ module sstruder_lever_move(){
 module sstruder_lever(hobb=true){
   thickness = 3; // Of material. Leave enough for stiffness
   width = Bearing_623_outer_diameter; // Of rectangular part of arms...
-  height = 2*Bearing_623_width
-           + Hobbed_insert_height
-           + Sstruder_gear_thickness
-           + 2*Sstruder_handle_height;
+  height = Sstruder_fork_width;
 
   module bearing_holder(l){
     difference(){
@@ -1022,33 +1003,14 @@ module sstruder_lever(hobb=true){
         cube([Bearing_623_outer_diameter/2
             + Sstruder_edge_around_bearing
             + Sstruder_hinge_length
-            + Sstruder_edge_around_bearing
-            + M3_diameter/2,
+            + Sstruder_edge_around_bearing,
             Sstruder_lever_thickness,
             height]);
       // Wall around hinge screw
       translate([Sstruder_hinge_length,Sstruder_fork_length,0]){
-        cylinder(d=M3_diameter+2*Sstruder_edge_around_bearing, h=height);
-        translate([-M3_diameter/2-Sstruder_edge_around_bearing,0,0])
-          cube([M3_diameter+2*Sstruder_edge_around_bearing,
-               (M3_diameter+2*Sstruder_edge_around_bearing)/2,
-               height]);
+        cylinder(d=M3_diameter+2*Sstruder_edge_around_bearing, h=height,$fn=30);
       }
     }
-    translate([Sstruder_hinge_length/2,
-               Sstruder_fork_length + Sstruder_thickness,
-               -Sstruder_thickness/2])
-      rotate([0,0,-90])
-      sstruder_reffles();
-    translate([height/2
-                - Sstruder_lever_thickness
-                - Bearing_623_outer_diameter/2
-                - Sstruder_edge_around_bearing
-                + Sstruder_lever_thickness,
-               Sstruder_fork_length + Sstruder_lever_thickness + 1,
-               height/2])
-      rotate([90,0,0])
-      cylinder(d=height-2*Sstruder_lever_thickness, h=Sstruder_lever_thickness+2);
     // Hole for hinge screw
     translate([Sstruder_hinge_length,Sstruder_fork_length,-1])
       cylinder(d=M3_diameter+0.3, h=height+2);
@@ -1063,7 +1025,7 @@ module sstruder_lever(hobb=true){
 module sstruder_plate(hobb=true){
   hot_end_fastening_h = 16;
   ring_hole_d = (Nema17_ring_diameter+4);
-  extra_width_for_lever = 10;
+  extra_width_for_lever = 7;
   // Interface between sstruder block and lever
   pressblock_edge = Nema17_cube_width/2 + extra_width_for_lever - Sstruder_pressblock_thickness;
   lever_edge = Hobbed_insert_diameter
@@ -1088,126 +1050,163 @@ module sstruder_plate(hobb=true){
 
   }
 
-  color(Printed_color_2)
-  difference(){
-    union(){
-      // Main flat block
-      translate([-Nema17_cube_width/2,
-                 -Sstruder_height+Nema17_cube_width/2, 0])
-        cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness]);
-      // Make space for pressblock
-      translate([-Nema17_cube_width/2,
-                 -Sstruder_height+Nema17_cube_width/2, 0])
-        cube([Nema17_cube_width + extra_width_for_lever,
+  module channel_for_hotend_tube(){
+    color(Printed_color_2)
+    difference(){
+      // Block for channel for tube
+      translate([-(Bowden_tube_diameter+4)/2 - E_motor_x_offset,
+          -(Sstruder_height-Nema17_cube_width/2 - hot_end_fastening_h-3),
+          0])
+        cube([Bowden_tube_diameter+4, // 2mm walls on each side of tube
+            Sstruder_height - Nema17_cube_width/2 - hot_end_fastening_h - 3, // Tube cavety length
+            Sstruder_filament_meets_shaft  + 2.5]);
+      // Make channel_cube lean towards filament
+      translate([0,-ring_hole_d/2,0])
+        rotate([45,0,0])
+        translate([-10,0,-30])
+        cube(30);
+      // But cut it before it reaches the hobb
+      translate([-15,-1,0.1])
+        cube(30);
+      // Cut around hobb 1
+      cylinder(d = Hobbed_insert_diameter + 0.6, h = 30, $fn=60);
+      // Cut around hobb 2
+      translate([Hobbed_insert_diameter + Extruder_filament_opening, 0, 0])
+        cylinder(d = Hobbed_insert_diameter + 0.6, h = 30, $fn=60);
+      // tube channel
+      translate([-E_motor_x_offset,1,Sstruder_filament_meets_shaft])
+        rotate([90,0,0])
+        teardrop(Bowden_tube_diameter/2, Sstruder_height);
+    }
+  }
+
+  module flat_block(){
+    // Main flat block
+    translate([-Nema17_cube_width/2,
+        -Sstruder_height+Nema17_cube_width/2, 0])
+      cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness]);
+    // support for hinge screw
+    translate([0,
+        -Sstruder_height + Nema17_cube_width/2,
+        0])
+      cube([Nema17_cube_width/2+2,
+          Sstruder_pressblock_height,
+          Sstruder_thickness]);
+  }
+
+  pressblock_cyl_radius = 3.1;
+  module pressblock_cyl(){
+    difference(){
+      cylinder(r=pressblock_cyl_radius, h=Sstruder_fork_width+4, $fn=40);
+      translate([0.5,0,-1])
+        M3_screw(Sstruder_fork_width+10,true);
+    }
+  }
+  //!pressblock_cyl();
+
+  pressblock_handlecyl_radius = 4.4;
+  scaling_factor = 1.5;
+  module pressblock_handle(){
+    difference(){
+      union(){
+        scale([scaling_factor,1,1])
+          cylinder(r=pressblock_handlecyl_radius, h=Sstruder_fork_width, $fn=45);
+        // Handle
+        translate([-Sstruder_thickness + pressblock_handlecyl_radius*scaling_factor,-Sstruder_hinge_length,Sstruder_fork_width*0.66]){
+          cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.34]);
+          rotate([0,0,21])
+          cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.34]);
+          rotate([-45,0,21])
+          translate([0,10,10])
+          difference(){
+            cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.43]);
+            translate([-1,Sstruder_hinge_length/sqrt(2),-1])
+            rotate([45,0,0])
+            translate([0,0,-Big/2])
+            cube(Big);
+          }
+        }
+      }
+      translate([pressblock_handlecyl_radius*(scaling_factor-1)/2,0,0])
+      translate([0,0,-1])
+      cylinder(r=pressblock_cyl_radius+0.1, h=Sstruder_fork_width+4,$fn=20);
+      translate([-10-pressblock_handlecyl_radius*scaling_factor+0.7, -pressblock_handlecyl_radius,-1])
+      cube([10,pressblock_handlecyl_radius*2,Sstruder_fork_width+2]);
+    }
+  }
+  //!rotate([180,0,0]) pressblock_handle();
+  //!pressblock_handle();
+
+  extra_width_for_pressblock = 12;
+  module pressblock(){
+    difference(){
+    // Flat area for pressblock
+    translate([-Nema17_cube_width/2,
+        - Sstruder_pressblock_height
+        + Bearing_623_outer_diameter/2
+        + Sstruder_edge_around_bearing,
+        0])
+        cube([Nema17_cube_width + extra_width_for_pressblock,
             Sstruder_pressblock_height,
             Sstruder_thickness]);
-      // Tower for securing hinge screw
-      translate([0 + lever_edge - Sstruder_lever_thickness,
-                 -3 -Sstruder_hinge_length - 3,0])
-        rotate([0,-5,0])
-        cube([8,10,34]);
-      translate([Nema17_cube_width/2
-                 + extra_width_for_lever - 15,
-                 -3 -Sstruder_hinge_length - 3,0])
-        cube([15,10,Nema17_shaft_height-Nema17_cube_height]);
-    }
-    // Dig out space for lever hinge
-    translate([-E_motor_x_offset +(E3d_mount_big_r*2+4)/2,
-               -3 -Sstruder_hinge_length, Sstruder_thickness]){
-      cube([14,10,22]);
-      translate([0, 0, 17+5])
-        rotate([45,0,0])
-        translate([0,0,-5])
-        cube([14,10,5]);
-    }
-
-    // Screw holes for spring holding screws
-    for(i=[-5:10:16])
-    translate([(pressblock_edge + lever_edge)/2,
-               -Sstruder_hinge_length-Sstruder_edge_around_bearing-M3_diameter/2 +i,
+      // For pressblock cyl
+    translate([Nema17_cube_width/2 + extra_width_for_pressblock/1.5,
+               0,
                -1])
-      cylinder(d=M3_diameter, h=28);
+      M3_screw(Sstruder_fork_width+Sstruder_thickness+2,true);
+    }
+  }
+
+  module e3d_mount(){
+    color(Printed_color_2)
+    difference(){
+      translate([-(E3d_mount_big_r*2+6)/2-E_motor_x_offset,
+        -Sstruder_height+Nema17_cube_width/2,
+        0]){
+      cube([E3d_mount_big_r*2+6,hot_end_fastening_h,Sstruder_filament_meets_shaft  + 7]);
+      }
+      translate([-E_motor_x_offset,
+          Sstruder_hot_end_bore_z,
+          Sstruder_filament_meets_shaft])
+        rotate([-90,0,0])
+        rotate([0,0,180])
+        e3d_v6_mount_bore(10);
+        //hinge_digger();
+    }
+  }
+
+  difference(){
+    union(){
+      color(Printed_color_2){
+        flat_block();
+        pressblock();
+      }
+    }
     // Screw holes for motor
     translate([0,0,-1])
       Nema17_screw_holes(M3_diameter, Sstruder_thickness+2);
     // Nema17 ring
     translate([0,0,-1])
-      cylinder(d=ring_hole_d, h=Sstruder_thickness+1.01);
+      cylinder(d=ring_hole_d, h=Sstruder_thickness+2);
     // Hole for hinge screw. This must only be moved in perfect sync with lever hinge module...
     translate([lever_edge - Sstruder_lever_thickness,-Sstruder_hinge_length,-1])
       cylinder(d=M3_diameter+0.5, h = 38);
-    hinge_digger();
+    //hinge_digger();
   }
-
-  // Block to press springs against
-  // This is the interface between sstruder and sstruder_lever modules
-  color(Printed_color_2)
-  translate([Nema17_cube_width/2
-              + extra_width_for_lever
-              - Sstruder_pressblock_thickness, // On edge of main block
-            -Sstruder_hinge_length
-              - Sstruder_edge_around_bearing
-              - M3_diameter/2,
-            1])
-    difference(){
-      // Sstruder pressblock
-      cube([Sstruder_pressblock_thickness,
-            Sstruder_pressblock_height,
-            Nema17_shaft_height-Nema17_cube_height-1]);
-      translate([0,3,0])
-        sstruder_reffles();
-    }
-
-  // Make channel block lean in
-  color(Printed_color_2)
-  difference(){
-    // Block for channel for tube
-    translate([-(Bowden_tube_diameter+4)/2 - E_motor_x_offset,
-        -(Sstruder_height-Nema17_cube_width/2 - hot_end_fastening_h-3),
-        0])
-      cube([Bowden_tube_diameter+4, // 2mm walls on each side of tube
-          Sstruder_height - Nema17_cube_width/2 - hot_end_fastening_h - 3, // Tube cavety length
-          Sstruder_filament_meets_shaft  + 2.5]);
-    // Make channel_cube lean towards filament
-    translate([0,-ring_hole_d/2,0])
-      rotate([45,0,0])
-      translate([-10,0,-30])
-      cube(30);
-    // But cut it before it reaches the hobb
-    translate([-15,-1,0.1])
-      cube(30);
-    // Cut around hobb 1
-    cylinder(d = Hobbed_insert_diameter + 0.6, h = 30, $fn=60);
-    // Cut around hobb 2
-    translate([Hobbed_insert_diameter + Extruder_filament_opening, 0, 0])
-      cylinder(d = Hobbed_insert_diameter + 0.6, h = 30, $fn=60);
-    // tube channel
-    translate([-E_motor_x_offset,1,Sstruder_filament_meets_shaft])
-      rotate([90,0,0])
-      teardrop(Bowden_tube_diameter/2, Sstruder_height);
-  }
-
-  color(Printed_color_2)
-  difference(){
-    translate([-(E3d_mount_big_r*2+4)/2-E_motor_x_offset,
-      -Sstruder_height+Nema17_cube_width/2,
-      0]){
-    cube([E3d_mount_big_r*2+4,hot_end_fastening_h,Sstruder_filament_meets_shaft  + 7]);
-    }
-    translate([-E_motor_x_offset,
-        Sstruder_hot_end_bore_z,
-        Sstruder_filament_meets_shaft])
-      rotate([-90,0,0])
-      rotate([0,0,180])
-      e3d_v6_mount_bore(10);
-
-      hinge_digger();
-  }
-
+  channel_for_hotend_tube();
+  e3d_mount();
 
   if(hobb){
     translate([0,0,-Bearing_623_width])
     hobb_towers([0,0,Sstruder_filament_meets_shaft - Hobbed_insert_height/2]);
+
+    translate([Nema17_cube_width/2 + extra_width_for_pressblock/1.5 -0.5,
+               0,
+               Sstruder_thickness]){
+      pressblock_cyl();
+      translate([-pressblock_handlecyl_radius*(scaling_factor-1)/2,0,0])
+      color("blue") pressblock_handle();
+    }
   }
 }
 //sstruder_plate(false);
@@ -1223,7 +1222,9 @@ module sstruder(hobb=false){
   //  Nema17();
 }
 //sstruder();
-//sstruder(true);
+sstruder(true);
+//rotate([-90,0,0])
+//sstruder_lever(false);
 
 module bearing_housing(){
   walls = 1.5;
