@@ -270,11 +270,58 @@ module sandwich_gear(worm=false){
 module snelle(){
   difference(){
     sandwich();
-    translate([0,0,Snelle_height])
+    translate([0,0,Snelle_height-0.01])
       cylinder(r=Big, h=Big);
   }
 }
 //snelle();
+
+module snelle_line_buildup_visualization(){
+  module snelle(){
+    difference(){
+      color(Printed_color_2)
+      rotate([0,0,-103])
+      snelle();
+      translate([0,0,-1])
+        cylinder(r=Big, h=1.7);
+    }
+  }
+  module rectangular_torus(){
+    color("gold")
+    difference(){
+      cylinder(r=Snelle_radius+3, h=Snelle_height-1,$fn=300);
+      translate([0,0,-1])
+        cylinder(r=Snelle_radius, h=Snelle_height+2,$fn=300);
+    }
+  }
+  module line(){
+    translate([Snelle_radius+3,0,Snelle_height/2])
+      rotate([90,0,0])
+      cylinder(r=0.7, h=150);
+  }
+  module letters(){
+    translate([0,0,Snelle_height]){
+      color("white")
+        translate([0,-2.5,0])
+        cube([Snelle_radius+3, 5, 0.2]);
+      color("black")
+      translate([Snelle_radius/2,-2,0])
+      text("R", font="Times New Roman:style=Italic", size=4);
+
+      rotate([0,0,45]){
+      color("white")
+        translate([0,-2.5,0])
+        cube([Snelle_radius, 5, 0.2]);
+      color("black")
+      translate([Snelle_radius/2,-2,0])
+      text("r", font="Times New Roman:style=Italic", size=4);
+      }
+    }
+  }
+  rectangular_torus();
+  letters();
+}
+//snelle_line_buildup_visualization();
 
 module motor_gear(height = Motor_protruding_shaft_length, letter){
   swgh  = Sandwich_gear_height  - 0.4;  // allow some space for easier printing
@@ -571,7 +618,7 @@ module worm(step=0.2, with_details=true){
 // and we want to push gear _down_ towards bottom plate
 // to avoid pushing disc up onto the other sandwich snelles and gears
 //mirror([1,0,0])
-//worm();
+//worm(step=0.06);
 
 // ang is angle of worm plate, not worm itself
 module placed_worm(ang = 0){
