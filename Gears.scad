@@ -408,7 +408,7 @@ module worm_gear(angle=Worm_largest_angle){
   //echo((PI/180)*Worm_disc_radius);
   linear_extrude(height    = Sandwich_gear_height,
                  convexity = 10,
-                 twist     = tan(angle)*(180/PI)*(Sandwich_gear_height/Worm_disc_radius))
+                 twist     = -tan(angle)*(180/PI)*(Sandwich_gear_height/Worm_disc_radius))
     difference(){
       // There is a radius and a virtual radius for worm gears in design_numbers.scad
       // Cutting off the outermost virtual band has the same effect as if
