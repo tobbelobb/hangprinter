@@ -174,22 +174,26 @@ Pushdown_d_motor = 75;
 D_motor_twist = 29;
 
 Sstruder_thickness = 3;
-Sstruder_lever_thickness = 3;
+Sstruder_lever_thickness = 3.5;
 Sstruder_height = 55;
 Sstruder_handle_height = 0.2; // Length of shaft outside Bearing_623. TODO: rename...
 Sstruder_filament_meets_shaft = (Nema17_shaft_height-Nema17_cube_height)/2 + Sstruder_handle_height;
 Sstruder_gear_thickness = 3;
 Sstruder_gear_diameter = 5;
-Sstruder_fork_length = Hobbed_insert_diameter/2 + Extruder_filament_opening + 3;
-Sstruder_edge_around_bearing = 1.6;
+Sstruder_fork_length = Hobbed_insert_diameter/2 + Extruder_filament_opening + 5;
+Sstruder_fork_width = 2*Bearing_623_width
+                      + Hobbed_insert_height
+                      + Sstruder_gear_thickness
+                      + 2*Sstruder_handle_height;
+Sstruder_edge_around_bearing = 2;
 Sstruder_press_angle = 90; // TODO: only used in sstruder() for rendering. Use in sstruder_plate as well
-//Sstruder_hinge_length = Nema17_cube_width/2 + M3_diameter; // As short as possible
-Sstruder_hinge_length = Sstruder_height
-                        - Nema17_cube_height/2
-                        - M3_diameter
-                        - Sstruder_edge_around_bearing; // As long as possible
+Sstruder_hinge_length = Nema17_cube_width/2 + M3_head_diameter; // As short as possible
+//Sstruder_hinge_length = Sstruder_height
+//                        - Nema17_cube_height/2
+//                        - M3_diameter
+//                        - Sstruder_edge_around_bearing; // As long as possible
 Sstruder_pressblock_thickness = 4.5;
-Sstruder_pressblock_height = 19;
+Sstruder_pressblock_height = Bearing_623_outer_diameter + 2*Sstruder_edge_around_bearing;
 Sstruder_hot_end_bore_z = -Sstruder_height + Nema17_cube_width/2 + 2.5; // Move hot end up and down
 Sstruder_gear_teeth = 10;
 Sstruder_gear_pitch = Hobbed_insert_diameter/2 + Extruder_filament_opening/2;
