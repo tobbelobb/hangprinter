@@ -30,6 +30,7 @@ This repo contains code from many places. Some of them:
 * [Greg Frost gears](http://www.thingiverse.com/thing:3575)
 
 The project has been supported economically by
+* [Aleph Objects](https://www.alephobjects.com/)
 * [E3D](https://e3d-online.com)
 * [3Dnet.no](https://3dnet.no)
 
