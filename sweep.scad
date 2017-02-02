@@ -30,6 +30,14 @@ function tail3(v) = [v[3],v[4],v[5]];
 function construct_Rt(R,t) = [concat(R[0],t[0]),concat(R[1],t[1]),concat(R[2],t[2]),[0,0,0,1]];
 
 /// so3.scad
+
+function se3_exp_2(t,w) = se3_exp_2_0(t,w,w*w);
+function se3_exp_2_0(t,w,theta_sq) =
+se3_exp_23(
+	so3_exp_2(theta_sq),
+	C = (1.0 - theta_sq/20) / 6,
+	t=t,w=w);
+
 // Taylor series expansions close to 0
 function so3_exp_1(theta_sq) = [
 	1 - 1/6*theta_sq,
