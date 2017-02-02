@@ -19,7 +19,7 @@ This guide is up to date as of Jan 25 2017.
 * Upload what you find in firmare/Marlin/Marlin via Arduino IDE
 * If you want a quick and dirty anchor point, I suggest the following:
 ![Quick and dirty anchor point solution](https://vitana.se/opr3d/tbear/bilder/quick_and_dirty_anchor_point_liten.JPG)
-* Create a Github issue of send me an email if you get stuck!
+* Create a Github issue or send me an email if you get stuck!
 
 Credits
 ============
