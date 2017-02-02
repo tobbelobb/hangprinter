@@ -29,14 +29,14 @@ function take3(v) = [v[0],v[1],v[2]];
 function tail3(v) = [v[3],v[4],v[5]];
 function construct_Rt(R,t) = [concat(R[0],t[0]),concat(R[1],t[1]),concat(R[2],t[2]),[0,0,0,1]];
 
+
 /// so3.scad
 
-function se3_exp_2(t,w) = se3_exp_2_0(t,w,w*w);
-function se3_exp_2_0(t,w,theta_sq) =
-se3_exp_23(
-	so3_exp_2(theta_sq),
-	C = (1.0 - theta_sq/20) / 6,
-	t=t,w=w);
+function so3_exp_2(theta_sq) = [
+	1.0 - theta_sq * (1.0 - theta_sq/20) / 6,
+	0.5 - 0.25/6 * theta_sq
+];
+
 
 // Taylor series expansions close to 0
 function so3_exp_1(theta_sq) = [
@@ -56,6 +56,13 @@ function so3_exp_3_0(theta_deg, inv_theta) = [
 ];
 
 /// se3.scad
+function se3_exp_2(t,w) = se3_exp_2_0(t,w,w*w);
+function se3_exp_2_0(t,w,theta_sq) =
+se3_exp_23(
+	so3_exp_2(theta_sq),
+	C = (1.0 - theta_sq/20) / 6,
+	t=t,w=w);
+
 function combine_se3_exp(w, ABt) = construct_Rt(rodrigues_so3_exp(w, ABt[0], ABt[1]), ABt[2]);
 function se3_exp_1(t,w) = concat(
 	so3_exp_1(w*w),
