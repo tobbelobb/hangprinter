@@ -464,9 +464,12 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {7240.0,6260.0,6900.0,18000.0};
 
 // Motor gear teeth: 9
 // Sandwich gear teeth: 43
-// Steps per motor revolution: 1600
+// Steps per motor revolution: 1600 (that is, 1/8 stepping a 200 step per revolution motor)
 // ==> Steps per spool radian = 1600/(2*pi*9/43) = 1216.651
-const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
+// D-motor has 1 tooth instead of 9 teeth. 1216.651*9 = 10949.860
+//const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
+// Double all of those if 1/16 stepping is used
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720};
 
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
 // then constant ABCD values are calculated on the fly and used only used to calculate accelerations
