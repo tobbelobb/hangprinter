@@ -31,6 +31,8 @@ This repo contains code from many places. Some of them:
 
 The project has been supported economically by
 * [Aleph Objects](https://www.alephobjects.com/)
+* [Bondtech](http://www.bondtech.se/)
+* [Grégory Herreman](https://www.bountysource.com/people/49670-gregory-herreman)
 * [E3D](https://e3d-online.com)
 * [3Dnet.no](https://3dnet.no)
 
