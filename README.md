@@ -32,8 +32,9 @@ This repo contains code from many places. Some of them:
 The project has been supported economically by
 * [Aleph Objects](https://www.alephobjects.com/)
 * [Bondtech](http://www.bondtech.se/)
-* [Grégory Herreman](https://www.bountysource.com/people/49670-gregory-herreman)
 * [E3D](https://e3d-online.com)
+* [Grégory Herreman](https://www.bountysource.com/people/49670-gregory-herreman)
+* [Joshua Congleton](https://www.bountysource.com/people/49918-joshua-congleton)
 * [3Dnet.no](https://3dnet.no)
 
 /tobbelobb
