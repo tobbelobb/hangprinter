@@ -233,19 +233,11 @@ module bottom_plate(){
           cube_y2 = 6;
           channel_length = 9;
           translate(Line_contact_d_xy){
-            translate([0,0,Line_contacts_abcd_z[D]]){
-              translate([0,Bearing_623_outer_diameter/2,0])
-                rotate([0,0,-20])
-                translate([0,0,1])
-                rotate([0,-45,0])
-                // Channel for d line
-                cylinder(r=0.7, h=2*channel_length,center=true);
-              translate([0,0,-2.5]){
+              translate([0,0,Line_contacts_abcd_z[D]-2.5]){
                 rotate([0,-90,0])
                   // Hole for d line length adjusting screw
                   cylinder(d=M3_diameter, h=15,center=true);
                 M3_nyloc_trap();
-              }
             } // end translate Line_contacts_abcd_z[D]
           } // end translate Line_contact_d_xy
         }
@@ -444,7 +436,7 @@ module bottom_plate(){
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-//bottom_plate();
+bottom_plate();
 
 //** bottom_plate end **//
 
