@@ -30,24 +30,25 @@ module placed_lines(){
             + [0,-Bearing_623_outer_diameter/2,0] , 0.8);
     }
   }
-  // Double them all up (gearing down ABC by half)
-  for(i=[0,-0.8*Bearing_623_outer_diameter]){
-    translate([0,0,i]){
       // Outer pair of a-lines
-      pline(Wall_action_point_a + [0,0,0.4*Bearing_623_outer_diameter] + [-Abc_xy_split/2,0,0], Line_contact_abc_xy + [0,0,Line_contacts_abcd_z[A]]);
-      pline(Wall_action_point_a + [0,0,0.4*Bearing_623_outer_diameter] + [ Abc_xy_split/2,0,0], Mirrored_line_contact_abc_xy + [0,0,Line_contacts_abcd_z[A]]);
+      pline(Wall_action_point_a + [0,0,0.4*Bearing_623_outer_diameter] + [-Abc_xy_split/2,0,0],
+            Line_contact_abc_xy + [0,0,Line_contacts_abcd_z[A]]);
+      pline(Wall_action_point_a + [0,0,0.4*Bearing_623_outer_diameter] + [ Abc_xy_split/2,0,0],
+            Mirrored_line_contact_abc_xy + [0,0,Line_contacts_abcd_z[A]]);
+      pline(Wall_action_point_a + [0,0,0.4*Bearing_623_outer_diameter] + [-Abc_xy_split/2,0,0],
+            Wall_action_point_a + [0,0,0.4*Bearing_623_outer_diameter] + [ Abc_xy_split/2,0,0]);
       // Outer pair of b-lines
       pline(Wall_action_point_b + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(240, [-Abc_xy_split/2,0,0]),
             rotate_point_around_z(240, Line_contact_abc_xy) + [0,0,Line_contacts_abcd_z[B]]);
       pline(Wall_action_point_b + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(240, [ Abc_xy_split/2,0,0]),
             rotate_point_around_z(240, Mirrored_line_contact_abc_xy + [0,0,Line_contacts_abcd_z[B]]));
+      pline(Wall_action_point_b + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(240, [ Abc_xy_split/2,0,0]), Wall_action_point_b + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(240, [-Abc_xy_split/2,0,0]));
       // Outer pair of c-lines
       pline(Wall_action_point_c + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(120, [-Abc_xy_split/2,0,0]),
             rotate_point_around_z(120, Line_contact_abc_xy) + [0,0,Line_contacts_abcd_z[C]]);
       pline(Wall_action_point_c + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(120, [ Abc_xy_split/2,0,0]),
             rotate_point_around_z(120, Mirrored_line_contact_abc_xy + [0,0,Line_contacts_abcd_z[C]]));
-    }
-  }
+      pline(Wall_action_point_c + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(120, [-Abc_xy_split/2,0,0]), Wall_action_point_c + [0,0,0.4*Bearing_623_outer_diameter] + rotate_point_around_z(120, [ Abc_xy_split/2,0,0]));
   // d-lines
   for(i=[0,1,2])
     rotate([0,0,i*120]){
@@ -56,28 +57,6 @@ module placed_lines(){
     }
 }
 //placed_lines();
-
-module placed_wall_vgrooves(){
-  color("purple"){
-    for(r=[0,120,240]){
-      rotate([0,0,r]){
-        // Bearings at wall
-        translate(Wall_action_point_a + [Abc_xy_split/2,7,1])
-          rotate([0,90,0])
-          translate([-1,Bearing_623_vgroove_big_diameter/2,-Bearing_623_width/2])
-          Bearing_623_vgroove();
-        translate(Wall_action_point_a - [Abc_xy_split/2,-7,-1])
-          rotate([0,90,0])
-          translate([-1,Bearing_623_vgroove_big_diameter/2,-Bearing_623_width/2])
-          Bearing_623_vgroove();
-        translate(Line_contact_d_xy + [0,0,Ceiling_action_point[2]-7])
-          rotate([0,90,0])
-          translate([0,0,-Bearing_623_vgroove_width/2])
-          Bearing_623_vgroove();
-      }
-    }
-  }
-}
 
 module bearing_filled_sandwich(worm=false){
   if(worm){
@@ -244,7 +223,7 @@ module placed_extruder(plastic_parts=true){
     Nema17();
     if(plastic_parts){
       translate([0,0,Nema17_cube_height])
-        sstruder();
+        sstruder(true);
     }
     // Move drive up extruder motor shaft
     // TODO: Remove part of Tble-extruder
@@ -252,14 +231,14 @@ module placed_extruder(plastic_parts=true){
     //  tble_struder(Big_extruder_gear_rotation);
   }
 }
-placed_extruder();
+//placed_extruder();
 
 module placed_hotend(){
     // Manually placed.
     // For exact placement look in the difference
     // that creates groove in drive_support
     translate([0,0,-E3d_heatsink_height + Sstruder_hot_end_bore_z])
-      rotate([0,0,56]){
+      rotate([0,0,17]){
         e3d_v6_volcano_hotend(fan=0);
         // filament following placed hotend
         //cylinder(r=1.75/2,h=82);

@@ -16,28 +16,23 @@ use <Nema17_and_Ramps_and_bearings.scad>
 
 // Rendering control
 // TODO: move _all_ rendering control back up here
-render_bottom_plate  = false;
-render_sandwich      = false;
-render_abc_motors    = false;
-render_fish_rings    = false;
-render_lines         = false;
+render_bottom_plate  = true;
+render_sandwich      = true;
+render_abc_motors    = true;
+render_fish_rings    = true;
+render_lines         = true;
 render_extruder      = true;
 render_hotend        = true;
-render_ramps         = false;
+render_ramps         = true;
 render_plates        = false;
-render_filament      = false;
-render_wall_vgrooves = false;
-render_d_motor       = false;
+render_filament      = true;
+render_d_motor       = true;
 
 // Measure distance to hot end tip
 //mirror([0,0,1])
 //  %cylinder(r=10, h=105.3);
 
 module full_render(){
-  if(render_wall_vgrooves){
-    placed_wall_vgrooves();
-  }
-
   if(render_bottom_plate){
     color(Printed_color_1)
     bottom_plate();
