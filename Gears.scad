@@ -618,7 +618,16 @@ module worm(step=0.2, with_details=true){
 // and we want to push gear _down_ towards bottom plate
 // to avoid pushing disc up onto the other sandwich snelles and gears
 //mirror([1,0,0])
-//worm(step=0.06);
+//worm(step=0.01);
+
+module animate_roating_worm(){
+  rotate([0,0,360*$t])
+  rotate([0,5,0])
+  translate([0,0,10])
+  color(Printed_color_2)
+  worm(step=0.062);
+}
+//animate_roating_worm();
 
 // ang is angle of worm plate, not worm itself
 module placed_worm(ang = 0){
