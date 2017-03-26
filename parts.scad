@@ -911,10 +911,6 @@ module hobb_towers(v=[0,0,0], bearings_and_shaft=false){
       translate([0, 0, 0.1 + Hobbed_insert_height + Sstruder_gear_thickness])
         Bearing_623();
     }
-    // The gears
-    color("gold")
-    translate([0, 0, 0.1 + Hobbed_insert_height])
-      sstruder_gear();
   }
 }
 //hobb_towers(0,true);
