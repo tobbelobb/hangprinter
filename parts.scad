@@ -943,9 +943,6 @@ module hobb_towers(v=[0,0,0], bearings_and_shaft=false){
 }
 //hobb_towers(0,true);
 
-// TODO: reffles placement is quite arbitrary...
-//       should depend on Sstruder pressblock height everywhere it is placed out
-
 module sstruder_lever_move(){
   translate([Hobbed_insert_diameter + Extruder_filament_opening,
       0,
@@ -1055,7 +1052,7 @@ module sstruder_plate(hobb=true){
     difference(){
       // Block for channel for tube
       translate([-(Bowden_tube_diameter+4)/2 - E_motor_x_offset,
-          -(Sstruder_height-Nema17_cube_width/2 - hot_end_fastening_h-3),
+          -(Sstruder_height-Nema17_cube_width/2 - hot_end_fastening_h-2),
           0])
         cube([Bowden_tube_diameter+4, // 2mm walls on each side of tube
             Sstruder_height - Nema17_cube_width/2 - hot_end_fastening_h - 3, // Tube cavety length
@@ -1112,19 +1109,27 @@ module sstruder_plate(hobb=true){
         scale([scaling_factor,1,1])
           cylinder(r=pressblock_handlecyl_radius, h=Sstruder_fork_width, $fn=45);
         // Handle
-        translate([-Sstruder_thickness + pressblock_handlecyl_radius*scaling_factor,-Sstruder_hinge_length,Sstruder_fork_width*0.66]){
-          cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.34]);
-          rotate([0,0,21])
-          cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.34]);
-          rotate([-45,0,21])
-          translate([0,10,10])
-          difference(){
-            cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.43]);
-            translate([-1,Sstruder_hinge_length/sqrt(2),-1])
-            rotate([45,0,0])
-            translate([0,0,-Big/2])
-            cube(Big);
+        difference(){
+          translate([-Sstruder_thickness + pressblock_handlecyl_radius*scaling_factor,
+                     -Sstruder_hinge_length,
+                     Sstruder_fork_width*0.66]){
+            cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.34]);
+            rotate([0,0,21])
+            cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.34]);
+            rotate([-45,0,21])
+            translate([0,10,10])
+            difference(){
+              cube([Sstruder_thickness, Sstruder_hinge_length, Sstruder_fork_width*0.43]);
+              translate([-1,Sstruder_hinge_length/sqrt(2),-1])
+              rotate([45,0,0])
+              translate([0,0,-Big/2])
+              cube(Big);
+            }
           }
+          translate([-10,-Sstruder_hinge_length,Sstruder_fork_width])
+            rotate([-45,0,0])
+            translate([0,0,-Sstruder_fork_width])
+            cube([20,60,Sstruder_fork_width]);
         }
       }
       translate([pressblock_handlecyl_radius*(scaling_factor-1)/2,0,0])
@@ -1222,7 +1227,7 @@ module sstruder(hobb=false){
   //  Nema17();
 }
 //sstruder();
-sstruder(true);
+//sstruder(true);
 //rotate([-90,0,0])
 //sstruder_lever(false);
 
