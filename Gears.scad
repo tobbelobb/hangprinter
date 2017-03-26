@@ -343,16 +343,6 @@ module motor_gear(height = Motor_protruding_shaft_length, letter){
      cylinder(r2=Nema17_motor_shaft/2+0.8, r1=1.6, h=3.0);
   }
 
-  // Wedge nut between gear and shaft. No screw needed
-  module the_trap(h=16.5){
-    nut_thickness = 3;
-    translate([-Motor_gear_shaft_radius + nut_thickness,
-               Nema17_motor_shaft/2 - Shaft_flat - 0.1,
-               5.6 + nut_thickness])
-      rotate([0,90,0])
-      point_cube([5.6, nut_thickness, h],120);
-  }
-
   difference(){
     union(){
       translate([0,0,height - swgh])
@@ -361,7 +351,6 @@ module motor_gear(height = Motor_protruding_shaft_length, letter){
       cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40);
     }
     the_bore();
-    the_trap();
     translate([Nema17_motor_shaft/2,0,height-1])
       linear_extrude(height=2)
       text(letter,halign="left",valign="center", size=8);
