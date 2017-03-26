@@ -438,7 +438,7 @@ module bottom_plate(){
 // The rotate is for easier fitting print bed when printing
 // this part on 200 mm square print bed
 //rotate([0,0,15])
-bottom_plate();
+//bottom_plate();
 
 //** bottom_plate end **//
 
@@ -938,21 +938,32 @@ module sstruder_lever(hobb=true){
   width = Bearing_623_outer_diameter; // Of rectangular part of arms...
   height = Sstruder_fork_width;
 
-  module bearing_holder(l){
+  module bearing_holder(l,th=Sstruder_lever_thickness){
     difference(){
       union(){
         translate([-width/2-Sstruder_edge_around_bearing, 0, 0])
-          cube([width+2*Sstruder_edge_around_bearing, l, Sstruder_lever_thickness]);
+          cube([width+2*Sstruder_edge_around_bearing, l, th]);
         rotate([0,0,180])
-        teardrop(r=Bearing_623_outer_diameter/2+Sstruder_edge_around_bearing, h = Sstruder_lever_thickness);
+        teardrop(r=Bearing_623_outer_diameter/2+Sstruder_edge_around_bearing, h = th);
       }
-      translate([0,0,-1]){
+      if(th==Sstruder_lever_thickness){
+        translate([0,0,-1]){
+          rotate([0,0,180])
+          teardrop(r=Bearing_623_outer_diameter/2, h = Sstruder_lever_thickness+2);
+        }
+      } else {
+        translate([0,0,-2]){
+          rotate([0,0,180])
+          teardrop(r=Bearing_623_outer_diameter/2, h = Sstruder_lever_thickness+2);
+        }
+      }
+      translate([0,0,-th]){
         rotate([0,0,180])
-        teardrop(r=Bearing_623_outer_diameter/2, h = Sstruder_lever_thickness+2);
+        teardrop(r=Bearing_623_outer_diameter/2-1, h = 2.1*th);
       }
       // Cut tip of teardrops to avoid interfering with motor shaft
       translate([-5,-10-Bearing_623_outer_diameter/2,-1])
-        cube([10,10,Sstruder_lever_thickness+2]);
+        cube([10,10,th+2]);
     }
   }
 
@@ -966,7 +977,7 @@ module sstruder_lever(hobb=true){
         + Sstruder_gear_thickness
         + 2*Sstruder_handle_height
         + (Bearing_623_width-Sstruder_lever_thickness)])
-    bearing_holder(Sstruder_fork_length+Sstruder_lever_thickness);
+    bearing_holder(Sstruder_fork_length+Sstruder_lever_thickness, Sstruder_lever_thickness+1);
 
   // Block connecting hinge and bearing holder arms
   color(Printed_color_1)
