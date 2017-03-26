@@ -432,24 +432,6 @@ module bottom_plate(){
         }
       }// end extruder_motor_translate()
 
-      // Letters for easier identification
-      translate([0,0,-1]){
-        rotate([0,0,120*A+7])
-          translate(Line_action_point_abc_xy + [-11,4,th])
-          scale([1,1,1.5])
-          linear_extrude(height=2)
-          text("A",halign="center",valign="center");
-        rotate([0,0,120*B+7])
-          translate(Line_action_point_abc_xy + [10,2,th])
-          scale([1,1,1.5])
-          linear_extrude(height=2)
-          text("B",halign="center",valign="center");
-        rotate([0,0,120*C+7])
-          translate(Line_action_point_abc_xy + [-24,7,th])
-          scale([1,1,1.5])
-          linear_extrude(height=2)
-          text("C",halign="center",valign="center");
-      }
       // Funnel shape for easier bowden tube fit
       translate([0,0,-0.1])
         cylinder(h=3, r1=3, r2=2);
