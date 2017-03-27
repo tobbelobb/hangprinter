@@ -189,6 +189,23 @@ module my_gear(teeth, height){
 }
 //my_gear(40,10);
 
+module decoration_holes(){
+  for(i = [1:60:360]){
+    rotate([0,0,i])
+      translate([2*Snelle_radius/3,0,-1])
+      cylinder(r=8.5,h=Big);
+  }
+}
+
+module line_holes(){
+  rotate([90,0,33])
+    translate([0,Snelle_height/2,Snelle_radius/2])
+    cylinder(r = 0.95, h = 40);
+  rotate([90,0,27])
+    translate([0,Snelle_height/2,Snelle_radius/2])
+    cylinder(r = 0.95, h = 40);
+}
+
 // Sandwich is a sandwich gear on top of a snelle.
 // These are modelled together, then split up before printing to make a cleaner edge.
 
@@ -204,7 +221,6 @@ module sandwich(worm=false, brim=Snelle_brim){
       if(worm){
         translate([0, 0, Snelle_height])
           worm_gear();
-          //worm_gear_by_diff();
       }else{
         translate([0, 0, Snelle_height])
           my_gear(Sandwich_gear_teeth, Sandwich_gear_height);
@@ -213,10 +229,6 @@ module sandwich(worm=false, brim=Snelle_brim){
       // Snelle
       cylinder(r = Snelle_radius,   h = Snelle_height + meltlength, $fn=150);
       cylinder(r = brim, h = Sandwich_edge_thickness, $fn=150);
-      //if(!worm){
-      //  translate([0,0,Snelle_height - Sandwich_edge_thickness])
-      //    cylinder(r = brim, h = Sandwich_edge_thickness, $fn=150);
-      //}
       }
     }
     // Dig out the right holes
@@ -225,54 +237,57 @@ module sandwich(worm=false, brim=Snelle_brim){
       cylinder(r = od/2 + 0.15, h = Sandwich_height); // 0.15 added to raduis during print...
     cylinder(r = od/2-2, h = Big);
     // Decoration/material saving holes
-    for(i = [1:60:360]){
-      rotate([0,0,i])
-        translate([2*Snelle_radius/3,0,-1])
-        cylinder(r=8.5,h=Big);
-    }
-    rotate([90,0,33])
-      translate([0,Snelle_height/2,Snelle_radius/2])
-      cylinder(r = 0.95, h = 40);
-    rotate([90,0,27])
-      translate([0,Snelle_height/2,Snelle_radius/2])
-      cylinder(r = 0.95, h = 40);
-    // screw holes
-    for(i = [1:120:360]){
-      rotate([0,0,i]){
-      translate([0,Snelle_radius - 4, Sandwich_height + 0.2])
-      mirror([0,0,1])
-        M3_screw(Sandwich_height+2);
-      translate([0,Snelle_radius - 4, -0.5])
-        M3_screw(Sandwich_height+2);
-      }
-    }
+    decoration_holes();
+    line_holes();
   }
   //Bearing_608();
 }
 //sandwich(brim=Snelle_radius+7);
 //sandwich(worm=true);
-//sandwich(worm=true);
+//sandwich(worm=false);
+
+module inverse_torx(h = Snelle_height + 2, r = Snelle_radius){
+  circs = 12;
+  difference(){
+    intersection(){
+      cylinder(r=r, h=h, $fn=150);
+      for(i=[0:1:circs])
+        rotate([0,0,i*360/circs])
+        translate([r-5,0,-1])
+        cylinder(r=r/4.2, h=h+2);
+    }
+    decoration_holes();
+    line_holes();
+  }
+}
+//inverse_torx();
 
 // May not render correctly in preview...
 module sandwich_gear(worm=false){
-  rotate([180,0,0])
     difference(){
       sandwich(worm=worm);
       translate([0,0,-1])
+        color(Printed_color_2)
         cylinder(r=Big, h=Snelle_height + 1);
+      color("blue")
+      inverse_torx();
     }
 }
 // Give space to worm so it doesn't lock up
 //scale(0.99)
+//rotate([180,0,0])
 //sandwich_gear(true);
 
 // May not render correctly in preview...
 module snelle(){
+  color(Printed_color_2)
   difference(){
     sandwich();
     translate([0,0,Snelle_height-0.01])
       cylinder(r=Big, h=Big);
   }
+  color("red")
+  inverse_torx();
 }
 //snelle();
 
