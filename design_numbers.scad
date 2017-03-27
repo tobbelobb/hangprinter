@@ -86,7 +86,8 @@ Motor_gear_d_height = Line_contacts_abcd_z[D];
 Big_extruder_gear_height = 4;
 Small_extruder_gear_height = 6;
 
-Motor_gear_shaft_radius = 7;
+Motor_gear_shaft_radius_A = 7.5; // A motor gear shaft is most likely to break. Thicken it.
+Motor_gear_shaft_radius_BC = 7;
 Snelle_radius = 33; // This is the radius the line will wind around.
 Snelle_brim   = Snelle_radius + 12;
 // TODO: worm should use this

@@ -338,7 +338,7 @@ module snelle_line_buildup_visualization(){
 }
 //snelle_line_buildup_visualization();
 
-module motor_gear(height = Motor_protruding_shaft_length){
+module motor_gear(height = Motor_protruding_shaft_length, shaft_radius = Motor_gear_shaft_radius_BC){
   swgh  = Sandwich_gear_height  - 0.4;  // allow some space for easier printing
   melt = 0.1;
   teeth = Motor_gear_teeth;
@@ -363,7 +363,7 @@ module motor_gear(height = Motor_protruding_shaft_length){
       translate([0,0,height - swgh])
         my_gear(teeth, swgh);
       // Shaft cylinder
-      cylinder(r = Motor_gear_shaft_radius, h = height - swgh + melt, $fn=40);
+      cylinder(r = shaft_radius, h = height - swgh + melt, $fn=40);
     }
     the_bore();
   }
@@ -371,19 +371,19 @@ module motor_gear(height = Motor_protruding_shaft_length){
 //motor_gear();
 
 module motor_gear_a(){
-  motor_gear(Motor_gear_a_height);
+  motor_gear(Motor_gear_a_height, Motor_gear_shaft_radius_A);
 }
 //rotate([180,0,0])
 //motor_gear_a();
 
 module motor_gear_b(){
-  motor_gear(Motor_gear_b_height);
+  motor_gear(Motor_gear_b_height, Motor_gear_shaft_radius_BC);
 }
 //rotate([180,0,0])
 //motor_gear_b();
 
 module motor_gear_c(){
-  motor_gear(Motor_gear_c_height);
+  motor_gear(Motor_gear_c_height, Motor_gear_shaft_radius_BC);
 }
 //rotate([180,0,0])
 //motor_gear_c();
