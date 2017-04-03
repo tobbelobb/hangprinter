@@ -560,7 +560,7 @@ module worm(step=0.2, with_details=true){
     union(){
       // Axle
       translate([0,0,-height_downwards-Worm_axle_length])
-        cylinder(Worm_axle_length, Worm_axle_radius*2,Worm_axle_radius*2);
+        cylinder(h=Worm_axle_length, r=Worm_axle_radius);
       // Spiral
       if(with_details){
         mirror([1,0,0]) // Right-handed threading to push with greatest force _down_ into bottom_plate
@@ -590,11 +590,12 @@ module worm(step=0.2, with_details=true){
         cylinder(d1=8, d2=5, h=3);
       }
 
-      // Cut bottom
-      translate([0,0,-10 - height_downwards])
+      // Cut bottom (except Worm_axle)
+      translate([0,0,-Worm_axle_length - height_downwards])
         difference() {
-          cylinder(10,50,50);
-          cylinder(10,Worm_axle_radius*2,Worm_axle_radius*2);
+          cylinder(h=Worm_axle_length,r=50);
+          translate([0,0,-1])
+            cylinder(h=Worm_axle_length+2,r=Worm_axle_radius);
         }
       // Cut top
       translate([-50,-50,height_upwards])
