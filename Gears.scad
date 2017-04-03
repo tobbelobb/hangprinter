@@ -602,21 +602,25 @@ module worm(step=0.2, with_details=true){
       translate([-50,-50,height_upwards])
         cube(100);
       // Screw hole and nut lock
-      translate([0,0,-height_downwards+4.6-Worm_axle_length]){
-        rotate([0,90,45]){
-          scale([1.06,1.06,3])
-            M3_screw(6,true);
-          rotate([0,0,90])
-            translate([0,4,5])
-            rotate([90,0,0])
-            translate([-5.6/2,0,0]){
-            point_cube([5.6,2.5,10],120);
-            // Phase in nutlock
-            translate([5.6/2,2.5/2, 7.1])
-              linear_extrude(height=3,convexity=3,scale=[2.4, 2.7])
-              translate([-(5.6/1.5)/2,-(2.5/1.5)/2])
-              square([5.6/1.5,2.5/1.5]);
+      for(i=[0,120,240]){
+        rotate([0,0,i]){
+          translate([0,0,-height_downwards+6.3-Worm_axle_length]){
+            rotate([0,90,45]){
+              scale([1.06,1.06,3])
+                M3_screw(6,true);
+              rotate([0,0,90])
+                translate([0,4,5])
+                rotate([90,0,0])
+                translate([-5.6/2,0,1]){
+                  point_cube([5.6,2.5,9],120);
+                  // Phase in nutlock
+                  translate([5.6/2,2.5/2, 7.1])
+                    linear_extrude(height=3,convexity=3,scale=[2.4, 2.7])
+                    translate([-(5.6/1.5)/2,-(2.5/1.5)/2])
+                    square([5.6/1.5,2.5/1.5]);
+                }
             }
+          }
         }
       }
     }
