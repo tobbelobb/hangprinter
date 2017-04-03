@@ -558,6 +558,9 @@ module worm(step=0.2, with_details=true){
   //translate([0,0,height_downwards]) // Put bottom plane on z=0
   difference(){
     union(){
+      // Axle
+      translate([0,0,-height_downwards-Worm_axle_length])
+        cylinder(Worm_axle_length, Worm_axle_radius*2,Worm_axle_radius*2);
       // Spiral
       if(with_details){
         mirror([1,0,0]) // Right-handed threading to push with greatest force _down_ into bottom_plate
@@ -576,25 +579,28 @@ module worm(step=0.2, with_details=true){
       // Motor shaft D-shaped bore
       h = height_downwards + height_upwards + 2;
       rotate([0,0,45])
-      translate([0,0,-height_downwards - 1])
+      translate([0,0,-height_downwards - Worm_axle_length - 1])
       difference(){
         cylinder(r = 5.4/2, h = h+2, $fn=40);
         translate([2.2,-(h+4),-2])
           cube(2*(h+4));
       }
       // Phase in the D-shape
-      translate([0,0,-height_downwards - 1]){
+      translate([0,0,-height_downwards - Worm_axle_length - 1]){
         cylinder(d1=8, d2=5, h=3);
       }
 
       // Cut bottom
-      translate([-50,-50,-100 - height_downwards])
-        cube(100);
+      translate([0,0,-10 - height_downwards])
+        difference() {
+          cylinder(10,50,50);
+          cylinder(10,Worm_axle_radius*2,Worm_axle_radius*2);
+        }
       // Cut top
       translate([-50,-50,height_upwards])
         cube(100);
       // Screw hole and nut lock
-      translate([0,0,-height_downwards+4.6]){
+      translate([0,0,-height_downwards+4.6-Worm_axle_length]){
         rotate([0,90,45]){
           scale([1.06,1.06,3])
             M3_screw(6,true);

@@ -156,6 +156,8 @@ Worm_radius                  = 15.5; // Distance from origo to virtual worm edge
 Worm_smallest_radius         = Worm_radius - (Worm_disc_virtual_radius - Worm_disc_tooth_valley_r)
                                + Worm_disc_tooth_cutoff; // fill_interior inside this
 Worm_largest_angle           = atan(2*(Worm_disc_virtual_radius - Worm_disc_tooth_valley_r)/(2*PI*Worm_smallest_radius));
+Worm_axle_radius             = 5.5;
+Worm_axle_length             = 10;
 
 
 Printed_color_1 = "deepskyblue";
