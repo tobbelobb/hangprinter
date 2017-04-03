@@ -373,6 +373,10 @@ module bottom_plate(){
             translate(([-Nema17_cube_width/2, -Nema17_cube_width/2, 0]))
               cube([Nema17_cube_width, Nema17_cube_width, Nema17_cube_height]);
             cylinder(d=Nema17_ring_diameter, h=Nema17_cube_height+Nema17_ring_height);
+            translate([0,0,Nema17_cube_height+4.2])
+            cylinder(h=Worm_axle_length,
+                     r1=Worm_axle_radius+2.5,
+                     r2=Worm_axle_radius+2.5+Worm_axle_length);
             //Nema17();
           }
         //scale([1.1,1.05,1.05])
