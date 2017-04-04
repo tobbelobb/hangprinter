@@ -24,17 +24,21 @@ This guide is up to date as of Jan 25 2017.
 Credits
 ============
 This repo contains code from many places. Some of them:
+* [Greg Frost gears](http://www.thingiverse.com/thing:3575)
+* [list-comprehension-demos](https://github.com/openscad/list-comprehension-demos)
 * [Marlin firmware](https://github.com/MarlinFirmware/Marlin)
 * [scad-utils](https://github.com/openscad/scad-utils)
-* [list-comprehension-demos](https://github.com/openscad/list-comprehension-demos)
-* [Greg Frost gears](http://www.thingiverse.com/thing:3575)
 
 The project has been supported economically by
 * [Aleph Objects](https://www.alephobjects.com/)
 * [Bondtech](http://www.bondtech.se/)
+* [David Lang](https://www.bountysource.com/people/50149-david-lang)
 * [E3D](https://e3d-online.com)
 * [Grégory Herreman](https://www.bountysource.com/people/49670-gregory-herreman)
 * [Joshua Congleton](https://www.bountysource.com/people/49918-joshua-congleton)
+* [Paul Fisher](https://www.bountysource.com/people/50118-paul-fisher)
 * [3Dnet.no](https://3dnet.no)
+
+Lists sorted alphabetically.
 
 /tobbelobb
