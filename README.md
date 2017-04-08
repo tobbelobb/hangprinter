@@ -38,6 +38,7 @@ The project has been supported economically by
 * [Grégory Herreman](https://www.bountysource.com/people/49670-gregory-herreman)
 * [Joshua Congleton](https://www.bountysource.com/people/49918-joshua-congleton)
 * [Paul Fisher](https://www.bountysource.com/people/50118-paul-fisher)
+* [Rob Brisky](https://www.bountysource.com/people/49764-rob-brisky)
 * [3Dnet.no](https://3dnet.no)
 
 Lists sorted alphabetically.
