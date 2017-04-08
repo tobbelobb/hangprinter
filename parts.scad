@@ -159,7 +159,7 @@ module bottom_plate(){
   // Global variables renamed short
   cw  = Nema17_cube_width;
   th  = Bottom_plate_thickness;
-  bpr = Bottom_plate_radius;
+  bpr = Bottom_plate_radius+6.5;
   bd  = Bearing_608_bore_diameter;
   bw  = Bearing_608_width;
   swh = Sandwich_height;
@@ -188,7 +188,9 @@ module bottom_plate(){
   module towers(){
     difference(){
       union(){
-        // Sandwich stick
+        // Sandwich stick, center cylinder
+
+        scale([Nema17_cube_width/Nema14_cube_width,Nema17_cube_width/Nema14_cube_width,1])
         cylinder(r=bd/2+0.16,
             h=sandwich_stick_height);
         // Bluetooth mount (and autocooling while printing tower)
@@ -258,6 +260,9 @@ module bottom_plate(){
       }
       // Dig out filament hole in sandwich stick
       // Note that bowden tube should fit in this from below
+
+
+      scale([Nema17_cube_width/Nema14_cube_width,Nema17_cube_width/Nema14_cube_width,1])
       translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
       // Mounting holes for abc fish rings
       // rotations and translations synced with placed_fish_rings

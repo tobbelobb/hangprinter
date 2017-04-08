@@ -1,7 +1,9 @@
 //////////// Measured numbers //////////////
 Nema17_cube_width          = 42.43;
+Nema14_cube_width          = 35.3;
  // TODO: Make it possible to have different height d and e motors
 //Nema17_cube_height         = 48; // Big motor
+//Nema17_cube_height         = 39.36;
 Nema17_cube_height         = 39.36;
 Nema17_shaft_height        = 63.65;
 Nema17_screw_hole_width    = 43.74; // Opposite corner screws

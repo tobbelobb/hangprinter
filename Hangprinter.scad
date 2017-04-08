@@ -17,16 +17,16 @@ use <Nema17_and_Ramps_and_bearings.scad>
 // Rendering control
 // TODO: move _all_ rendering control back up here
 render_bottom_plate  = true;
-render_sandwich      = true;
-render_abc_motors    = true;
-render_fish_rings    = true;
-render_lines         = true;
-render_extruder      = true;
-render_hotend        = true;
-render_ramps         = true;
+render_sandwich      = false;
+render_abc_motors    = false;
+render_fish_rings    = false;
+render_lines         = false;
+render_extruder      = false;
+render_hotend        = false;
+render_ramps         = false;
 render_plates        = false;
-render_filament      = true;
-render_d_motor       = true;
+render_filament      = false;
+render_d_motor       = false;
 
 // Measure distance to hot end tip
 //mirror([0,0,1])
@@ -37,7 +37,7 @@ module full_render(){
     color(Printed_color_1)
     bottom_plate();
     // For better rendering performance, precompile bottom_plate
-    //precompiled("stl/Complete_printer_26_nov_2016/Bottom_plate_qty_1.stl");
+    //precompiled("stl/Bottom_plate_qty_1.stl");
     //precompiled("stl/Complete_printer_24_nov_2016/Sparser_bottom_plate_qty_1.stl");
   }
   if(render_sandwich){
@@ -77,7 +77,12 @@ module full_render(){
     filament();
   }
 }
+//scale([150/200,150/200,1])
+rotate([0,0,15])
+scale([Nema14_cube_width/Nema17_cube_width,Nema14_cube_width/Nema17_cube_width,1])
 full_render();
+//rotate([0,0,-15])
+//  %cube([150,150,30], center=true);
 
 module check_if_bottom_plate_fits_print_bed(){
   translate([-Full_tri_side/2 - 4,-Full_tri_side*sqrt(3)/6 - 4,0])

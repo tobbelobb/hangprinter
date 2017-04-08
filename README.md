@@ -6,6 +6,7 @@ A RepRap hanging from the ceiling.
 ![Hangprinter Portrait](https://vitana.se/opr3d/tbear/bilder/Sideview_rot_liten.JPG)
 
 See [tobbelobb's vimeo user](https://vimeo.com/user23166500) for demonstation videos and [dev blog](https://vitana.se/opr3d/tbear) for technical updates.
+Use the [reprap forums thread](http://forums.reprap.org/read.php?1,738858) for technical discussion.
 The Hangprinter Project also has a [Bountysource Salt campaign](https://salt.bountysource.com/teams/hangprinter) where you can support it economically.
 
 
