@@ -12,12 +12,12 @@ The Hangprinter Project also has a [Bountysource Salt campaign](https://salt.bou
 
 Quick start guide
 ======
-This guide is up to date as of Jan 25 2017.
-* Print the parts you find in stl/Complete_printer_26_Nov_2016/
-* Get the vitamins listed [here](http://www.appropedia.org/Clerck,_a_RepRap_3D_printer_hanging_from_the_ceiling#Costs)
+This guide is up to date as of Apr 8 2017.
+* Print the parts you find in the stl directory of this repo.
+* Get the vitamins listed [here](http://www.appropedia.org/Clerck,_a_RepRap_3D_printer_hanging_from_the_ceiling#Costs) (some help with sources can be found [here](https://docs.google.com/spreadsheets/d/1KG-mppoRfgcM9aCTWDJxUgEF1-imCNuGGyRYKuE3kvw/edit#gid=0)).
 * Follow the (slightly outdated) build instructions [here](https://vitana.se/opr3d/tbear/index.html#Clerck_assembly_manual)
-* Follow the calibration manual [here](https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21)
-* Upload what you find in firmare/Marlin/Marlin via Arduino IDE
+* Follow the calibration manual [here](https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21). See the [calibration calculator](http://hangprinter.org/calculate.html) to avoid having to type the equations yourself.
+* Update Configuration.h in firmare/Marlin/Marlin via Arduino IDE and upload.
 * If you want a quick and dirty anchor point, I suggest the following:
 ![Quick and dirty anchor point solution](https://vitana.se/opr3d/tbear/bilder/quick_and_dirty_anchor_point_liten.JPG)
 * Create a Github issue or send me an email if you get stuck!
