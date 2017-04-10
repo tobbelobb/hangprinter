@@ -15,7 +15,7 @@ Z = 2;
 //////////// Design decision numbers //////////////
 
 //** The bottom plate parameters **//
-Full_tri_side             = 200*0.932; // Rotate eq_tri relative to 200 mm printbed, gain 3.5 % side length
+Full_tri_side             = 200*1.035; // Rotate eq_tri relative to 200 mm printbed, gain 3.5 % side length
 Sandwich_gap              = 0.8;
 Sandwich_height           = Bearing_608_width + 2;
 Sandwich_edge_thickness   = 0.6;

@@ -79,7 +79,6 @@ module full_render(){
 }
 //scale([150/200,150/200,1])
 rotate([0,0,15])
-scale([Nema14_cube_width/Nema17_cube_width,Nema14_cube_width/Nema17_cube_width,1])
 full_render();
 //rotate([0,0,-15])
 //  %cube([150,150,30], center=true);
