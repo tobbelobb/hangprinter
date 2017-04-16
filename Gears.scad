@@ -246,15 +246,25 @@ module sandwich(worm=false, brim=Snelle_brim){
 //sandwich(worm=true);
 //sandwich(worm=false);
 
-module inverse_torx(h = Snelle_height + 2, r = Snelle_radius){
+module inverse_torx(h = Snelle_height + 2, r = Snelle_radius, female=false){
   circs = 12;
   difference(){
     intersection(){
-      cylinder(r=r, h=h, $fn=150);
+      if(female){
+        cylinder(r=r+0.1, h=h, $fn=150);
+      } else {
+        cylinder(r=r, h=h, $fn=150);
+      }
       for(i=[0:1:circs])
-        rotate([0,0,i*360/circs])
-        translate([r-5,0,-1])
-        cylinder(r=r/4.2, h=h+2);
+        rotate([0,0,i*360/circs]){
+          translate([r-5,0,-1])
+          cylinder(r=r/4.2, h=h+2, $fn=50);
+        if(female){
+          rotate([0,0,360/(2*circs)])
+            translate([r-7,0,-1])
+            cylinder(r2=1, r1=r/1.9, h=h+2, $fn=50);
+          }
+        }
     }
     decoration_holes();
     line_holes();
@@ -270,12 +280,13 @@ module sandwich_gear(worm=false){
         color(Printed_color_2)
         cylinder(r=Big, h=Snelle_height + 1);
       color("blue")
-      inverse_torx();
+      inverse_torx(female=true);
     }
 }
 // Give space to worm so it doesn't lock up
 //scale(0.99)
-//rotate([180,0,0])
+rotate([180,0,0])
+sandwich_gear(false);
 //sandwich_gear(true);
 
 // May not render correctly in preview...
