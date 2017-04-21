@@ -437,6 +437,14 @@ module bottom_plate(){
       translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
     }// end difference
     towers();
+    translate([64,-22.5,Bottom_plate_thickness/2])
+      rotate([0,90,90-D_motor_twist])
+      scale([1,3,1])
+      difference(){
+        cylinder(r=Bottom_plate_thickness/2+Sandwich_gear_height, h=10, center=true);
+        translate([0,-25,-25])
+        cube(50);
+      }
   }// end union
 }
 // The rotate is for easier fitting print bed when printing
