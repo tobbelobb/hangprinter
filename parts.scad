@@ -159,7 +159,7 @@ module bottom_plate(){
   // Global variables renamed short
   cw  = Nema17_cube_width;
   th  = Bottom_plate_thickness;
-  bpr = Bottom_plate_radius+6.5;
+  bpr = Bottom_plate_radius;
   bd  = Bearing_608_bore_diameter;
   bw  = Bearing_608_width;
   swh = Sandwich_height;
@@ -441,7 +441,13 @@ module bottom_plate(){
       rotate([0,90,90-D_motor_twist])
       scale([1,3,1])
       difference(){
-        cylinder(r=Bottom_plate_thickness/2+Sandwich_gear_height, h=10, center=true);
+        h1 = 10;
+        union(){
+          translate([0,0,h1/6])
+            cylinder(r=Bottom_plate_thickness/2+Sandwich_gear_height, h=h1/3);
+          translate([0,0,-h1/3-h1/6])
+            cylinder(r=Bottom_plate_thickness/2+Sandwich_gear_height, h=h1/3);
+        }
         translate([0,-25,-25])
         cube(50);
       }
