@@ -1038,7 +1038,7 @@ void process_commands(){
           break;
 
           case 92: // M92
-#ifdef HANGPRINTER && EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+#if defined(HANGPRINTER) && defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
           if(code_seen('S')){
             spool_buildup_factor = code_value();
           }
