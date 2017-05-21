@@ -245,3 +245,13 @@ extern void digipot_i2c_init();
 
 extern void calculate_volumetric_multipliers();
 
+extern float anchor_A_x;
+extern float anchor_A_y;
+extern float anchor_A_z;
+extern float anchor_B_x;
+extern float anchor_B_y;
+extern float anchor_B_z;
+extern float anchor_C_x;
+extern float anchor_C_y;
+extern float anchor_C_z;
+extern float anchor_D_z;
