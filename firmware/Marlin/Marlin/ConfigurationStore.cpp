@@ -107,6 +107,16 @@ void Config_StoreSettings()  {
   EEPROM_WRITE_VAR(i, endstop_adj);               // 3 floats
   EEPROM_WRITE_VAR(i, delta_segments_per_second); // 1 float
 #ifdef HANGPRINTER
+  EEPROM_WRITE_VAR(i, anchor_A_x);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_A_y);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_A_z);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_B_x);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_B_y);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_B_z);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_C_x);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_C_y);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_C_z);                // 1 float
+  EEPROM_WRITE_VAR(i, anchor_D_z);                // 1 float
 #else
   EEPROM_WRITE_VAR(i, delta_radius);              // 1 float
   EEPROM_WRITE_VAR(i, delta_diagonal_rod);        // 1 float
@@ -226,11 +236,21 @@ void Config_StoreSettings()  {
 
 #ifdef DELTA
       EEPROM_READ_VAR(i, endstop_adj);                // 3 floats
+      EEPROM_READ_VAR(i, delta_segments_per_second);  // 1 float
 #ifdef HANGPRINTER
+      EEPROM_READ_VAR(i, anchor_A_x);                // 1 float
+      EEPROM_READ_VAR(i, anchor_A_y);                // 1 float
+      EEPROM_READ_VAR(i, anchor_A_z);                // 1 float
+      EEPROM_READ_VAR(i, anchor_B_x);                // 1 float
+      EEPROM_READ_VAR(i, anchor_B_y);                // 1 float
+      EEPROM_READ_VAR(i, anchor_B_z);                // 1 float
+      EEPROM_READ_VAR(i, anchor_C_x);                // 1 float
+      EEPROM_READ_VAR(i, anchor_C_y);                // 1 float
+      EEPROM_READ_VAR(i, anchor_C_z);                // 1 float
+      EEPROM_READ_VAR(i, anchor_D_z);                // 1 float
 #else
       EEPROM_READ_VAR(i, delta_radius);               // 1 float
       EEPROM_READ_VAR(i, delta_diagonal_rod);         // 1 float
-      EEPROM_READ_VAR(i, delta_segments_per_second);  // 1 float
 #endif
 #else
       for (int q=6; q--;) EEPROM_READ_VAR(i, dummy);
@@ -332,7 +352,18 @@ void Config_StoreSettings()  {
     max_z_jerk = DEFAULT_ZJERK;
     max_e_jerk = DEFAULT_EJERK;
     add_homing[A_AXIS] = add_homing[B_AXIS] = add_homing[C_AXIS] = add_homing[D_AXIS] = 0;
-
+#if defined(HANGPRINTER)
+    anchor_A_x = ANCHOR_A_X;
+    anchor_A_y = ANCHOR_A_Y;
+    anchor_A_z = ANCHOR_A_Z;
+    anchor_B_x = ANCHOR_B_X;
+    anchor_B_y = ANCHOR_B_Y;
+    anchor_B_z = ANCHOR_B_Z;
+    anchor_C_x = ANCHOR_C_X;
+    anchor_C_y = ANCHOR_C_Y;
+    anchor_C_z = ANCHOR_C_Z;
+    anchor_D_z = ANCHOR_D_Z;
+#endif
     delta_segments_per_second =  DELTA_SEGMENTS_PER_SECOND;
     endstop_adj[A_AXIS] = endstop_adj[B_AXIS] = endstop_adj[C_AXIS] = endstop_adj[D_AXIS] = 0;
 
@@ -467,15 +498,27 @@ void Config_StoreSettings()  {
     SERIAL_ECHOPAIR(" C", endstop_adj[C_AXIS] );
     SERIAL_ECHOPAIR(" D", endstop_adj[D_AXIS] );
     SERIAL_EOL;
-    SERIAL_ECHO_START;
 #ifdef HANGPRINTER
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR("  M665 Q",  anchor_A_x);
+    SERIAL_ECHOPAIR(      " W",  anchor_A_y);
+    SERIAL_ECHOPAIR(      " E",  anchor_A_z);
+    SERIAL_ECHOPAIR(      " R",  anchor_B_x);
+    SERIAL_ECHOPAIR(      " T",  anchor_B_y);
+    SERIAL_ECHOPAIR(      " Y",  anchor_B_z);
+    SERIAL_ECHOPAIR(      " U",  anchor_C_x);
+    SERIAL_ECHOPAIR(      " I",  anchor_C_y);
+    SERIAL_ECHOPAIR(      " O",  anchor_C_z);
+    SERIAL_ECHOPAIR(      " P",  anchor_D_z);
+    SERIAL_EOL;
 #else
     SERIAL_ECHOLNPGM("Delta settings: L=delta_diagonal_rod, R=delta_radius, S=delta_segments_per_second");
     SERIAL_ECHO_START;
     SERIAL_ECHOPAIR("  M665 L", delta_diagonal_rod );
     SERIAL_ECHOPAIR(" R", delta_radius );
 #endif
-    SERIAL_ECHOPAIR(" S", delta_segments_per_second );
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR(" DELTA_SEGMENTS_PER_SECOND: ", delta_segments_per_second );
     SERIAL_EOL;
 #endif // DELTA
 
