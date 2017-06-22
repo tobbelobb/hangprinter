@@ -285,8 +285,8 @@ module sandwich_gear(worm=false){
 }
 // Give space to worm so it doesn't lock up
 //scale(0.99)
-rotate([180,0,0])
-sandwich_gear(false);
+//rotate([180,0,0])
+//sandwich_gear(false);
 //sandwich_gear(true);
 
 // May not render correctly in preview...
@@ -366,7 +366,10 @@ module motor_gear(height = Motor_protruding_shaft_length, shaft_radius = Motor_g
     translate([0,0,-0.1])
       cylinder(r1=Nema17_motor_shaft/2+0.8, r2=1.6, h=3.0);
     translate([0,0,height - 2.9])
-     cylinder(r2=Nema17_motor_shaft/2+0.8, r1=1.6, h=3.0);
+      cylinder(r2=Nema17_motor_shaft/2+0.8, r1=1.6, h=3.0);
+    // Mark the direction of the flat D-side
+    translate([-1,0,-1])
+      cube([2,10,1.5]);
   }
 
   difference(){
