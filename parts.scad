@@ -1053,10 +1053,10 @@ module sstruder_plate(hobb=true){
     difference(){
       // Block for channel for tube
       translate([-(Bowden_tube_diameter+4)/2 - E_motor_x_offset,
-          -(Sstruder_height-Nema17_cube_width/2 - hot_end_fastening_h-2),
+          -(Sstruder_height-Nema17_cube_width/2 - hot_end_fastening_h),
           0])
         cube([Bowden_tube_diameter+4, // 2mm walls on each side of tube
-            Sstruder_height - Nema17_cube_width/2 - hot_end_fastening_h - 3, // Tube cavety length
+            Sstruder_height - Nema17_cube_width/2 - hot_end_fastening_h, // Tube cavety length
             Sstruder_filament_meets_shaft  + 2.5]);
       // Make channel_cube lean towards filament
       translate([0,-ring_hole_d/2,0])
@@ -1143,7 +1143,7 @@ module sstruder_plate(hobb=true){
   //!rotate([180,0,0]) pressblock_handle();
   //!pressblock_handle();
 
-  extra_width_for_pressblock = 12;
+  extra_width_for_pressblock = 9;
   module pressblock(){
     difference(){
     // Flat area for pressblock
@@ -1152,9 +1152,9 @@ module sstruder_plate(hobb=true){
         + Bearing_623_outer_diameter/2
         + Sstruder_edge_around_bearing,
         0])
-        cube([Nema17_cube_width + extra_width_for_pressblock,
-            Sstruder_pressblock_height,
-            Sstruder_thickness]);
+        x_rounded_block([Nema17_cube_width + extra_width_for_pressblock + 3,
+                         Sstruder_pressblock_height,
+                         Sstruder_thickness]);
       // For pressblock cyl
     translate([Nema17_cube_width/2 + extra_width_for_pressblock/1.5,
                0,

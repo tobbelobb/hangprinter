@@ -286,3 +286,11 @@ module bent_path(r1=10,r2=1, l=10){
     sweep(my_circle(r2), path);
 }
 //bent_path();
+
+module x_rounded_block(v){
+  r = v[1]/2;
+  cube([v[0]-r, v[1], v[2]]);
+  translate([v[0]-r, r, 0])
+  cylinder(r=r, h=v[2]);
+}
+//x_rounded_block([100,20,4]);
