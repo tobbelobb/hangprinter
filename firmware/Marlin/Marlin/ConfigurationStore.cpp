@@ -79,7 +79,7 @@ void _EEPROM_readData(int &pos, uint8_t* value, uint8_t size) {
 // wrong data being written to the variables.
 // ALSO:  always make sure the variables in the Store and retrieve sections are in the same order.
 
-#define EEPROM_VERSION "V15"
+#define EEPROM_VERSION "V16"
 
 #ifdef EEPROM_SETTINGS
 
@@ -103,10 +103,8 @@ void Config_StoreSettings()  {
 #endif // ifdef EXTRUDERS
   EEPROM_WRITE_VAR(i, add_homing);
 
-#ifdef DELTA
   EEPROM_WRITE_VAR(i, endstop_adj);               // 3 floats
   EEPROM_WRITE_VAR(i, delta_segments_per_second); // 1 float
-#ifdef HANGPRINTER
   EEPROM_WRITE_VAR(i, anchor_A_x);                // 1 float
   EEPROM_WRITE_VAR(i, anchor_A_y);                // 1 float
   EEPROM_WRITE_VAR(i, anchor_A_z);                // 1 float
@@ -117,454 +115,316 @@ void Config_StoreSettings()  {
   EEPROM_WRITE_VAR(i, anchor_C_y);                // 1 float
   EEPROM_WRITE_VAR(i, anchor_C_z);                // 1 float
   EEPROM_WRITE_VAR(i, anchor_D_z);                // 1 float
-#else
-  EEPROM_WRITE_VAR(i, delta_radius);              // 1 float
-  EEPROM_WRITE_VAR(i, delta_diagonal_rod);        // 1 float
-#endif
-#else
-  dummy = 0.0f;
-  for (int q=6; q--;) EEPROM_WRITE_VAR(i, dummy);
-#endif
 
-  int plaPreheatHotendTemp = PLA_PREHEAT_HOTEND_TEMP, plaPreheatHPBTemp = PLA_PREHEAT_HPB_TEMP, plaPreheatFanSpeed = PLA_PREHEAT_FAN_SPEED,
-      absPreheatHotendTemp = ABS_PREHEAT_HOTEND_TEMP, absPreheatHPBTemp = ABS_PREHEAT_HPB_TEMP, absPreheatFanSpeed = ABS_PREHEAT_FAN_SPEED;
 
+  int storageSize = i;
+
+  char ver2[4] = EEPROM_VERSION;
+  int j = EEPROM_OFFSET;
+  EEPROM_WRITE_VAR(j, ver2); // validate data
+
+  // Report storage size
+  SERIAL_ECHO_START;
+  SERIAL_ECHOPAIR("Settings Stored (", (unsigned long)i);
+  SERIAL_ECHOLNPGM(" bytes)");
+}
+
+void Config_RetrieveSettings() {
+
+  int i = EEPROM_OFFSET;
+  char stored_ver[4];
+  char ver[4] = EEPROM_VERSION;
+  EEPROM_READ_VAR(i, stored_ver); //read stored version
+  //  SERIAL_ECHOLN("Version: [" << ver << "] Stored version: [" << stored_ver << "]");
+
+  if (strncmp(ver, stored_ver, 3) != 0) {
+    Config_ResetDefault();
+  }
+  else {
+    float dummy = 0;
+
+    // version number match
+    EEPROM_READ_VAR(i, axis_steps_per_unit);
+    EEPROM_READ_VAR(i, max_feedrate);
+    EEPROM_READ_VAR(i, max_acceleration_units_per_sq_second);
+
+    // steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
+    reset_acceleration_rates();
+
+    EEPROM_READ_VAR(i, acceleration);
+    EEPROM_READ_VAR(i, retract_acceleration);
+    EEPROM_READ_VAR(i, minimumfeedrate);
+    EEPROM_READ_VAR(i, mintravelfeedrate);
+    EEPROM_READ_VAR(i, minsegmenttime);
+    EEPROM_READ_VAR(i, max_xy_jerk);
+    EEPROM_READ_VAR(i, max_z_jerk);
 #ifdef EXTRUDERS
-  EEPROM_WRITE_VAR(i, plaPreheatHotendTemp);
-  EEPROM_WRITE_VAR(i, plaPreheatHPBTemp);
-  EEPROM_WRITE_VAR(i, plaPreheatFanSpeed);
-  EEPROM_WRITE_VAR(i, absPreheatHotendTemp);
-  EEPROM_WRITE_VAR(i, absPreheatHPBTemp);
-  EEPROM_WRITE_VAR(i, absPreheatFanSpeed);
+    EEPROM_READ_VAR(i, max_e_jerk);
 #endif // ifdef EXTRUDERS
-  EEPROM_WRITE_VAR(i, zprobe_zoffset);
+    EEPROM_READ_VAR(i, add_homing);
 
-  for (int e = 0; e < 4; e++) {
+    EEPROM_READ_VAR(i, endstop_adj);                // 3 floats
+    EEPROM_READ_VAR(i, delta_segments_per_second);  // 1 float
+    EEPROM_READ_VAR(i, anchor_A_x);                // 1 float
+    EEPROM_READ_VAR(i, anchor_A_y);                // 1 float
+    EEPROM_READ_VAR(i, anchor_A_z);                // 1 float
+    EEPROM_READ_VAR(i, anchor_B_x);                // 1 float
+    EEPROM_READ_VAR(i, anchor_B_y);                // 1 float
+    EEPROM_READ_VAR(i, anchor_B_z);                // 1 float
+    EEPROM_READ_VAR(i, anchor_C_x);                // 1 float
+    EEPROM_READ_VAR(i, anchor_C_y);                // 1 float
+    EEPROM_READ_VAR(i, anchor_C_z);                // 1 float
+    EEPROM_READ_VAR(i, anchor_D_z);                // 1 float
 
-#ifdef EXTRUDERS
-#ifdef PIDTEMP
-    if (e < EXTRUDERS) {
-      EEPROM_WRITE_VAR(i, PID_PARAM(Kp, e));
-      EEPROM_WRITE_VAR(i, PID_PARAM(Ki, e));
-      EEPROM_WRITE_VAR(i, PID_PARAM(Kd, e));
-#ifdef PID_ADD_EXTRUSION_RATE
-      EEPROM_WRITE_VAR(i, PID_PARAM(Kc, e));
-#else
-      dummy = 1.0f; // 1.0 = default kc
-      EEPROM_WRITE_VAR(i, dummy);
-#endif
-    }
-    else {
-#else // !PIDTEMP
-      {
-#endif // !PIDTEMP
-
-        dummy = DUMMY_PID_VALUE;
-        EEPROM_WRITE_VAR(i, dummy);
-        dummy = 0.0f;
-        for (int q = 3; q--;) EEPROM_WRITE_VAR(i, dummy);
-      }
-
-    } // Extruders Loop
-#endif // ifdef EXTRUDERS
-
-    int lcd_contrast = 32; // dummy
-    EEPROM_WRITE_VAR(i, lcd_contrast);
-
-#ifdef SCARA
-    EEPROM_WRITE_VAR(i, axis_scaling); // 3 floats
-#else
-    dummy = 1.0f;
-    EEPROM_WRITE_VAR(i, dummy);
-#endif
-
-    EEPROM_WRITE_VAR(i, volumetric_enabled);
-
-#ifdef EXTRUDERS
-    // Save filament sizes
-    for (int q = 0; q < 4; q++) {
-      if (q < EXTRUDERS) dummy = filament_size[q];
-      EEPROM_WRITE_VAR(i, dummy);
-    }
-#endif // ifdef EXTRUDERS
-
-    int storageSize = i;
-
-    char ver2[4] = EEPROM_VERSION;
-    int j = EEPROM_OFFSET;
-    EEPROM_WRITE_VAR(j, ver2); // validate data
-
-    // Report storage size
+    // Report settings retrieved and length
     SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR("Settings Stored (", (unsigned long)i);
+    SERIAL_ECHO(ver);
+    SERIAL_ECHOPAIR(" stored settings retrieved (", (unsigned long)i);
     SERIAL_ECHOLNPGM(" bytes)");
   }
 
-  void Config_RetrieveSettings() {
-
-    int i = EEPROM_OFFSET;
-    char stored_ver[4];
-    char ver[4] = EEPROM_VERSION;
-    EEPROM_READ_VAR(i, stored_ver); //read stored version
-    //  SERIAL_ECHOLN("Version: [" << ver << "] Stored version: [" << stored_ver << "]");
-
-    if (strncmp(ver, stored_ver, 3) != 0) {
-      Config_ResetDefault();
-    }
-    else {
-      float dummy = 0;
-
-      // version number match
-      EEPROM_READ_VAR(i, axis_steps_per_unit);
-      EEPROM_READ_VAR(i, max_feedrate);
-      EEPROM_READ_VAR(i, max_acceleration_units_per_sq_second);
-
-      // steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
-      reset_acceleration_rates();
-
-      EEPROM_READ_VAR(i, acceleration);
-      EEPROM_READ_VAR(i, retract_acceleration);
-      EEPROM_READ_VAR(i, minimumfeedrate);
-      EEPROM_READ_VAR(i, mintravelfeedrate);
-      EEPROM_READ_VAR(i, minsegmenttime);
-      EEPROM_READ_VAR(i, max_xy_jerk);
-      EEPROM_READ_VAR(i, max_z_jerk);
-#ifdef EXTRUDERS
-      EEPROM_READ_VAR(i, max_e_jerk);
-#endif // ifdef EXTRUDERS
-      EEPROM_READ_VAR(i, add_homing);
-
-#ifdef DELTA
-      EEPROM_READ_VAR(i, endstop_adj);                // 3 floats
-      EEPROM_READ_VAR(i, delta_segments_per_second);  // 1 float
-#ifdef HANGPRINTER
-      EEPROM_READ_VAR(i, anchor_A_x);                // 1 float
-      EEPROM_READ_VAR(i, anchor_A_y);                // 1 float
-      EEPROM_READ_VAR(i, anchor_A_z);                // 1 float
-      EEPROM_READ_VAR(i, anchor_B_x);                // 1 float
-      EEPROM_READ_VAR(i, anchor_B_y);                // 1 float
-      EEPROM_READ_VAR(i, anchor_B_z);                // 1 float
-      EEPROM_READ_VAR(i, anchor_C_x);                // 1 float
-      EEPROM_READ_VAR(i, anchor_C_y);                // 1 float
-      EEPROM_READ_VAR(i, anchor_C_z);                // 1 float
-      EEPROM_READ_VAR(i, anchor_D_z);                // 1 float
-#else
-      EEPROM_READ_VAR(i, delta_radius);               // 1 float
-      EEPROM_READ_VAR(i, delta_diagonal_rod);         // 1 float
-#endif
-#else
-      for (int q=6; q--;) EEPROM_READ_VAR(i, dummy);
-#endif
-
-      int plaPreheatHotendTemp, plaPreheatHPBTemp, plaPreheatFanSpeed,
-          absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed;
-
-#ifdef EXTRUDERS
-      EEPROM_READ_VAR(i, plaPreheatHotendTemp);
-      EEPROM_READ_VAR(i, plaPreheatHPBTemp);
-      EEPROM_READ_VAR(i, plaPreheatFanSpeed);
-      EEPROM_READ_VAR(i, absPreheatHotendTemp);
-      EEPROM_READ_VAR(i, absPreheatHPBTemp);
-      EEPROM_READ_VAR(i, absPreheatFanSpeed);
-#endif // ifdef EXTRUDERS
-      EEPROM_READ_VAR(i, zprobe_zoffset);
-
-#ifdef EXTRUDERS
-#ifdef PIDTEMP
-      for (int e = 0; e < 4; e++) { // 4 = max extruders currently supported by Marlin
-        EEPROM_READ_VAR(i, dummy);
-        if (e < EXTRUDERS && dummy != DUMMY_PID_VALUE) {
-          // do not need to scale PID values as the values in EEPROM are already scaled
-          PID_PARAM(Kp, e) = dummy;
-          EEPROM_READ_VAR(i, PID_PARAM(Ki, e));
-          EEPROM_READ_VAR(i, PID_PARAM(Kd, e));
-#ifdef PID_ADD_EXTRUSION_RATE
-          EEPROM_READ_VAR(i, PID_PARAM(Kc, e));
-#else
-          EEPROM_READ_VAR(i, dummy);
-#endif
-        }
-        else {
-          for (int q=3; q--;) EEPROM_READ_VAR(i, dummy); // Ki, Kd, Kc
-        }
-      }
-#else // !PIDTEMP
-      // 4 x 4 = 16 slots for PID parameters
-      for (int q=16; q--;) EEPROM_READ_VAR(i, dummy);  // 4x Kp, Ki, Kd, Kc
-#endif // !PIDTEMP
-#endif // ifdef EXTRUDERS
-
-      int lcd_contrast;
-      EEPROM_READ_VAR(i, lcd_contrast);
-
-#ifdef SCARA
-      EEPROM_READ_VAR(i, axis_scaling);  // 3 floats
-#else
-      EEPROM_READ_VAR(i, dummy);
-#endif
-
-      EEPROM_READ_VAR(i, volumetric_enabled);
-
-#ifdef EXTRUDERS
-      for (int q = 0; q < 4; q++) {
-        EEPROM_READ_VAR(i, dummy);
-        if (q < EXTRUDERS) filament_size[q] = dummy;
-      }
-
-      calculate_volumetric_multipliers();
-      // Call updatePID (similar to when we have processed M301)
-      updatePID();
-#endif // ifdef EXTRUDERS
-
-      // Report settings retrieved and length
-      SERIAL_ECHO_START;
-      SERIAL_ECHO(ver);
-      SERIAL_ECHOPAIR(" stored settings retrieved (", (unsigned long)i);
-      SERIAL_ECHOLNPGM(" bytes)");
-    }
-
 #ifdef EEPROM_CHITCHAT
-    Config_PrintSettings();
+  Config_PrintSettings();
 #endif
-  }
+}
 
 #endif // EEPROM_SETTINGS
 
-  void Config_ResetDefault() {
-    float tmp1[] = DEFAULT_AXIS_STEPS_PER_UNIT;
-    float tmp2[] = DEFAULT_MAX_FEEDRATE;
-    long tmp3[] = DEFAULT_MAX_ACCELERATION;
-    for (int i = 0; i < NUM_AXIS; i++) {
-      axis_steps_per_unit[i] = tmp1[i];
-      max_feedrate[i] = tmp2[i];
-      max_acceleration_units_per_sq_second[i] = tmp3[i];
-    }
+void Config_ResetDefault() {
+  float tmp1[] = DEFAULT_AXIS_STEPS_PER_UNIT;
+  float tmp2[] = DEFAULT_MAX_FEEDRATE;
+  long tmp3[] = DEFAULT_MAX_ACCELERATION;
+  for (int i = 0; i < NUM_AXIS; i++) {
+    axis_steps_per_unit[i] = tmp1[i];
+    max_feedrate[i] = tmp2[i];
+    max_acceleration_units_per_sq_second[i] = tmp3[i];
+  }
 
-    // steps per sq second need to be updated to agree with the units per sq second
-    reset_acceleration_rates();
+  // steps per sq second need to be updated to agree with the units per sq second
+  reset_acceleration_rates();
 
-    acceleration = DEFAULT_ACCELERATION;
-    retract_acceleration = DEFAULT_RETRACT_ACCELERATION;
-    minimumfeedrate = DEFAULT_MINIMUMFEEDRATE;
-    minsegmenttime = DEFAULT_MINSEGMENTTIME;
-    mintravelfeedrate = DEFAULT_MINTRAVELFEEDRATE;
-    max_xy_jerk = DEFAULT_XYJERK;
-    max_z_jerk = DEFAULT_ZJERK;
-    max_e_jerk = DEFAULT_EJERK;
-    add_homing[A_AXIS] = add_homing[B_AXIS] = add_homing[C_AXIS] = add_homing[D_AXIS] = 0;
+  acceleration = DEFAULT_ACCELERATION;
+  retract_acceleration = DEFAULT_RETRACT_ACCELERATION;
+  minimumfeedrate = DEFAULT_MINIMUMFEEDRATE;
+  minsegmenttime = DEFAULT_MINSEGMENTTIME;
+  mintravelfeedrate = DEFAULT_MINTRAVELFEEDRATE;
+  max_xy_jerk = DEFAULT_XYJERK;
+  max_z_jerk = DEFAULT_ZJERK;
+  max_e_jerk = DEFAULT_EJERK;
+  add_homing[A_AXIS] = add_homing[B_AXIS] = add_homing[C_AXIS] = add_homing[D_AXIS] = 0;
 #if defined(HANGPRINTER)
-    anchor_A_x = ANCHOR_A_X;
-    anchor_A_y = ANCHOR_A_Y;
-    anchor_A_z = ANCHOR_A_Z;
-    anchor_B_x = ANCHOR_B_X;
-    anchor_B_y = ANCHOR_B_Y;
-    anchor_B_z = ANCHOR_B_Z;
-    anchor_C_x = ANCHOR_C_X;
-    anchor_C_y = ANCHOR_C_Y;
-    anchor_C_z = ANCHOR_C_Z;
-    anchor_D_z = ANCHOR_D_Z;
+  anchor_A_x = ANCHOR_A_X;
+  anchor_A_y = ANCHOR_A_Y;
+  anchor_A_z = ANCHOR_A_Z;
+  anchor_B_x = ANCHOR_B_X;
+  anchor_B_y = ANCHOR_B_Y;
+  anchor_B_z = ANCHOR_B_Z;
+  anchor_C_x = ANCHOR_C_X;
+  anchor_C_y = ANCHOR_C_Y;
+  anchor_C_z = ANCHOR_C_Z;
+  anchor_D_z = ANCHOR_D_Z;
 #endif
-    delta_segments_per_second =  DELTA_SEGMENTS_PER_SECOND;
-    endstop_adj[A_AXIS] = endstop_adj[B_AXIS] = endstop_adj[C_AXIS] = endstop_adj[D_AXIS] = 0;
+  delta_segments_per_second =  DELTA_SEGMENTS_PER_SECOND;
+  endstop_adj[A_AXIS] = endstop_adj[B_AXIS] = endstop_adj[C_AXIS] = endstop_adj[D_AXIS] = 0;
 
 #ifdef PIDTEMP
 #ifdef PID_PARAMS_PER_EXTRUDER
-    for (int e = 0; e < EXTRUDERS; e++)
+  for (int e = 0; e < EXTRUDERS; e++)
 #else
-      int e = 0; // only need to write once
+    int e = 0; // only need to write once
 #endif
-    {
-      PID_PARAM(Kp, e) = DEFAULT_Kp;
-      PID_PARAM(Ki, e) = scalePID_i(DEFAULT_Ki);
-      PID_PARAM(Kd, e) = scalePID_d(DEFAULT_Kd);
+  {
+    PID_PARAM(Kp, e) = DEFAULT_Kp;
+    PID_PARAM(Ki, e) = scalePID_i(DEFAULT_Ki);
+    PID_PARAM(Kd, e) = scalePID_d(DEFAULT_Kd);
 #ifdef PID_ADD_EXTRUSION_RATE
-      PID_PARAM(Kc, e) = DEFAULT_Kc;
+    PID_PARAM(Kc, e) = DEFAULT_Kc;
 #endif
-    }
-    // call updatePID (similar to when we have processed M301)
-    updatePID();
+  }
+  // call updatePID (similar to when we have processed M301)
+  updatePID();
 #endif // PIDTEMP
 
 #ifdef EXTRUDERS
-    volumetric_enabled = false;
-    filament_size[0] = DEFAULT_NOMINAL_FILAMENT_DIA;
+  volumetric_enabled = false;
+  filament_size[0] = DEFAULT_NOMINAL_FILAMENT_DIA;
 #if EXTRUDERS > 1
-    filament_size[1] = DEFAULT_NOMINAL_FILAMENT_DIA;
+  filament_size[1] = DEFAULT_NOMINAL_FILAMENT_DIA;
 #if EXTRUDERS > 2
-    filament_size[2] = DEFAULT_NOMINAL_FILAMENT_DIA;
+  filament_size[2] = DEFAULT_NOMINAL_FILAMENT_DIA;
 #if EXTRUDERS > 3
-    filament_size[3] = DEFAULT_NOMINAL_FILAMENT_DIA;
+  filament_size[3] = DEFAULT_NOMINAL_FILAMENT_DIA;
 #endif
 #endif
 #endif
-    calculate_volumetric_multipliers();
+  calculate_volumetric_multipliers();
 #endif
 
-    SERIAL_ECHO_START;
-    SERIAL_ECHOLNPGM("Hardcoded Default Settings Loaded");
-  }
+  SERIAL_ECHO_START;
+  SERIAL_ECHOLNPGM("Hardcoded Default Settings Loaded");
+}
 
 #ifndef DISABLE_M503
 
-  void Config_PrintSettings(bool forReplay) {
-    // Always have this function, even with EEPROM_SETTINGS disabled, the current values will be shown
+void Config_PrintSettings(bool forReplay) {
+  // Always have this function, even with EEPROM_SETTINGS disabled, the current values will be shown
 
+  SERIAL_ECHO_START;
+
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("Steps per unit:");
     SERIAL_ECHO_START;
-
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("Steps per unit:");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("  M92 A", axis_steps_per_unit[A_AXIS]);
-    SERIAL_ECHOPAIR(" B", axis_steps_per_unit[B_AXIS]);
-    SERIAL_ECHOPAIR(" C", axis_steps_per_unit[C_AXIS]);
-    SERIAL_ECHOPAIR(" D", axis_steps_per_unit[D_AXIS]);
+  }
+  SERIAL_ECHOPAIR("  M92 A", axis_steps_per_unit[A_AXIS]);
+  SERIAL_ECHOPAIR(" B", axis_steps_per_unit[B_AXIS]);
+  SERIAL_ECHOPAIR(" C", axis_steps_per_unit[C_AXIS]);
+  SERIAL_ECHOPAIR(" D", axis_steps_per_unit[D_AXIS]);
 #ifdef EXTRUDERS
-    SERIAL_ECHOPAIR(" E", axis_steps_per_unit[E_AXIS]);
+  SERIAL_ECHOPAIR(" E", axis_steps_per_unit[E_AXIS]);
 #endif // ifdef EXTRUDERS
-    SERIAL_EOL;
+  SERIAL_EOL;
 
+  SERIAL_ECHO_START;
+
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("Maximum feedrates (mm/s):");
     SERIAL_ECHO_START;
-
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("Maximum feedrates (mm/s):");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("  M203 A", max_feedrate[A_AXIS]);
-    SERIAL_ECHOPAIR(" B", max_feedrate[B_AXIS]);
-    SERIAL_ECHOPAIR(" C", max_feedrate[C_AXIS]);
-    SERIAL_ECHOPAIR(" D", max_feedrate[D_AXIS]);
+  }
+  SERIAL_ECHOPAIR("  M203 A", max_feedrate[A_AXIS]);
+  SERIAL_ECHOPAIR(" B", max_feedrate[B_AXIS]);
+  SERIAL_ECHOPAIR(" C", max_feedrate[C_AXIS]);
+  SERIAL_ECHOPAIR(" D", max_feedrate[D_AXIS]);
 #ifdef EXTRUDERS
-    SERIAL_ECHOPAIR(" E", max_feedrate[E_AXIS]);
+  SERIAL_ECHOPAIR(" E", max_feedrate[E_AXIS]);
 #endif // ifdef EXTRUDERS
-    SERIAL_EOL;
+  SERIAL_EOL;
 
+  SERIAL_ECHO_START;
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("Maximum Acceleration (mm/s2):");
     SERIAL_ECHO_START;
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("Maximum Acceleration (mm/s2):");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("  M201 A", max_acceleration_units_per_sq_second[A_AXIS] );
-    SERIAL_ECHOPAIR(" B", max_acceleration_units_per_sq_second[B_AXIS] );
-    SERIAL_ECHOPAIR(" C", max_acceleration_units_per_sq_second[C_AXIS] );
-    SERIAL_ECHOPAIR(" D", max_acceleration_units_per_sq_second[D_AXIS] );
+  }
+  SERIAL_ECHOPAIR("  M201 A", max_acceleration_units_per_sq_second[A_AXIS] );
+  SERIAL_ECHOPAIR(" B", max_acceleration_units_per_sq_second[B_AXIS] );
+  SERIAL_ECHOPAIR(" C", max_acceleration_units_per_sq_second[C_AXIS] );
+  SERIAL_ECHOPAIR(" D", max_acceleration_units_per_sq_second[D_AXIS] );
 #ifdef EXTRUDERS
-    SERIAL_ECHOPAIR(" E", max_acceleration_units_per_sq_second[E_AXIS]);
+  SERIAL_ECHOPAIR(" E", max_acceleration_units_per_sq_second[E_AXIS]);
 #endif // ifdef EXTRUDERS
-    SERIAL_EOL;
+  SERIAL_EOL;
+  SERIAL_ECHO_START;
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("Acceleration: S=acceleration, T=retract acceleration");
     SERIAL_ECHO_START;
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("Acceleration: S=acceleration, T=retract acceleration");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("  M204 S", acceleration );
-    SERIAL_ECHOPAIR(" T", retract_acceleration);
-    SERIAL_EOL;
+  }
+  SERIAL_ECHOPAIR("  M204 S", acceleration );
+  SERIAL_ECHOPAIR(" T", retract_acceleration);
+  SERIAL_EOL;
 
+  SERIAL_ECHO_START;
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("Advanced variables: S=Min feedrate (mm/s), T=Min travel feedrate (mm/s), B=minimum segment time (ms), X=maximum XY jerk (mm/s),  Z=maximum Z jerk (mm/s),  E=maximum E jerk (mm/s)");
     SERIAL_ECHO_START;
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("Advanced variables: S=Min feedrate (mm/s), T=Min travel feedrate (mm/s), B=minimum segment time (ms), X=maximum XY jerk (mm/s),  Z=maximum Z jerk (mm/s),  E=maximum E jerk (mm/s)");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("  M205 S", minimumfeedrate );
-    SERIAL_ECHOPAIR(" T", mintravelfeedrate );
-    SERIAL_ECHOPAIR(" B", minsegmenttime );
-    SERIAL_ECHOPAIR(" X", max_xy_jerk );
-    SERIAL_ECHOPAIR(" Z", max_z_jerk);
+  }
+  SERIAL_ECHOPAIR("  M205 S", minimumfeedrate );
+  SERIAL_ECHOPAIR(" T", mintravelfeedrate );
+  SERIAL_ECHOPAIR(" B", minsegmenttime );
+  SERIAL_ECHOPAIR(" X", max_xy_jerk );
+  SERIAL_ECHOPAIR(" Z", max_z_jerk);
 #ifdef EXTRUDERS
-    SERIAL_ECHOPAIR(" E", max_e_jerk);
+  SERIAL_ECHOPAIR(" E", max_e_jerk);
 #endif // ifdef EXTRUDERS
-    SERIAL_EOL;
+  SERIAL_EOL;
 
+  SERIAL_ECHO_START;
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("Home offset (mm):");
     SERIAL_ECHO_START;
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("Home offset (mm):");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("  M206 A", add_homing[A_AXIS] );
-    SERIAL_ECHOPAIR(" B", add_homing[B_AXIS] );
-    SERIAL_ECHOPAIR(" C", add_homing[C_AXIS] );
-    SERIAL_ECHOPAIR(" D", add_homing[D_AXIS] );
-    SERIAL_EOL;
+  }
+  SERIAL_ECHOPAIR("  M206 A", add_homing[A_AXIS] );
+  SERIAL_ECHOPAIR(" B", add_homing[B_AXIS] );
+  SERIAL_ECHOPAIR(" C", add_homing[C_AXIS] );
+  SERIAL_ECHOPAIR(" D", add_homing[D_AXIS] );
+  SERIAL_EOL;
 
 #ifdef DELTA
+  SERIAL_ECHO_START;
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("Endstop adjustement (mm):");
     SERIAL_ECHO_START;
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("Endstop adjustement (mm):");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("  M666 A", endstop_adj[A_AXIS] );
-    SERIAL_ECHOPAIR(" B", endstop_adj[B_AXIS] );
-    SERIAL_ECHOPAIR(" C", endstop_adj[C_AXIS] );
-    SERIAL_ECHOPAIR(" D", endstop_adj[D_AXIS] );
-    SERIAL_EOL;
+  }
+  SERIAL_ECHOPAIR("  M666 A", endstop_adj[A_AXIS] );
+  SERIAL_ECHOPAIR(" B", endstop_adj[B_AXIS] );
+  SERIAL_ECHOPAIR(" C", endstop_adj[C_AXIS] );
+  SERIAL_ECHOPAIR(" D", endstop_adj[D_AXIS] );
+  SERIAL_EOL;
 #ifdef HANGPRINTER
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR("  M665 Q",  anchor_A_x);
-    SERIAL_ECHOPAIR(      " W",  anchor_A_y);
-    SERIAL_ECHOPAIR(      " E",  anchor_A_z);
-    SERIAL_ECHOPAIR(      " R",  anchor_B_x);
-    SERIAL_ECHOPAIR(      " T",  anchor_B_y);
-    SERIAL_ECHOPAIR(      " Y",  anchor_B_z);
-    SERIAL_ECHOPAIR(      " U",  anchor_C_x);
-    SERIAL_ECHOPAIR(      " I",  anchor_C_y);
-    SERIAL_ECHOPAIR(      " O",  anchor_C_z);
-    SERIAL_ECHOPAIR(      " P",  anchor_D_z);
-    SERIAL_EOL;
+  SERIAL_ECHO_START;
+  SERIAL_ECHOPAIR("  M665 Q",  anchor_A_x);
+  SERIAL_ECHOPAIR(      " W",  anchor_A_y);
+  SERIAL_ECHOPAIR(      " E",  anchor_A_z);
+  SERIAL_ECHOPAIR(      " R",  anchor_B_x);
+  SERIAL_ECHOPAIR(      " T",  anchor_B_y);
+  SERIAL_ECHOPAIR(      " Y",  anchor_B_z);
+  SERIAL_ECHOPAIR(      " U",  anchor_C_x);
+  SERIAL_ECHOPAIR(      " I",  anchor_C_y);
+  SERIAL_ECHOPAIR(      " O",  anchor_C_z);
+  SERIAL_ECHOPAIR(      " P",  anchor_D_z);
+  SERIAL_EOL;
 #else
-    SERIAL_ECHOLNPGM("Delta settings: L=delta_diagonal_rod, R=delta_radius, S=delta_segments_per_second");
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR("  M665 L", delta_diagonal_rod );
-    SERIAL_ECHOPAIR(" R", delta_radius );
+  SERIAL_ECHOLNPGM("Delta settings: L=delta_diagonal_rod, R=delta_radius, S=delta_segments_per_second");
+  SERIAL_ECHO_START;
+  SERIAL_ECHOPAIR("  M665 L", delta_diagonal_rod );
+  SERIAL_ECHOPAIR(" R", delta_radius );
 #endif
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR(" DELTA_SEGMENTS_PER_SECOND: ", delta_segments_per_second );
-    SERIAL_EOL;
+  SERIAL_ECHO_START;
+  SERIAL_ECHOPAIR(" DELTA_SEGMENTS_PER_SECOND: ", delta_segments_per_second );
+  SERIAL_EOL;
 #endif // DELTA
 
 #ifdef PIDTEMP
+  SERIAL_ECHO_START;
+  if (!forReplay) {
+    SERIAL_ECHOLNPGM("PID settings:");
     SERIAL_ECHO_START;
-    if (!forReplay) {
-      SERIAL_ECHOLNPGM("PID settings:");
-      SERIAL_ECHO_START;
-    }
-    SERIAL_ECHOPAIR("   M301 P", PID_PARAM(Kp, 0)); // for compatibility with hosts, only echos values for E0
-    SERIAL_ECHOPAIR(" I", unscalePID_i(PID_PARAM(Ki, 0)));
-    SERIAL_ECHOPAIR(" D", unscalePID_d(PID_PARAM(Kd, 0)));
-    SERIAL_EOL;
+  }
+  SERIAL_ECHOPAIR("   M301 P", PID_PARAM(Kp, 0)); // for compatibility with hosts, only echos values for E0
+  SERIAL_ECHOPAIR(" I", unscalePID_i(PID_PARAM(Ki, 0)));
+  SERIAL_ECHOPAIR(" D", unscalePID_d(PID_PARAM(Kd, 0)));
+  SERIAL_EOL;
 #endif // PIDTEMP
 
-    SERIAL_ECHO_START;
-    if (volumetric_enabled) {
-      if (!forReplay) {
-        SERIAL_ECHOLNPGM("Filament settings:");
-        SERIAL_ECHO_START;
-      }
-      SERIAL_ECHOPAIR("   M200 D", filament_size[0]);
-      SERIAL_EOL;
+  SERIAL_ECHO_START;
+  if (volumetric_enabled) {
+    if (!forReplay) {
+      SERIAL_ECHOLNPGM("Filament settings:");
+      SERIAL_ECHO_START;
+    }
+    SERIAL_ECHOPAIR("   M200 D", filament_size[0]);
+    SERIAL_EOL;
 
 #if EXTRUDERS > 1
-      SERIAL_ECHO_START;
-      SERIAL_ECHOPAIR("   M200 T1 D", filament_size[1]);
-      SERIAL_EOL;
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR("   M200 T1 D", filament_size[1]);
+    SERIAL_EOL;
 #if EXTRUDERS > 2
-      SERIAL_ECHO_START;
-      SERIAL_ECHOPAIR("   M200 T2 D", filament_size[2]);
-      SERIAL_EOL;
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR("   M200 T2 D", filament_size[2]);
+    SERIAL_EOL;
 #if EXTRUDERS > 3
-      SERIAL_ECHO_START;
-      SERIAL_ECHOPAIR("   M200 T3 D", filament_size[3]);
-      SERIAL_EOL;
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR("   M200 T3 D", filament_size[3]);
+    SERIAL_EOL;
 #endif
 #endif
 #endif
 
-    } else {
-      if (!forReplay) {
-        SERIAL_ECHOLNPGM("Filament settings: Disabled");
-      }
+  } else {
+    if (!forReplay) {
+      SERIAL_ECHOLNPGM("Filament settings: Disabled");
     }
-
   }
+
+}
 
 #endif // !DISABLE_M503
