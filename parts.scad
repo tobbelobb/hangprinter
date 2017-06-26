@@ -233,10 +233,10 @@ module bottom_plate(){
           cube_y2 = 6;
           channel_length = 9;
           translate(Line_contact_d_xy){
-              translate([0,0,Line_contacts_abcd_z[D]-3.0]){
+              translate([0,0,Line_contacts_abcd_z[D]-3.3]){
                 rotate([0,-90,0])
                   // Hole for d line length adjusting screw
-                  cylinder(d=M3_diameter, h=15,center=true);
+                  cylinder(d=M3_diameter+0.2, h=15,center=true);
                 translate([-1,-2.5,-1.7])
                   cube([2,5,10]);
 
