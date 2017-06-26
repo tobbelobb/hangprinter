@@ -414,19 +414,15 @@ module bottom_plate(){
         //      0])
         //  cube([Nema17_cube_width,Sstruder_height,Sstruder_thickness+0.2]);
           //sstruder_plate();
-        for(i=[1,-1]){
-          translate([i*Nema17_screw_hole_dist/2,Nema17_screw_hole_dist/2,0]){
-            translate([0,0,-Big+Nema17_cube_height+10])
-              cylinder(h=Big, d=M3_diameter+0.2);
-            translate([-9/2,-(Bottom_plate_thickness+2)/2,Nema17_cube_height+7])
+        translate([-Nema17_screw_hole_dist/2,Nema17_screw_hole_dist/2,0]){
+          translate([0,0,-Big+Nema17_cube_height+10])
+            cylinder(h=Big, d=M3_diameter+0.2);
+          translate([-9/2,-(Bottom_plate_thickness+2)/2,Nema17_cube_height+7])
+            // Rectangular hole to reach in with hex key
+            cube([9,Bottom_plate_thickness+3,30]);
+            translate([-9/2,-(Bottom_plate_thickness+2)/2,-31-7])
               // Rectangular hole to reach in with hex key
-              cube([9,Bottom_plate_thickness+3,30]);
-            if(i==-1){
-              translate([-9/2,-(Bottom_plate_thickness+2)/2,-31-7])
-                // Rectangular hole to reach in with hex key
-                cube([9,Bottom_plate_thickness+3,31]);
-            }
-          }
+              cube([9,Bottom_plate_thickness+3,31]);
         }
       }// end extruder_motor_translate()
 
