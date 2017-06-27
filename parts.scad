@@ -1007,7 +1007,7 @@ module sstruder_lever(hobb=true){
     }
     // Hole for hinge screw
     translate([Sstruder_hinge_length,Sstruder_fork_length,-1])
-      cylinder(d=M3_diameter+0.3, h=height+2);
+      cylinder(d=M3_diameter+0.45, h=height+2);
   }
   if(hobb){
     hobb_towers([0,0,0],true);
