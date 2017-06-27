@@ -1066,7 +1066,7 @@ module sstruder_plate(hobb=true){
       cylinder(d = Hobbed_insert_diameter + 0.6, h = 30, $fn=60);
       // Cut around hobb 2
       translate([Hobbed_insert_diameter + Extruder_filament_opening, 0, 0])
-        cylinder(d = Hobbed_insert_diameter + 0.6, h = 30, $fn=60);
+        cylinder(d = Bearing_623_outer_diameter+1, h = 30, $fn=60);
       // tube channel
       translate([-E_motor_x_offset,1,Sstruder_filament_meets_shaft])
         rotate([90,0,0])
