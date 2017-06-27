@@ -496,6 +496,8 @@ module placed_worm_gear(ang=0){
 
 // This is the worm for the worm drive
 module worm(step=0.2, with_details=true){
+  stop_angle = Worm_spiral_turns*Degrees_per_worm_gear_tooth; // where main path stops
+
   // XY-Translations of top (phase in), main (touch gear) and bottom (phase out) spirals
   function translate_top_xy(v)    = Worm_radius
                   - virtual_side*v/Degrees_per_worm_gear_tooth;
@@ -508,7 +510,7 @@ module worm(step=0.2, with_details=true){
     function my_circle(r) = [for (i=[0:Worm_spiral_turns*step*360/stop_angle:359.9])
       r * [cos(i), sin(i)]];
     // Scale profile to fill interior
-    towerpath1 = [for (v=[-Degrees_per_worm_gear_tooth : step : stop_angle + Degrees_per_worm_gear_tooth])
+    towerpath1 = [for (v=[-Degrees_per_worm_gear_tooth : (stop_angle+2*Degrees_per_worm_gear_tooth)/20 : stop_angle + Degrees_per_worm_gear_tooth+0.01])
       // Move downwards
       translation([0, // x
           0,
@@ -535,7 +537,6 @@ module worm(step=0.2, with_details=true){
                   ];
   //p = [translation([0,0,0]),translation([0,1,0])];
   //sweep(thread_profile,p);
-  stop_angle = Worm_spiral_turns*Degrees_per_worm_gear_tooth; // where main path stops
 
   // Top spiral
   path0 = [for (v=[Degrees_per_worm_gear_tooth : -step : step])
@@ -565,16 +566,22 @@ module worm(step=0.2, with_details=true){
     rotation([0,-v,0])
     ];
 
-  height_downwards = Worm_disc_tooth_valley_r*sin(stop_angle) + virtual_side;
+  height_downwards = Worm_disc_tooth_valley_r*sin(stop_angle+Degrees_per_worm_gear_tooth);
   height_upwards = 5;
 
+
+  module worm_axle(h){
+    big_radius = Worm_smallest_radius*(translate_main_xy(stop_angle + Degrees_per_worm_gear_tooth)+virtual_side*(1 - cos(stop_angle + Degrees_per_worm_gear_tooth)))/translate_main_xy(0);
+    small_radius = big_radius - h + 1;
+    cylinder(h=h,r1=small_radius,r2=big_radius, $fs = step*big_radius);
+  }
 
   //translate([0,0,height_downwards]) // Put bottom plane on z=0
   difference(){
     union(){
       // Axle
       translate([0,0,-height_downwards-Worm_axle_length])
-        cylinder(h=Worm_axle_length, r1=Worm_axle_radius, r2=Worm_axle_radius + Worm_axle_length);
+        worm_axle(Worm_axle_length+0.01);
 
       // Spiral
       if(with_details){
@@ -592,7 +599,7 @@ module worm(step=0.2, with_details=true){
 
     if(with_details){
       // Motor shaft D-shaped bore
-      h = height_downwards + height_upwards + 2;
+      h = height_downwards + height_upwards + Worm_axle_length + 2;
       rotate([0,0,45])
       translate([0,0,-height_downwards - Worm_axle_length - 1])
       difference(){
@@ -609,8 +616,7 @@ module worm(step=0.2, with_details=true){
       translate([0,0,-Worm_axle_length - height_downwards])
         difference() {
           cylinder(h=Worm_axle_length,r=50);
-          translate([0,0,-1])
-            cylinder(h=Worm_axle_length+2,r1=Worm_axle_radius,r2=Worm_axle_radius+Worm_axle_length);
+          worm_axle(Worm_axle_length);
         }
       // Cut top
       translate([-50,-50,height_upwards])
@@ -644,8 +650,7 @@ module worm(step=0.2, with_details=true){
 // This will be the direction of heaviest load,
 // and we want to push gear _down_ towards bottom plate
 // to avoid pushing disc up onto the other sandwich snelles and gears
-//mirror([1,0,0])
-//worm(step=0.01);
+//worm(step=0.07);
 
 module animate_roating_worm(){
   rotate([0,0,360*$t])
