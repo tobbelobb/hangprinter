@@ -1155,7 +1155,7 @@ module sstruder_plate(hobb=true){
     translate([Nema17_cube_width/2 + extra_width_for_pressblock/1.5,
                0,
                -1])
-      M3_screw(Sstruder_fork_width+Sstruder_thickness+2,true);
+      cylinder(d=M3_diameter+0.5, h = 10);
     }
   }
 
@@ -1186,7 +1186,7 @@ module sstruder_plate(hobb=true){
     }
     // Screw holes for motor
     translate([0,0,-1])
-      Nema17_screw_holes(M3_diameter, Sstruder_thickness+2);
+      Nema17_screw_holes(M3_diameter+0.5, Sstruder_thickness+2);
     // Nema17 ring
     translate([0,0,-1])
       cylinder(d=ring_hole_d, h=Sstruder_thickness+2);
