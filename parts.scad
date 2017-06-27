@@ -1139,7 +1139,7 @@ module sstruder_plate(hobb=true){
   //!rotate([180,0,0]) pressblock_handle();
   //!pressblock_handle();
 
-  extra_width_for_pressblock = 9;
+  extra_width_for_pressblock = 10.5;
   module pressblock(){
     difference(){
     // Flat area for pressblock
