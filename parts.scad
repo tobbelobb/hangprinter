@@ -420,9 +420,14 @@ module bottom_plate(){
           translate([-9/2,-(Bottom_plate_thickness+2)/2,Nema17_cube_height+7])
             // Rectangular hole to reach in with hex key
             cube([9,Bottom_plate_thickness+3,30]);
-            translate([-9/2,-(Bottom_plate_thickness+2)/2,-31-7])
-              // Rectangular hole to reach in with hex key
-              cube([9,Bottom_plate_thickness+3,31]);
+          translate([-9/2,-(Bottom_plate_thickness+2)/2,-31-7])
+            // Rectangular hole to reach in with hex key
+            cube([9,Bottom_plate_thickness+3,31]);
+          translate([-9/2 + Nema17_screw_hole_dist,-(Bottom_plate_thickness+2)/2,Nema17_cube_height+7])
+            // Rectangular hole to reach in with hex key
+            cube([9,Bottom_plate_thickness+3,30]);
+          translate([Nema17_screw_hole_dist,0,-20+Nema17_cube_height+10])
+            cylinder(h=20, d=M3_diameter+0.2);
         }
       }// end extruder_motor_translate()
 
