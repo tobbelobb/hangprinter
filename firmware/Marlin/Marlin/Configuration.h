@@ -95,17 +95,20 @@
 // Or do other measurments and calculate Carthesian axis lengths by trigonometry
 // See Hangprinter calibration manual for help:
 // https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
-#define ANCHOR_A_X -573.0 // anchor point A's Carthesian x-coordinate. In mm
-#define ANCHOR_A_Y -1331.0
-#define ANCHOR_A_Z -162.5 // measured from print surface to frame middle.
-#define ANCHOR_B_X 1548.0
-#define ANCHOR_B_Y 0.0
-#define ANCHOR_B_Z -148.0 // measured from print surface to frame middle.
-#define ANCHOR_C_X -609.0
-#define ANCHOR_C_Y 1209.0
-#define ANCHOR_C_Z -133.5 // measured from print surface to frame middle.
-// It's assumed that ceiling frame part is directly above origo
-#define ANCHOR_D_Z 2295.0 // measured along vertical line, from fish eye to anchor point.
+//
+//
+//
+//
+#define ANCHOR_A_X 0.000000
+#define ANCHOR_A_Y -2205.666667
+#define ANCHOR_A_Z -117.000000
+#define ANCHOR_B_X 1587.441956
+#define ANCHOR_B_Y 1563.733988
+#define ANCHOR_B_Z -117.000000
+#define ANCHOR_C_X -2056.826407
+#define ANCHOR_C_Y 799.136608
+#define ANCHOR_C_Z -117.000000
+#define ANCHOR_D_Z 3183.000000
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -367,9 +370,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define DISABLE_E false // For all extruders
 #define DISABLE_INACTIVE_EXTRUDER false //disable only inactive extruders and keep active extruder enabled
 
-#define INVERT_X_DIR false // DELTA does not invert
-#define INVERT_Y_DIR false
-#define INVERT_Z_DIR false
+#define INVERT_X_DIR true // DELTA does not invert
+#define INVERT_Y_DIR true
+#define INVERT_Z_DIR true
 
 #define INVERT_E0_DIR true   // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E1_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
@@ -420,7 +423,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // For deltabots this means top and center of the Cartesian print volume.
 #define MANUAL_X_HOME_POS 0
 #define MANUAL_Y_HOME_POS 0
-#define MANUAL_Z_HOME_POS 0.2 // For delta: Distance between nozzle and print surface after homing.
+#define MANUAL_Z_HOME_POS 0 // For delta: Distance between nozzle and print surface after homing.
 
 #define NUM_AXIS 5 // The axis order in all axis related arrays is A, B, C, D, E
 #define DIRS 4     // (that is A_AXIS, B_AXIS, C_AXIS, D_AXIS, E_AXIS or 0, 1, 2, 3, 4)
@@ -432,14 +435,14 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //============================= Steps per unit ==============================
 //===========================================================================
 // If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
-#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+//#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 
 // Mechanical advantage in each direction needed for dynamic step/mm calculations
 // One pulley along each line gives halved forces and doubled distances
 #define MECHANICAL_ADVANTAGE_A 1
 #define MECHANICAL_ADVANTAGE_B 1
 #define MECHANICAL_ADVANTAGE_C 1
-#define MECHANICAL_ADVANTAGE_D 2
+#define MECHANICAL_ADVANTAGE_D 1
 
 // Action points in each direction needed for dynamic step/mm calculations
 #define POINTS_A 2
@@ -476,7 +479,7 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, 134.0}
 #else
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {36.87, 36.87, 36.87, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {88.189752, 88.189752, 88.189752, 617.328264, 134.0}
 #endif
 
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
