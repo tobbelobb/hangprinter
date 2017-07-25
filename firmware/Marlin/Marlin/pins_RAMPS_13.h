@@ -37,6 +37,13 @@
 #define Z_MIN_PIN          18
 #define Z_MAX_PIN          19
 
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+#define TORQUE_MODE_ENABLE_PIN_A 16
+#define TORQUE_MODE_ENABLE_PIN_B 17
+#define TORQUE_MODE_ENABLE_PIN_C 23
+#define TORQUE_MODE_ENABLE_PIN_D 25
+#endif
+
 #define Y2_STEP_PIN        36
 #define Y2_DIR_PIN         34
 #define Y2_ENABLE_PIN      30

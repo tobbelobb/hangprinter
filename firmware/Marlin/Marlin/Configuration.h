@@ -374,8 +374,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define INVERT_Y_DIR true
 #define INVERT_Z_DIR true
 
-#define INVERT_E0_DIR true   // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E1_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E0_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
 // ENDSTOP SETTINGS:
@@ -435,7 +435,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //============================= Steps per unit ==============================
 //===========================================================================
 // If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
-//#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+
+// If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
+#define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
 
 // Mechanical advantage in each direction needed for dynamic step/mm calculations
 // One pulley along each line gives halved forces and doubled distances
@@ -472,14 +475,16 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {7240.0,6260.0,6900.0,18000.0};
 // D-motor has 1 tooth instead of 9 teeth. 1216.651*9 = 10949.860
 //const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
 // Double all of those if 1/16 stepping is used
-const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720};
+//const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720};
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {4866.604,4866.604,4866.604,21899.720};
 
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
 // then constant ABCD values are calculated on the fly and used only used to calculate accelerations
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, 134.0}
 #else
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {88.189752, 88.189752, 88.189752, 617.328264, 134.0}
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   {88.189752, 88.189752, 88.189752, 617.328264, 134.0}
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {176.3795, 176.3795, 176.3795, 617.328264, 134.0}
 #endif
 
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)

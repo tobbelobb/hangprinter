@@ -38,6 +38,9 @@
 #include "language.h"
 #include "pins_arduino.h"
 #include "math.h"
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+#include "Wire.h"
+#endif
 
 #if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
 #include <SPI.h>
@@ -50,9 +53,14 @@
 //-------------------
 // G0  -> G1
 // G1  - Coordinated Movement X Y Z E
+// G6  - Uncoordinated movement A B C D E
+// G7  - Do A B C D moves, and remember new delta lengths.
 // G90 - Use Absolute Coordinates
 // G91 - Use Relative Coordinates
 // G92 - Set current position to coordinates given
+// G95 - Set servo torque mode status
+// G96 - Tell sensor servo to mark its reference point
+// G97 - Get sensor servo length travelled since last G96
 
 // M Codes
 // M17  - Enable/Power all stepper motors
@@ -314,6 +322,15 @@ void setup_killpin(){
 #endif
 }
 
+void setup_torque_mode_pins(){
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+  pinMode(TORQUE_MODE_ENABLE_PIN_A, OUTPUT); // servo A torque mode
+  pinMode(TORQUE_MODE_ENABLE_PIN_B, OUTPUT); // servo B torque mode
+  pinMode(TORQUE_MODE_ENABLE_PIN_C, OUTPUT); // servo C torque mode
+  pinMode(TORQUE_MODE_ENABLE_PIN_D, OUTPUT); // servo C torque mode
+#endif
+}
+
 // Set home pin
 void setup_homepin(void){
 #if defined(HOME_PIN) && HOME_PIN > -1
@@ -349,6 +366,11 @@ void suicide(){
 
 void setup(){
   setup_killpin();
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+  setup_torque_mode_pins();
+  // Initialize i2c as master.
+  Wire.begin();
+#endif
   setup_powerhold();
   MYSERIAL.begin(BAUDRATE);
   SERIAL_PROTOCOLLNPGM("start");
@@ -594,6 +616,18 @@ static void axis_is_at_home(int axis){
 // TODO: Homing procedure goes here. tobben 8. sep 2015
 static void homeaxis(int axis) { }
 
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+float ang_to_mm_A(float ang){
+  float abs_step_in_origo = lround(k0a*(sqrt(k1a + k2a*0.0) - sqrtk1a));
+  float microstepping = 32.0;
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+  return (pow((c + sqrtk1a)/k0a, 2) - k1a)/k2a; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+}
+#endif
+
 void refresh_cmd_timeout(void){
   previous_millis_cmd = millis();
 }
@@ -646,6 +680,26 @@ void process_commands(){
         plan_buffer_line(tmp_delta, delta,
                          destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
+      case 7: // G7: Do A B C D moves, and remember new delta lengths.
+        // WARNING: Using G7 first, then G1 will give you chaos!
+        //          Make sure to use G92 after G7 moves, so G1 sees sane previous delta lengths.
+        float prev_delta[DIRS];
+        memcpy(prev_delta, delta, sizeof(delta));
+        if(code_seen('A')) delta[A_AXIS] += code_value();
+        if(code_seen('B')) delta[B_AXIS] += code_value();
+        if(code_seen('C')) delta[C_AXIS] += code_value();
+        if(code_seen('D')) delta[D_AXIS] += code_value();
+        if(code_seen('F')){
+          next_feedrate = code_value();
+          if(next_feedrate > 0.0){
+            saved_feedrate = feedrate;
+            feedrate = next_feedrate;
+          }
+        }
+        // Line buildup compensation included in plan_buffer_line()...
+        plan_buffer_line(delta, prev_delta,
+                         destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
+        break;
       case 90: // G90
         relative_mode = false;
         break;
@@ -668,6 +722,56 @@ void process_commands(){
           }
         }
         break;
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+      case 95: // G95 Set servo torque mode status. Accepts 0 or 1.
+        if(code_seen('A')){
+          if(code_value_long() == 1){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_A, HIGH);
+          }else if(code_value_long() == 0){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_A, LOW);
+          }
+        }
+        if(code_seen('B')){
+          if(code_value_long() == 1){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_B, HIGH);
+          }else if(code_value_long() == 0){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_B, LOW);
+          }
+        }
+        if(code_seen('C')){
+          if(code_value_long() == 1){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_C, HIGH);
+          }else if(code_value_long() == 0){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_C, LOW);
+          }
+        }
+        if(code_seen('D')){
+          if(code_value_long() == 1){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_D, HIGH);
+          }else if(code_value_long() == 0){
+            digitalWrite(TORQUE_MODE_ENABLE_PIN_D, LOW);
+          }
+        }
+        break;
+      case 96: // G96 Tell sensor servo to mark its reference point
+        Wire.beginTransmission(0x2c);
+        Wire.write(1);
+        Wire.endTransmission(0x2c);
+        break;
+      case 97: // G97 Get sensor servo length travelled since last G96
+        Wire.requestFrom(0x2c, 4);
+        while(Wire.available() < 4){
+          delay(10);
+        }
+        byte b0 = Wire.read();
+        byte b1 = Wire.read();
+        byte b2 = Wire.read();
+        byte b3 = Wire.read();
+        float ang = (float) ((b0 << 3*8) | (b1 << 2*8) | (b2 << 8) | b3);
+        SERIAL_PROTOCOLPGM("Sensor angle is: ");
+        SERIAL_PROTOCOL(ang);
+        break;
+#endif
     }
   }
 
