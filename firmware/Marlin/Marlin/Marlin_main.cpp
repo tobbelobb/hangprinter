@@ -328,6 +328,10 @@ void setup_torque_mode_pins(){
   pinMode(TORQUE_MODE_ENABLE_PIN_B, OUTPUT); // servo B torque mode
   pinMode(TORQUE_MODE_ENABLE_PIN_C, OUTPUT); // servo C torque mode
   pinMode(TORQUE_MODE_ENABLE_PIN_D, OUTPUT); // servo C torque mode
+  digitalWrite(TORQUE_MODE_ENABLE_PIN_A, LOW);
+  digitalWrite(TORQUE_MODE_ENABLE_PIN_B, LOW);
+  digitalWrite(TORQUE_MODE_ENABLE_PIN_C, LOW);
+  digitalWrite(TORQUE_MODE_ENABLE_PIN_D, LOW);
 #endif
 }
 
@@ -617,14 +621,24 @@ static void axis_is_at_home(int axis){
 static void homeaxis(int axis) { }
 
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+// Ang is angle moved away from origo position
+// Output is line length from origo in mm
 float ang_to_mm_A(float ang){
-  float abs_step_in_origo = lround(k0a*(sqrt(k1a + k2a*0.0) - sqrtk1a));
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0a*(sqrtf(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS];
+#endif
   float microstepping = 32.0;
   float steps_per_rot = 200.0*microstepping;
   float steps_per_ang = steps_per_rot/360.0;
   float step_diff = steps_per_ang*ang;
   float c = abs_step_in_origo + step_diff; // current step count
-  return (pow((c + sqrtk1a)/k0a, 2) - k1a)/k2a; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0a + sqrtk1a)*(c/k0a + sqrtk1a) - k1a)/k2a - INITIAL_DISTANCES[A_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[A_AXIS] - INITIAL_DISTANCES[A_AXIS];
+#endif
 }
 #endif
 
@@ -663,8 +677,12 @@ void process_commands(){
       // Make moves without altering position variables.
       // Speed variables for planning are modified.
       case 6:
-        float tmp_delta[DIRS];
-        memcpy(tmp_delta, delta, sizeof(delta));
+        float tmp_delta[NUM_AXIS];
+        tmp_delta[A_AXIS] = delta[A_AXIS];
+        tmp_delta[B_AXIS] = delta[B_AXIS];
+        tmp_delta[C_AXIS] = delta[C_AXIS];
+        tmp_delta[D_AXIS] = delta[D_AXIS];
+
         if(code_seen('A')) tmp_delta[A_AXIS] += code_value();
         if(code_seen('B')) tmp_delta[B_AXIS] += code_value();
         if(code_seen('C')) tmp_delta[C_AXIS] += code_value();
@@ -678,13 +696,17 @@ void process_commands(){
           }
         }
         plan_buffer_line(tmp_delta, delta,
-                         destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
+            destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
       case 7: // G7: Do A B C D moves, and remember new delta lengths.
         // WARNING: Using G7 first, then G1 will give you chaos!
         //          Make sure to use G92 after G7 moves, so G1 sees sane previous delta lengths.
-        float prev_delta[DIRS];
-        memcpy(prev_delta, delta, sizeof(delta));
+        float prev_delta[NUM_AXIS];
+        prev_delta[A_AXIS] = delta[A_AXIS];
+        prev_delta[B_AXIS] = delta[B_AXIS];
+        prev_delta[C_AXIS] = delta[C_AXIS];
+        prev_delta[D_AXIS] = delta[D_AXIS];
+
         if(code_seen('A')) delta[A_AXIS] += code_value();
         if(code_seen('B')) delta[B_AXIS] += code_value();
         if(code_seen('C')) delta[C_AXIS] += code_value();
@@ -696,9 +718,9 @@ void process_commands(){
             feedrate = next_feedrate;
           }
         }
-        // Line buildup compensation included in plan_buffer_line()...
         plan_buffer_line(delta, prev_delta,
-                         destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
+            destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
+
         break;
       case 90: // G90
         relative_mode = false;
@@ -769,8 +791,14 @@ void process_commands(){
           ang.b[i] = Wire.read();
           i++;
         }
-        SERIAL_PROTOCOLPGM("Sensor angle is: ");
-        SERIAL_PROTOCOL(ang.fval);
+
+        //const float mm_ref = ang_to_mm_A(0.0);
+        SERIAL_ECHO("Sensor angle is: ");
+        SERIAL_ECHOLN(ang.fval);
+        SERIAL_ECHO("Converted to mm that is: ");
+        //SERIAL_ECHOLN(ang_to_mm_A(ang.fval) - mm_ref);
+        SERIAL_ECHOLN(ang_to_mm_A(ang.fval));
+
         break;
 #endif
     }
