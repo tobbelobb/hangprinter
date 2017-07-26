@@ -759,17 +759,18 @@ void process_commands(){
         Wire.endTransmission(0x2c);
         break;
       case 97: // G97 Get sensor servo length travelled since last G96
+        union {
+                byte b[4]; // hard coded 4 instead of sizeof(float)
+                float fval;
+              } ang;
         Wire.requestFrom(0x2c, 4);
-        while(Wire.available() < 4){
-          delay(10);
+        int i = 0;
+        while(Wire.available()){
+          ang.b[i] = Wire.read();
+          i++;
         }
-        byte b0 = Wire.read();
-        byte b1 = Wire.read();
-        byte b2 = Wire.read();
-        byte b3 = Wire.read();
-        float ang = (float) ((b0 << 3*8) | (b1 << 2*8) | (b2 << 8) | b3);
         SERIAL_PROTOCOLPGM("Sensor angle is: ");
-        SERIAL_PROTOCOL(ang);
+        SERIAL_PROTOCOL(ang.fval);
         break;
 #endif
     }
