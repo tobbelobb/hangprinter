@@ -54,7 +54,8 @@
 // G0  -> G1
 // G1  - Coordinated Movement X Y Z E
 // G6  - Uncoordinated movement A B C D E
-// G7  - Do A B C D moves, and remember new delta lengths.
+// G7  - Do relative A B C D moves, and remember new delta lengths.
+// G8  - Do absolute A B C D moves, and remember new delta lengths.
 // G90 - Use Absolute Coordinates
 // G91 - Use Relative Coordinates
 // G92 - Set current position to coordinates given
@@ -677,50 +678,78 @@ void process_commands(){
       // Make moves without altering position variables.
       // Speed variables for planning are modified.
       case 6:
-        float tmp_delta[NUM_AXIS];
-        tmp_delta[A_AXIS] = delta[A_AXIS];
-        tmp_delta[B_AXIS] = delta[B_AXIS];
-        tmp_delta[C_AXIS] = delta[C_AXIS];
-        tmp_delta[D_AXIS] = delta[D_AXIS];
+        {
+          float tmp_delta[NUM_AXIS];
+          tmp_delta[A_AXIS] = delta[A_AXIS];
+          tmp_delta[B_AXIS] = delta[B_AXIS];
+          tmp_delta[C_AXIS] = delta[C_AXIS];
+          tmp_delta[D_AXIS] = delta[D_AXIS];
 
-        if(code_seen('A')) tmp_delta[A_AXIS] += code_value();
-        if(code_seen('B')) tmp_delta[B_AXIS] += code_value();
-        if(code_seen('C')) tmp_delta[C_AXIS] += code_value();
-        if(code_seen('D')) tmp_delta[D_AXIS] += code_value();
-        if(code_seen('E')) destination[E_CARTH] += code_value();
-        if(code_seen('F')){
-          next_feedrate = code_value();
-          if(next_feedrate > 0.0){
-            saved_feedrate = feedrate;
-            feedrate = next_feedrate;
+          if(code_seen('A')) tmp_delta[A_AXIS] += code_value();
+          if(code_seen('B')) tmp_delta[B_AXIS] += code_value();
+          if(code_seen('C')) tmp_delta[C_AXIS] += code_value();
+          if(code_seen('D')) tmp_delta[D_AXIS] += code_value();
+          if(code_seen('E')) destination[E_CARTH] += code_value();
+          if(code_seen('F')){
+            next_feedrate = code_value();
+            if(next_feedrate > 0.0){
+              saved_feedrate = feedrate;
+              feedrate = next_feedrate;
+            }
           }
+          plan_buffer_line(tmp_delta, delta,
+              destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         }
-        plan_buffer_line(tmp_delta, delta,
-            destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
-      case 7: // G7: Do A B C D moves, and remember new delta lengths.
-        // WARNING: Using G7 first, then G1 will give you chaos!
-        //          Make sure to use G92 after G7 moves, so G1 sees sane previous delta lengths.
-        float prev_delta[NUM_AXIS];
-        prev_delta[A_AXIS] = delta[A_AXIS];
-        prev_delta[B_AXIS] = delta[B_AXIS];
-        prev_delta[C_AXIS] = delta[C_AXIS];
-        prev_delta[D_AXIS] = delta[D_AXIS];
+      case 7: // G7: Do relative A B C D moves, and remember/count new delta lengths.
+        {
+          // WARNING: Using G7 first, then G1 will give you chaos!
+          //          Make sure to use G92 after G7 moves, so G1 sees sane previous delta lengths.
+          float prev_delta[NUM_AXIS];
+          prev_delta[A_AXIS] = delta[A_AXIS];
+          prev_delta[B_AXIS] = delta[B_AXIS];
+          prev_delta[C_AXIS] = delta[C_AXIS];
+          prev_delta[D_AXIS] = delta[D_AXIS];
 
-        if(code_seen('A')) delta[A_AXIS] += code_value();
-        if(code_seen('B')) delta[B_AXIS] += code_value();
-        if(code_seen('C')) delta[C_AXIS] += code_value();
-        if(code_seen('D')) delta[D_AXIS] += code_value();
-        if(code_seen('F')){
-          next_feedrate = code_value();
-          if(next_feedrate > 0.0){
-            saved_feedrate = feedrate;
-            feedrate = next_feedrate;
+          if(code_seen('A')) delta[A_AXIS] += code_value();
+          if(code_seen('B')) delta[B_AXIS] += code_value();
+          if(code_seen('C')) delta[C_AXIS] += code_value();
+          if(code_seen('D')) delta[D_AXIS] += code_value();
+          if(code_seen('F')){
+            next_feedrate = code_value();
+            if(next_feedrate > 0.0){
+              saved_feedrate = feedrate;
+              feedrate = next_feedrate;
+            }
           }
+          plan_buffer_line(delta, prev_delta,
+              destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
         }
-        plan_buffer_line(delta, prev_delta,
-            destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
+        break;
+      case 8: // G8: Do A B C D moves, and remember new delta lengths.
+        {
+          // WARNING: Using G8 first, then G1 will give you chaos!
+          //          Make sure to use G92 after G8 moves, so G1 sees sane previous delta lengths.
+          float prev_delta[NUM_AXIS];
+          prev_delta[A_AXIS] = delta[A_AXIS];
+          prev_delta[B_AXIS] = delta[B_AXIS];
+          prev_delta[C_AXIS] = delta[C_AXIS];
+          prev_delta[D_AXIS] = delta[D_AXIS];
 
+          if(code_seen('A')) delta[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + code_value();
+          if(code_seen('B')) delta[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + code_value();
+          if(code_seen('C')) delta[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + code_value();
+          if(code_seen('D')) delta[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + code_value();
+          if(code_seen('F')){
+            next_feedrate = code_value();
+            if(next_feedrate > 0.0){
+              saved_feedrate = feedrate;
+              feedrate = next_feedrate;
+            }
+          }
+          plan_buffer_line(delta, prev_delta,
+              destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
+        }
         break;
       case 90: // G90
         relative_mode = false;
