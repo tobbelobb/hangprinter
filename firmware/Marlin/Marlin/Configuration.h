@@ -99,16 +99,16 @@
 //
 //
 //
-#define ANCHOR_A_X 0.000000
-#define ANCHOR_A_Y -2205.666667
-#define ANCHOR_A_Z -117.000000
-#define ANCHOR_B_X 1587.441956
-#define ANCHOR_B_Y 1563.733988
-#define ANCHOR_B_Z -117.000000
-#define ANCHOR_C_X -2056.826407
-#define ANCHOR_C_Y 799.136608
-#define ANCHOR_C_Z -117.000000
-#define ANCHOR_D_Z 3183.000000
+#define ANCHOR_A_X 0.0
+#define ANCHOR_A_Y -2163.0
+#define ANCHOR_A_Z -75.5
+#define ANCHOR_B_X -1841.0
+#define ANCHOR_B_Y 741.0
+#define ANCHOR_B_Z -75.5
+#define ANCHOR_C_X 1639.0
+#define ANCHOR_C_Y 1404.0
+#define ANCHOR_C_Z -75.5
+#define ANCHOR_D_Z 3250.5
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -375,7 +375,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define INVERT_Z_DIR true
 
 #define INVERT_E0_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E1_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
 // ENDSTOP SETTINGS:
@@ -456,17 +456,20 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // This comes from spool height and line diameter.
 // diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
 // 0.39*0.39/(pi*4.6) = 0.010525
-#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.010525
+// 0.5*0.5/(pi*8.) = 0.009947
+//#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.010525
+#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.007
 
 // Measure the total length of lines on each spool when printer is in origo
 // Two A-lines, each of length 150.0 gives total length 300.0
-const float LINE_ON_SPOOL_ORIGO[DIRS] = {7240.0,6260.0,6900.0,18000.0};
+const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
 //const float LINE_ON_SPOOL_ORIGO[DIRS] = {2460.0,2600.0,2800.0,3000.0};
 //const float LINE_ON_SPOOL_ORIGO[DIRS] = {0.0,0.0,0.0,0.0};
 
 // Squared spool radius. 33.0^2 = 1089.0
 // Assumes equal A, B, C and D radii.
-#define SPOOL_RADIUS2 1089.0
+//#define SPOOL_RADIUS2 1089.0
+#define SPOOL_RADIUS2 3600.0
 
 // Motor gear teeth: 9
 // Sandwich gear teeth: 43
@@ -476,7 +479,10 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {7240.0,6260.0,6900.0,18000.0};
 //const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
 // Double all of those if 1/16 stepping is used
 //const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720};
-const float STEPS_PER_SPOOL_RADIAN[DIRS] = {4866.604,4866.604,4866.604,21899.720};
+// Double all of those if 1/32 stepping is used
+//const float STEPS_PER_SPOOL_RADIAN[DIRS] = {4866.604,4866.604,4866.604,21899.720};
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {14712.990, 14712.990, 14712.990, 14712.990};
+
 
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
 // then constant ABCD values are calculated on the fly and used only used to calculate accelerations
