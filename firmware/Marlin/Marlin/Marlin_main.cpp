@@ -323,19 +323,6 @@ void setup_killpin(){
 #endif
 }
 
-void setup_torque_mode_pins(){
-#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
-  pinMode(TORQUE_MODE_ENABLE_PIN_A, OUTPUT); // servo A torque mode
-  pinMode(TORQUE_MODE_ENABLE_PIN_B, OUTPUT); // servo B torque mode
-  pinMode(TORQUE_MODE_ENABLE_PIN_C, OUTPUT); // servo C torque mode
-  pinMode(TORQUE_MODE_ENABLE_PIN_D, OUTPUT); // servo C torque mode
-  digitalWrite(TORQUE_MODE_ENABLE_PIN_A, LOW);
-  digitalWrite(TORQUE_MODE_ENABLE_PIN_B, LOW);
-  digitalWrite(TORQUE_MODE_ENABLE_PIN_C, LOW);
-  digitalWrite(TORQUE_MODE_ENABLE_PIN_D, LOW);
-#endif
-}
-
 // Set home pin
 void setup_homepin(void){
 #if defined(HOME_PIN) && HOME_PIN > -1
@@ -372,7 +359,6 @@ void suicide(){
 void setup(){
   setup_killpin();
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
-  setup_torque_mode_pins();
   // Initialize i2c as master.
   Wire.begin();
 #endif
@@ -624,13 +610,15 @@ static void homeaxis(int axis) { }
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
 // Ang is angle moved away from origo position
 // Output is line length from origo in mm
+// TODO: k0, k1, k2, and sqrtk1 should be arrays like INITIAL_DISTANCES
+//       that way, this fct could be written once and take AXIS_ABCD as an argument...
 float ang_to_mm_A(float ang){
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
   float abs_step_in_origo = k0a*(sqrtf(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a);
 #else
   float abs_step_in_origo = INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS];
 #endif
-  float microstepping = 32.0;
+  float microstepping = 32.0; // TODO: all configuration constants should be defined in Configuration.h...
   float steps_per_rot = 200.0*microstepping;
   float steps_per_ang = steps_per_rot/360.0;
   float step_diff = steps_per_ang*ang;
@@ -641,7 +629,62 @@ float ang_to_mm_A(float ang){
   return c/axis_steps_per_unit[A_AXIS] - INITIAL_DISTANCES[A_AXIS];
 #endif
 }
+
+float ang_to_mm_B(float ang){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0b*(sqrtf(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS];
 #endif
+  float microstepping = 32.0;
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0b + sqrtk1b)*(c/k0b + sqrtk1b) - k1b)/k2b - INITIAL_DISTANCES[B_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[B_AXIS] - INITIAL_DISTANCES[B_AXIS];
+#endif
+}
+
+float ang_to_mm_C(float ang){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0c*(sqrtf(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS];
+#endif
+  float microstepping = 32.0;
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0c + sqrtk1c)*(c/k0c + sqrtk1c) - k1c)/k2c - INITIAL_DISTANCES[C_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[C_AXIS] - INITIAL_DISTANCES[C_AXIS];
+#endif
+}
+
+float ang_to_mm_D(float ang){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0d*(sqrtf(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS];
+#endif
+  float microstepping = 32.0;
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0d + sqrtk1d)*(c/k0d + sqrtk1d) - k1d)/k2d - INITIAL_DISTANCES[D_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[D_AXIS] - INITIAL_DISTANCES[D_AXIS];
+#endif
+}
+
+#endif // EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
 
 void refresh_cmd_timeout(void){
   previous_millis_cmd = millis();
@@ -775,61 +818,121 @@ void process_commands(){
         break;
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
       case 95: // G95 Set servo torque mode status. Accepts 0 or 1.
+        float torque;
         if(code_seen('A')){
-          if(code_value_long() == 1){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_A, HIGH);
-          }else if(code_value_long() == 0){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_A, LOW);
-          }
+          torque = code_value();
+          Wire.beginTransmission(0x0a);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0a);
         }
         if(code_seen('B')){
-          if(code_value_long() == 1){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_B, HIGH);
-          }else if(code_value_long() == 0){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_B, LOW);
-          }
+          torque = code_value();
+          Wire.beginTransmission(0x0b);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0b);
         }
         if(code_seen('C')){
-          if(code_value_long() == 1){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_C, HIGH);
-          }else if(code_value_long() == 0){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_C, LOW);
-          }
+          torque = code_value();
+          Wire.beginTransmission(0x0c);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0c);
         }
         if(code_seen('D')){
-          if(code_value_long() == 1){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_D, HIGH);
-          }else if(code_value_long() == 0){
-            digitalWrite(TORQUE_MODE_ENABLE_PIN_D, LOW);
-          }
+          torque = code_value();
+          Wire.beginTransmission(0x0d);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0d);
         }
         break;
       case 96: // G96 Tell sensor servo to mark its reference point
-        Wire.beginTransmission(0x2c);
-        Wire.write(1);
-        Wire.endTransmission(0x2c);
+        if(code_seen('A')){
+          Wire.beginTransmission(0x0a);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0a);
+        }
+        if(code_seen('B')){
+          Wire.beginTransmission(0x0b);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0b);
+        }
+        if(code_seen('C')){
+          Wire.beginTransmission(0x0c);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0c);
+        }
+        if(code_seen('D')){
+          Wire.beginTransmission(0x0d);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0d);
+        }
         break;
       case 97: // G97 Get sensor servo length travelled since last G96
-        union {
-                byte b[4]; // hard coded 4 instead of sizeof(float)
-                float fval;
-              } ang;
-        Wire.requestFrom(0x2c, 4);
-        int i = 0;
-        while(Wire.available()){
-          ang.b[i] = Wire.read();
-          i++;
+        if(code_seen('A')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_a;
+          Wire.requestFrom(0x0a, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_a.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("A: ");
+          SERIAL_ECHO(ang_to_mm_A(ang_a.fval));
+          SERIAL_ECHO(" ");
         }
-
-        //const float mm_ref = ang_to_mm_A(0.0);
-        SERIAL_ECHO("Sensor angle is: ");
-        SERIAL_ECHOLN(ang.fval);
-        SERIAL_ECHO("Converted to mm that is: ");
-        //SERIAL_ECHOLN(ang_to_mm_A(ang.fval) - mm_ref);
-        SERIAL_ECHOLN(ang_to_mm_A(ang.fval));
-
+        if(code_seen('B')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_b;
+          Wire.requestFrom(0x0b, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_b.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("B: ");
+          SERIAL_ECHO(ang_to_mm_B(ang_b.fval));
+          SERIAL_ECHO(" ");
+        }
+        if(code_seen('C')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_c;
+          Wire.requestFrom(0x0c, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_c.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("C: ");
+          SERIAL_ECHO(ang_to_mm_C(ang_c.fval));
+          SERIAL_ECHO(" ");
+        }
+        if(code_seen('D')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_d;
+          Wire.requestFrom(0x0d, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_d.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("D: ");
+          SERIAL_ECHO(ang_to_mm_D(ang_d.fval));
+        }
+        SERIAL_ECHO("\n");
         break;
-#endif
+#endif // end of EXPERIMENTAL_AUTO_CALIBRATION_FEATURE code
     }
   }
 
