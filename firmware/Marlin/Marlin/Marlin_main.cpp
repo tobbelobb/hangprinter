@@ -819,54 +819,56 @@ void process_commands(){
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
       case 95: // G95 Set servo torque mode status. Accepts 0 or 1.
         float torque;
+        byte cmd[5];
+        cmd[0] = 0x5f; // 95 in hexadecimal is 0x5f
         if(code_seen('A')){
           torque = code_value();
+          memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0a);
-          Wire.write(0x00);
-          Wire.write((byte*)&torque, 4);
+          Wire.write(cmd, 5);
           Wire.endTransmission(0x0a);
         }
         if(code_seen('B')){
           torque = code_value();
+          memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0b);
-          Wire.write(0x00);
-          Wire.write((byte*)&torque, 4);
+          Wire.write(cmd, 5);
           Wire.endTransmission(0x0b);
         }
         if(code_seen('C')){
           torque = code_value();
+          memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0c);
-          Wire.write(0x00);
-          Wire.write((byte*)&torque, 4);
+          Wire.write(cmd, 5);
           Wire.endTransmission(0x0c);
         }
         if(code_seen('D')){
           torque = code_value();
+          memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0d);
-          Wire.write(0x00);
-          Wire.write((byte*)&torque, 4);
+          Wire.write(cmd, 5);
           Wire.endTransmission(0x0d);
         }
         break;
       case 96: // G96 Tell sensor servo to mark its reference point
         if(code_seen('A')){
           Wire.beginTransmission(0x0a);
-          Wire.write(0x01);
+          Wire.write(0x60); // 96 in hexadecimal is 0x60
           Wire.endTransmission(0x0a);
         }
         if(code_seen('B')){
           Wire.beginTransmission(0x0b);
-          Wire.write(0x01);
+          Wire.write(0x60);
           Wire.endTransmission(0x0b);
         }
         if(code_seen('C')){
           Wire.beginTransmission(0x0c);
-          Wire.write(0x01);
+          Wire.write(0x60);
           Wire.endTransmission(0x0c);
         }
         if(code_seen('D')){
           Wire.beginTransmission(0x0d);
-          Wire.write(0x01);
+          Wire.write(0x60);
           Wire.endTransmission(0x0d);
         }
         break;
