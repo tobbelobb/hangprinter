@@ -821,6 +821,9 @@ void process_commands(){
         float torque;
         if(code_seen('A')){
           torque = code_value();
+          if(!INVERT_X_DIR){
+            torque = -torque;
+          }
           Wire.beginTransmission(0x0a);
           Wire.write(0x00);
           Wire.write((byte*)&torque, 4);
@@ -828,6 +831,9 @@ void process_commands(){
         }
         if(code_seen('B')){
           torque = code_value();
+          if(!INVERT_Y_DIR){
+            torque = -torque;
+          }
           Wire.beginTransmission(0x0b);
           Wire.write(0x00);
           Wire.write((byte*)&torque, 4);
@@ -835,6 +841,9 @@ void process_commands(){
         }
         if(code_seen('C')){
           torque = code_value();
+          if(!INVERT_Z_DIR){
+            torque = -torque;
+          }
           Wire.beginTransmission(0x0c);
           Wire.write(0x00);
           Wire.write((byte*)&torque, 4);
@@ -842,6 +851,9 @@ void process_commands(){
         }
         if(code_seen('D')){
           torque = code_value();
+          if(!INVERT_E1_DIR){
+            torque = -torque;
+          }
           Wire.beginTransmission(0x0d);
           Wire.write(0x00);
           Wire.write((byte*)&torque, 4);
