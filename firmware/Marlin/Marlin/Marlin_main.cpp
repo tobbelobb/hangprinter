@@ -38,6 +38,9 @@
 #include "language.h"
 #include "pins_arduino.h"
 #include "math.h"
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+#include "Wire.h"
+#endif
 
 #if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
 #include <SPI.h>
@@ -50,9 +53,15 @@
 //-------------------
 // G0  -> G1
 // G1  - Coordinated Movement X Y Z E
+// G6  - Uncoordinated movement A B C D E
+// G7  - Do relative A B C D moves, and remember new delta lengths.
+// G8  - Do absolute A B C D moves, and remember new delta lengths.
 // G90 - Use Absolute Coordinates
 // G91 - Use Relative Coordinates
 // G92 - Set current position to coordinates given
+// G95 - Set servo torque mode status
+// G96 - Tell sensor servo to mark its reference point
+// G97 - Get sensor servo length travelled since last G96
 
 // M Codes
 // M17  - Enable/Power all stepper motors
@@ -349,6 +358,10 @@ void suicide(){
 
 void setup(){
   setup_killpin();
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+  // Initialize i2c as master.
+  Wire.begin();
+#endif
   setup_powerhold();
   MYSERIAL.begin(BAUDRATE);
   SERIAL_PROTOCOLLNPGM("start");
@@ -594,6 +607,85 @@ static void axis_is_at_home(int axis){
 // TODO: Homing procedure goes here. tobben 8. sep 2015
 static void homeaxis(int axis) { }
 
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+// Ang is angle moved away from origo position
+// Output is line length from origo in mm
+// TODO: k0, k1, k2, and sqrtk1 should be arrays like INITIAL_DISTANCES
+//       that way, this fct could be written once and take AXIS_ABCD as an argument...
+float ang_to_mm_A(float ang){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0a*(sqrtf(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS];
+#endif
+  float microstepping = 32.0; // TODO: all configuration constants should be defined in Configuration.h...
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0a + sqrtk1a)*(c/k0a + sqrtk1a) - k1a)/k2a - INITIAL_DISTANCES[A_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[A_AXIS] - INITIAL_DISTANCES[A_AXIS];
+#endif
+}
+
+float ang_to_mm_B(float ang){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0b*(sqrtf(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS];
+#endif
+  float microstepping = 32.0;
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0b + sqrtk1b)*(c/k0b + sqrtk1b) - k1b)/k2b - INITIAL_DISTANCES[B_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[B_AXIS] - INITIAL_DISTANCES[B_AXIS];
+#endif
+}
+
+float ang_to_mm_C(float ang){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0c*(sqrtf(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS];
+#endif
+  float microstepping = 32.0;
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0c + sqrtk1c)*(c/k0c + sqrtk1c) - k1c)/k2c - INITIAL_DISTANCES[C_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[C_AXIS] - INITIAL_DISTANCES[C_AXIS];
+#endif
+}
+
+float ang_to_mm_D(float ang){
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  float abs_step_in_origo = k0d*(sqrtf(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d);
+#else
+  float abs_step_in_origo = INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS];
+#endif
+  float microstepping = 32.0;
+  float steps_per_rot = 200.0*microstepping;
+  float steps_per_ang = steps_per_rot/360.0;
+  float step_diff = steps_per_ang*ang;
+  float c = abs_step_in_origo + step_diff; // current step count
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+  return ((c/k0d + sqrtk1d)*(c/k0d + sqrtk1d) - k1d)/k2d - INITIAL_DISTANCES[D_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+#else
+  return c/axis_steps_per_unit[D_AXIS] - INITIAL_DISTANCES[D_AXIS];
+#endif
+}
+
+#endif // EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
+
 void refresh_cmd_timeout(void){
   previous_millis_cmd = millis();
 }
@@ -646,9 +738,188 @@ void process_commands(){
         plan_buffer_line(tmp_delta, delta,
                          destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         break;
+      case 7: // G7: Do relative A B C D moves, and remember/count new delta lengths.
+        {
+          // WARNING: Using G7 first, then G1 will give you chaos!
+          //          Make sure to use G92 after G7 moves, so G1 sees sane previous delta lengths.
+          float prev_delta[NUM_AXIS];
+          prev_delta[A_AXIS] = delta[A_AXIS];
+          prev_delta[B_AXIS] = delta[B_AXIS];
+          prev_delta[C_AXIS] = delta[C_AXIS];
+          prev_delta[D_AXIS] = delta[D_AXIS];
+
+          if(code_seen('A')) delta[A_AXIS] += code_value();
+          if(code_seen('B')) delta[B_AXIS] += code_value();
+          if(code_seen('C')) delta[C_AXIS] += code_value();
+          if(code_seen('D')) delta[D_AXIS] += code_value();
+          if(code_seen('F')){
+            next_feedrate = code_value();
+            if(next_feedrate > 0.0){
+              saved_feedrate = feedrate;
+              feedrate = next_feedrate;
+            }
+          }
+          plan_buffer_line(delta, prev_delta,
+              destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
+        }
+        break;
+      case 8: // G8: Do A B C D moves, and remember new delta lengths.
+        {
+          // WARNING: Using G8 first, then G1 will give you chaos!
+          //          Make sure to use G92 after G8 moves, so G1 sees sane previous delta lengths.
+          float prev_delta[NUM_AXIS];
+          prev_delta[A_AXIS] = delta[A_AXIS];
+          prev_delta[B_AXIS] = delta[B_AXIS];
+          prev_delta[C_AXIS] = delta[C_AXIS];
+          prev_delta[D_AXIS] = delta[D_AXIS];
+
+          if(code_seen('A')) delta[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + code_value();
+          if(code_seen('B')) delta[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + code_value();
+          if(code_seen('C')) delta[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + code_value();
+          if(code_seen('D')) delta[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + code_value();
+          if(code_seen('F')){
+            next_feedrate = code_value();
+            if(next_feedrate > 0.0){
+              saved_feedrate = feedrate;
+              feedrate = next_feedrate;
+            }
+          }
+          plan_buffer_line(delta, prev_delta,
+              destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
+        }
+        break;
       case 90: // G90
         relative_mode = false;
         break;
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+      case 95: // G95 Set servo torque mode status. Accepts 0 or 1.
+        float torque;
+        if(code_seen('A')){
+          torque = code_value();
+          if(!INVERT_X_DIR){
+            torque = -torque;
+          }
+          Wire.beginTransmission(0x0a);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0a);
+        }
+        if(code_seen('B')){
+          torque = code_value();
+          if(!INVERT_Y_DIR){
+            torque = -torque;
+          }
+          Wire.beginTransmission(0x0b);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0b);
+        }
+        if(code_seen('C')){
+          torque = code_value();
+          if(!INVERT_Z_DIR){
+            torque = -torque;
+          }
+          Wire.beginTransmission(0x0c);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0c);
+        }
+        if(code_seen('D')){
+          torque = code_value();
+          if(!INVERT_E1_DIR){
+            torque = -torque;
+          }
+          Wire.beginTransmission(0x0d);
+          Wire.write(0x00);
+          Wire.write((byte*)&torque, 4);
+          Wire.endTransmission(0x0d);
+        }
+        break;
+      case 96: // G96 Tell sensor servo to mark its reference point
+        if(code_seen('A')){
+          Wire.beginTransmission(0x0a);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0a);
+        }
+        if(code_seen('B')){
+          Wire.beginTransmission(0x0b);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0b);
+        }
+        if(code_seen('C')){
+          Wire.beginTransmission(0x0c);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0c);
+        }
+        if(code_seen('D')){
+          Wire.beginTransmission(0x0d);
+          Wire.write(0x01);
+          Wire.endTransmission(0x0d);
+        }
+        break;
+      case 97: // G97 Get sensor servo length travelled since last G96
+        if(code_seen('A')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_a;
+          Wire.requestFrom(0x0a, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_a.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("A: ");
+          SERIAL_ECHO(ang_to_mm_A(ang_a.fval));
+          SERIAL_ECHO(" ");
+        }
+        if(code_seen('B')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_b;
+          Wire.requestFrom(0x0b, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_b.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("B: ");
+          SERIAL_ECHO(ang_to_mm_B(ang_b.fval));
+          SERIAL_ECHO(" ");
+        }
+        if(code_seen('C')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_c;
+          Wire.requestFrom(0x0c, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_c.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("C: ");
+          SERIAL_ECHO(ang_to_mm_C(ang_c.fval));
+          SERIAL_ECHO(" ");
+        }
+        if(code_seen('D')){
+          union {
+                  byte b[4]; // hard coded 4 instead of sizeof(float)
+                  float fval;
+                } ang_d;
+          Wire.requestFrom(0x0d, 4);
+          int i = 0;
+          while(Wire.available()){
+            ang_d.b[i] = Wire.read();
+            i++;
+          }
+          SERIAL_ECHO("D: ");
+          SERIAL_ECHO(ang_to_mm_D(ang_d.fval));
+        }
+        SERIAL_ECHO("\n");
+        break;
+#endif // end of EXPERIMENTAL_AUTO_CALIBRATION_FEATURE code
       case 91: // G91
         relative_mode = true;
         break;

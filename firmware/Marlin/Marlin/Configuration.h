@@ -433,6 +433,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //===========================================================================
 // If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
 #define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+//
+// If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
+#define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
 
 // Mechanical advantage in each direction needed for dynamic step/mm calculations
 // One pulley along each line gives halved forces and doubled distances
