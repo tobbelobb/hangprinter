@@ -613,6 +613,9 @@ static void homeaxis(int axis) { }
 // TODO: k0, k1, k2, and sqrtk1 should be arrays like INITIAL_DISTANCES
 //       that way, this fct could be written once and take AXIS_ABCD as an argument...
 float ang_to_mm_A(float ang){
+  if(!INVERT_X_DIR){
+    ang = -ang;
+  }
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
   float abs_step_in_origo = k0a*(sqrtf(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a);
 #else
@@ -631,6 +634,9 @@ float ang_to_mm_A(float ang){
 }
 
 float ang_to_mm_B(float ang){
+  if(!INVERT_Y_DIR){
+    ang = -ang;
+  }
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
   float abs_step_in_origo = k0b*(sqrtf(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b);
 #else
@@ -649,6 +655,9 @@ float ang_to_mm_B(float ang){
 }
 
 float ang_to_mm_C(float ang){
+  if(!INVERT_Z_DIR){
+    ang = -ang;
+  }
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
   float abs_step_in_origo = k0c*(sqrtf(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c);
 #else
@@ -667,6 +676,9 @@ float ang_to_mm_C(float ang){
 }
 
 float ang_to_mm_D(float ang){
+  if(!INVERT_E1_DIR){
+    ang = -ang;
+  }
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
   float abs_step_in_origo = k0d*(sqrtf(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d);
 #else
@@ -823,6 +835,9 @@ void process_commands(){
         cmd[0] = 0x5f; // 95 in hexadecimal is 0x5f
         if(code_seen('A')){
           torque = code_value();
+          if(!INVERT_X_DIR){
+            torque = -torque;
+          }
           memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0a);
           Wire.write(cmd, 5);
@@ -830,6 +845,9 @@ void process_commands(){
         }
         if(code_seen('B')){
           torque = code_value();
+          if(!INVERT_Y_DIR){
+            torque = -torque;
+          }
           memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0b);
           Wire.write(cmd, 5);
@@ -837,6 +855,9 @@ void process_commands(){
         }
         if(code_seen('C')){
           torque = code_value();
+          if(!INVERT_Z_DIR){
+            torque = -torque;
+          }
           memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0c);
           Wire.write(cmd, 5);
@@ -844,6 +865,9 @@ void process_commands(){
         }
         if(code_seen('D')){
           torque = code_value();
+          if(!INVERT_E1_DIR){
+            torque = -torque;
+          }
           memcpy(cmd+1, &torque, 4);
           Wire.beginTransmission(0x0d);
           Wire.write(cmd, 5);
