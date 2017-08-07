@@ -1,105 +1,183 @@
-G95 A1 B1 C1 D1 ; Set all motors in torque mode and drag close to origo
+G95 A-40 B-40 C-40 D-20 ; Set all motors in torque mode and drag close to origo
 G92 X0 Y0 Z0    ; Assure that line lengths are re-calculated to match origo. Printer should be within ca 10 cm of origo.
-G95 B0 C0 D0    ; Set BCD in position mode
+G95 A0 B0 D0    ; Set ABD in position mode
 G4 P2000        ; Dwell for 2000 ms
-G96             ; Set sensor motor reference point
+G96 A B C D     ; Set sensor reference points
 
 ; Ready to collect data points
 ; Following thetas are what we'll get if anchors are symmetric, length 1500 with abc in z=0
-; array([[    0.  , -1500.        ,     0.        ],
-;        [ 1299.04,   750.        ,     0.        ],
-;        [-1299.04,   750.        ,     0.        ],
-;        [    0.  ,     0.        ,  1500.        ]])
-; And all positions are in 3x3 square grid with side length 800 centered around (0, 0, 400)
+;a = np.array([[0.0, -2163.0, -75.5],
+;              [-1841.0, 741.0, -75.5],
+;              [1639.0, 1404.0, -75.5],
+;              [0.0, 0.0, 3250.5]])
+; And all positions are in 3x3 square grid with side length 600 centered around (0, 0, 300)
 ; ... And there are no measurement errors at all.
 ; A-values are to be filled in by measurement.
-; Points are ordered so that highest points are measured first.
-; At each height, points closest to C are made first.
-; In numpy: s = s[s[:,2].argsort()]
-;           s = s[s[:,3].argsort(kind='mergesort')]
+; Points are ordered so that points farthes away from C anchor are measured first.
+; In numpy: s = s[s[:,1].argsort()]
+;           s = s[s[:,2].argsort(kind='mergesort')]
+G95 C-50
+G96 C
+G95 C-3
 
-G7 B200.0 C200.0 D-800.0 F500
-G4 P2000
-G97
-G7 B322.184 C-281.983 D106.225 F500
-G4 P2000
-G97
-G7 B-456.936 C147.231 D0.0 F500
-G4 P2000
-G97
-G7 B345.249 C345.249 D0.0 F500
-G4 P2000
-G97
-G7 B-492.481 C111.687 D0.0 F500
-G4 P2000
-G97
-G7 B492.279 C-768.881 D93.774 F500
-G4 P2000
-G97
-G7 B291.800 C411.259 D0.0 F500
-G4 P2000
-G97
-G7 B-948.793 C245.733 D0.0 F500
-G4 P2000
-G97
-G7 B411.259 C291.800 D0.0 F500
-G4 P2000
-G97
-G7 B-112.145 C-649.679 D200.0 F500
-G4 P2000
-G97
-G7 B347.380 C-315.174 D70.469 F500
-G4 P2000
-G97
-G7 B-496.230 C166.324 D0.0 F500
-G4 P2000
-G97
-G7 B376.882 C376.882 D0.0 F500
-G4 P2000
-G97
-G7 B-543.206 C119.348 D0.0 F500
-G4 P2000
-G97
-G7 B542.990 C-855.398 D66.461 F500
-G4 P2000
-G97
-G7 B310.037 C469.129 D0.0 F500
-G4 P2000
-G97
-G7 B-1045.871 C266.704 D0.0 F500
-G4 P2000
-G97
-G7 B469.129 C310.037 D0.0 F500
-G4 P2000
-G97
-G7 B-13.528 C-590.270 D263.068 F500
-G4 P2000
-G97
-G7 B357.210 C-329.201 D52.417 F500
-G4 P2000
-G97
-G7 B-511.847 C174.563 D0.0 F500
-G4 P2000
-G97
-G7 B389.572 C389.572 D0.0 F500
-G4 P2000
-G97
-G7 B-564.136 C122.275 D0.0 F500
-G4 P2000
-G97
-G7 B563.914 C-892.446 D50.704 F500
-G4 P2000
-G97
-G7 B316.927 C494.951 D0.0 F500
-G4 P2000
-G97
-G7 B-1086.876 C274.997 D0.0 F500
-G4 P2000
-G97
-G7 B494.951 C316.927 D0.0 F500
-G4 P2000
-G97
+G8 A0.000    B0.000    D0.000    F1500 ; C0.000
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
 
-G7 B-40.284  C551.640 D103.121 F500 ; Go back where you started
-G92 X0 Y0 Z0                        ; Reset delta (array of line lengths in firmware)
-G95 A0                              ; Set A motor back in position mode
+G8 A-160.054 B-7.415   D-566.258 F1500 ; C508.811
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-240.319 B-88.767  D-269.652 F1500 ; C449.059
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-275.807 B-124.767 D27.571   F1500 ; C422.994
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A121.480  B-147.471 D-583.076 F1500 ; C327.962
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-182.633 B234.227  D-583.076 F1500 ; C299.456
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A51.437   B-235.320 D-284.787 F1500 ; C263.755
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A20.692   B-274.399 D13.814   F1500 ; C235.674
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-263.851 B162.047  D-284.787 F1500 ; C234.484
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-299.788 B130.318  D13.814   F1500 ; C206.056
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A407.193  B-246.580 D-566.258 F1500 ; C171.820
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-160.054 B488.677  D-566.258 F1500 ; C110.533
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A345.138  B-339.709 D-269.652 F1500 ; C103.186
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A101.707  B110.378  D-600.000 F1500 ; C101.926
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A318.034  B-381.328 D27.571   F1500 ; C73.087
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-240.319 B424.129  D-269.652 F1500 ; C39.987
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A31.034   B33.776   D-300.000 F1500 ; C31.103
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A-275.807 B395.894  D27.571   F1500 ; C9.011
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A389.634  B24.024   D-583.076 F1500 ; C-71.047
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A121.480  B378.195  D-583.076 F1500 ; C-105.082
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A327.141  B-56.002  D-284.787 F1500 ; C-147.951
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A299.839  B-91.378  D13.814   F1500 ; C-181.869
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A51.437   B310.544  D-284.787 F1500 ; C-183.310
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A20.692   B280.895  D13.814   F1500 ; C-217.846
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A407.193  B301.972  D-566.258 F1500 ; C-297.186
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A345.138  B231.997  D-269.652 F1500 ; C-383.858
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
+
+G8 A318.034  B201.283  D27.571   F1500 ; C-422.375
+G95 C-50
+G4 P2000        ; Dwell for 2000 ms
+G97 a b c d
+G95 C-3
