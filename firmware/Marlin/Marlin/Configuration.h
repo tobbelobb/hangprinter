@@ -97,13 +97,13 @@
 // https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
 #define ANCHOR_A_X -573.0 // anchor point A's Carthesian x-coordinate. In mm
 #define ANCHOR_A_Y -1331.0
-#define ANCHOR_A_Z -162.5 // measured from print surface to frame middle.
+#define ANCHOR_A_Z -162.5
 #define ANCHOR_B_X 1548.0
 #define ANCHOR_B_Y 0.0
-#define ANCHOR_B_Z -148.0 // measured from print surface to frame middle.
+#define ANCHOR_B_Z -148.0
 #define ANCHOR_C_X -609.0
 #define ANCHOR_C_Y 1209.0
-#define ANCHOR_C_Z -133.5 // measured from print surface to frame middle.
+#define ANCHOR_C_Z -133.5
 // It's assumed that ceiling frame part is directly above origo
 #define ANCHOR_D_Z 2295.0 // measured along vertical line, from fish eye to anchor point.
 
