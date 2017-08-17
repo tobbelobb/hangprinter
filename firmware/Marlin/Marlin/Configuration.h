@@ -469,7 +469,8 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
 // Squared spool radius. 33.0^2 = 1089.0
 // Assumes equal A, B, C and D radii.
 //#define SPOOL_RADIUS2 1089.0
-#define SPOOL_RADIUS2 3600.0
+//#define SPOOL_RADIUS2 3600.0
+#define SPOOL_RADIUS2 625.0
 
 // Motor gear teeth: 9
 // Sandwich gear teeth: 43
@@ -481,7 +482,8 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
 //const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720};
 // Double all of those if 1/32 stepping is used
 //const float STEPS_PER_SPOOL_RADIAN[DIRS] = {4866.604,4866.604,4866.604,21899.720};
-const float STEPS_PER_SPOOL_RADIAN[DIRS] = {14712.990, 14712.990, 14712.990, 14712.990};
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {8488.2636, 8488.2636, 8488.2636, 8488.2636};
+
 
 
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
