@@ -362,10 +362,10 @@ ISR(TIMER1_COMPA_vect)
 
     if(out_bits & (1<<D_AXIS)){
       WRITE(E1_DIR_PIN, INVERT_E1_DIR);
-      count_direction[C_AXIS]=-1;
+      count_direction[D_AXIS]=-1;
     }else{
       WRITE(E1_DIR_PIN, !INVERT_E1_DIR);
-      count_direction[C_AXIS]=1;
+      count_direction[D_AXIS]=1;
     }
 #else
     if(out_bits & (1<<X_AXIS)){
