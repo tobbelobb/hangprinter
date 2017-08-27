@@ -935,6 +935,13 @@ void process_commands(){
       case 91: // G91
         relative_mode = true;
         break;
+      case 28: // G28 means "we're already in origo" for Hangprinter
+        current_position[A_AXIS] = 0.0;
+        current_position[B_AXIS] = 0.0;
+        current_position[C_AXIS] = 0.0;
+        current_position[D_AXIS] = 0.0;
+        calculate_delta(current_position, delta);
+        break;
       case 92: // G92
         if(!code_seen(axis_codes_carthesian[E_AXIS]))
           st_synchronize();
