@@ -310,7 +310,7 @@
 
 // Parameters for all extruder heaters
 #define THERMAL_RUNAWAY_PROTECTION_PERIOD 180 //in seconds
-#define THERMAL_RUNAWAY_PROTECTION_HYSTERESIS 4 // in degree Celsius
+#define THERMAL_RUNAWAY_PROTECTION_HYSTERESIS 10 // in degree Celsius
 
 // If you want to enable this feature for your bed heater,
 // uncomment the 2 defines below:
@@ -489,10 +489,10 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {8488.2636, 8488.2636, 8488.2636, 848
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
 // then constant ABCD values are calculated on the fly and used only used to calculate accelerations
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, 134.0}
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, 410.0}
 #else
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {88.189752, 88.189752, 88.189752, 617.328264, 134.0}
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {176.3795, 176.3795, 176.3795, 617.328264, 134.0}
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {176.3795, 176.3795, 176.3795, 617.328264, 410.0}
 #endif
 
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
