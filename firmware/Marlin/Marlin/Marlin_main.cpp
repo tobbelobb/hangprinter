@@ -62,6 +62,7 @@
 // G95 - Set servo torque mode status
 // G96 - Tell sensor servo to mark its reference point
 // G97 - Get sensor servo length travelled since last G96
+// G98 - Set absolute line length based on servo encoder output
 
 // M Codes
 // M17  - Enable/Power all stepper motors
@@ -908,9 +909,9 @@ void process_commands(){
             ang_a.b[i] = Wire.read();
             i++;
           }
-          SERIAL_ECHO("A: ");
-          SERIAL_ECHO(ang_to_mm_A(ang_a.fval));
-          SERIAL_ECHO(" ");
+          SERIAL_ERROR("A: ");
+          SERIAL_ERROR(ang_to_mm_A(ang_a.fval));
+          SERIAL_ERROR(" ");
         }
         if(code_seen('B')){
           union {
@@ -923,9 +924,9 @@ void process_commands(){
             ang_b.b[i] = Wire.read();
             i++;
           }
-          SERIAL_ECHO("B: ");
-          SERIAL_ECHO(ang_to_mm_B(ang_b.fval));
-          SERIAL_ECHO(" ");
+          SERIAL_ERROR("B: ");
+          SERIAL_ERROR(ang_to_mm_B(ang_b.fval));
+          SERIAL_ERROR(" ");
         }
         if(code_seen('C')){
           union {
@@ -938,9 +939,9 @@ void process_commands(){
             ang_c.b[i] = Wire.read();
             i++;
           }
-          SERIAL_ECHO("C: ");
-          SERIAL_ECHO(ang_to_mm_C(ang_c.fval));
-          SERIAL_ECHO(" ");
+          SERIAL_ERROR("C: ");
+          SERIAL_ERROR(ang_to_mm_C(ang_c.fval));
+          SERIAL_ERROR(" ");
         }
         if(code_seen('D')){
           union {
@@ -953,11 +954,62 @@ void process_commands(){
             ang_d.b[i] = Wire.read();
             i++;
           }
-          SERIAL_ECHO("D: ");
-          SERIAL_ECHO(ang_to_mm_D(ang_d.fval));
+          SERIAL_ERROR("D: ");
+          SERIAL_ERROR(ang_to_mm_D(ang_d.fval));
         }
-        SERIAL_ECHO("\n");
+        SERIAL_ERROR("\n");
         break;
+      case 98: // G98 Set absolute line length based on servo encoder output
+        if(code_seen('A')){
+         union {
+           byte b[4]; // hard coded 4 instead of sizeof(float)
+           float fval;
+         } ang_a;
+         Wire.requestFrom(0x0a, 4);
+         int i = 0;
+         while(Wire.available()){
+           ang_a.b[i] = Wire.read();
+           i++;
+         }    delta[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + ang_to_mm_A(ang_a.fval);
+       }
+       if(code_seen('B')){
+         union {
+           byte b[4]; // hard coded 4 instead of sizeof(float)
+           float fval;
+         } ang_b;
+         Wire.requestFrom(0x0b, 4);
+         int i = 0;
+         while(Wire.available()){
+           ang_b.b[i] = Wire.read();
+           i++;
+         }    delta[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + ang_to_mm_B(ang_b.fval);
+       }
+       if(code_seen('C')){
+         union {
+           byte b[4]; // hard coded 4 instead of sizeof(float)
+           float fval;
+         } ang_c;
+         Wire.requestFrom(0x0c, 4);
+         int i = 0;
+         while(Wire.available()){
+           ang_c.b[i] = Wire.read();
+           i++;
+         }    delta[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + ang_to_mm_C(ang_c.fval);
+       }
+       if(code_seen('D')){
+         union {
+           byte b[4]; // hard coded 4 instead of sizeof(float)
+           float fval;
+         } ang_d;
+         Wire.requestFrom(0x0d, 4);
+         int i = 0;
+         while(Wire.available()){
+           ang_d.b[i] = Wire.read();
+           i++;
+         }    delta[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + ang_to_mm_D(ang_d.fval);
+       }
+       break;
+
 #endif // end of EXPERIMENTAL_AUTO_CALIBRATION_FEATURE code
     }
   }
