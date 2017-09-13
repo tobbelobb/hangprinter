@@ -145,14 +145,14 @@ module extruder_motor_translate(){
 
 // The thing separating bearings on center axis of bottom plate
 // TODO: Rename to sandwich_spacer
-module lock(r1, r2, height){
+module sandwich_spacer(r1, r2, height){
   difference(){
     cylinder(r=r2, h=height);
     translate([0,0,-1])
       cylinder(r=r1, h=height+2);
   }
 }
-//lock(Lock_radius_1, Lock_radius_2, Lock_height);
+//sandwich_spacer(Sandwich_spacer_radius_1, Sandwich_spacer_radius_2, Sandwich_spacer_height);
 
 
 module bottom_plate(){
@@ -196,7 +196,7 @@ module bottom_plate(){
           translate(Line_action_point_abc_xy)
           cube([4.2,4.2,sandwich_stick_height]);
         // The bottom lock
-        cylinder(r=Lock_radius_2, h=th + Bottom_plate_sandwich_gap);
+        cylinder(r=Sandwich_spacer_radius_2, h=th + Bottom_plate_sandwich_gap);
         // Mounting towers for D fish rings
         for(i=[0,120,240]){
           rotate([0,0,i]){
@@ -250,7 +250,7 @@ module bottom_plate(){
         translate([0,
             -Fish_ring_inner_radius - Fish_ring_holes_distance,0]){
           translate([0,0,-big+5])
-            cylinder(d=M3_diameter, h=big);
+            cylinder(d=M3_diameter+0.4, h=big, $fn=10);
           //M3 screw headhole
           translate([0,0,-big - 3])
             cylinder(r=M3_head_diameter/2,h=big);
@@ -258,7 +258,7 @@ module bottom_plate(){
       }
       // Dig out filament hole in sandwich stick
       // Note that bowden tube should fit in this from below
-      translate([0, 0, -1]) cylinder(r = 2.3, h = Big);
+      translate([0, 0, -1]) cylinder(r = 2.4, h = Big);
       // Mounting holes for abc fish rings
       // rotations and translations synced with placed_fish_rings
       for(i=[0,1,2]){ // Used both for rotation and indexing
@@ -312,7 +312,7 @@ module bottom_plate(){
                 M3_diameter+1.08
                 -sin(45-D_motor_twist)*Nema17_screw_hole_width/2
                 -Snelle_height/2
-                -Lock_height
+                -Sandwich_spacer_height
                 -Bottom_plate_thickness]){
               // Mounting tower
               cube([13,5.5,21]);
@@ -454,9 +454,6 @@ module bottom_plate(){
       }
   }// end union
 }
-// The rotate is for easier fitting print bed when printing
-// this part on 200 mm square print bed
-//rotate([0,0,15])
 //bottom_plate();
 
 //** bottom_plate end **//
@@ -677,7 +674,6 @@ module top_plate(){
       }
     }
 }
-//rotate([180,0,15])
 //top_plate();
 
 //%cube([139,139,20]);
@@ -1018,10 +1014,9 @@ module sstruder_lever(hobb=true){
     hobb_towers([0,0,0],true);
   }
 }
-//rotate([-90,0,0])
 //sstruder_lever(false);
 
-module sstruder_plate(hobb=true){
+module sstruder_plate(hobb=true, only_pressblock_cyl=false, only_pressblock_handle=false){
   hot_end_fastening_h = 16;
   ring_hole_d = (Nema17_ring_diameter+4);
   extra_width_for_lever = 7;
@@ -1101,7 +1096,9 @@ module sstruder_plate(hobb=true){
         M3_screw(Sstruder_fork_width+10,true);
     }
   }
-  //!pressblock_cyl();
+  if(only_pressblock_cyl){
+    !pressblock_cyl();
+  }
 
   pressblock_handlecyl_radius = 4.4;
   scaling_factor = 1.5;
@@ -1141,8 +1138,10 @@ module sstruder_plate(hobb=true){
       cube([10,pressblock_handlecyl_radius*2,Sstruder_fork_width+2]);
     }
   }
-  //!rotate([180,0,0]) pressblock_handle();
-  //!pressblock_handle();
+  if(only_pressblock_handle){
+    !rotate([180,0,0])
+      pressblock_handle();
+  }
 
   extra_width_for_pressblock = 10.5;
   module pressblock(){
@@ -1217,7 +1216,8 @@ module sstruder_plate(hobb=true){
   }
 }
 //sstruder_plate(false);
-//sstruder_plate();
+//sstruder_plate(only_pressblock_handle=true);
+//sstruder_plate(only_pressblock_cyl=true);
 //translate([0,0,-Nema17_cube_height])
 // %Nema17();
 

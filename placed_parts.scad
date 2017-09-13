@@ -70,7 +70,7 @@ module bearing_filled_sandwich(worm=false){
   }
   Bearing_608();
   translate([0,0,Bearing_608_width])
-  color("gold") lock(Lock_radius_1, Lock_radius_2, Lock_height);
+  color("gold") sandwich_spacer(Sandwich_spacer_radius_1, Sandwich_spacer_radius_2, Sandwich_spacer_height);
 }
 
 module placed_sandwich(a_render=true, b_render=true, c_render=true, d_render=true){

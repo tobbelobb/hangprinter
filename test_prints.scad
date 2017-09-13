@@ -25,4 +25,4 @@ module corner_test(){
 rotate([0,0,-45])
 side_plate2();
 
-//lock(Lock_radius_1, Lock_radius_2, Lock_height);
+//sandwich_spacer(Sandwich_spacer_radius_1, Sandwich_spacer_radius_2, Sandwich_spacer_height);

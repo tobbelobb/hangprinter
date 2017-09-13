@@ -108,7 +108,7 @@ module gear(number_of_teeth = 15,
 	// Pitch diameter: Diameter of pitch circle.
 	pitch_diameter             = number_of_teeth*circular_pitch/180;
 	pitch_radius               = pitch_diameter/2;
-	echo("Teeth:", number_of_teeth, " Pitch radius:", pitch_radius);
+	//echo("Teeth:", number_of_teeth, " Pitch radius:", pitch_radius);
 
 	// Base Circle
 	base_radius                = pitch_radius*cos(pressure_angle);
@@ -284,7 +284,6 @@ module sandwich_gear(worm=false){
     }
 }
 // Give space to worm so it doesn't lock up
-//scale(0.99)
 //rotate([180,0,0])
 //sandwich_gear(false);
 //sandwich_gear(true);
@@ -387,19 +386,16 @@ module motor_gear(height = Motor_protruding_shaft_length, shaft_radius = Motor_g
 module motor_gear_a(){
   motor_gear(Motor_gear_a_height, Motor_gear_shaft_radius_A);
 }
-//rotate([180,0,0])
 //motor_gear_a();
 
 module motor_gear_b(){
   motor_gear(Motor_gear_b_height, Motor_gear_shaft_radius_BC);
 }
-//rotate([180,0,0])
 //motor_gear_b();
 
 module motor_gear_c(){
   motor_gear(Motor_gear_c_height, Motor_gear_shaft_radius_BC);
 }
-//rotate([180,0,0])
 //motor_gear_c();
 
 // Visualization only
@@ -441,50 +437,6 @@ module worm_gear(angle=Worm_largest_angle){
 //worm_gear(61);
 //translate([0,Worm_disc_radius,0])
 //rotate([0,61,0]) cylinder(r=2, h=10, center=true);
-
-// Creates throated worm gear.
-// No need as long as worm disc is thin
-module worm_gear_by_diff(){
-  module toothed_out_cylinder(){
-    difference(){
-      cylinder(h=Sandwich_gear_height,
-          r=Worm_disc_radius,
-          $fn=Sandwich_gear_teeth);
-      for(i=[0:60:360]){
-        rotate([0,0,(i/360)*Degrees_per_worm_gear_tooth])
-          translate([Worm_disc_tooth_valley_r+Worm_radius,
-              0,
-              Sandwich_gear_height/2])
-          rotate([90,0,0])
-          rotate([0,0,i])
-            worm(0.06, false);
-      }
-    }
-  }
-  module tooth(){
-    difference(){
-      toothed_out_cylinder();
-      rotate([0,0,2.51*Degrees_per_worm_gear_tooth])
-        translate([-Sandwich_radius*1.5,
-            0,
-            -Sandwich_height*1.5])
-        cube([Sandwich_radius*3,
-            Sandwich_radius*3,
-            Sandwich_height*3]);
-      rotate([0,0,1.49*Degrees_per_worm_gear_tooth])
-        translate([-Sandwich_radius*1.5,
-            -Sandwich_radius*3,
-            -Sandwich_height*1.5])
-        cube([Sandwich_radius*3,
-            Sandwich_radius*3,
-            Sandwich_height*3]);
-    }
-  }
-  for(i=[0:Sandwich_gear_teeth])
-    rotate([0,0,i*Degrees_per_worm_gear_tooth])
-    tooth();
-}
-//worm_gear_by_diff();
 
 module placed_worm_gear(ang=0){
   rotate([90,0,0])
@@ -646,10 +598,6 @@ module worm(step=0.2, with_details=true){
     }
   }
 }
-// Mirror to make it turn counterclockwise when it retracts line
-// This will be the direction of heaviest load,
-// and we want to push gear _down_ towards bottom plate
-// to avoid pushing disc up onto the other sandwich snelles and gears
 //worm(step=0.07);
 
 module animate_roating_worm(){

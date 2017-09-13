@@ -19,9 +19,9 @@ Full_tri_side             = 200*1.035; // Rotate eq_tri relative to 200 mm print
 Sandwich_gap              = 0.8;
 Sandwich_height           = Bearing_608_width + 2;
 Sandwich_edge_thickness   = 0.6;
-Lock_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
-Lock_radius_1 = Bearing_608_bore_diameter/2 + 0.30;
-Lock_radius_2 = Lock_radius_1 + 2;
+Sandwich_spacer_height               = Sandwich_height-Bearing_608_width+Sandwich_gap;
+Sandwich_spacer_radius_1 = Bearing_608_bore_diameter/2 + 0.30;
+Sandwich_spacer_radius_2 = Sandwich_spacer_radius_1 + 2;
 Bottom_plate_sandwich_gap = 1.5;
 Bottom_plate_thickness    = 8.0;
 Top_plate_thickness       = Bottom_plate_thickness;
@@ -127,10 +127,10 @@ Drive_support_v = [Bearing_623_outer_diameter + 16,
 
 //** Derived parameters **//
 Motor_gear_pitch             = Motor_gear_teeth*Circular_pitch_top_gears/360;
-echo(Motor_gear_pitch);
+//echo(Motor_gear_pitch);
 Motor_gear_radius            = Motor_gear_pitch + Motor_gear_pitch*2/Motor_gear_teeth;
 Sandwich_gear_pitch          = Sandwich_gear_teeth*Circular_pitch_top_gears/360;
-echo(Sandwich_gear_pitch);
+//echo(Sandwich_gear_pitch);
 Sandwich_radius              = Sandwich_gear_pitch + Sandwich_gear_pitch*2/Sandwich_gear_teeth;
 Big_extruder_gear_pitch      = Big_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
 Small_extruder_gear_pitch    = Small_extruder_gear_teeth*Circular_pitch_extruder_gears/360;
