@@ -145,7 +145,7 @@ Drive_support_height = Nema17_cube_width/3 +
 // Worm parameters
 Degrees_per_worm_gear_tooth  = 360/Sandwich_gear_teeth;
 Worm_disc_tooth_cutoff      = 0.37;
-Worm_disc_radius            = Sandwich_radius; // Worm plate will be cut to this radius
+Worm_disc_radius            = Sandwich_radius - 0.2; // Worm plate will be cut to this radius. -0.2 reduces risk of worm and worm disc binding (and play is not an issue anyways).
 Worm_disc_virtual_radius    = Worm_disc_radius + Worm_disc_tooth_cutoff; // Also affects worm
 Worm_disc_tooth_valley_r    = Worm_disc_virtual_radius*(1 // Shift inwards for 45 deg valleys
                                                   - sqrt((1-cos(Degrees_per_worm_gear_tooth))/2)
