@@ -1,6 +1,8 @@
+include <parameters.scad>
 
 //!rounded_cube([40,61,42], 8, center=true);
 module rounded_cube(v, r, center=false){
+  fn = 32;
   v = (v[0] == undef) ? [v, v, v] : v;
   obj_translate = center ?
     [-(v[0] / 2), -(v[1] / 2),	-(v[2] / 2)] : [0, 0, 0];
@@ -14,12 +16,13 @@ module rounded_cube(v, r, center=false){
       l = i%2 == 0 ? v[0] - d : v[1] - d;
       translate(xy_corners[i]){
         rotate([0,0,90*i]){
-          cylinder(r=r, h=v[2]-d);
+          cylinder(r=r, h=v[2]-d, $fn = fn);
           for(j=[0,v[2]-d]){
             translate([0,0,j]){
-              sphere(r);
+              sphere(r, $fn = fn);
               rotate([0,90,0])
-                cylinder(r=r, h=l);
+                rotate([0,0,0.5*360/fn])
+                cylinder(r=r, h=l, $fn = fn);
             }
           }
         }
@@ -50,6 +53,7 @@ module rounded_cube(v, r, center=false){
 
 //rounded_cube2([20,30,2], 2);
 module rounded_cube2(v, r){
+  $fn = 16;
   union(){
     translate([r,0,0])           cube([v[0]-2*r, v[1]    , v[2]]);
     translate([0,r,0])           cube([v[0]    , v[1]-2*r, v[2]]);
@@ -59,4 +63,26 @@ module rounded_cube2(v, r){
     translate([r,v[1]-r,0])      cylinder(h=v[2], r=r);
   }
 }
+
+module rounded_square(v, r){
+  union(){
+    translate([r,0])           square([v[0]-2*r, v[1]]);
+    translate([0,r])           square([v[0], v[1]-2*r]);
+    translate([r,r])           circle(r);
+    translate([v[0]-r,r])      circle(r);
+    translate([v[0]-r,v[1]-r]) circle(r);
+    translate([r,v[1]-r])      circle(r);
+  }
+}
+
+module beam(l, standing = false){
+  v = standing ? [Beam_width, Beam_width, l] : [l, Beam_width, Beam_width];
+  cube(v);
+}
+
+module fat_beam(l, standing = false){
+  v = standing ? [Fat_beam_width, Fat_beam_width, l] : [l, Fat_beam_width, Fat_beam_width];
+  cube(v);
+}
+
 
