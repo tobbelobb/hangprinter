@@ -11,7 +11,7 @@ module prev_art(){
 
 beam_clamp();
 module beam_clamp(){
-  wall_th = 2.5;
+  wall_th = Wall_th;
   l = 23;
   l2 = 30;
   h = Beam_width + 2*wall_th;

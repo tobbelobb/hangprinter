@@ -85,4 +85,14 @@ module fat_beam(l, standing = false){
   cube(v);
 }
 
+//standing_ls_tri(10, 20);
+module standing_ls_tri(l, h){
+  difference(){
+  cube([l,l,h]);
+  translate([l,0,0])
+    rotate([0,0,45])
+    translate([0,0,-1])
+    cube([l*sqrt(2),l*sqrt(2),h+2]);
+  }
+}
 
