@@ -17,19 +17,10 @@ module beam_clamp(){
   h = Beam_width + 2*wall_th;
   little_r = 0.5;
   step = 15*little_r;
-  function my_rounded_square(v, r) = [
-    for (i=[0:step:360])
-      i < 90 ?
-      [r,r] - r*[cos(i), sin(i)] :
-      i < 180 ?
-      [v[0]-r,r] - r*[cos(i), sin(i)] :
-      i < 270 ?
-      [v[0]-r,v[1]-r] - r*[cos(i), sin(i)] :
-      [r,v[1]-r] - r*[cos(i), sin(i)]];
 
   difference(){
     // Sweep up basic outline
-    sweep(my_rounded_square([l,h],0.5),
+    sweep(my_rounded_square([l,h],0.5, step=step),
       [translation([0,0,0]),
        translation([0,0,h]),
        translation([l2/2,0,h + l2*sqrt(3)/2])

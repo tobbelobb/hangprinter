@@ -96,3 +96,22 @@ module standing_ls_tri(l, h){
   }
 }
 
+// Functions for use with sweep
+function my_rounded_square(v, r, step=7.5) = [
+  for (i=[0:step:360])
+    i < 90 ?
+    [r,r] - r*[cos(i), sin(i)] :
+    i < 180 ?
+    [v[0]-r,r] - r*[cos(i), sin(i)] :
+    i < 270 ?
+    [v[0]-r,v[1]-r] - r*[cos(i), sin(i)] :
+    [r,v[1]-r] - r*[cos(i), sin(i)]];
+
+function my_rounded_eqtri(l, r, step=3) = [
+  for (i=[-30:step:360-30.01])
+    (i < 120 - 30) ?
+    [r*sqrt(3),r] - r*[cos(i), sin(i)] :
+    (i < 240 - 30) ?
+    [l-r*sqrt(3),r] - r*[cos(i), sin(i)] :
+    [l/2,sqrt(3)*l/2-r*2] - r*[cos(i), sin(i)]];
+
