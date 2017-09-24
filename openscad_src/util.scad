@@ -115,3 +115,23 @@ function my_rounded_eqtri(l, r, step=3) = [
     [l-r*sqrt(3),r] - r*[cos(i), sin(i)] :
     [l/2,sqrt(3)*l/2-r*2] - r*[cos(i), sin(i)]];
 
+module rounded_2corner(v, r){
+  v = (v[0] == undef) ? [v, v] : v;
+  square([v[0]-r,v[1]]);
+  translate([0,r])
+    square([v[0],v[1]-2*r]);
+  translate([v[0]-r, r])
+    circle(r=r,$fs = 1);
+  translate([v[0]-r, v[1]-r])
+    circle(r=r,$fs = 1);
+}
+
+module Nema17_screw_translate(corners){
+  for (i=[0:90:90*corners - 1]){
+    rotate([0,0,i+45]) translate([Nema17_screw_hole_width/2,0,0]) children();
+  }
+}
+
+module Nema17_screw_holes(d, h, corners=4){
+  Nema17_screw_translate(corners) cylinder(r=d/2,h=h);
+}
