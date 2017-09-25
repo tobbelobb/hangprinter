@@ -53,7 +53,7 @@ module rounded_cube(v, r, center=false){
 
 //rounded_cube2([20,30,2], 2);
 module rounded_cube2(v, r){
-  $fn = 16;
+  $fs = 1;
   union(){
     translate([r,0,0])           cube([v[0]-2*r, v[1]    , v[2]]);
     translate([0,r,0])           cube([v[0]    , v[1]-2*r, v[2]]);
@@ -74,6 +74,7 @@ module rounded_square(v, r){
     translate([r,v[1]-r])      circle(r);
   }
 }
+
 
 module beam(l, standing = false){
   v = standing ? [Beam_width, Beam_width, l] : [l, Beam_width, Beam_width];
@@ -97,6 +98,11 @@ module standing_ls_tri(l, h){
 }
 
 // Functions for use with sweep
+function my_square(v) = [[-v[0]/2, -v[1]/2],
+                         [ v[0]/2, -v[1]/2],
+                         [ v[0]/2,  v[1]/2],
+                         [-v[0]/2,  v[1]/2]];
+
 function my_rounded_square(v, r, step=7.5) = [
   for (i=[0:step:360])
     i < 90 ?
@@ -134,4 +140,17 @@ module Nema17_screw_translate(corners){
 
 module Nema17_screw_holes(d, h, corners=4){
   Nema17_screw_translate(corners) cylinder(r=d/2,h=h);
+}
+
+module centered_u_groove_bearing(){
+  translate([1.5,-32,0])
+    import("U-groove_bearing.stl");
+}
+
+// Looks best with $fn = n*8
+module round_end(v){
+  v = (v[0] == undef) ? [v, v] : v;
+  cube([v[0]-v[1]/2, v[1], v[2]]);
+  translate([v[0]-v[1]/2, v[1]/2,0])
+    cylinder(d=v[1], h=v[2]);
 }
