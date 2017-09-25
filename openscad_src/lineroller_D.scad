@@ -14,7 +14,9 @@ module lineroller_D(){
   flerp0 = 6;
   flerp1 = 4;
   base_th = 2;
-  lineroller_ABC_winch(edge_start=90) base(flerp0=flerp0);
+  lineroller_ABC_winch(edge_start=90)
+    translate([0,0,-0.01])
+      base(flerp0=flerp0);
   swing_r = 2;
 
   cr = (Bearing_r + Bearing_wall+Lineroller_wall_th-swing_r)/2;
@@ -22,18 +24,19 @@ module lineroller_D(){
     rotate([0,-90,0]){
   difference(){
     union(){
-      cube([Tower_h+swing_r, d, base_th]);
+      translate([0,0,-0.05])
+        cube([Tower_h+swing_r, d, base_th+0.1]);
       translate([Tower_h+swing_r-Lineroller_wall_th,0,-Bearing_r-Bearing_wall]){
         translate([0,0,+Lineroller_wall_th])
           cube([Lineroller_wall_th, d, Bearing_r + Bearing_wall]);
-        translate([-Bearing_r-Bearing_wall+0.01,0,0])
+        translate([-Bearing_r-Bearing_wall,0,0])
           cube([Bearing_r+Bearing_wall+Lineroller_wall_th, Lineroller_wall_th, Bearing_r + Bearing_wall+Lineroller_wall_th]);
-        translate([-Bearing_r-Bearing_wall+0.01,d-Lineroller_wall_th,0])
+        translate([-Bearing_r-Bearing_wall,d-Lineroller_wall_th,0])
           cube([Bearing_r+Bearing_wall+Lineroller_wall_th, Lineroller_wall_th, Bearing_r + Bearing_wall+Lineroller_wall_th]);
       }
       translate([Tower_h,cr+Lineroller_wall_th,-cr+Lineroller_wall_th])
         rotate([0,90,0])
-        cylinder(r=cr, h=2+swing_r, $fs=1);
+        cylinder(r=cr-0.01, h=2+swing_r, $fs=1);
       }
       translate([Tower_h+swing_r-Lineroller_wall_th-Bearing_r-Bearing_wall,0,-Bearing_r-Bearing_wall])
         rotate([-90,0,0])

@@ -70,6 +70,6 @@ module lineroller_anchor(){
     translate([0,0,line_entrance])
       rotate([0,-90,0])
       translate([0,0,-1])
-      cylinder(r=2.1, h=Lineroller_wall_th+3+2, $fs=1);
+      cylinder(r=Ptfe_r, h=Lineroller_wall_th+3+2, $fs=1);
   }
 }
