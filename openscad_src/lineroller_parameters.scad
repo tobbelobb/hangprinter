@@ -5,5 +5,8 @@ Bearing_bore_r = 2;
 
 Lineroller_wall_th = 2;
 Tower_flerp = 14.4;
+Tower_h = Bearing_r*2 + Tower_flerp;
 Bearing_wall = 1;
 d = Bearing_width + 2*Wall_th; // depth of lineroller base
+
+Ptfe_r = 2.1;

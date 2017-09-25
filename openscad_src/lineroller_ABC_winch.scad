@@ -43,17 +43,16 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180){
         cube([foot_l+2, 2*foot_h, sqrt(2)*foot_h+1]);
     }
     // Main block
-    tower_h = Bearing_r*2 + Tower_flerp;
     r2=2+1.3;
     translate([0, -d/2, 0])
       rotate([-90,-90,0]){
         difference(){
           union(){
-            round_end([tower_h, Bearing_r*2+2*Bearing_wall, Lineroller_wall_th],$fn=8*6);
-            translate([tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,0])
+            round_end([Tower_h, Bearing_r*2+2*Bearing_wall, Lineroller_wall_th],$fn=8*6);
+            translate([Tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,0])
               cylinder(r=r2, h=Lineroller_wall_th+0.5, $fs=1);
           }
-          translate([tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,-1])
+          translate([Tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,-1])
             cylinder(d=4.3, h=Lineroller_wall_th+0.5+2, $fs=1);
         }
       }
@@ -69,14 +68,14 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180){
             * translation([rot_r,0,0])
             * scaling([
               1,
-              (ang < a*rot_r) ?       sqrt(1-pow(a*rot_r-ang,2)/pow(a*rot_r,2)) :
-              (ang > edge_stop - a*rot_r) ? sqrt(1-pow(ang-(edge_stop - a*rot_r),2)/pow(a*rot_r,2)) : 1,
+              (ang<edge_start+a*rot_r) ? sqrt(1-pow(a*rot_r-(ang-edge_start),2)/pow(a*rot_r,2)) :
+              (ang>edge_stop-a*rot_r) ? sqrt(1-pow(ang-(edge_stop - a*rot_r),2)/pow(a*rot_r,2)) : 1,
               1])
             ]);
       translate([-10,-10,0])
-        cube([10,10,tower_h]);
+        cube([10,10,Tower_h]);
       translate([2*Bearing_r+2*Bearing_wall,-10,0])
-        cube([10,10,tower_h]);
+        cube([10,10,Tower_h]);
     }
   }
   wall();
