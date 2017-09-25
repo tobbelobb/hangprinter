@@ -154,3 +154,17 @@ module round_end(v){
   translate([v[0]-v[1]/2, v[1]/2,0])
     cylinder(d=v[1], h=v[2]);
 }
+
+// Looks best with $fn = n*4
+//quarterround_wall([10,20,50,20]);
+module quarterround_wall(v){
+  v = (v[0] == undef) ? [v, v] : v;
+  cube([v[0], v[1], v[2]-v[0]]);
+  translate([v[0],0,v[2]-v[0]])
+  difference(){
+    rotate([-90,0,0])
+      cylinder(r=v[0], h=v[1]);
+    translate([0,-1,-v[0]-1])
+      cube([v[0]+1, v[1]+2, 2*v[0]+2]);
+  }
+}
