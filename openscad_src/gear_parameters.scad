@@ -8,4 +8,4 @@ Motor_outer_radius               = Motor_pitch + 1/Motor_pitch_diametrial;
 echo("Motor gear outer radius",  Motor_outer_radius);
 echo("Motor gear pitch", Motor_pitch);
 
-Spool_teeth = 84;
+Spool_teeth = 80;
