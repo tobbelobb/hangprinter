@@ -2,7 +2,7 @@ include <parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
-%prev_art();
+//%prev_art();
 module prev_art(){
   import("../stl/motor_holder.stl");
 }
@@ -72,16 +72,17 @@ module motor_bracket(){
      * translation([0,0,flerp_h-wall_th-1])
      * translation([0,-1,0])
      * rotation([90,0,0])
-     * translation([0,1,0])],
-     [for(i=[1:1:10])
-       translation([0,-wall_th+2-i/10,0])
+     * translation([0,1,0])]
+     ,
+     [for(i=[0.1:0.1:1.0])
+       translation([0,-wall_th+2-i,0])
        * translation([0,0,flerp_h-wall_th-1])
        * translation([0,-1,0])
        * rotation([90,0,0])
        * translation([0,1,0])
-       * translation([sqrt(3)/2,sqrt(3)/2,0])
-       * scaling([1+i/10,1+i/10,1])
-       * translation([-sqrt(3)/2,-sqrt(3)/2, 0])]
+       * translation([1,1,0])
+       * scaling([2-sqrt(1-i*i),2-sqrt(1-i*i),1])
+       * translation([-1,-1, 0])]
      );
 
 
@@ -89,7 +90,7 @@ module motor_bracket(){
      mirror([k,0,0]){
        translate([-cd/2+wall_th,-wall_th,-cw/2+wall_th])
          rotate([0,0,-90])
-         !sweep(my_outline(1),
+         sweep(my_outline(1),
              my_path());
        translate([-cd/2+wall_th,-bd,-cw/2+wall_th])
          rotate([-90,0,0])
