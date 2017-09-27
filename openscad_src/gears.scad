@@ -131,7 +131,7 @@ module gear(number_of_teeth = 15,
 	difference(){
 		union(){
 			difference(){
-				linear_extrude(height = rim_thickness, convexity = 10, twist = twist, slices=twist/10)
+				linear_extrude(height = rim_thickness, convexity = 10, twist = twist, slices=floor(gear_thickness/2))
 				gear_shape(number_of_teeth,
 					         pitch_radius     = pitch_radius,
 					         root_radius      = root_radius,
