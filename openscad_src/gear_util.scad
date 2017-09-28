@@ -77,7 +77,7 @@ module decoration(height=10, wallr = 50, dd=10.2, lou=6.9, inr=9){
            [for (a=[0:max_ang/steps:max_ang])
              r1*[cos(max_ang-a), sin(max_ang-a)]]);
   translate([0,0,-d])
-    rotate([0,3.5,-last_ang/2+start_ang/2+3.3])
+    rotate([0,0,-last_ang/2+start_ang/2+3.3])
     sweep(circle_sector(last_ang-start_ang-6.6, wallr-dd-inr+shpr+0.1, wallr-shpr),
         [translation([0,0,0]),translation([0,0,height+2*d+2])]);
 

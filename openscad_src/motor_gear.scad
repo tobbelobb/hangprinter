@@ -13,7 +13,7 @@ module motor_gear(){
 
   gear_height = Gear_height + 1; //Want extra millimeter to avoid first- and last layer problems.
   module half(){
-    my_gear(Motor_teeth, gear_height/2+0.1, Circular_pitch);
+    my_gear(Motor_teeth, gear_height/2+0.1, Circular_pitch, fac=-1);
   }
 
   difference(){
@@ -34,7 +34,7 @@ module motor_gear(){
     // Cut bottom to avoid problems with elephant foot
     translate([0,0,-0.3])
     rotate_extrude(angle=360, convexity=5)
-      translate([6,0])
+      translate([Motor_pitch-1.3,0])
       rotate([0,0,-70])
       square([4,5]);
 

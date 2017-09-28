@@ -18,15 +18,15 @@ module spool(){
   difference(){
     union(){
       // Edge to keep line in place
-      cylinder(r = Spool_outer_radius-15, h = 1, $fn=100);
+      cylinder(r = Spool_outer_radius-Nema17_cube_width/2+Motor_pitch-4, h = 1, $fn=100);
       cylinder(r = Spool_r, h = Spool_height+1, $fn=100);
       translate([0,0,Spool_height+1-0.4]) // Sink 0.4 mm back to make extra space for torx
         torx(h=Torx_depth, female=false);
     }
-    //for(i=[0:60:359])
-    for(i=[0:60:50])
+    //for(i=[0:60:50])
+    for(i=[0:60:359])
       rotate([0,0,i])
-        decoration(height=Spool_height+Torx_depth-0.4+1, wallr=Spool_r-2, dd=3, lou=4, inr=7);
+        decoration(height=Spool_height+1+Gear_height, wallr=Spool_r-2, dd=3, lou=4, inr=7);
     for(v=[0:120:359])
       rotate([0,0,v])
         translate([Spool_r-4, 0, 1+Spool_height/2])

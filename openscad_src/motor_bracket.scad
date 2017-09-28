@@ -1,4 +1,5 @@
 include <parameters.scad>
+include <gear_parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
@@ -7,12 +8,13 @@ module prev_art(){
   import("../stl/motor_holder.stl");
 }
 
+
 motor_bracket();
 module motor_bracket(){
   cw = Nema17_cube_width+3;
   cd = Nema17_cube_width+5.85;
   wall_th = Wall_th + 0.5;
-  bd = 28.01;
+  bd = Motor_bracket_depth;
   flerp = 18.01;
   flerp_h = 30.35;
   flerp_r = 8;
@@ -45,8 +47,15 @@ module motor_bracket(){
           translate([-cd/2,-bd+0.1,-cw/2+0.3])
             rounded_cube([wall_th, bd-0.2, flerp_h-0.3], 1);
     }
-  translate([-(cd)/2, -bd, -cw/2])
-    cube([cd, bd-1, wall_th]);
+  difference(){
+    translate([-(cd)/2, -bd, -cw/2])
+      cube([cd, bd-1, wall_th]);
+    // Hole to reach set screw
+    window_w = 10;
+    window_h = 7;
+    translate([-window_w/2, -window_h-wall_th-1, -1.5*cd])
+      rounded_cube([window_w, window_h, 2*cd], 1);
+  }
 
    // Round corners
    translate([0,0,-cw/2])

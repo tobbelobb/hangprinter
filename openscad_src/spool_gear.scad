@@ -28,14 +28,21 @@ module spool_gear(){
     for(i=[0:60:359])
       rotate([0,0,i])
         decoration(Gear_height);
-    //translate([0,0,0])
-    //  #cylinder(r=28,0, h=Gear_height+8,$fn=100);
+    for(i=[0:60:359])
+      rotate([0,0,i])
+        decoration(height=Spool_height+1+Gear_height, wallr=Spool_r-2, dd=3, lou=4, inr=7);
     translate([0,0,Gear_height+Spool_height+2-Torx_depth])
       rotate([180,0,0])
       torx(h = Spool_height+2, female=true);
     // Space for 608 bearing
     translate([0,0,-1])
       cylinder(r=12,h=Gear_height+2);
+    // Cut bottom to avoid problems with elephant foot
+    translate([0,0,-0.3])
+    rotate_extrude(angle=360, convexity=5)
+      translate([Spool_pitch-1.3,0])
+        rotate([0,0,-70])
+          square([4,5]);
   }
 
 }

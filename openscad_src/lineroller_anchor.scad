@@ -56,20 +56,4 @@ module lineroller_anchor(){
   }
 
   lineroller_ABC_winch(edge_start=0, edge_stop=90) base_al(flerp0=6, flerp1=4);
-  line_entrance = Tower_flerp+Bearing_r-Bearing_wall-Bearing_small_r-0.25;
-  difference(){
-    union(){
-      translate([-Lineroller_wall_th,-d/2,base_th-0.1])
-        quarterround_wall([Lineroller_wall_th+0.01,
-            d,
-            Tower_flerp+Bearing_r-Bearing_wall-base_th+0.1],$fn=10*4);
-      translate([0,0,line_entrance])
-        rotate([0,-90,0])
-        cylinder(r=4, h=Lineroller_wall_th + 3, $fs=1);
-    }
-    translate([0,0,line_entrance])
-      rotate([0,-90,0])
-      translate([0,0,-1])
-      cylinder(r=Ptfe_r, h=Lineroller_wall_th+3+2, $fs=1);
-  }
 }
