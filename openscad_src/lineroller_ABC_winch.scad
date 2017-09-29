@@ -20,7 +20,7 @@ module base(base_th = 2, flerp0 = 4, flerp1 = 4){
     }
 }
 
-lineroller_ABC_winch(edge_stop=90, the_wall=false) base();
+lineroller_ABC_winch(the_wall=false) base();
 module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=true){
   foot_h = 1.5;
   foot_l = 2*Bearing_r + 2*Bearing_wall + 2*foot_h;

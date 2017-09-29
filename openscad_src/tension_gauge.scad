@@ -23,7 +23,7 @@ module base_tension_gauge(base_th = 2, flerp0 = 7, flerp1 = 4){
     }
 
   translate([-22,base_w-3,0])
-  rounded_cube2([13,11,Lineroller_wall_th],2, $fn=4*4);
+  rounded_cube2([13,11,base_th],2, $fn=4*4);
 }
 
 tension_gauge();
@@ -39,28 +39,30 @@ module tension_gauge(){
   difference(){
     for(k=[0,1])
       mirror([0,k,0])
-        translate([-gap-1, -Bearing_width/2-Lineroller_wall_th-0.5])
+        translate([-gap-1, d/2 - Lineroller_wall_th, 0])
         cube([2*gap+2,Lineroller_wall_th, h]);
     translate([0,0,h])
       rotate([90,0,0])
-      cylinder(r=gap, h=base_w+1, center=true, $fn=30);
+      cylinder(r=gap, h=d+1, center=true, $fn=30);
   }
 
   end = h + 2.5*(Bearing_r + Bearing_wall);
   maxl = 20*(1-0.7*sin(4*floor(end)));
+  leg_gap = 3.3;
 
   module spring(){
-    sweep([[-10,-1], [10, -1], [10, 1], [-10,1]],
+    upw = 4.5;
+    sweep([[-10,-Lineroller_wall_th/2], [10, -Lineroller_wall_th/2], [10, Lineroller_wall_th/2], [-10,Lineroller_wall_th/2]],
       [for(i=[0:end])
         translation([ 0 ,
          i < Lineroller_wall_th ? 2 : 0
          , 0])
         * translation([0,
-         i < h/2 ?
-         -0.5-base_w-1-0.4*i:
-         i < h ?
-           -0.5-base_w-1-0.4*h + 0.4*i:
-           -0.5-base_w-1-0.4*h + 0.4*h
+         i < (h+upw)/2 ?
+         -Lineroller_wall_th/2 - d/2 - leg_gap - 0.4*i:
+         i < (h+upw) ?
+           -Lineroller_wall_th/2 - d/2 - leg_gap - 0.4*(h+upw) + 0.4*i:
+           -Lineroller_wall_th/2 - d/2 - leg_gap - 0.4*(h+upw) + 0.4*(h+upw)
          ,i])
          * scaling([
          1-0.7*sin(4*i)
@@ -70,36 +72,45 @@ module tension_gauge(){
   }
 
   module leg(){
-    sweep([[-10,-1], [10, -1], [10, 1], [-10,1]],
+    sweep([[-10,-Lineroller_wall_th/2], [10, -Lineroller_wall_th/2], [10, Lineroller_wall_th/2], [-10,Lineroller_wall_th/2]],
         [for(i=[0:end])
-        translation([0, 0.5+base_w+1 ,i])
+        translation([0,
+        i < 3 ?
+        Lineroller_wall_th/2+d/2+leg_gap + Lineroller_wall_th/2 :
+        Lineroller_wall_th/2+d/2+leg_gap
+        ,i])
         * scaling([
           i < 90/4 ?
           0.3 :
           1-0.7*sin(4*(i))
-          ,1,1])]);
+          ,
+          i < 3 ?
+          2.0 : 1
+          ,1])]);
   }
 
   difference(){
     union(){
     spring();
     leg();
-    translate([-maxl/2, -base_w-2.5, floor(end)-0.1])
-      cube([maxl/4, 2*base_w + 5, Lineroller_wall_th]);
-    translate([maxl/4, -base_w-2.5, floor(end)-0.1])
-      cube([maxl/4, 2*base_w + 5, Lineroller_wall_th]);
-    heigh = +0.5+base_w+1-Bearing_width/2;
-    translate([0,0,floor(end) - 0.75*(Bearing_r + Bearing_wall)])
-      rotate([-90,0,0])
-        translate([0,0,-heigh-Bearing_width/2])
-        cylinder(r1=Bearing_bore_r+heigh, r2=Bearing_bore_r+1, h=heigh);
+    translate([-maxl/2, -d/2 - leg_gap - Lineroller_wall_th, floor(end)-0.1])
+      cube([maxl/4, d + 2*leg_gap + 2*Lineroller_wall_th, 2*Lineroller_wall_th]);
+    translate([maxl/4, -d/2 - leg_gap - Lineroller_wall_th, floor(end)-0.1])
+      cube([maxl/4, d + 2*leg_gap + 2*Lineroller_wall_th, 2*Lineroller_wall_th]);
+    heigh = d/2+leg_gap-Bearing_width/2+0.1;
+    for(k=[0,1])
+      mirror([0,k,0])
+        translate([0,0,floor(end) - 0.75*(Bearing_r + Bearing_wall)])
+          rotate([-90,0,0])
+            translate([0,0,-heigh-Bearing_width/2])
+            cylinder(r1=Bearing_bore_r+heigh, r2=Bearing_bore_r+1, h=heigh);
     }
 
     translate([0,0,floor(end) - 0.75*(Bearing_r + Bearing_wall)])
       rotate([90,0,0])
-        cylinder(d=4.3, h=50, center=false, $fs=1);
-    translate([-maxl/4, -base_w-2.5, floor(end)-0.1])
-      cube([maxl/2, 2*base_w + 5, Lineroller_wall_th]);
+        cylinder(d=4.3, h=50, center=true, $fs=1);
+    translate([-maxl/4, -d/2-leg_gap-Lineroller_wall_th, floor(end)-0.1])
+      cube([maxl/2, d + 2*leg_gap + 2*Lineroller_wall_th, 10]);
   }
 
 
