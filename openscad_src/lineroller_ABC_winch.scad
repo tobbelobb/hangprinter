@@ -21,7 +21,7 @@ module base(base_th = 2, flerp0 = 4, flerp1 = 4){
 }
 
 lineroller_ABC_winch(the_wall=false) base();
-module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=true){
+module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=true, tower_h = Tower_h, tower_flerp = Tower_flerp){
   foot_h = 1.5;
   foot_l = 2*Bearing_r + 2*Bearing_wall + 2*foot_h;
   foot_d = Lineroller_wall_th + foot_h;
@@ -48,11 +48,11 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=t
       rotate([-90,-90,0]){
         difference(){
           union(){
-            round_end([Tower_h, Bearing_r*2+2*Bearing_wall, Lineroller_wall_th],$fn=8*6);
-            translate([Tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,0])
+            round_end([tower_h, Bearing_r*2+2*Bearing_wall, Lineroller_wall_th],$fn=8*6);
+            translate([tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,0])
               cylinder(r=r2, h=Lineroller_wall_th+0.5, $fs=1);
           }
-          translate([Tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,-1])
+          translate([tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,-1])
             cylinder(d=4.3, h=Lineroller_wall_th+0.5+2, $fs=1);
         }
       }
@@ -61,7 +61,7 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=t
     b= 0.5;
     rot_r = Bearing_r+b;
     difference(){
-      translate([Bearing_r+Bearing_wall, -4, Tower_flerp - Bearing_wall])
+      translate([Bearing_r+Bearing_wall, -4, tower_flerp - Bearing_wall])
         sweep([[0,0], [0,-0.5], [b+a, -0.5], [b+a,0], [b, a], [0, a]],
             [for (ang=[edge_start+0.01:((edge_stop-edge_start)-0.03)/100:edge_stop-0.01])
             rotation([0,ang,0])
@@ -73,9 +73,9 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=t
               1])
             ]);
       translate([-10,-10,0])
-        cube([10,10,Tower_h]);
+        cube([10,10,tower_h]);
       translate([2*Bearing_r+2*Bearing_wall,-10,0])
-        cube([10,10,Tower_h]);
+        cube([10,10,tower_h]);
     }
   }
   wall();
@@ -85,13 +85,13 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=t
 
   // Guide line out of lineroller
   if(the_wall){
-    line_entrance = Tower_flerp-Bearing_wall-Bearing_small_r-0.25;
+    line_entrance = tower_flerp-Bearing_wall-Bearing_small_r-0.25;
     difference(){
       union(){
         translate([-Lineroller_wall_th,-d/2,base_th-0.1])
           quarterround_wall([Lineroller_wall_th+0.01,
               d,
-              Tower_flerp-Bearing_wall-base_th+0.1],$fn=10*4);
+              tower_flerp-Bearing_wall-base_th+0.1],$fn=10*4);
         translate([0,0,line_entrance])
           rotate([0,-90,0])
           cylinder(r=4, h=Lineroller_wall_th + 3, $fs=1);

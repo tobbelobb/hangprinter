@@ -61,8 +61,12 @@ module lineroller_anchor(){
     }
   }
 
+  tower_flerp = 18;
   difference(){
-    lineroller_ABC_winch(edge_start=0, edge_stop=90) base_al();
+    lineroller_ABC_winch(edge_stop=90,
+                         tower_h = Bearing_r + tower_flerp,
+                         tower_flerp=tower_flerp)
+      base_al();
     slot_for_countersunk_screw();
   }
 }
