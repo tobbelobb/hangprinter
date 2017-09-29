@@ -31,9 +31,9 @@ module spool(){
       rotate([0,0,v])
         translate([Spool_r-4, 0, 1+Spool_height/2])
           rotate([0,90,0])
-            for(i=[-1,1])
+            for(i=[-2,2])
               translate([0,i,0])
-                cylinder(r=0.7, h=Spool_r);
+                cylinder(r=0.9, h=Spool_r);
 
     translate([0,0,-1])
       cylinder(r=12,h=Spool_height+Torx_depth-0.4+1+2);
