@@ -36,7 +36,7 @@ module spool_gear(){
       torx(h = Spool_height+2, female=true);
     // Space for 608 bearing
     translate([0,0,-1])
-      cylinder(r=12,h=Gear_height+2);
+      cylinder(d=b608_outer_dia,h=Gear_height+2);
     // Cut bottom to avoid problems with elephant foot
     translate([0,0,-0.3])
     rotate_extrude(angle=360, convexity=5)
