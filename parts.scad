@@ -533,34 +533,34 @@ module e3d_v6_volcano_hotend(fan=1){
 }
 //e3d_v6_volcano_hotend();
 
-module e3d_v6_mount_bore(d = 5){
+module e3d_v6_mount_bore(d = 5, extra_w = 0){
   // Bowden tube
   cylinder(d=Bowden_tube_diameter+0.4,h=31);
   // Extra space for bowden fastener
-  cylinder(d=Bowden_tube_diameter+2.6,h=14);
-  translate([-(Bowden_tube_diameter+2.6)/2,0,0])
-    cube([Bowden_tube_diameter+2.6,d,14]);
+  cylinder(d=Bowden_tube_diameter+2.6 + extra_w/2,h=14);
+  translate([-(Bowden_tube_diameter+2.6 + extra_w)/2,0,0])
+    cube([Bowden_tube_diameter+2.6 + extra_w,d,14]);
   // Downmost
   translate([0,0,-1-3])
-    cylinder(h=3.1, r=E3d_mount_big_r+0.25);
-  translate([-E3d_mount_big_r-0.25,0,-4])
-    cube([2*E3d_mount_big_r+0.5,d,3.1]);
+    cylinder(h=3.1, r=E3d_mount_big_r+0.25 + extra_w/2);
+  translate([-E3d_mount_big_r-0.25 - extra_w/2,0,-4])
+    cube([2*E3d_mount_big_r+0.5 + extra_w,d,3.1]);
   // Next Downmost
-  cylinder(h=3, r=E3d_mount_big_r);
-  translate([-E3d_mount_big_r,0,-0.0]) // Stop Z-fighting and give some more space
-    cube([2*E3d_mount_big_r,d,3+0.0]);
+  cylinder(h=3, r=E3d_mount_big_r + extra_w/2);
+  translate([-E3d_mount_big_r - extra_w/2,0,-0.0]) // Stop Z-fighting and give some more space
+    cube([2*E3d_mount_big_r + extra_w,d,3+0.0]);
   // Middle
-  translate([0,0,2.9]) cylinder(h=6.2, r=E3d_mount_small_r); // 0.1 melt zone...
-  translate([-E3d_mount_small_r,0,2.9]) cube([2*E3d_mount_small_r,d,6.2]);
+  translate([0,0,2.9]) cylinder(h=6.2, r=E3d_mount_small_r + extra_w/2); // 0.1 melt zone...
+  translate([-E3d_mount_small_r - extra_w/2,0,2.9]) cube([2*E3d_mount_small_r + extra_w,d,6.2]);
   // Uppermost
   translate([0,0,3+6]){
-    cylinder(h=3.7+0.05, r=E3d_mount_big_r);
-    translate([-E3d_mount_big_r,0,0]) cube([2*E3d_mount_big_r,d,3.7+0.05]);
+    cylinder(h=3.7+0.05, r=E3d_mount_big_r + extra_w/2);
+    translate([-E3d_mount_big_r - extra_w/2,0,0]) cube([2*E3d_mount_big_r + extra_w,d,3.7+0.05]);
   }
   // Hot end continues downwards
   translate([0,0,-9.9]){
-    cylinder(r=4.2, h=10.1);
-    translate([-4.2,0,0]) cube([4.2*2,d,10]);
+    cylinder(r=4.2  + extra_w/2, h=10.1);
+    translate([-4.2 - extra_w/2,0,0]) cube([4.2*2 + extra_w,d,10]);
   }
 }
 //e3d_v6_mount_bore(10);
@@ -1008,7 +1008,7 @@ module sstruder_lever(hobb=true){
     }
     // Hole for hinge screw
     translate([Sstruder_hinge_length,Sstruder_fork_length,-1])
-      cylinder(d=M3_diameter+0.45, h=height+2);
+      cylinder(d=M3_diameter+0.6, h=height+2);
   }
   if(hobb){
     hobb_towers([0,0,0],true);
@@ -1059,11 +1059,20 @@ module sstruder_plate(hobb=true, only_pressblock_cyl=false, only_pressblock_hand
         rotate([45,0,0])
         translate([-10,0,-30])
         cube(30);
+      // Make channel_cube lean towards filament
+      translate([0,-56,10])
+        rotate([45,0,0])
+        translate([-10,27.5,-30]){
+          cube([30,42,30]);
+          translate([0,0,0])
+            rotate([45,0,0])
+            cube([30,42,30]);
+        }
       // But cut it before it reaches the hobb
       translate([-15,-1,0.1])
         cube(30);
       // Cut around hobb 1
-      cylinder(d = Hobbed_insert_diameter + 0.6, h = 30, $fn=60);
+      cylinder(d = Hobbed_insert_diameter + 2.6, h = 30, $fn=60);
       // Cut around hobb 2
       translate([Hobbed_insert_diameter + Extruder_filament_opening, 0, 0])
         cylinder(d = Bearing_623_outer_diameter+1, h = 30, $fn=60);
@@ -1088,12 +1097,12 @@ module sstruder_plate(hobb=true, only_pressblock_cyl=false, only_pressblock_hand
           Sstruder_thickness]);
   }
 
-  pressblock_cyl_radius = 3.1;
+  pressblock_cyl_radius = 3.05;
   module pressblock_cyl(){
     difference(){
       cylinder(r=pressblock_cyl_radius, h=Sstruder_fork_width+4, $fn=40);
       translate([0.5,0,-1])
-        M3_screw(Sstruder_fork_width+10,true);
+        cylinder(d=M3_diameter+0.6, h=Sstruder_fork_width+10);
     }
   }
   if(only_pressblock_cyl){
@@ -1143,7 +1152,7 @@ module sstruder_plate(hobb=true, only_pressblock_cyl=false, only_pressblock_hand
       pressblock_handle();
   }
 
-  extra_width_for_pressblock = 10.5;
+  extra_width_for_pressblock = 10.7;
   module pressblock(){
     difference(){
     // Flat area for pressblock
@@ -1169,14 +1178,14 @@ module sstruder_plate(hobb=true, only_pressblock_cyl=false, only_pressblock_hand
       translate([-(E3d_mount_big_r*2+6)/2-E_motor_x_offset,
         -Sstruder_height+Nema17_cube_width/2,
         0]){
-      cube([E3d_mount_big_r*2+6,hot_end_fastening_h,Sstruder_filament_meets_shaft  + 7]);
+      cube([E3d_mount_big_r*2+6,hot_end_fastening_h-1,Sstruder_filament_meets_shaft  + 7]);
       }
       translate([-E_motor_x_offset,
           Sstruder_hot_end_bore_z,
           Sstruder_filament_meets_shaft])
         rotate([-90,0,0])
         rotate([0,0,180])
-        e3d_v6_mount_bore(10);
+        e3d_v6_mount_bore(10, extra_w=0.15, $fn=4*7);
         //hinge_digger();
     }
   }
@@ -1190,7 +1199,7 @@ module sstruder_plate(hobb=true, only_pressblock_cyl=false, only_pressblock_hand
     }
     // Screw holes for motor
     translate([0,0,-1])
-      Nema17_screw_holes(M3_diameter+0.5, Sstruder_thickness+2);
+      Nema17_screw_holes(M3_diameter+0.6, Sstruder_thickness+2);
     // Nema17 ring
     translate([0,0,-1])
       cylinder(d=ring_hole_d, h=Sstruder_thickness+2);
