@@ -38,11 +38,14 @@ module spool_gear(){
     translate([0,0,-1])
       cylinder(d=b608_outer_dia,h=Gear_height+2);
     // Cut bottom to avoid problems with elephant foot
-    translate([0,0,-0.3])
-    rotate_extrude(angle=360, convexity=5)
-      translate([Spool_pitch-1.3,0])
-        rotate([0,0,-70])
-          square([4,5]);
+    for(k=[0,1])
+      translate([0,0,k*Gear_height])
+        mirror([0,0,k])
+          translate([0,0,0])
+            rotate_extrude(angle=360, convexity=5)
+              translate([Spool_pitch-3.5,-1])
+                rotate([0,0,-60])
+                  square([4,7]);
   }
 
 }
