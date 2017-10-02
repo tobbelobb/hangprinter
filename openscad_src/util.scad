@@ -234,8 +234,8 @@ module Nema17(){
 
 module D_shaft(height){
   difference(){
-    cylinder(r=Nema17_shaft_radius, h=height,$fn=13);
-    translate([-5,Nema17_shaft_radius-0.6,-1])
+    cylinder(r=Nema17_shaft_radius+0.25, h=height,$fn=13);
+    translate([-5,Nema17_shaft_radius-0.55,-1])
       cube([10,10,height+1]);
   }
 }

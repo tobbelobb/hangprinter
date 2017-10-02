@@ -86,7 +86,8 @@ module gear(number_of_teeth = 15,
 	          circles         = 0,
 	          backlash        = 0,
 	          twist           = 0,
-	          involute_facets = 0){
+	          involute_facets = 0,
+            slices          = 1){
 	if(circular_pitch==false && diametral_pitch==false)
 		echo("ERROR: gear module needs either a diametral_pitch or circular_pitch");
 
@@ -131,7 +132,7 @@ module gear(number_of_teeth = 15,
 	difference(){
 		union(){
 			difference(){
-				linear_extrude(height = rim_thickness, convexity = 10, twist = twist, slices=floor(gear_thickness/2))
+				linear_extrude(height = rim_thickness, convexity = 10, twist = twist, slices=slices)
 				gear_shape(number_of_teeth,
 					         pitch_radius     = pitch_radius,
 					         root_radius      = root_radius,
@@ -158,7 +159,7 @@ module gear(number_of_teeth = 15,
 	}
 }
 
-module my_gear(teeth, height, circular_pitch, fac=1){
+module my_gear(teeth, height, circular_pitch, fac=1, slices=1){
   pitch = (teeth*circular_pitch/360);
 	gear(number_of_teeth = teeth,
        // Increasing circular_pitch this makes gears larger
@@ -171,6 +172,7 @@ module my_gear(teeth, height, circular_pitch, fac=1){
 			 rim_width       = 5,
 			 hub_thickness   = height,
 			 hub_diameter    = 15,
-       twist = fac*(180/3.14)*height*1/pitch);
+       twist = fac*(180/3.14)*height*1/pitch,
+       slices = slices);
 }
 //my_gear(40,10);

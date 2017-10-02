@@ -15,7 +15,7 @@ module prev_art(){
 spool_gear();
 module spool_gear(){
   module half(){
-    my_gear(Spool_teeth, Gear_height/2+0.1, Circular_pitch);
+    my_gear(Spool_teeth, Gear_height/2+0.1, Circular_pitch, slices = floor(Gear_height/2));
   }
   difference(){
     union(){
