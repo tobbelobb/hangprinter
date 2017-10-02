@@ -29,8 +29,9 @@ module extruder_holder(){
       rounded_2corner([cw + wiggle + 2*Wall_th + Fat_beam_width + flerp,
           block_depth],
           r_little);
+    translate([(Fat_beam_width+Beam_width)/2+Wall_th-edges,0,0])
     rotate([90,0,90])
-      linear_extrude(height=Wall_th+edges, slices=1)
+      linear_extrude(height=Wall_th+edges-(Fat_beam_width-Beam_width)/2, slices=1)
       rounded_2corner([wiggle + 2*Wall_th + Fat_beam_width + flerp + cable_clamp_ex_l,
           block_depth],
           r_little);
@@ -67,7 +68,7 @@ module extruder_holder(){
     for(i=[cable_clamp_o,block_depth-cable_clamp_o])
       translate([0,Fat_beam_width+2*Wall_th+wiggle+flerp+cable_clamp_ex_l - 4,i])
         rotate([0,90,0])
-        cylinder(d=3.1, h=block_height+2, $fs=1, center=true);
+        cylinder(d=3.1, h=4*Beam_width, $fs=1, center=true);
   }
 }
 
