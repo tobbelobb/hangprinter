@@ -482,11 +482,11 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {36.87, 36.87, 36.87, 663.7, 134.0}  // steps per unit with no line on spools for Hangprinter
 #endif
 
-#define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 20, 25}    // (mm/sec)
-#define DEFAULT_MAX_ACCELERATION      {2000,2000,2000,2000,10000}    // X, Y, Z, E maximum start speed for accelerated moves.
+#define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 15, 25}    // (mm/sec)
+#define DEFAULT_MAX_ACCELERATION      {2000,2000,2000,200,10000}    // A, B, C, D, E maximum start speed for accelerated moves.
 
-#define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
+#define DEFAULT_ACCELERATION          1000
+#define DEFAULT_RETRACT_ACCELERATION  3000
 
 #define DEFAULT_NOMINAL_FILAMENT_DIA 1.75
 
