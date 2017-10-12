@@ -4,6 +4,9 @@ use <sweep.scad>
 use <util.scad>
 
 //decoration();
+// Wallr is radius out to outermost edge of this decoration
+// inr is the radius of those rounded corners
+// dd is width of circle band to be formed inside of wallr
 module decoration(height=10, wallr = 50, dd=10.2, lou=6.9, inr=9){
   d = 2;
   shpr = 2; // Radius of the bend that shape has
@@ -60,7 +63,7 @@ module decoration(height=10, wallr = 50, dd=10.2, lou=6.9, inr=9){
         * translation([+lou-inr+shpr,0,0])
         * rotation([0,90*1.1 + i*0.9,0])
         * translation([-lou+inr-shpr,0,0])],
-        [for(i=[start_ang2:stp:last_ang/2+1])
+        [for(i=[start_ang2:stp:last_ang/2+6])
         rotation([0,0,-i+start_ang])
         * translation(dd*[-cos(last_ang), -sin(last_ang), 0])
         * rotation([0,0,stop_ang])
@@ -76,12 +79,27 @@ module decoration(height=10, wallr = 50, dd=10.2, lou=6.9, inr=9){
               r0*[cos(a), sin(a)]],
            [for (a=[0:max_ang/steps:max_ang])
              r1*[cos(max_ang-a), sin(max_ang-a)]]);
-  skip_ang = 8;
+  skip_ang = 4.7;
   translate([0,0,-d])
-    rotate([0,0,-last_ang/2+start_ang/2+skip_ang/2])
-    sweep(circle_sector(last_ang-start_ang-skip_ang, wallr-dd-inr+shpr+0.3, wallr-shpr),
-        [translation([0,0,0]),translation([0,0,height+2*d+2])]);
+    rotate([0,0,-last_ang/2+start_ang/2+skip_ang/2]){
+      sweep(circle_sector(last_ang-start_ang-skip_ang, wallr-dd-inr*inr*inr/105, wallr-inr/10),
+          [translation([0,0,0]),translation([0,0,height+2*d+2])]);
+      //sweep(circle_sector(last_ang-start_ang-skip_ang*2, wallr-dd, wallr-2*dd/3+1.0),
+      //    [translation([0,0,0]),translation([0,0,height+2*d+2])]);
+    }
 
+}
+
+module spool_decoration(){
+  wallr_inner = Spool_r - 4;
+  inr_inner = 8.0;
+  dd_inner = wallr_inner - inr_inner - b608_outer_dia/2 - 6;
+  lou_inner = 5.5;
+  decoration(height=Spool_height+1+Gear_height,
+      wallr = wallr_inner,
+      inr = inr_inner,
+      dd = dd_inner,
+      lou = lou_inner);
 }
 
 //torx(remale=true);

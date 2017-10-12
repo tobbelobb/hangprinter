@@ -15,7 +15,7 @@ module prev_art(){
 spool_gear();
 module spool_gear(){
   module half(){
-    my_gear(Spool_teeth, Gear_height/2+0.1, Circular_pitch, slices = floor(Gear_height/2));
+    my_gear(Spool_teeth, Gear_height/2+0.1, Circular_pitch, slices = 2);// slices = floor(Gear_height/2));
   }
   difference(){
     union(){
@@ -25,12 +25,22 @@ module spool_gear(){
           half();
       }
     }
+    wallr_outer = Spool_outer_radius-9;
+    inr_outer = 4.6;
+    dd_outer = wallr_outer - inr_outer - Spool_r - 2.5;
+    lou_outer = 2.5;
+    // Outermost decoration
     for(i=[0:60:359])
       rotate([0,0,i])
-        decoration(Gear_height);
+        decoration(Gear_height,
+                   wallr = wallr_outer,
+                   inr = inr_outer,
+                   dd = dd_outer,
+                   lou = lou_outer);
+
     for(i=[0:60:359])
       rotate([0,0,i])
-        decoration(height=Spool_height+1+Gear_height, wallr=Spool_r-2, dd=3, lou=4, inr=7);
+        spool_decoration();
     translate([0,0,Gear_height+Spool_height+2-Torx_depth])
       rotate([180,0,0])
       torx(h = Spool_height+2, female=true);
