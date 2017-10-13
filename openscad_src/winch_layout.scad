@@ -31,7 +31,7 @@ module top_plate(){
 }
 
 placed_lineroller_D();
-module placed_lineroller_D(angs=[-70,72,0]){
+module placed_lineroller_D(angs=[-73,68,0]){
   center_it = -2.5;
   three = [0,120,240];
   for(k=[0:2])
@@ -82,7 +82,7 @@ module winch_unit(l=100, a=90, motor_a=0, with_motor=false, lines=1, angs=[0,120
           translate([0,0,Nema17_cube_height])
             rotate([0,180,0])
               Nema17();
-        rotate([90,0,0])
+        rotate([90,0,90-50])
           if(stls){
             import("../openscad_stl/motor_bracket.stl");
           } else {
@@ -112,12 +112,12 @@ module abc_winch(with_motor=false,dist=190, motor_a = 0){
 // D
 edg = 10;
 translate([-ext_sidelength/2+edg,-ext_sidelength/2+55,0])
-winch_unit(l=500, motor_a=-110, a=-6.6, lines=3, angs=[71,169.5,121.8]);
+winch_unit(l=500, motor_a=-110, a=-6.6, lines=3, angs=[67.3,166.5,120.1]);
 // A
-translate([-148,-24,0])
+translate([-149,-7,0])
 rotate([0,0,-92])
   mirror([1,0,0])
-  abc_winch(with_motor=false,motor_a=126,dist=194);
+  abc_winch(with_motor=false,motor_a=130,dist=194);
 
 // B
 translate([-40,-116,0]){
