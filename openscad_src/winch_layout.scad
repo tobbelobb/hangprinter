@@ -20,16 +20,24 @@ ext_sidelength = sidelength+73;
 
 sandwich_gap = 0.7;
 
+color0 = "sandybrown";
+color0_alpha = 0.55;
+color1 = [0.14,0.16,0.90];
+color1_alpha = 0.9;
+color2 = [0.99,0.99,0.99];
+color2_alpha = 0.8;
+
+color(color0, color0_alpha)
 top_plate();
 module top_plate(){
   //translate([0,0,ANCHOR_D_Z])
-  color("brown")
     translate([-ext_sidelength/2, -ext_sidelength/2-8,-12])
       cube([ext_sidelength, ext_sidelength, 12]);
   //rotate([180,0,30])
   //  cylinder(r=sidelength/sqrt(3) + 20, h=12, $fn=3);
 }
 
+color(color1, color1_alpha)
 placed_lineroller_D();
 module placed_lineroller_D(angs=[-73,68,0]){
   center_it = -2.5;
@@ -49,11 +57,13 @@ module placed_lineroller_D(angs=[-73,68,0]){
 //translate([0,0,sandwich_gap])
 //sandwich();
 module sandwich(){
+  color(color2, color2_alpha)
   if(stls){
     import("../openscad_stl/spool_gear.stl");
   } else {
     spool_gear();
   }
+  color(color1, color1_alpha)
   translate([0,0,Gear_height+Spool_height+1+0.1])
     rotate([0,180,0]){
       if(stls){
@@ -72,6 +82,7 @@ module winch_unit(l=100, a=90, motor_a=0, with_motor=false, lines=1, angs=[0,120
     translate([0,Motor_pitch+Spool_pitch,0]){
       rotate([0,0,18])
         translate([0,0,sandwich_gap-0.5]) // 0.5 since motor gear is 1 mm higher than spool gear
+          color(color1, color1_alpha+0.1)
           if(stls){
             import("../openscad_stl/motor_gear.stl");
           } else {
@@ -83,6 +94,7 @@ module winch_unit(l=100, a=90, motor_a=0, with_motor=false, lines=1, angs=[0,120
             rotate([0,180,0])
               Nema17();
         rotate([90,0,90-50])
+          color(color2, color2_alpha-0.2)
           if(stls){
             import("../openscad_stl/motor_bracket.stl");
           } else {
@@ -101,6 +113,7 @@ module winch_unit(l=100, a=90, motor_a=0, with_motor=false, lines=1, angs=[0,120
 
 module abc_winch(with_motor=false,dist=190, motor_a = 0){
   translate([dist,Spool_r,0])
+    color(color2, color2_alpha)
     if(stls){
       import("../openscad_stl/lineroller_ABC_winch.stl");
     } else {
