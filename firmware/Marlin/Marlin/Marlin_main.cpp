@@ -807,13 +807,6 @@ void process_commands(){
               destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
         }
         break;
-      case 28: // G28 means "we're already in origo" for Hangprinter
-        current_position[A_AXIS] = 0.0;
-        current_position[B_AXIS] = 0.0;
-        current_position[C_AXIS] = 0.0;
-        current_position[D_AXIS] = 0.0;
-        calculate_delta(current_position, delta);
-        break;
       case 90: // G90
         relative_mode = false;
         break;
@@ -1018,6 +1011,13 @@ void process_commands(){
        break;
 
 #endif // end of EXPERIMENTAL_AUTO_CALIBRATION_FEATURE code
+      case 28: // G28 means "we're already in origo" for Hangprinter
+        current_position[X_AXIS] = 0.0;
+        current_position[Y_AXIS] = 0.0;
+        current_position[Z_AXIS] = 0.0;
+        calculate_delta(current_position, delta);
+        plan_set_position(delta, destination[E_CARTH]);
+        break;
     }
   }
 
