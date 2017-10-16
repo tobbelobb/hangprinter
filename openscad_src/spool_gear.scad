@@ -15,7 +15,7 @@ module prev_art(){
 spool_gear();
 module spool_gear(){
   module half(){
-    my_gear(Spool_teeth, Gear_height/2+0.1, Circular_pitch, slices = 2);// slices = floor(Gear_height/2));
+    my_gear(Spool_teeth, Gear_height/2+0.1, Circular_pitch, slices = floor(Gear_height/2));
   }
   difference(){
     union(){
@@ -25,9 +25,9 @@ module spool_gear(){
           half();
       }
     }
-    wallr_outer = Spool_outer_radius-9;
+    wallr_outer = Spool_outer_radius-10;
     inr_outer = 4.6;
-    dd_outer = wallr_outer - inr_outer - Spool_r - 2.5;
+    dd_outer = wallr_outer - inr_outer - Spool_r - 3.5;
     lou_outer = 2.5;
     // Outermost decoration
     for(i=[0:60:359])
@@ -36,7 +36,9 @@ module spool_gear(){
                    wallr = wallr_outer,
                    inr = inr_outer,
                    dd = dd_outer,
-                   lou = lou_outer);
+                   lou = lou_outer,
+                   skip_ang = 4.50,
+                   push_in_center = wallr_outer-6.9);
 
     for(i=[0:60:359])
       rotate([0,0,i])

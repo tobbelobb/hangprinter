@@ -91,7 +91,7 @@ module winch_unit(l=100, a=90, motor_a=0, with_motor=false, lines=1, angs=[0,120
       translate([0,0,Motor_bracket_depth]){
         if(with_motor)
           translate([0,0,Nema17_cube_height])
-            rotate([0,180,0])
+            rotate([0,180,40])
               Nema17();
         rotate([90,0,90-50])
           color(color2, color2_alpha-0.2)
@@ -125,24 +125,24 @@ module abc_winch(with_motor=false,dist=190, motor_a = 0){
 // D
 edg = 10;
 translate([-ext_sidelength/2+edg,-ext_sidelength/2+55,0])
-winch_unit(l=500, motor_a=-110, a=-6.6, lines=3, angs=[67.3,166.5,120.1]);
+winch_unit(l=500, motor_a=-110, a=-6.6, lines=3, angs=[64.6,164.5,118.9]);
 // A
-translate([-149,-7,0])
-rotate([0,0,-92])
+translate([-137,26,0])
+rotate([0,0,-90])
   mirror([1,0,0])
-  abc_winch(with_motor=false,motor_a=130,dist=194);
+  abc_winch(with_motor=false,motor_a=131,dist=166);
 
 // B
-translate([-40,-116,0]){
+translate([-39,-110,0]){
   rotate([0,0,-30]){
-    abc_winch(dist=235);
+    abc_winch(dist=235, motor_a=119);
   }
 }
 
 // C
-translate([169,180,0]){
+translate([167,190,0]){
   rotate([0,0,180+30]){
-    abc_winch(dist=235, motor_a=-120);
+    abc_winch(dist=235, motor_a=-85);
   }
 }
 
