@@ -9,51 +9,82 @@ module prev_art(){
 }
 
 base();
-module base(base_th = 2, flerp0 = 4, flerp1 = 4){
-  l = d + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
-  translate([-d/2-flerp0, -d/2, 0])
+module base(base_th = Base_th, flerp0 = 6, flerp1 = 6){
+  l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
+  for(k=[0,1])
+  translate([+k*(l/2+Depth_of_lineroller_base/2),-k*(l/2-Depth_of_lineroller_base/2),0])
+    translate([-Depth_of_lineroller_base/2-flerp0, -Depth_of_lineroller_base/2, 0])
+    rotate([0,0,k*90])
     difference(){
-      rounded_cube2([l, d, base_th], d/2, $fn=10*4);
-      for(x=[d/2-1, l - (d/2-1)])
-        translate([x, d/2, -1])
+      rounded_cube2([l, Depth_of_lineroller_base, base_th], Lineroller_base_r, $fn=13*4);
+      for(x=[Depth_of_lineroller_base/2-1, l - (Depth_of_lineroller_base/2-1)])
+        translate([x, Depth_of_lineroller_base/2, -1])
           cylinder(d=4, h=base_th+2, $fs=1);
     }
 }
 
-lineroller_ABC_winch(the_wall=false) base();
-module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=true, tower_h = Tower_h, tower_flerp = Tower_flerp){
-  foot_h = 1.5;
-  foot_l = 2*Bearing_r + 2*Bearing_wall + 2*foot_h;
-  foot_d = Lineroller_wall_th + foot_h;
+function foot_shape(r, e, f, w) = concat([
+  for(i=[90:10:181])
+     [-e-Lineroller_wall_th+r,f+w-r] + r*[cos(i), sin(i)]
+  ],
+  [for(i=[180:10:271])
+     [-e-Lineroller_wall_th+r,-f+r] + r*[cos(i), sin(i)]
+  ],
+  [for(i=[270:10:361])
+     [-r,-f+r] + r*[cos(i), sin(i)]
+  ],
+  [for(i=[0:10:91])
+     [-r,w+f-r] + r*[cos(i), sin(i)]
+  ]);
+
+function wall_shape(a, w, extr) = 1 - (sin(a*90))*extr/((w/2)+extr); // a 0 -> 1
+
+lineroller_ABC_winch(edge_start=35, edge_stop = 180-35);
+module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, tower_flerp = Tower_flerp){
 
   module wall(){
-    // Foot
-    difference(){
-      translate([-foot_h,-d/2,base_th-0.1])
-        cube([foot_l, foot_d, foot_h+0.1]);
-      for(i=[0,1])
-        translate([-foot_h+i*foot_l,-d/2,base_th])
-          mirror([i,0,0])
-          rotate([0,45,0])
-          translate([-foot_h*2,-1,-2*foot_h])
-          cube([foot_h*2,foot_d+2,2*foot_h + sqrt(2)*foot_h]);
-      translate([-foot_h, -d/2 + foot_d, base_th])
-      rotate([45,0,0])
-      translate([-1,0,-1])
-        cube([foot_l+2, 2*foot_h, sqrt(2)*foot_h+1]);
-    }
+    // Foot parameters
+    c = 10;
+    e = 5.52;
+    f = 2.5; // extra x-length for swung wall
+    w = Bearing_r*2+2*Bearing_wall;
+
+    //q = 0.879;
+    q = 3.0;
     // Main block
-    r2=2+1.3;
-    translate([0, -d/2, 0])
+    r2 = Bearing_bore_r+1.3;
+    foot_shape_r = 1.0;
+    translate([0, -(Bearing_width + 2*Wall_th)/2, 0])
       rotate([-90,-90,0]){
         difference(){
           union(){
-            round_end([tower_h, Bearing_r*2+2*Bearing_wall, Lineroller_wall_th],$fn=8*6);
+            //%round_end([tower_h, w, Lineroller_wall_th],$fn=8*6);
+            // Foot with a swing
+            translate([0,0,Lineroller_wall_th])
+            sweep(foot_shape(foot_shape_r, e, f, w), concat(
+                   [for (h = [base_th/(tower_h-2*Bearing_r+q)-0.01:0.05:1.00001])
+                     translation([(tower_h-2*Bearing_r+q)*h,0,0])
+                     * translation([0,w/2,0])
+                     * scaling([1, wall_shape(h, w, f), wall_shape(h, Lineroller_wall_th, e/2)])
+                     * translation([0,-w/2,0])
+                     * rotation([0,-90,0])
+                     ],
+
+                   [for (h = [0:(1 - 0.01)/20:1 - 0.00001])
+                     translation([tower_h-2*Bearing_r+q+h*(1*Bearing_r+Bearing_wall),0,0])
+                     * translation([0,w/2,0])
+                     * scaling([1,wall_shape(1, w, f)*(sqrt(1-(h)*(h))),
+                                  wall_shape(1, Lineroller_wall_th, e/2)])
+                     * translation([0,-w/2,0])
+                     * rotation([0,-90,0])
+                     ]
+                     ));
+
             translate([tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,0])
-              cylinder(r=r2, h=Lineroller_wall_th+0.5, $fs=1);
+              cylinder(r=r2, h=Lineroller_wall_th+0.4, $fs=1);
           }
           translate([tower_h-Bearing_r-Bearing_wall,Bearing_r+Bearing_wall,-1])
-            cylinder(d=4.3, h=Lineroller_wall_th+0.5+2, $fs=1);
+            cylinder(d=Bearing_bore_r*2+0.3, h=Lineroller_wall_th+0.5+2, $fs=1);
         }
       }
     // Edge to prevent line from falling of...
@@ -61,7 +92,7 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=t
     b= 0.5;
     rot_r = Bearing_r+b;
     difference(){
-      translate([Bearing_r+Bearing_wall, -4, tower_flerp - Bearing_wall])
+      translate([Bearing_r+Bearing_wall, -Bearing_width/2-0.8, tower_flerp - Bearing_wall])
         sweep([[0,0], [0,-0.5], [b+a, -0.5], [b+a,0], [b, a], [0, a]],
             [for (ang=[edge_start+0.01:((edge_stop-edge_start)-0.03)/100:edge_stop-0.01])
             rotation([0,ang,0])
@@ -78,28 +109,8 @@ module lineroller_ABC_winch(base_th = 2, edge_start=0, edge_stop=180, the_wall=t
         cube([10,10,tower_h]);
     }
   }
+
   wall();
   mirror([0,1,0])
     wall();
-  children(0);
-
-  // Guide line out of lineroller
-  if(the_wall){
-    line_entrance = tower_flerp-Bearing_wall-Bearing_small_r-0.25;
-    difference(){
-      union(){
-        translate([-Lineroller_wall_th,-d/2,base_th-0.1])
-          quarterround_wall([Lineroller_wall_th+0.01,
-              d,
-              tower_flerp-Bearing_wall-base_th+0.1],$fn=10*4);
-        translate([0,0,line_entrance])
-          rotate([0,-90,0])
-          cylinder(r=4, h=Lineroller_wall_th + 3, $fs=1);
-      }
-      translate([0,0,line_entrance])
-        rotate([0,-90,0])
-        translate([0,0,-1])
-        cylinder(r=Ptfe_r, h=Lineroller_wall_th+3+2, $fs=1);
-    }
-  }
 }
