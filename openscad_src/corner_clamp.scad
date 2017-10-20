@@ -20,7 +20,7 @@ module corner_clamp(){
     difference(){
       rotate([90,0,0])
         sweep(my_rounded_eqtri(l,big_r, step=step),
-            [for(i=[-little_r:2*little_r/20:little_r])
+            [for(i=[-little_r:2*little_r/7:little_r])
             scaling([1+little_r*sqrt(1-i*i/(little_r*little_r))/(l*sqrt(3)/6),
               1+little_r*sqrt(1-i*i/(little_r*little_r))/(l*sqrt(3)/6), 1])
             * translation([0,0,i])
@@ -48,7 +48,7 @@ module corner_clamp(){
               * translation([-w/2,-d/2,hup])];
 
     // Just round off top edges
-    path1 = [for(i=[0.02:0.01-(0.02/10):1])
+    path1 = [for(i=[0.02:0.1:1- 0.0001])
               scaling([1-(1-sqrt(1-i*i))*little_r2/l0,
               1 - (1-sqrt(1-i*i))*little_r2/(d/2), 1])
               * scaling([1-((hup+i*little_r2)/sqrt(3))/(w/2),1,1])
