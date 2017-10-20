@@ -64,5 +64,17 @@ module beam_slider2(){
     arm();
   translate([-wall_th-Beam_width/2,-w/2,0])
     cube([wall_th, w, h]);
+  // Hooks for line
+  hook_h = 6;
+
+  for(k=[0,1])
+    mirror([0,k,0]){
+      translate([-2.5/2,w/2,0])
+        cube([2.5, 2.5, h]);
+      translate([0,2+w/2+2.5/2,0])
+        rotate([0,0,2])
+        translate([-hook_h/2,-2.5/2,0])
+        cube([hook_h, 2.5, h]);
+    }
 }
 
