@@ -34,7 +34,7 @@
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION "1.1.0.tobbelobb"
+#define STRING_VERSION "1.1.0.hangprinter"
 #define STRING_URL "github.com/tobbelobb/hangprinter"
 #define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
 #define STRING_CONFIG_H_AUTHOR "tobbelobb" // Who made the changes.
@@ -47,9 +47,7 @@
 #define SERIAL_PORT 0
 
 // This determines the communication speed of the printer
-//#define BAUDRATE 250000
 #define BAUDRATE 115200
-//#define BAUDRATE 9600
 
 // This enables the serial port associated to the Bluetooth interface
 //#define BTENABLED              // Enable BT interface on AT90USB devices
@@ -95,10 +93,6 @@
 // Or do other measurments and calculate Carthesian axis lengths by trigonometry
 // See Hangprinter calibration manual for help:
 // https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
-//
-//
-//
-//
 #define ANCHOR_A_X 0.0
 #define ANCHOR_A_Y -2163.0
 #define ANCHOR_A_Z -75.5
@@ -423,7 +417,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // For deltabots this means top and center of the Cartesian print volume.
 #define MANUAL_X_HOME_POS 0
 #define MANUAL_Y_HOME_POS 0
-#define MANUAL_Z_HOME_POS 0 // For delta: Distance between nozzle and print surface after homing.
+#define MANUAL_Z_HOME_POS 0
 
 #define NUM_AXIS 5 // The axis order in all axis related arrays is A, B, C, D, E
 #define DIRS 4     // (that is A_AXIS, B_AXIS, C_AXIS, D_AXIS, E_AXIS or 0, 1, 2, 3, 4)
@@ -466,36 +460,30 @@ const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
 //const float LINE_ON_SPOOL_ORIGO[DIRS] = {2460.0,2600.0,2800.0,3000.0};
 //const float LINE_ON_SPOOL_ORIGO[DIRS] = {0.0,0.0,0.0,0.0};
 
-// Squared spool radius. 33.0^2 = 1089.0
+// Squared spool radius. 50.0^2 = 2500.0
 // Assumes equal A, B, C and D radii.
-//#define SPOOL_RADIUS2 1089.0
-//#define SPOOL_RADIUS2 3600.0
-#define SPOOL_RADIUS2 625.0
+// Measuring your spool radii and adjusting this number will help your machine's precision
+#define SPOOL_RADIUS2 2500.0
 
-// Motor gear teeth: 9
-// Sandwich gear teeth: 43
-// Steps per motor revolution: 1600 (that is, 1/8 stepping a 200 step per revolution motor)
-// ==> Steps per spool radian = 1600/(2*pi*9/43) = 1216.651
-// D-motor has 1 tooth instead of 9 teeth. 1216.651*9 = 10949.860
-//const float STEPS_PER_SPOOL_RADIAN[DIRS] = {1216.651,1216.651,1216.651,10949.860};
-// Double all of those if 1/16 stepping is used
-//const float STEPS_PER_SPOOL_RADIAN[DIRS] = {2433.302,2433.302,2433.302,21899.720};
-// Double all of those if 1/32 stepping is used
-//const float STEPS_PER_SPOOL_RADIAN[DIRS] = {4866.604,4866.604,4866.604,21899.720};
-const float STEPS_PER_SPOOL_RADIAN[DIRS] = {8488.2636, 8488.2636, 8488.2636, 8488.2636};
+// Motor gear teeth: 10
+// Sandwich gear teeth: 100
+// Steps per motor revolution: 3200 (that is, 1/16 stepping a 200 step per revolution motor)
+// ==> Steps per spool radian = 3200/(2*pi*10/100) = 5093.0
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 
 
 
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
 // then constant ABCD values are calculated on the fly and used only used to calculate accelerations
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, 410.0}
+#define DEFAULT_ESTEPS 410.0 // 410.0 set quite at random
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, DEFAULT_ESTEPS}
 #else
-//#define DEFAULT_AXIS_STEPS_PER_UNIT   {88.189752, 88.189752, 88.189752, 617.328264, 134.0}
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {176.3795, 176.3795, 176.3795, 617.328264, 410.0}
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {101.86, 101.86, 101.86, 101.86, DEFAULT_ESTEPS}
 #endif
 
-#define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 80, 25}    // (mm/sec)
+
+#define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 100, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {2000,2000,2000,2000,10000}    // X, Y, Z, E maximum start speed for accelerated moves.
 
 #define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
@@ -539,56 +527,9 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {8488.2636, 8488.2636, 8488.2636, 848
 #define ABS_PREHEAT_HPB_TEMP 100
 #define ABS_PREHEAT_FAN_SPEED 255   // Insert Value between 0 and 255
 #endif
-//SD support
-
-//#define SDSUPPORT // Enable SD Card Support in Hardware Console
-//#define SDSLOW // Use slower SD transfer mode (not normally needed - uncomment if you're getting volume init error)
-//#define SD_CHECK_AND_RETRY // Use CRC checks and retries on the SD communication
-//#define ENCODER_PULSES_PER_STEP 1 // Increase if you have a high resolution encoder
-//#define ENCODER_STEPS_PER_MENU_ITEM 5 // Set according to ENCODER_PULSES_PER_STEP or your liking
-
-// The MaKr3d Makr-Panel with graphic controller and SD support
-// http://reprap.org/wiki/MaKr3d_MaKrPanel
-//#define MAKRPANEL
-
-// The RepRapDiscount Smart Controller (white PCB)
-// http://reprap.org/wiki/RepRapDiscount_Smart_Controller
-//#define REPRAP_DISCOUNT_SMART_CONTROLLER
-
-// The GADGETS3D G3D LCD/SD Controller (blue PCB)
-// http://reprap.org/wiki/RAMPS_1.3/1.4_GADGETS3D_Shield_with_Panel
-//#define G3D_PANEL
-
-// The RepRapDiscount FULL GRAPHIC Smart Controller (quadratic white PCB)
-// http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
-//
-// ==> REMEMBER TO INSTALL U8glib to your ARDUINO library folder: http://code.google.com/p/u8glib/wiki/u8glib
-//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
-
-// The RepRapWorld REPRAPWORLD_KEYPAD v1.1
-// http://reprapworld.com/?products_details&products_id=202&cPath=1591_1626
-//#define REPRAPWORLD_KEYPAD
-//#define REPRAPWORLD_KEYPAD_MOVE_STEP 10.0 // how much should be moved when a key is pressed, eg 10.0 means 10mm per click
-
-// The Elefu RA Board Control Panel
-// http://www.elefu.com/index.php?route=product/product&product_id=53
-// REMEMBER TO INSTALL LiquidCrystal_I2C.h in your ARDUINO library folder: https://github.com/kiyoshigawa/LiquidCrystal_I2C
-//#define RA_CONTROL_PANEL
-
-// Delta calibration menu
-// uncomment to add three points calibration menu option.
-// See http://minow.blogspot.com/index.html#4918805519571907051
-// If needed, adjust the X, Y, Z calibration coordinates
-// in ultralcd.cpp@lcd_delta_calibrate_menu()
-// #define DELTA_CALIBRATION_MENU
 
 // Increase the FAN pwm frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
-
-// Temperature status LEDs that display the hotend and bet temperature.
-// If all hotends and bed temperature and temperature setpoint are < 54C then the BLUE led is on.
-// Otherwise the RED led is on. There is 1C hysteresis.
-//#define TEMP_STAT_LEDS
 
 // Use software PWM to drive the fan, as for the heaters. This uses a very low frequency
 // which is not ass annoying as with the hardware PWM. On the other hand, if this frequency
@@ -604,9 +545,6 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {8488.2636, 8488.2636, 8488.2636, 848
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
 // #define PHOTOGRAPH_PIN     23
-
-// SF send wrong arc g-codes when using Arc Point as fillet procedure
-//#define SF_ARC_FIX
 
 #include "Configuration_adv.h"
 #ifdef EXTRUDERS
