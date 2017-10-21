@@ -20,6 +20,7 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_clamp.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/spool_gear.scad \
 	$(SRC_DIR)/spool.scad \
+	$(SRC_DIR)/spacer.scad \
 	$(SRC_DIR)/sweep.scad \
 	$(SRC_DIR)/util.scad
 	openscad -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -34,7 +35,9 @@ all: | $(STL_DIR) $(STL_DIR)/beam_clamp.stl \
 	$(STL_DIR)/motor_bracket.stl \
 	$(STL_DIR)/motor_gear.stl \
 	$(STL_DIR)/spool_gear.stl \
-	$(STL_DIR)/spool.stl
+	$(STL_DIR)/spool.stl \
+	$(STL_DIR)/spacer.stl
+
 
 
 $(STL_DIR):

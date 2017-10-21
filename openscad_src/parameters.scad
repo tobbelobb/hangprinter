@@ -15,3 +15,4 @@ Nema17_screw_hole_width    = 43.74; // Opposite corner screws
 Nema17_shaft_radius        = 5/2;
 
 b608_outer_dia = 22.2;
+b608_width = 7.05;
