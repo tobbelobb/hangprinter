@@ -22,9 +22,7 @@
 #include "Configuration.h"
 #include "pins.h"
 
-#ifndef AT90USB
 #define  HardwareSerial_h // trick to disable the standard HWserial
-#endif
 
 #if (ARDUINO >= 100)
 # include "Arduino.h"
@@ -35,10 +33,6 @@
 // Arduino < 1.0.0 does not define this, so we need to do it ourselves
 #ifndef analogInputToDigitalPin
 # define analogInputToDigitalPin(p) ((p) + 0xA0)
-#endif
-
-#ifdef AT90USB
-#include "HardwareSerial.h"
 #endif
 
 #include "MarlinSerial.h"
@@ -52,15 +46,7 @@
 
 #include "WString.h"
 
-#ifdef AT90USB
-#ifdef BTENABLED
-#define MYSERIAL bt
-#else
-#define MYSERIAL Serial
-#endif // BTENABLED
-#else
 #define MYSERIAL MSerial
-#endif
 
 #define SERIAL_PROTOCOL(x) (MYSERIAL.print(x))
 #define SERIAL_PROTOCOL_F(x,y) (MYSERIAL.print(x,y))

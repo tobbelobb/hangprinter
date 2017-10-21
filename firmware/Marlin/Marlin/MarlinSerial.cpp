@@ -23,8 +23,7 @@
 #include "Marlin.h"
 #include "MarlinSerial.h"
 
-#ifndef AT90USB
-// this next line disables the entire HardwareSerial.cpp, 
+// this next line disables the entire HardwareSerial.cpp,
 // this is so I can support Attiny series and any other chip without a UART
 #if defined(UBRRH) || defined(UBRR0H) || defined(UBRR1H) || defined(UBRR2H) || defined(UBRR3H)
 
@@ -95,7 +94,7 @@ void MarlinSerial::begin(long baud) {
 void MarlinSerial::end() {
   cbi(M_UCSRxB, M_RXENx);
   cbi(M_UCSRxB, M_TXENx);
-  cbi(M_UCSRxB, M_RXCIEx);  
+  cbi(M_UCSRxB, M_RXCIEx);
 }
 
 
@@ -178,7 +177,7 @@ void MarlinSerial::print(double n, int digits) {
 
 void MarlinSerial::println(void) {
   print('\r');
-  print('\n');  
+  print('\n');
 }
 
 void MarlinSerial::println(const String &s) {
@@ -229,13 +228,13 @@ void MarlinSerial::println(double n, int digits) {
 // Private Methods /////////////////////////////////////////////////////////////
 
 void MarlinSerial::printNumber(unsigned long n, uint8_t base) {
-  unsigned char buf[8 * sizeof(long)]; // Assumes 8-bit chars. 
+  unsigned char buf[8 * sizeof(long)]; // Assumes 8-bit chars.
   unsigned long i = 0;
 
   if (n == 0) {
     print('0');
     return;
-  } 
+  }
 
   while (n > 0) {
     buf[i++] = n % base;
@@ -269,15 +268,15 @@ void MarlinSerial::printFloat(double number, uint8_t digits) {
 
   // Print the decimal point, but only if there are digits beyond
   if (digits > 0)
-    print("."); 
+    print(".");
 
   // Extract digits from the remainder one at a time
   while (digits-- > 0) {
     remainder *= 10.0;
     int toPrint = int(remainder);
     print(toPrint);
-    remainder -= toPrint; 
-  } 
+    remainder -= toPrint;
+  }
 }
 // Preinstantiate Objects //////////////////////////////////////////////////////
 
@@ -285,10 +284,3 @@ void MarlinSerial::printFloat(double number, uint8_t digits) {
 MarlinSerial MSerial;
 
 #endif // whole file
-#endif // !AT90USB
-
-// For AT90USB targets use the UART for BT interfacing
-#if defined(AT90USB) && defined (BTENABLED)
-HardwareSerial bt;
-#endif
-
