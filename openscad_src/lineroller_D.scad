@@ -13,7 +13,7 @@ module prev_art(){
 e = 5.52;
 f = 2.5; // extra x-length for swung wall
 w = 2*(Ptfe_r+2);
-height = Tower_h+4;
+height = Tower_h+6;
 q = 3.0;
 foot_shape_r = 1.0;
 base_th = Base_th;
@@ -51,7 +51,7 @@ module topping(){
             * translation([0,-w/2,0])
             * rotation([0,-90,0])],
             [
-            translation([height-2*Bearing_r+q+1*(Bearing_r+Bearing_wall),0,0])
+            translation([height,0,0])
             * translation([0,w/2,0])
             * scaling([1,wall_shape(stop_h_fac, w, f),
               wall_shape(stop_h_fac, Lineroller_wall_th, e/2)])
@@ -74,8 +74,8 @@ module topping(){
     flerp0 = 6;
     flerp1 = 6;
     le = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
-    translate([-1-flerp0,0,base_th])
-      cylinder(r1=5.7, r2=4.3, h=13);
+    translate([-2-flerp0,0,base_th])
+      cylinder(r1=flerp0+0.3, r2=4.4, h=16);
   }
 }
 topping();
