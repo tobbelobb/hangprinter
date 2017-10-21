@@ -22,98 +22,10 @@
 #define HEATER_3_PIN -1
 #define TEMP_3_PIN -1
 
-#if MB(GEN7_CUSTOM)
-#include "pins_GEN7_CUSTOM.h"
-#elif MB(GEN7_12)
-#include "pins_GEN7_12.h"
-#elif MB(GEN7_13)
-#include "pins_GEN7_13.h"
-#elif MB(GEN7_14)
-#include "pins_GEN7_14.h"
-#elif MB(CHEAPTRONIC)
-#include "pins_CHEAPTRONIC.h"
-#elif MB(SETHI)
-#include "pins_SETHI.h"
-#elif MB(RAMPS_OLD)
-#include "pins_RAMPS_OLD.h"
-#elif IS_RAMPS
+#if IS_RAMPS
 #include "pins_RAMPS_13.h"
-#elif MB(DUEMILANOVE_328P)
-#include "pins_DUEMILANOVE_328P.h"
-#elif MB(GEN6)
-#include "pins_GEN6.h"
-#elif MB(GEN6_DELUXE)
-#include "pins_GEN6_DELUXE.h"
-#elif MB(SANGUINOLOLU_11)
-#include "pins_SANGUINOLOLU_11.h"
-#elif MB(SANGUINOLOLU_12)
-#include "pins_SANGUINOLOLU_12.h"
-#elif MB(MELZI)
-#include "pins_MELZI.h"
-#elif MB(STB_11)
-#include "pins_STB_11.h"
-#elif MB(AZTEEG_X1)
-#include "pins_AZTEEG_X1.h"
-#elif MB(MELZI_1284)
-#include "pins_MELZI_1284.h"
-#elif MB(AZTEEG_X3)
-#include "pins_AZTEEG_X3.h"
-#elif MB(AZTEEG_X3_PRO)
-#include "pins_AZTEEG_X3_PRO.h"
-#elif MB(ULTIMAKER)
-#include "pins_ULTIMAKER.h"
-#elif MB(ULTIMAKER_OLD)
-#include "pins_ULTIMAKER_OLD.h"
-#elif MB(ULTIMAIN_2)
-#include "pins_ULTIMAIN_2.h"
-#elif MB(3DRAG)
-#include "pins_3DRAG.h"
-#elif MB(K8200)
-#include "pins_K8200.h"
-#elif MB(TEENSYLU)
-#include "pins_TEENSYLU.h"
-#elif MB(RUMBA)
-#include "pins_RUMBA.h"
-#elif MB(PRINTRBOARD)
-#include "pins_PRINTRBOARD.h"
-#elif MB(BRAINWAVE)
-#include "pins_BRAINWAVE.h"
-#elif MB(SAV_MKI)
-#include "pins_SAV_MKI.h"
-#elif MB(TEENSY2)
-#include "pins_TEENSY2.h"
-#elif MB(GEN3_PLUS)
-#include "pins_GEN3_PLUS.h"
-#elif MB(GEN3_MONOLITHIC)
-#include "pins_GEN3_MONOLITHIC.h"
-#elif MB(MEGATRONICS)
-#include "pins_MEGATRONICS.h"
-#elif MB(MEGATRONICS_1)
-#include "pins_MEGATRONICS_1.h"
-#elif MB(MEGATRONICS_2)
-#include "pins_MEGATRONICS_2.h"
-#elif MB(MEGATRONICS_3)
-#include "pins_MEGATRONICS_3.h"
-#elif MB(OMCA_A)
-#include "pins_OMCA_A.h"
-#elif MB(OMCA)
-#include "pins_OMCA.h"
-#elif MB(RAMBO)
-#include "pins_RAMBO.h"
-#elif MB(ELEFU_3)
-#include "pins_ELEFU_3.h"
-#elif MB(5DPRINT)
-#include "pins_5DPRINT.h"
-#elif MB(LEAPFROG)
-#include "pins_LEAPFROG.h"
-#elif MB(WITBOX)
-#include "pins_WITBOX.h"
-#elif MB(HEPHESTOS)
-#include "pins_HEPHESTOS.h"
-#elif MB(99)
-#include "pins_99.h"
 #else
-#error Unknown MOTHERBOARD value set in Configuration.h
+#error Unknown MOTHERBOARD value set in Configuration.h. You probably need to edit boards.h pins.h to get your board working
 #endif
 
 // List of pins which to ignore when asked to change by gcode, 0 and 1 are RX and TX, do not mess with those!
