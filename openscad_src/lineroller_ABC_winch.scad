@@ -50,7 +50,8 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
     w = Bearing_r*2+2*Bearing_wall;
 
     //q = 0.879;
-    q = 3.0;
+    q = 4.0;
+    round_part = 0.65;
     // Main block
     r2 = Bearing_bore_r+1.3;
     foot_shape_r = 1.0;
@@ -70,10 +71,10 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
                      * rotation([0,-90,0])
                      ],
 
-                   [for (h = [0:(1 - 0.01)/20:1 - 0.00001])
+                   [for (h = [0:(1 - 0.01)/40:1])
                      translation([tower_h-2*Bearing_r+q+h*(1*Bearing_r+Bearing_wall),0,0])
                      * translation([0,w/2,0])
-                     * scaling([1,wall_shape(1, w, f)*(sqrt(1-(h)*(h))),
+                     * scaling([1,wall_shape(1, w, f)*((1-round_part) + round_part*sqrt(1-(h)*(h))),
                                   wall_shape(1, Lineroller_wall_th, e/2)])
                      * translation([0,-w/2,0])
                      * rotation([0,-90,0])

@@ -20,7 +20,7 @@ screw_head_h = 2;
 screw_h = 2;
 tower_flerp = 18;
 tower_h = Bearing_r + tower_flerp;
-x_len = Depth_of_lineroller_base; // For the two "wings" with tracks for screws
+x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screws
 y_extra = -2.0; // For the two "wings" with tracks for screws
 
 // Module lineroller_ABC_winch() defined in lineroller_ABC_winch.scad
@@ -94,16 +94,24 @@ module ptfe_guide(){
   length = 9;
   width = (Ptfe_r+2)*2;
   difference(){
-    translate([-Depth_of_lineroller_base/2-flerp0,-width/2,base_th-0.1]){
-      cube([length, width, line_z-base_th+0.1]);
-      translate([0, width/2, line_z-base_th+0.1])
-        rotate([0,90,0])
-        cylinder(d=width, h=length, $fn=4*10);
+    union(){
+      translate([-Depth_of_lineroller_base/2-flerp0+length/2,0,base_th-0.1])
+        linear_extrude(height=line_z-base_th+0.1, scale=[1,width/Depth_of_lineroller_base])
+          square([length, Depth_of_lineroller_base], center=true);
+        //cube([length, width, line_z-base_th+0.1]);
+      translate([-Depth_of_lineroller_base/2-flerp0,-width/2,base_th-0.1])
+        translate([0, width/2, line_z-base_th+0.1])
+          rotate([0,90,0])
+          cylinder(d=width, h=length, $fn=4*10);
     }
     translate([-Depth_of_lineroller_base/2-flerp0,-width/2,base_th-0.1])
       translate([0, width/2, line_z-base_th+0.1])
       rotate([0,90,0])
       translate([0,0,-1])
       cylinder(r=Ptfe_r, h=length+2, $fn=4*10);
+    for(k=[0,1])
+      mirror([0,k,0])
+        translate([-Depth_of_lineroller_base/2-flerp0,-Depth_of_lineroller_base/2,-1])
+          inner_round_corner(r=Lineroller_base_r, h=base_th+10, $fn=4*10);
   }
 }
