@@ -20,6 +20,7 @@ Bill of Materials
     * Motor gear x 4
     * Spool x 4
     * Spool Gear x 4
+    * Spacer x 4
   * Vitamins
     * 5 x Nema17 steppers (> 40 N/cm holding torque, flat shaft)
     * 60 m FireLine 0.5 mm
