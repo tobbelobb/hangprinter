@@ -80,10 +80,10 @@ static bool old_z_max_endstop=false;
 
 static bool check_endstops = true;
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
-volatile long count_position[NUM_AXIS] = { lround(k0a*(sqrt(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a)),
-                                           lround(k0b*(sqrt(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b)),
-                                           lround(k0c*(sqrt(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c)),
-                                           lround(k0d*(sqrt(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d)), 0 }; // Assume we start in origo.
+volatile long count_position[NUM_AXIS] = { lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) - sqrtk1[A_AXIS])),
+                                           lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) - sqrtk1[B_AXIS])),
+                                           lround(k0[C_AXIS]*(sqrt(k1[C_AXIS] + k2[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) - sqrtk1[C_AXIS])),
+                                           lround(k0[D_AXIS]*(sqrt(k1[D_AXIS] + k2[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) - sqrtk1[D_AXIS])), 0 }; // Assume we start in origo.
 #else
 float tmp_def_ax_st_p_u[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
 volatile long count_position[NUM_AXIS] = { INITIAL_DISTANCES[A_AXIS]*tmp_def_ax_st_p_u[A_AXIS],

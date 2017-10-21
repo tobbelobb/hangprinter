@@ -611,16 +611,20 @@ static void homeaxis(int axis) { }
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
 // Ang is angle moved away from origo position
 // Output is line length from origo in mm
-// TODO: k0, k1, k2, and sqrtk1 should be arrays like INITIAL_DISTANCES
-//       that way, this fct could be written once and take AXIS_ABCD as an argument...
-float ang_to_mm_A(float ang){
-  if(!INVERT_X_DIR){
+float ang_to_mm(float ang, int axis){
+  if(axis < 0 || axis > D_AXIS){
+    return 0.0;
+  }
+  if((axis == A_AXIS && !INVERT_X_DIR)
+      || (axis == B_AXIS && !INVERT_Y_DIR)
+      || (axis == C_AXIS && !INVERT_Z_DIR)
+      || (axis == D_AXIS && !INVERT_E1_DIR)){
     ang = -ang;
   }
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  float abs_step_in_origo = k0a*(sqrtf(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a);
+  float abs_step_in_origo = k0[axis]*(sqrtf(k1[axis] + k2[axis]*INITIAL_DISTANCES[axis]) - sqrtk1[axis]);
 #else
-  float abs_step_in_origo = INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS];
+  float abs_step_in_origo = INITIAL_DISTANCES[axis]*axis_steps_per_unit[axis];
 #endif
   float microstepping = 32.0; // TODO: all configuration constants should be defined in Configuration.h...
   float steps_per_rot = 200.0*microstepping;
@@ -628,75 +632,11 @@ float ang_to_mm_A(float ang){
   float step_diff = steps_per_ang*ang;
   float c = abs_step_in_origo + step_diff; // current step count
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  return ((c/k0a + sqrtk1a)*(c/k0a + sqrtk1a) - k1a)/k2a - INITIAL_DISTANCES[A_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
+  return ((c/k0[axis] + sqrtk1[axis])*(c/k0[axis] + sqrtk1[axis]) - k1[axis])/k2[axis] - INITIAL_DISTANCES[axis]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
 #else
-  return c/axis_steps_per_unit[A_AXIS] - INITIAL_DISTANCES[A_AXIS];
+  return c/axis_steps_per_unit[axis] - INITIAL_DISTANCES[axis];
 #endif
 }
-
-float ang_to_mm_B(float ang){
-  if(!INVERT_Y_DIR){
-    ang = -ang;
-  }
-#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  float abs_step_in_origo = k0b*(sqrtf(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b);
-#else
-  float abs_step_in_origo = INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS];
-#endif
-  float microstepping = 32.0;
-  float steps_per_rot = 200.0*microstepping;
-  float steps_per_ang = steps_per_rot/360.0;
-  float step_diff = steps_per_ang*ang;
-  float c = abs_step_in_origo + step_diff; // current step count
-#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  return ((c/k0b + sqrtk1b)*(c/k0b + sqrtk1b) - k1b)/k2b - INITIAL_DISTANCES[B_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
-#else
-  return c/axis_steps_per_unit[B_AXIS] - INITIAL_DISTANCES[B_AXIS];
-#endif
-}
-
-float ang_to_mm_C(float ang){
-  if(!INVERT_Z_DIR){
-    ang = -ang;
-  }
-#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  float abs_step_in_origo = k0c*(sqrtf(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c);
-#else
-  float abs_step_in_origo = INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS];
-#endif
-  float microstepping = 32.0;
-  float steps_per_rot = 200.0*microstepping;
-  float steps_per_ang = steps_per_rot/360.0;
-  float step_diff = steps_per_ang*ang;
-  float c = abs_step_in_origo + step_diff; // current step count
-#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  return ((c/k0c + sqrtk1c)*(c/k0c + sqrtk1c) - k1c)/k2c - INITIAL_DISTANCES[C_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
-#else
-  return c/axis_steps_per_unit[C_AXIS] - INITIAL_DISTANCES[C_AXIS];
-#endif
-}
-
-float ang_to_mm_D(float ang){
-  if(!INVERT_E1_DIR){
-    ang = -ang;
-  }
-#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  float abs_step_in_origo = k0d*(sqrtf(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d);
-#else
-  float abs_step_in_origo = INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS];
-#endif
-  float microstepping = 32.0;
-  float steps_per_rot = 200.0*microstepping;
-  float steps_per_ang = steps_per_rot/360.0;
-  float step_diff = steps_per_ang*ang;
-  float c = abs_step_in_origo + step_diff; // current step count
-#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  return ((c/k0d + sqrtk1d)*(c/k0d + sqrtk1d) - k1d)/k2d - INITIAL_DISTANCES[D_AXIS]; // Inverse function found in planner.cpp line 567, setting target[AXIS_A]
-#else
-  return c/axis_steps_per_unit[D_AXIS] - INITIAL_DISTANCES[D_AXIS];
-#endif
-}
-
 #endif // EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
 
 void refresh_cmd_timeout(void){
@@ -910,7 +850,7 @@ void process_commands(){
             i++;
           }
           SERIAL_ERROR("A: ");
-          SERIAL_ERROR(ang_to_mm_A(ang_a.fval));
+          SERIAL_ERROR(ang_to_mm(ang_a.fval, A_AXIS));
           SERIAL_ERROR(" ");
         }
         if(code_seen('B')){
@@ -925,7 +865,7 @@ void process_commands(){
             i++;
           }
           SERIAL_ERROR("B: ");
-          SERIAL_ERROR(ang_to_mm_B(ang_b.fval));
+          SERIAL_ERROR(ang_to_mm(ang_b.fval, B_AXIS));
           SERIAL_ERROR(" ");
         }
         if(code_seen('C')){
@@ -940,7 +880,7 @@ void process_commands(){
             i++;
           }
           SERIAL_ERROR("C: ");
-          SERIAL_ERROR(ang_to_mm_C(ang_c.fval));
+          SERIAL_ERROR(ang_to_mm(ang_c.fval, C_AXIS));
           SERIAL_ERROR(" ");
         }
         if(code_seen('D')){
@@ -955,7 +895,7 @@ void process_commands(){
             i++;
           }
           SERIAL_ERROR("D: ");
-          SERIAL_ERROR(ang_to_mm_D(ang_d.fval));
+          SERIAL_ERROR(ang_to_mm(ang_d.fval, D_AXIS));
         }
         SERIAL_ERROR("\n");
         break;
@@ -970,7 +910,7 @@ void process_commands(){
          while(Wire.available()){
            ang_a.b[i] = Wire.read();
            i++;
-         }    delta[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + ang_to_mm_A(ang_a.fval);
+         }    delta[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + ang_to_mm(ang_a.fval, A_AXIS);
        }
        if(code_seen('B')){
          union {
@@ -982,7 +922,7 @@ void process_commands(){
          while(Wire.available()){
            ang_b.b[i] = Wire.read();
            i++;
-         }    delta[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + ang_to_mm_B(ang_b.fval);
+         }    delta[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + ang_to_mm(ang_b.fval, B_AXIS);
        }
        if(code_seen('C')){
          union {
@@ -994,7 +934,7 @@ void process_commands(){
          while(Wire.available()){
            ang_c.b[i] = Wire.read();
            i++;
-         }    delta[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + ang_to_mm_C(ang_c.fval);
+         }    delta[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + ang_to_mm(ang_c.fval, C_AXIS);
        }
        if(code_seen('D')){
          union {
@@ -1006,7 +946,7 @@ void process_commands(){
          while(Wire.available()){
            ang_d.b[i] = Wire.read();
            i++;
-         }    delta[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + ang_to_mm_D(ang_d.fval);
+         }    delta[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + ang_to_mm(ang_d.fval, D_AXIS);
        }
        break;
 

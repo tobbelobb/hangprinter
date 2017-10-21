@@ -79,22 +79,25 @@ const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*POINTS_A,
                                             MECHANICAL_ADVANTAGE_C*POINTS_C,
                                             MECHANICAL_ADVANTAGE_D*POINTS_D};
 
-const float k2a = -(float)nr_of_lines_in_direction[A_AXIS]*spool_buildup_factor;
-const float k2b = -(float)nr_of_lines_in_direction[B_AXIS]*spool_buildup_factor;
-const float k2c = -(float)nr_of_lines_in_direction[C_AXIS]*spool_buildup_factor;
-const float k2d = -(float)nr_of_lines_in_direction[D_AXIS]*spool_buildup_factor;
-const float k0a = 2*steps_per_unit_times_r[A_AXIS]/k2a;
-const float k0b = 2*steps_per_unit_times_r[B_AXIS]/k2b;
-const float k0c = 2*steps_per_unit_times_r[C_AXIS]/k2c;
-const float k0d = 2*steps_per_unit_times_r[D_AXIS]/k2d;
-const float k1a = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + SPOOL_RADIUS2;
-const float k1b = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + SPOOL_RADIUS2;
-const float k1c = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + SPOOL_RADIUS2;
-const float k1d = spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + SPOOL_RADIUS2;
-const float sqrtk1a = sqrt(k1a);
-const float sqrtk1b = sqrt(k1b);
-const float sqrtk1c = sqrt(k1c);
-const float sqrtk1d = sqrt(k1d);
+const float k2[DIRS] = {-(float)nr_of_lines_in_direction[A_AXIS]*spool_buildup_factor,
+                        -(float)nr_of_lines_in_direction[B_AXIS]*spool_buildup_factor,
+                        -(float)nr_of_lines_in_direction[C_AXIS]*spool_buildup_factor,
+                        -(float)nr_of_lines_in_direction[D_AXIS]*spool_buildup_factor};
+
+const float k0[DIRS] = {2*steps_per_unit_times_r[A_AXIS]/k2[A_AXIS],
+                        2*steps_per_unit_times_r[B_AXIS]/k2[B_AXIS],
+                        2*steps_per_unit_times_r[C_AXIS]/k2[C_AXIS],
+                        2*steps_per_unit_times_r[D_AXIS]/k2[D_AXIS]};
+
+const float k1[DIRS] = {spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + SPOOL_RADIUS2,
+                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + SPOOL_RADIUS2,
+                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + SPOOL_RADIUS2,
+                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + SPOOL_RADIUS2};
+
+const float sqrtk1[DIRS] = {sqrt(k1[A_AXIS]),
+                            sqrt(k1[B_AXIS]),
+                            sqrt(k1[C_AXIS]),
+                            sqrt(k1[D_AXIS])};
 
 #endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 
@@ -111,10 +114,10 @@ unsigned long axis_steps_per_sqr_second[NUM_AXIS];
 float axis_steps_per_unit[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
 
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
-long position[NUM_AXIS] = {lround(k0a*(sqrt(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a)),
-                           lround(k0b*(sqrt(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b)),
-                           lround(k0c*(sqrt(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c)),
-                           lround(k0d*(sqrt(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d)), 0};
+long position[NUM_AXIS] = {lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) - sqrtk1[A_AXIS])),
+                           lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) - sqrtk1[B_AXIS])),
+                           lround(k0[C_AXIS]*(sqrt(k1[C_AXIS] + k2[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) - sqrtk1[C_AXIS])),
+                           lround(k0[D_AXIS]*(sqrt(k1[D_AXIS] + k2[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) - sqrtk1[D_AXIS])), 0};
 // The current position of the tool in absolute steps
 #else
 long position[NUM_AXIS] = {INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS],
@@ -413,15 +416,13 @@ void plan_init() {
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   // axis_steps_per_unit is used for acceleration planning
   calculate_axis_steps_per_unit(INITIAL_DISTANCES);
-  position[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*INITIAL_DISTANCES[A_AXIS]) - sqrtk1a));
-  position[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*INITIAL_DISTANCES[B_AXIS]) - sqrtk1b));
-  position[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*INITIAL_DISTANCES[C_AXIS]) - sqrtk1c));
-  position[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*INITIAL_DISTANCES[D_AXIS]) - sqrtk1d));
+  for(int i=0; i<DIRS; i++){
+    position[i] = lround(k0[i]*(sqrt(k1[i] + k2[i]*INITIAL_DISTANCES[i]) - sqrtk1[i]));
+  }
 #else
-  position[A_AXIS] = INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS];
-  position[B_AXIS] = INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS];
-  position[C_AXIS] = INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS];
-  position[D_AXIS] = INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS];
+  for(int i=0; i<DIRS; i++){
+    position[i] = INITIAL_DISTANCES[i]*axis_steps_per_unit[i];
+  }
 #endif
 
   previous_speed[A_AXIS] = 0.0;
@@ -564,10 +565,10 @@ void plan_buffer_line(const float* delta, const float* prev_delta, const float &
   // Integrate steps per mm function a/sqrt(c0 + c1*x) from 0 to delta[ABCD_AXIS]
   long target[NUM_AXIS];
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  target[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*delta[A_AXIS]) - sqrtk1a));
-  target[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*delta[B_AXIS]) - sqrtk1b));
-  target[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*delta[C_AXIS]) - sqrtk1c));
-  target[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*delta[D_AXIS]) - sqrtk1d));
+  target[A_AXIS] = lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*delta[A_AXIS]) - sqrtk1[A_AXIS]));
+  target[B_AXIS] = lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*delta[B_AXIS]) - sqrtk1[B_AXIS]));
+  target[C_AXIS] = lround(k0[C_AXIS]*(sqrt(k1[C_AXIS] + k2[C_AXIS]*delta[C_AXIS]) - sqrtk1[C_AXIS]));
+  target[D_AXIS] = lround(k0[D_AXIS]*(sqrt(k1[D_AXIS] + k2[D_AXIS]*delta[D_AXIS]) - sqrtk1[D_AXIS]));
 #else
   target[A_AXIS] = lround(delta[A_AXIS]*axis_steps_per_unit[A_AXIS]);
   target[B_AXIS] = lround(delta[B_AXIS]*axis_steps_per_unit[B_AXIS]);
@@ -789,15 +790,13 @@ void plan_buffer_line(const float* delta, const float* prev_delta, const float &
 void plan_set_position(const float* delta, const float &e)
 {
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
-  position[A_AXIS] = lround(k0a*(sqrt(k1a + k2a*delta[A_AXIS]) - sqrtk1a));
-  position[B_AXIS] = lround(k0b*(sqrt(k1b + k2b*delta[B_AXIS]) - sqrtk1b));
-  position[C_AXIS] = lround(k0c*(sqrt(k1c + k2c*delta[C_AXIS]) - sqrtk1c));
-  position[D_AXIS] = lround(k0d*(sqrt(k1d + k2d*delta[D_AXIS]) - sqrtk1d));
+  for(int i=0; i<DIRS; i++){
+    position[i] = lround(k0[i]*(sqrt(k1[i] + k2[i]*delta[i]) - sqrtk1[i]));
+  }
 #else
-  position[A_AXIS] = lround(delta[A_AXIS]*axis_steps_per_unit[A_AXIS]);
-  position[B_AXIS] = lround(delta[B_AXIS]*axis_steps_per_unit[B_AXIS]);
-  position[C_AXIS] = lround(delta[C_AXIS]*axis_steps_per_unit[C_AXIS]);
-  position[D_AXIS] = lround(delta[D_AXIS]*axis_steps_per_unit[D_AXIS]);
+  for(int i=0; i<DIRS; i++){
+    position[i] = lround(delta[i]*axis_steps_per_unit[i]);
+  }
 #endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   position[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
   st_set_position(position[A_AXIS], position[B_AXIS], position[C_AXIS], position[D_AXIS], position[E_AXIS]);

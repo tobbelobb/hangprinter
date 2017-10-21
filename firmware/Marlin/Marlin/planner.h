@@ -138,19 +138,7 @@ void set_extrude_min_temp(float temp);
 void reset_acceleration_rates();
 #endif
 
-extern const float k2a;
-extern const float k2b;
-extern const float k2c;
-extern const float k2d;
-extern const float k0a;
-extern const float k0b;
-extern const float k0c;
-extern const float k0d;
-extern const float k1a;
-extern const float k1b;
-extern const float k1c;
-extern const float k1d;
-extern const float sqrtk1a;
-extern const float sqrtk1b;
-extern const float sqrtk1c;
-extern const float sqrtk1d;
+extern const float k2[DIRS];
+extern const float k0[DIRS];
+extern const float k1[DIRS];
+extern const float sqrtk1[DIRS];
