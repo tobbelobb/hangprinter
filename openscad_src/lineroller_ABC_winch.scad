@@ -17,7 +17,7 @@ module base(base_th = Base_th, flerp0 = 6, flerp1 = 6){
     rotate([0,0,k*90])
     difference(){
       rounded_cube2([l, Depth_of_lineroller_base, base_th], Lineroller_base_r, $fn=13*4);
-      for(x=[Depth_of_lineroller_base/2-1, l - (Depth_of_lineroller_base/2-1)])
+      for(x=[Depth_of_lineroller_base/2-2, l - (Depth_of_lineroller_base/2-2)])
         translate([x, Depth_of_lineroller_base/2, -1])
           cylinder(d=4, h=base_th+2, $fs=1);
     }
