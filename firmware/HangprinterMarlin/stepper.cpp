@@ -192,19 +192,6 @@ void checkHitEndstops()
     endstop_x_hit=false;
     endstop_y_hit=false;
     endstop_z_hit=false;
-#if defined(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && defined(SDSUPPORT)
-    if (abort_on_endstop_hit)
-    {
-      card.sdprinting = false;
-      card.closefile();
-      quickStop();
-      setTargetHotend0(0);
-      setTargetHotend1(0);
-      setTargetHotend2(0);
-      setTargetHotend3(0);
-      setTargetBed(0);
-    }
-#endif
   }
 }
 

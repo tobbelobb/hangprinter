@@ -841,19 +841,14 @@ void tp_init()
 
   #ifdef HEATER_0_USES_MAX6675
 
-    #ifndef SDSUPPORT
-      SET_OUTPUT(SCK_PIN);
-      WRITE(SCK_PIN,0);
+    SET_OUTPUT(SCK_PIN);
+    WRITE(SCK_PIN,0);
 
-      SET_OUTPUT(MOSI_PIN);
-      WRITE(MOSI_PIN,1);
+    SET_OUTPUT(MOSI_PIN);
+    WRITE(MOSI_PIN,1);
 
-      SET_INPUT(MISO_PIN);
-      WRITE(MISO_PIN,1);
-    #else
-      pinMode(SS_PIN, OUTPUT);
-      digitalWrite(SS_PIN, HIGH);
-    #endif
+    SET_INPUT(MISO_PIN);
+    WRITE(MISO_PIN,1);
 
     SET_OUTPUT(MAX6675_SS);
     WRITE(MAX6675_SS,1);

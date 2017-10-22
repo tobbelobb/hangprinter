@@ -229,16 +229,9 @@
 //#define CHDK 4        //Pin for triggering CHDK to take a picture see how to use it here http://captain-slow.dk/2014/03/09/3d-printing-timelapses/
 #define CHDK_DELAY 50 //How long in ms the pin should stay HIGH before going LOW again
 
-#define SD_FINISHED_STEPPERRELEASE true  //if sd support and the file is finished: disable steppers?
-#define SD_FINISHED_RELEASECOMMAND "M84 X Y Z E" // You might want to keep the z enabled so your bed stays in place.
-
-#define SDCARD_RATHERRECENTFIRST  //reverse file order of sd card menu display. Its sorted practically after the filesystem block order.
 // if a file is deleted, it frees a block. hence, the order is not purely cronological. To still have auto0.g accessible, there is again the option to do that.
 // using:
 //#define MENU_ADDAUTOSTART
-
-// Show a progress bar on the LCD when printing from SD
-//#define LCD_PROGRESS_BAR
 
 #ifdef LCD_PROGRESS_BAR
 // Amount of time (ms) to show the bar
@@ -251,21 +244,12 @@
 //#define PROGRESS_MSG_ONCE
 #endif
 
-// Enable the option to stop SD printing when hitting and endstops, needs to be enabled from the LCD menu when this option is enabled.
-//#define ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
-
 // Arc interpretation settings:
 #define MM_PER_ARC_SEGMENT 1
 #define N_ARC_CORRECTION 25
 
 //const unsigned int dropsegments=5; //everything with less than this number of steps will be ignored as move and joined with the next movement
 const unsigned int dropsegments=1;   //set to 1 while we only use full steps
-
-// If you are using a RAMPS board or cheap E-bay purchased boards that do not detect when an SD card is inserted
-// You can get round this by connecting a push button or single throw switch to the pin defined as SDCARDCARDDETECT
-// in the pins.h file.  When using a push button pulling the pin to ground this will need inverted.  This setting should
-// be commented out otherwise
-#define SDCARDDETECTINVERTED
 
 // Power Signal Control Definitions
 // By default use ATX definition
@@ -292,12 +276,7 @@ const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 
 // The number of linear motions that can be in the plan at any give time.
 // THE BLOCK_BUFFER_SIZE NEEDS TO BE A POWER OF 2, i.g. 8,16,32 because shifts and ors are used to do the ringbuffering.
-#if defined SDSUPPORT
 #define BLOCK_BUFFER_SIZE 16   // SD,LCD,Buttons take more memory, block buffer needs to be smaller
-#else
-#define BLOCK_BUFFER_SIZE 16 // maximize block buffer
-#endif
-
 
 //The ASCII buffer for recieving from the serial:
 #define MAX_CMD_SIZE 96

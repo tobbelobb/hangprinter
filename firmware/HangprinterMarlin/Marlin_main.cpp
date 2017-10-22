@@ -65,22 +65,6 @@
 
 // M Codes
 // M17  - Enable/Power all stepper motors
-// M20  - List SD card
-// M21  - Init SD card
-// M22  - Release SD card
-// M23  - Select SD file (M23 filename.g)
-// M24  - Start/resume SD print
-// M25  - Pause SD print
-// M26  - Set SD position in bytes (M26 S12345)
-// M27  - Report SD print status
-// M928  - Start SD write (M28 filename.g)
-// M29  - Stop SD write
-// M30  - Delete file from SD (M30 filename.g)
-// M31  - Output time since last M109 or SD card start to serial
-// M32  - Select file and start SD print (Can be used _while_ printing from SD card files):
-//        syntax "M32 /path/filename#", or "M32 S<startpos bytes> !filename#"
-//        Call gcode file : "M32 P !filename#" and return to caller file after finishing (similar to #include).
-//        The '#' is necessary when calling from within sd files, as it stops buffer prereading
 // M42  - Change pin status via gcode Use M42 Px Sy to set pin x to value y, when omitting Px the onboard led will be used.
 // M82  - Set E codes absolute (default)
 // M83  - Set E codes relative while in Absolute Coordinates (G90) mode
@@ -117,7 +101,6 @@
 // M501 - Read parameters from EEPROM (if you need reset them after you changed them temporarily).
 // M502 - Revert to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 // M503 - Print the current settings (from memory not from EEPROM). Use S0 to leave off headings.
-// M540 - Use S[0|1] to enable or disable the stop SD card print on endstop hit (requires ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
 // M665 - Set delta configurations
 // M666 - Set delta endstop adjustment
 // M350 - Set microstepping mode.
@@ -132,12 +115,7 @@
 // M365 - SCARA calibration: Scaling factor, X, Y, Z axis
 //************* SCARA End ***************
 
-// M928 - Start SD logging (M928 filename.g) - ended by M29
 // M999 - Restart after being stopped by error
-
-#ifdef SDSUPPORT
-CardReader card;
-#endif
 
 float homing_feedrate[] = HOMING_FEEDRATE;
 bool axis_relative_modes[] = AXIS_RELATIVE_MODES;
@@ -265,10 +243,6 @@ void serial_echopair_P(const char *s_P, double v)
 void serial_echopair_P(const char *s_P, unsigned long v)
 { serialprintPGM(s_P); SERIAL_ECHO(v); }
 
-#ifdef SDSUPPORT
-#include "SdFatUtil.h"
-int freeMemory(){ return SdFatUtil::FreeRam(); }
-#else
 extern "C" {
   extern unsigned int __bss_end;
   extern unsigned int __heap_start;
@@ -285,7 +259,6 @@ extern "C" {
     return free_memory;
   }
 }
-#endif //!SDSUPPORT
 
 //adds an command to the main command buffer
 //thats really done in a non-safe way.
@@ -427,29 +400,8 @@ calculate_delta(current_position, delta);
 
 void loop(){
   if(buflen < (BUFSIZE-1)) get_command();
-#ifdef SDSUPPORT
-  card.checkautostart(false);
-#endif
   if(buflen){
-#ifdef SDSUPPORT
-    if(card.saving){
-      if(strstr_P(cmdbuffer[bufindr], PSTR("M29")) == NULL){
-        card.write_command(cmdbuffer[bufindr]);
-        if(card.logging){
-          process_commands();
-        }else{
-          SERIAL_PROTOCOLLNPGM(MSG_OK);
-        }
-      }else{
-        card.closefile();
-        SERIAL_PROTOCOLLNPGM(MSG_FILE_SAVED);
-      }
-    }else{
-      process_commands();
-    }
-#else
     process_commands();
-#endif //SDSUPPORT
     buflen = (buflen-1);
     bufindr = (bufindr + 1)%BUFSIZE;
   }
@@ -503,62 +455,6 @@ void get_command(){
         cmdbuffer[bufindw][serial_count++] = serial_char;
     }
   }
-#ifdef SDSUPPORT
-  if(!card.sdprinting || serial_count!=0){
-    return;
-  }
-
-  //'#' stops reading from SD to the buffer prematurely, so procedural macro calls are possible
-  // if it occurs, stop_buffering is triggered and the buffer is ran dry.
-  // this character _can_ occur in serial com, due to checksums. however, no checksums are used in SD printing
-
-  static bool stop_buffering=false;
-  if(buflen==0) stop_buffering=false;
-
-  while( !card.eof()  && buflen < BUFSIZE && !stop_buffering){
-    int16_t n=card.get();
-    serial_char = (char)n; // using the name serial_char here is not good since the char is not from serial. tobben 21 may 2015
-    if(serial_char == '\n' ||
-        serial_char == '\r' ||
-        (serial_char == '#' && comment_mode == false) ||
-        (serial_char == ':' && comment_mode == false) ||
-        serial_count >= (MAX_CMD_SIZE - 1)||n==-1){
-      if(card.eof()){
-        SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
-        stoptime=millis();
-        char time[30];
-        unsigned long t=(stoptime-starttime)/1000;
-        int hours, minutes;
-        minutes=(t/60)%60;
-        hours=t/60/60;
-        sprintf_P(time, PSTR("%i hours %i minutes"),hours, minutes);
-        SERIAL_ECHO_START;
-        SERIAL_ECHOLN(time);
-        card.printingHasFinished();
-        card.checkautostart(true);
-
-      }
-      if(serial_char=='#')
-        stop_buffering=true;
-
-      if(!serial_count){
-        comment_mode = false; //for new command
-        return; //if empty line
-      }
-      cmdbuffer[bufindw][serial_count] = '\0'; //terminate string
-      //      if(!comment_mode){
-      fromsd[bufindw] = true;
-      buflen += 1;
-      bufindw = (bufindw + 1)%BUFSIZE;
-      //      }
-      comment_mode = false; //for new command
-      serial_count = 0; //clear buffer
-    }else{
-      if(serial_char == ';') comment_mode = true;
-      if(!comment_mode) cmdbuffer[bufindw][serial_count++] = serial_char;
-    }
-  }
-#endif //SDSUPPORT
 }
 
 float code_value(){
@@ -969,113 +865,7 @@ void process_commands(){
         enable_e0();
         enable_e1();
         break;
-
-#ifdef SDSUPPORT
-      case 20: // M20 - list SD card
-        SERIAL_PROTOCOLLNPGM(MSG_BEGIN_FILE_LIST);
-        card.ls();
-        SERIAL_PROTOCOLLNPGM(MSG_END_FILE_LIST);
-        break;
-      case 21: // M21 - init SD card
-
-        card.initsd();
-
-        break;
-      case 22: //M22 - release SD card
-        card.release();
-
-        break;
-      case 23: //M23 - Select file
-        starpos = (strchr(strchr_pointer + 4,'*'));
-        if(starpos!=NULL)
-          *(starpos)='\0';
-        card.openFile(strchr_pointer + 4,true);
-        break;
-      case 24: //M24 - Start SD print
-        card.startFileprint();
-        starttime=millis();
-        break;
-      case 25: //M25 - Pause SD print
-        card.pauseSDPrint();
-        break;
-      case 26: //M26 - Set SD index
-        if(card.cardOK && code_seen('S')){
-          card.setIndex(code_value_long());
-        }
-        break;
-      case 27: //M27 - Get SD status
-        card.getStatus();
-        break;
-      case 28: //M28 - Start SD write
-        starpos = (strchr(strchr_pointer + 4,'*'));
-        if(starpos != NULL){
-          char* npos = strchr(cmdbuffer[bufindr], 'N');
-          strchr_pointer = strchr(npos,' ') + 1;
-          *(starpos) = '\0';
-        }
-        card.openFile(strchr_pointer+4,false);
-        break;
-      case 29: //M29 - Stop SD write
-        //processed in write to file routine above
-        //card,saving = false;
-        break;
-      case 30: //M30 <filename> Delete File
-        if(card.cardOK){
-          card.closefile();
-          starpos = (strchr(strchr_pointer + 4,'*'));
-          if(starpos != NULL){
-            char* npos = strchr(cmdbuffer[bufindr], 'N');
-            strchr_pointer = strchr(npos,' ') + 1;
-            *(starpos) = '\0';
-          }
-          card.removeFile(strchr_pointer + 4);
-        }
-        break;
-      case 32: //M32 - Select file and start SD print
-        {
-          if(card.sdprinting){
-            st_synchronize();
-
-          }
-          starpos = (strchr(strchr_pointer + 4,'*'));
-
-          char* namestartpos = (strchr(strchr_pointer + 4,'!'));   //find ! to indicate filename string start.
-          if(namestartpos==NULL){
-            namestartpos=strchr_pointer + 4; //default name position, 4 letters after the M
-          }else
-            namestartpos++; //to skip the '!'
-
-          if(starpos!=NULL)
-            *(starpos)='\0';
-
-          bool call_procedure=(code_seen('P'));
-
-          if(strchr_pointer>namestartpos)
-            call_procedure=false;  //false alert, 'P' found within filename
-
-          if( card.cardOK ){
-            card.openFile(namestartpos,true,!call_procedure);
-            if(code_seen('S'))
-              if(strchr_pointer<namestartpos) //only if "S" is occuring _before_ the filename
-                card.setIndex(code_value_long());
-            card.startFileprint();
-            if(!call_procedure)
-              starttime=millis(); //procedure calls count as normal print time.
-          }
-        } break;
-      case 928: //M928 - Start SD write
-        starpos = (strchr(strchr_pointer + 5,'*'));
-        if(starpos != NULL){
-          char* npos = strchr(cmdbuffer[bufindr], 'N');
-          strchr_pointer = strchr(npos,' ') + 1;
-          *(starpos) = '\0';
-        }
-        card.openLogFile(strchr_pointer+5);
-        break;
-
-#endif //SDSUPPORT
-
-      case 31: //M31 take time since the start of the SD print or an M109 command
+      case 31: //M31 take time since an M109 command
         {
           stoptime=millis();
           char time[30];
@@ -1777,10 +1567,6 @@ void process_commands(){
 
   void ClearToSend(){
     previous_millis_cmd = millis();
-#ifdef SDSUPPORT
-    if(fromsd[bufindr])
-      return;
-#endif //SDSUPPORT
     SERIAL_PROTOCOLLNPGM(MSG_OK);
   }
 
