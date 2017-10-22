@@ -78,9 +78,6 @@
 #define MSG_ENDSTOPS_HIT                    "endstops hit: "
 #define MSG_ERR_COLD_EXTRUDE_STOP           " cold extrusion prevented"
 #define MSG_ERR_LONG_EXTRUDE_STOP           " too long extrusion prevented"
-#define MSG_BABYSTEPPING_X                  "Babystepping X"
-#define MSG_BABYSTEPPING_Y                  "Babystepping Y"
-#define MSG_BABYSTEPPING_Z                  "Babystepping Z"
 #define MSG_SERIAL_ERROR_MENU_STRUCTURE     "Error in menu structure"
 
 #define MSG_ERR_EEPROM_WRITE                "Error writing to EEPROM!"
