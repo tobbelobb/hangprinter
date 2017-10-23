@@ -117,10 +117,8 @@
 // Two A-lines, each of length 150.0 gives total length 300.0
 const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
 
-// Squared spool radius. 50.0^2 = 2500.0
-// Assumes equal A, B, C and D radii.
-// Measuring your spool radii and adjusting this number will help your machine's precision
-#define SPOOL_RADIUS2 2500.0
+// Measuring your spool radii and adjusting this number will improve your Hangprinter's precision
+const float SPOOL_RADII[DIRS] = { 50.0, 50.0, 50.0, 50.0 };
 
 // Motor gear teeth: 10
 // Sandwich gear teeth: 100

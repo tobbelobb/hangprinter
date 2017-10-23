@@ -89,10 +89,15 @@ const float k0[DIRS] = {2*steps_per_unit_times_r[A_AXIS]/k2[A_AXIS],
                         2*steps_per_unit_times_r[C_AXIS]/k2[C_AXIS],
                         2*steps_per_unit_times_r[D_AXIS]/k2[D_AXIS]};
 
-const float k1[DIRS] = {spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + SPOOL_RADIUS2,
-                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + SPOOL_RADIUS2,
-                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + SPOOL_RADIUS2,
-                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + SPOOL_RADIUS2};
+const float spool_radii2[DIRS] = { SPOOL_RADII[A_AXIS]*SPOOL_RADII[A_AXIS],
+                                   SPOOL_RADII[B_AXIS]*SPOOL_RADII[B_AXIS],
+                                   SPOOL_RADII[C_AXIS]*SPOOL_RADII[C_AXIS],
+                                   SPOOL_RADII[D_AXIS]*SPOOL_RADII[D_AXIS] };
+
+const float k1[DIRS] = {spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + spool_radii2[A_AXIS],
+                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + spool_radii2[B_AXIS],
+                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + spool_radii2[C_AXIS],
+                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + spool_radii2[D_AXIS]};
 
 const float sqrtk1[DIRS] = {sqrt(k1[A_AXIS]),
                             sqrt(k1[B_AXIS]),
@@ -832,16 +837,15 @@ void set_extrude_min_temp(float temp)
 void calculate_axis_steps_per_unit(const float* line_lengths){
   // Divide by new radius to find new steps/mm
   axis_steps_per_unit[A_AXIS] =
-    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - line_lengths[A_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - line_lengths[A_AXIS])) + spool_radii2[A_AXIS]);
   axis_steps_per_unit[B_AXIS] =
-    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - line_lengths[B_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - line_lengths[B_AXIS])) + spool_radii2[B_AXIS]);
   axis_steps_per_unit[C_AXIS] =
-    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - line_lengths[C_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - line_lengths[C_AXIS])) + spool_radii2[C_AXIS]);
   axis_steps_per_unit[D_AXIS] =
-    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - line_lengths[D_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - line_lengths[D_AXIS])) + spool_radii2[D_AXIS]);
 }
 #endif
-
 
 // Calculate the steps/s^2 acceleration rates, based on the mm/s^s
 void reset_acceleration_rates(){
