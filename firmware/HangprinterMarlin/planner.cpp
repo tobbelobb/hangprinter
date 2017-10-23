@@ -535,7 +535,7 @@ float junction_deviation = 0.1;
 // Help, why does this comment contradict comments in planner.h?
 // I'm quite sure steps_a, _b, ... are absolute step count along each axis,
 // and that a, b, c, d are relative positions in mm that we plan on taking. tobben 9 sep 2015
-void plan_buffer_line(const float* delta, const float* prev_delta, const float &e,
+void plan_buffer_line(const float* line_lengths, const float* prev_line_lengths, const float &e,
                      float feed_rate, const uint8_t &extruder, unsigned char count_it){
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
@@ -562,18 +562,18 @@ void plan_buffer_line(const float* delta, const float* prev_delta, const float &
   //this should be done after the wait, because otherwise a M92 code within the gcode disrupts this calculation somehow
   //
   // To find target position of stepper motor:
-  // Integrate steps per mm function a/sqrt(c0 + c1*x) from 0 to delta[ABCD_AXIS]
+  // Integrate steps per mm function a/sqrt(c0 + c1*x) from 0 to line_lengths[ABCD_AXIS]
   long target[NUM_AXIS];
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  target[A_AXIS] = lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*delta[A_AXIS]) - sqrtk1[A_AXIS]));
-  target[B_AXIS] = lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*delta[B_AXIS]) - sqrtk1[B_AXIS]));
-  target[C_AXIS] = lround(k0[C_AXIS]*(sqrt(k1[C_AXIS] + k2[C_AXIS]*delta[C_AXIS]) - sqrtk1[C_AXIS]));
-  target[D_AXIS] = lround(k0[D_AXIS]*(sqrt(k1[D_AXIS] + k2[D_AXIS]*delta[D_AXIS]) - sqrtk1[D_AXIS]));
+  target[A_AXIS] = lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*line_lengths[A_AXIS]) - sqrtk1[A_AXIS]));
+  target[B_AXIS] = lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*line_lengths[B_AXIS]) - sqrtk1[B_AXIS]));
+  target[C_AXIS] = lround(k0[C_AXIS]*(sqrt(k1[C_AXIS] + k2[C_AXIS]*line_lengths[C_AXIS]) - sqrtk1[C_AXIS]));
+  target[D_AXIS] = lround(k0[D_AXIS]*(sqrt(k1[D_AXIS] + k2[D_AXIS]*line_lengths[D_AXIS]) - sqrtk1[D_AXIS]));
 #else
-  target[A_AXIS] = lround(delta[A_AXIS]*axis_steps_per_unit[A_AXIS]);
-  target[B_AXIS] = lround(delta[B_AXIS]*axis_steps_per_unit[B_AXIS]);
-  target[C_AXIS] = lround(delta[C_AXIS]*axis_steps_per_unit[C_AXIS]);
-  target[D_AXIS] = lround(delta[D_AXIS]*axis_steps_per_unit[D_AXIS]);
+  target[A_AXIS] = lround(line_lengths[A_AXIS]*axis_steps_per_unit[A_AXIS]);
+  target[B_AXIS] = lround(line_lengths[B_AXIS]*axis_steps_per_unit[B_AXIS]);
+  target[C_AXIS] = lround(line_lengths[C_AXIS]*axis_steps_per_unit[C_AXIS]);
+  target[D_AXIS] = lround(line_lengths[D_AXIS]*axis_steps_per_unit[D_AXIS]);
 #endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   target[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
 
@@ -627,10 +627,10 @@ void plan_buffer_line(const float* delta, const float* prev_delta, const float &
   }
 
   float delta_mm[NUM_AXIS];
-  delta_mm[A_AXIS] = delta[A_AXIS] - prev_delta[A_AXIS];
-  delta_mm[B_AXIS] = delta[B_AXIS] - prev_delta[B_AXIS];
-  delta_mm[C_AXIS] = delta[C_AXIS] - prev_delta[C_AXIS];
-  delta_mm[D_AXIS] = delta[D_AXIS] - prev_delta[D_AXIS];
+  delta_mm[A_AXIS] = line_lengths[A_AXIS] - prev_line_lengths[A_AXIS];
+  delta_mm[B_AXIS] = line_lengths[B_AXIS] - prev_line_lengths[B_AXIS];
+  delta_mm[C_AXIS] = line_lengths[C_AXIS] - prev_line_lengths[C_AXIS];
+  delta_mm[D_AXIS] = line_lengths[D_AXIS] - prev_line_lengths[D_AXIS];
   delta_mm[E_AXIS] =((target[E_AXIS]-position[E_AXIS])/axis_steps_per_unit[E_AXIS])*volumetric_multiplier[active_extruder]*extrudemultiply/100.0;
 
   if (block->steps_a <=dropsegments && block->steps_b <=dropsegments && block->steps_c <=dropsegments && block->steps_d <=dropsegments ){
@@ -787,15 +787,15 @@ void plan_buffer_line(const float* delta, const float* prev_delta, const float &
   st_wake_up();
 }
 
-void plan_set_position(const float* delta, const float &e)
+void plan_set_position(const float* line_lengths, const float &e)
 {
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   for(int i=0; i<DIRS; i++){
-    position[i] = lround(k0[i]*(sqrt(k1[i] + k2[i]*delta[i]) - sqrtk1[i]));
+    position[i] = lround(k0[i]*(sqrt(k1[i] + k2[i]*line_lengths[i]) - sqrtk1[i]));
   }
 #else
   for(int i=0; i<DIRS; i++){
-    position[i] = lround(delta[i]*axis_steps_per_unit[i]);
+    position[i] = lround(line_lengths[i]*axis_steps_per_unit[i]);
   }
 #endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
   position[E_AXIS] = lround(e*axis_steps_per_unit[E_AXIS]);
@@ -827,16 +827,16 @@ void set_extrude_min_temp(float temp)
 #endif
 
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-void calculate_axis_steps_per_unit(const float* delta){
+void calculate_axis_steps_per_unit(const float* line_lengths){
   // Divide by new radius to find new steps/mm
   axis_steps_per_unit[A_AXIS] =
-    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - delta[A_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - line_lengths[A_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[B_AXIS] =
-    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - delta[B_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - line_lengths[B_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[C_AXIS] =
-    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - delta[C_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - line_lengths[C_AXIS])) + SPOOL_RADIUS2);
   axis_steps_per_unit[D_AXIS] =
-    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - delta[D_AXIS])) + SPOOL_RADIUS2);
+    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - line_lengths[D_AXIS])) + SPOOL_RADIUS2);
 }
 #endif
 
@@ -844,7 +844,7 @@ void calculate_axis_steps_per_unit(const float* delta){
 // Calculate the steps/s^2 acceleration rates, based on the mm/s^s
 void reset_acceleration_rates(){
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-  calculate_axis_steps_per_unit(delta);
+  calculate_axis_steps_per_unit(line_lengths);
 #endif
   for(int8_t i=0; i < NUM_AXIS; i++)
     axis_steps_per_sqr_second[i] = max_acceleration_units_per_sq_second[i] * axis_steps_per_unit[i];

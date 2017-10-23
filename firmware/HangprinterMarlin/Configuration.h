@@ -10,36 +10,20 @@
 /*
    Here are some standard links for getting your machine calibrated:
  * http://reprap.org/wiki/Calibration
- * http://youtu.be/wAL9d7FgInk
- * http://calculator.josefprusa.cz
- * http://reprap.org/wiki/Triffid_Hunter%27s_Calibration_Guide
- * http://www.thingiverse.com/thing:5573
- * https://sites.google.com/site/repraplogphase/calibration-of-your-reprap
- * http://www.thingiverse.com/thing:298812
  * https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
  */
 
 // This configuration file contains the basic settings.
 // Advanced settings can be found in Configuration_adv.h
-// BASIC SETTINGS: select your board type, temperature sensor type, axis scaling, and endstop configuration
-
-
-//===========================================================================
-//============================= DELTA Printer ===============================
-//===========================================================================
-// For a Delta printer replace the configuration files with the files in the
-// example_configurations/delta directory.
-//
 
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION "1.1.0.hangprinter"
+#define STRING_VERSION "3.3.hangprinter"
 #define STRING_URL "github.com/tobbelobb/hangprinter"
 #define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
 #define STRING_CONFIG_H_AUTHOR "tobbelobb" // Who made the changes.
 #define STRING_SPLASH_LINE1 "v" STRING_VERSION // will be shown during bootup in line 1
-//#define STRING_SPLASH_LINE2 STRING_VERSION_CONFIG_H // will be shown during bootup in line2
 
 // SERIAL_PORT selects which serial port should be used for communication with the host.
 // This allows the connection of wireless adapters (for instance) to non-default port pins.
@@ -63,20 +47,18 @@
 // #define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 
 // This defines the number of extruders
-// If you have no extruders, uncomment this and code is more likely to compile (implemented while
-// developing Hangprinter)
+// If you have no extruders, uncomment this and code is more likely to compile
+// (implemented while developing Hangprinter)
 #define EXTRUDERS 1
 
 //// The following define selects which power supply you have. Please choose the one that matches your setup
 // 1 = ATX
 // 2 = X-Box 360 203Watts (the blue wire connected to PS_ON and the red wire to VCC)
-
 #define POWER_SUPPLY 1
 
 //===========================================================================
-//============================== Delta Settings =============================
+//=========================== Hangprinter Settings ==========================
 //===========================================================================
-// Enable DELTA kinematics and most of the default configuration for Deltas
 #define DELTA
 #define HANGPRINTER
 
@@ -100,6 +82,51 @@
 #define ANCHOR_C_Y 1404.0
 #define ANCHOR_C_Z -75.5
 #define ANCHOR_D_Z 3250.5
+
+#define NUM_AXIS 5 // The axis order: A_AXIS, B_AXIS, C_AXIS, D_AXIS, E_AXIS
+#define DIRS 4
+
+// If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
+#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+
+// If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
+#define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
+
+// Mechanical advantage in each direction needed for dynamic step/mm calculations
+// One pulley along each line gives halved forces and doubled distances
+#define MECHANICAL_ADVANTAGE_A 1
+#define MECHANICAL_ADVANTAGE_B 1
+#define MECHANICAL_ADVANTAGE_C 1
+#define MECHANICAL_ADVANTAGE_D 1
+
+// Action points in each direction needed for dynamic step/mm calculations
+#define POINTS_A 2
+#define POINTS_B 2
+#define POINTS_C 2
+#define POINTS_D 3
+
+// line diameter 0.39, spool height 4.6
+// approximating volume taken by line on spool to have quadratic cross section gives
+// 0.39*0.39/(pi*4.6) = 0.010525
+//#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.010525
+// line diameter 0.5, spool height 8.0:
+// 0.5*0.5/(pi*8.0) = 0.009947
+#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.007
+
+// Measure the total length of lines on each spool when printer is in origo
+// Two A-lines, each of length 150.0 gives total length 300.0
+const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
+
+// Squared spool radius. 50.0^2 = 2500.0
+// Assumes equal A, B, C and D radii.
+// Measuring your spool radii and adjusting this number will help your machine's precision
+#define SPOOL_RADIUS2 2500.0
+
+// Motor gear teeth: 10
+// Sandwich gear teeth: 100
+// Steps per motor revolution: 3200 (that is, 1/16 microstepping a motor with 200 full steps per revolution)
+// ==> Steps per spool radian = 3200/(2*pi*10/100) = 5093.0
+const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -205,61 +232,7 @@
 #define  DEFAULT_Ki 3.26
 #define  DEFAULT_Kd 121.18
 
-// Ultimaker
-//#define  DEFAULT_Kp 22.2
-//#define  DEFAULT_Ki 1.08
-//#define  DEFAULT_Kd 114
-
-// MakerGear
-//    #define  DEFAULT_Kp 7.0
-//    #define  DEFAULT_Ki 0.1
-//    #define  DEFAULT_Kd 12
-
-// Mendel Parts V9 on 12V
-//    #define  DEFAULT_Kp 63.0
-//    #define  DEFAULT_Ki 2.25
-//    #define  DEFAULT_Kd 440
 #endif // PIDTEMP
-
-
-//===========================================================================
-//============================= PID > Bed Temperature Control ===============
-//===========================================================================
-// Select PID or bang-bang with PIDTEMPBED. If bang-bang, BED_LIMIT_SWITCHING will enable hysteresis
-//
-// Uncomment this to enable PID on the bed. It uses the same frequency PWM as the extruder.
-// If your PID_dT above is the default, and correct for your hardware/configuration, that means 7.689Hz,
-// which is fine for driving a square wave into a resistive load and does not significantly impact you FET heating.
-// This also works fine on a Fotek SSR-10DA Solid State Relay into a 250W heater.
-// If your configuration is significantly different than this and you don't understand the issues involved, you probably
-// shouldn't use bed PID until someone else verifies your hardware works.
-// If this is enabled, find your own PID constants below.
-//#define PIDTEMPBED
-//
-//#define BED_LIMIT_SWITCHING
-
-// This sets the max power delivered to the bed, and replaces the HEATER_BED_DUTY_CYCLE_DIVIDER option.
-// all forms of bed control obey this (PID, bang-bang, bang-bang with hysteresis)
-// setting this to anything other than 255 enables a form of PWM to the bed just like HEATER_BED_DUTY_CYCLE_DIVIDER did,
-// so you shouldn't use it unless you are OK with PWM on your bed.  (see the comment on enabling PIDTEMPBED)
-#define MAX_BED_POWER 255 // limits duty cycle to bed; 255=full current
-
-#ifdef PIDTEMPBED
-//120v 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
-//from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-#define  DEFAULT_bedKp 10.00
-#define  DEFAULT_bedKi .023
-#define  DEFAULT_bedKd 305.4
-
-//120v 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
-//from pidautotune
-//    #define  DEFAULT_bedKp 97.1
-//    #define  DEFAULT_bedKi 1.41
-//    #define  DEFAULT_bedKd 1675.16
-
-// FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
-#endif // PIDTEMPBED
-
 
 //this prevents dangerous Extruder moves, i.e. if the temperature is under the limit
 //can be software-disabled for whatever purposes by
@@ -303,13 +276,6 @@
 #define THERMAL_RUNAWAY_PROTECTION_PERIOD 180 //in seconds
 #define THERMAL_RUNAWAY_PROTECTION_HYSTERESIS 10 // in degree Celsius
 
-// If you want to enable this feature for your bed heater,
-// uncomment the 2 defines below:
-
-// Parameters for the bed heater
-//#define THERMAL_RUNAWAY_PROTECTION_BED_PERIOD 20 //in seconds
-//#define THERMAL_RUNAWAY_PROTECTION_BED_HYSTERESIS 2 // in degree Celsius
-
 #endif // #ifdef EXTRUDERS
 //===========================================================================
 //============================= Mechanical Settings =========================
@@ -345,7 +311,6 @@ const bool X_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 const bool Y_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of the endstop.
 const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of the endstop.
 //#define DISABLE_MAX_ENDSTOPS
-// Deltas never have min endstops
 #define DISABLE_MIN_ENDSTOPS
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
@@ -361,7 +326,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define DISABLE_E false // For all extruders
 #define DISABLE_INACTIVE_EXTRUDER false //disable only inactive extruders and keep active extruder enabled
 
-#define INVERT_X_DIR true // DELTA does not invert
+#define INVERT_X_DIR true
 #define INVERT_Y_DIR true
 #define INVERT_Z_DIR true
 
@@ -371,7 +336,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 
 // ENDSTOP SETTINGS:
 // Sets direction of endstops when homing; 1=MAX, -1=MIN
-// deltas always home to max
 #define X_HOME_DIR 1
 #define Y_HOME_DIR 1
 #define Z_HOME_DIR 1
@@ -379,6 +343,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define min_software_endstops false // If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops false  // If true, axis won't move to coordinates greater than the defined lengths below.
 
+// TODO: remove this
 // Travel limits after homing (units are in mm)
 #define X_MAX_POS 90
 #define X_MIN_POS -90
@@ -411,65 +376,15 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //Manual homing switch locations:
 
 #define MANUAL_HOME_POSITIONS  // MANUAL_*_HOME_POS below will be used
-// For deltabots this means top and center of the Cartesian print volume.
 #define MANUAL_X_HOME_POS 0
 #define MANUAL_Y_HOME_POS 0
 #define MANUAL_Z_HOME_POS 0
 
-#define NUM_AXIS 5 // The axis order in all axis related arrays is A, B, C, D, E
-#define DIRS 4     // (that is A_AXIS, B_AXIS, C_AXIS, D_AXIS, E_AXIS or 0, 1, 2, 3, 4)
-//
-// delta homing speeds must be the same on xyz
 #define HOMING_FEEDRATE {200*60, 200*60, 200*60, 200*60, 0}  // set the homing speeds (mm/min)
 
 //===========================================================================
 //============================= Steps per unit ==============================
 //===========================================================================
-// If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
-#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
-
-// If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
-#define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
-
-// Mechanical advantage in each direction needed for dynamic step/mm calculations
-// One pulley along each line gives halved forces and doubled distances
-#define MECHANICAL_ADVANTAGE_A 1
-#define MECHANICAL_ADVANTAGE_B 1
-#define MECHANICAL_ADVANTAGE_C 1
-#define MECHANICAL_ADVANTAGE_D 1
-
-// Action points in each direction needed for dynamic step/mm calculations
-#define POINTS_A 2
-#define POINTS_B 2
-#define POINTS_C 2
-#define POINTS_D 3
-
-// This comes from spool height and line diameter.
-// diameter 0.39, spool height 4.6 and approximating volume taken by line on spool to have quadratic cross section gives
-// 0.39*0.39/(pi*4.6) = 0.010525
-// 0.5*0.5/(pi*8.) = 0.009947
-//#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.010525
-#define DEFAULT_SPOOL_BUILDUP_FACTOR 0.007
-
-// Measure the total length of lines on each spool when printer is in origo
-// Two A-lines, each of length 150.0 gives total length 300.0
-const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
-//const float LINE_ON_SPOOL_ORIGO[DIRS] = {2460.0,2600.0,2800.0,3000.0};
-//const float LINE_ON_SPOOL_ORIGO[DIRS] = {0.0,0.0,0.0,0.0};
-
-// Squared spool radius. 50.0^2 = 2500.0
-// Assumes equal A, B, C and D radii.
-// Measuring your spool radii and adjusting this number will help your machine's precision
-#define SPOOL_RADIUS2 2500.0
-
-// Motor gear teeth: 10
-// Sandwich gear teeth: 100
-// Steps per motor revolution: 3200 (that is, 1/16 stepping a 200 step per revolution motor)
-// ==> Steps per spool radian = 3200/(2*pi*10/100) = 5093.0
-const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
-
-
-
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
 // then constant ABCD values are calculated on the fly and used only used to calculate accelerations
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
@@ -480,7 +395,7 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 #endif
 
 
-#define DEFAULT_MAX_FEEDRATE          {300, 300, 300, 100, 25}    // (mm/sec)
+#define DEFAULT_MAX_FEEDRATE          {500, 500, 500, 300, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {2000,2000,2000,2000,10000}    // X, Y, Z, E maximum start speed for accelerated moves.
 
 #define DEFAULT_ACCELERATION          1000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
@@ -496,7 +411,7 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 
 // The speed change that does not require acceleration (i.e. the software might assume it can be done instantaneously)
 #define DEFAULT_XYJERK                13.0    // (mm/sec)
-#define DEFAULT_ZJERK                 13.0    // (mm/sec) Must be same as XY for delta
+#define DEFAULT_ZJERK                 13.0    // (mm/sec)
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 
 //===========================================================================
@@ -542,6 +457,8 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
 // #define PHOTOGRAPH_PIN     23
+
+#define MAX_BED_POWER 255
 
 #include "Configuration_adv.h"
 #ifdef EXTRUDERS

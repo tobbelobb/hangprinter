@@ -60,7 +60,7 @@ extern float spool_buildup_factor;
 #endif
 
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-extern void calculate_axis_steps_per_unit(const float* delta);
+extern void calculate_axis_steps_per_unit(const float* line_lengths);
 #endif
 extern float axis_steps_per_unit[NUM_AXIS];
 
@@ -73,13 +73,13 @@ const float INITIAL_DISTANCES[DIRS] = {sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*A
                                        sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z),
                                        ANCHOR_D_Z};
 
-// Add a new linear movement to the buffer. delta contains the absolute target position in
+// Add a new linear movement to the buffer. line_lengths contains the absolute target position in
 // millimeters. Feed rate specifies the speed of the motion.
-void plan_buffer_line(const float* delta, const float* prev_delta, const float &e,
+void plan_buffer_line(const float* line_lengths, const float* prev_line_lengths, const float &e,
                      float feed_rate, const uint8_t &extruder, unsigned char count_it);
 
 // Set position. Used for G92 instructions.
-void plan_set_position(const float* delta, const float &e);
+void plan_set_position(const float* line_lengths, const float &e);
 
 void plan_set_e_position(const float &e);
 

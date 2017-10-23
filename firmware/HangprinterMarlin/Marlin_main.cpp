@@ -32,7 +32,6 @@
 #include "planner.h"
 #include "stepper.h"
 #include "temperature.h"
-#include "watchdog.h"
 #include "ConfigurationStore.h"
 #include "language.h"
 #include "pins_arduino.h"
@@ -53,8 +52,8 @@
 // G0  -> G1
 // G1  - Coordinated Movement X Y Z E
 // G6  - Uncoordinated movement A B C D E
-// G7  - Do relative A B C D moves, and remember new delta lengths.
-// G8  - Do absolute A B C D moves, and remember new delta lengths.
+// G7  - Do relative A B C D moves, and remember new line lengths.
+// G8  - Do absolute A B C D moves, and remember new line lengths.
 // G90 - Use Absolute Coordinates
 // G91 - Use Relative Coordinates
 // G92 - Set current position to coordinates given
@@ -101,7 +100,7 @@
 // M501 - Read parameters from EEPROM (if you need reset them after you changed them temporarily).
 // M502 - Revert to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 // M503 - Print the current settings (from memory not from EEPROM). Use S0 to leave off headings.
-// M665 - Set delta configurations
+// M665 - Set anchor locations
 // M666 - Set delta endstop adjustment
 // M350 - Set microstepping mode.
 // M351 - Toggle MS1 MS2 pins directly.
@@ -173,7 +172,7 @@ float anchor_C_y = ANCHOR_C_Y;
 float anchor_C_z = ANCHOR_C_Z;
 float anchor_D_z = ANCHOR_D_Z;
 float delta_segments_per_second = DELTA_SEGMENTS_PER_SECOND;
-float delta[DIRS] = { 0 };
+float line_lengths[DIRS] = { 0 };
 
 #ifdef SCARA
 float axis_scaling[3] = { 1, 1, 1 };    // Build size scaling, default to 1
@@ -376,7 +375,6 @@ void setup(){
 
   tp_init();    // Initialize temperature loop
   plan_init();  // Initialize planner;
-  watchdog_init();
   st_init();    // Initialize stepper, this enables interrupts!
   setup_photpin();
 
@@ -394,7 +392,7 @@ enable_x();
 enable_y();
 enable_z();
 enable_e1();
-calculate_delta(current_position, delta);
+calculate_line_lengths(current_position, line_lengths);
 #endif
 }
 
@@ -568,18 +566,19 @@ void process_commands(){
       // G6 tighten Hangprinter lines.
       // Make moves without altering position variables.
       // Speed variables for planning are modified.
+      // TODO: look over G6 G7 G8
       case 6:
         {
-          float tmp_delta[NUM_AXIS];
-          tmp_delta[A_AXIS] = delta[A_AXIS];
-          tmp_delta[B_AXIS] = delta[B_AXIS];
-          tmp_delta[C_AXIS] = delta[C_AXIS];
-          tmp_delta[D_AXIS] = delta[D_AXIS];
+          float tmp_line_lengths[NUM_AXIS];
+          tmp_line_lengths[A_AXIS] = line_lengths[A_AXIS];
+          tmp_line_lengths[B_AXIS] = line_lengths[B_AXIS];
+          tmp_line_lengths[C_AXIS] = line_lengths[C_AXIS];
+          tmp_line_lengths[D_AXIS] = line_lengths[D_AXIS];
 
-          if(code_seen('A')) tmp_delta[A_AXIS] += code_value();
-          if(code_seen('B')) tmp_delta[B_AXIS] += code_value();
-          if(code_seen('C')) tmp_delta[C_AXIS] += code_value();
-          if(code_seen('D')) tmp_delta[D_AXIS] += code_value();
+          if(code_seen('A')) tmp_line_lengths[A_AXIS] += code_value();
+          if(code_seen('B')) tmp_line_lengths[B_AXIS] += code_value();
+          if(code_seen('C')) tmp_line_lengths[C_AXIS] += code_value();
+          if(code_seen('D')) tmp_line_lengths[D_AXIS] += code_value();
           if(code_seen('E')) destination[E_CARTH] += code_value();
           if(code_seen('F')){
             next_feedrate = code_value();
@@ -588,24 +587,24 @@ void process_commands(){
               feedrate = next_feedrate;
             }
           }
-          plan_buffer_line(tmp_delta, delta,
+          plan_buffer_line(tmp_line_lengths, line_lengths,
               destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, false);
         }
         break;
-      case 7: // G7: Do relative A B C D moves, and remember/count new delta lengths.
+      case 7: // G7: Do relative A B C D moves, and remember/count new line lengths.
         {
           // WARNING: Using G7 first, then G1 will give you chaos!
-          //          Make sure to use G92 after G7 moves, so G1 sees sane previous delta lengths.
-          float prev_delta[NUM_AXIS];
-          prev_delta[A_AXIS] = delta[A_AXIS];
-          prev_delta[B_AXIS] = delta[B_AXIS];
-          prev_delta[C_AXIS] = delta[C_AXIS];
-          prev_delta[D_AXIS] = delta[D_AXIS];
+          //          Make sure to use G92 after G7 moves, so G1 sees sane previous line lengths.
+          float prev_line_lengths[NUM_AXIS];
+          prev_line_lengths[A_AXIS] = line_lengths[A_AXIS];
+          prev_line_lengths[B_AXIS] = line_lengths[B_AXIS];
+          prev_line_lengths[C_AXIS] = line_lengths[C_AXIS];
+          prev_line_lengths[D_AXIS] = line_lengths[D_AXIS];
 
-          if(code_seen('A')) delta[A_AXIS] += code_value();
-          if(code_seen('B')) delta[B_AXIS] += code_value();
-          if(code_seen('C')) delta[C_AXIS] += code_value();
-          if(code_seen('D')) delta[D_AXIS] += code_value();
+          if(code_seen('A')) line_lengths[A_AXIS] += code_value();
+          if(code_seen('B')) line_lengths[B_AXIS] += code_value();
+          if(code_seen('C')) line_lengths[C_AXIS] += code_value();
+          if(code_seen('D')) line_lengths[D_AXIS] += code_value();
           if(code_seen('F')){
             next_feedrate = code_value();
             if(next_feedrate > 0.0){
@@ -613,24 +612,24 @@ void process_commands(){
               feedrate = next_feedrate;
             }
           }
-          plan_buffer_line(delta, prev_delta,
+          plan_buffer_line(line_lengths, prev_line_lengths,
               destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
         }
         break;
-      case 8: // G8: Do A B C D moves, and remember new delta lengths.
+      case 8: // G8: Do A B C D moves, and remember new line lengths.
         {
           // WARNING: Using G8 first, then G1 will give you chaos!
-          //          Make sure to use G92 after G8 moves, so G1 sees sane previous delta lengths.
-          float prev_delta[NUM_AXIS];
-          prev_delta[A_AXIS] = delta[A_AXIS];
-          prev_delta[B_AXIS] = delta[B_AXIS];
-          prev_delta[C_AXIS] = delta[C_AXIS];
-          prev_delta[D_AXIS] = delta[D_AXIS];
+          //          Make sure to use G92 after G8 moves, so G1 sees sane previous line lengths.
+          float prev_line_lengths[NUM_AXIS];
+          prev_line_lengths[A_AXIS] = line_lengths[A_AXIS];
+          prev_line_lengths[B_AXIS] = line_lengths[B_AXIS];
+          prev_line_lengths[C_AXIS] = line_lengths[C_AXIS];
+          prev_line_lengths[D_AXIS] = line_lengths[D_AXIS];
 
-          if(code_seen('A')) delta[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + code_value();
-          if(code_seen('B')) delta[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + code_value();
-          if(code_seen('C')) delta[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + code_value();
-          if(code_seen('D')) delta[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + code_value();
+          if(code_seen('A')) line_lengths[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + code_value();
+          if(code_seen('B')) line_lengths[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + code_value();
+          if(code_seen('C')) line_lengths[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + code_value();
+          if(code_seen('D')) line_lengths[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + code_value();
           if(code_seen('F')){
             next_feedrate = code_value();
             if(next_feedrate > 0.0){
@@ -638,7 +637,7 @@ void process_commands(){
               feedrate = next_feedrate;
             }
           }
-          plan_buffer_line(delta, prev_delta,
+          plan_buffer_line(line_lengths, prev_line_lengths,
               destination[E_CARTH], feedrate*feedmultiply/60/100, active_extruder, true);
         }
         break;
@@ -658,8 +657,8 @@ void process_commands(){
               plan_set_e_position(current_position[E_CARTH]);
             }else {
               current_position[i] = code_value();
-              calculate_delta(current_position, delta);
-              plan_set_position(delta, destination[E_CARTH]);
+              calculate_line_lengths(current_position, line_lengths);
+              plan_set_position(line_lengths, destination[E_CARTH]);
             }
           }
         }
@@ -805,7 +804,7 @@ void process_commands(){
          while(Wire.available()){
            ang_a.b[i] = Wire.read();
            i++;
-         }    delta[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + ang_to_mm(ang_a.fval, A_AXIS);
+         }    line_lengths[A_AXIS] = INITIAL_DISTANCES[A_AXIS] + ang_to_mm(ang_a.fval, A_AXIS);
        }
        if(code_seen('B')){
          union {
@@ -817,7 +816,7 @@ void process_commands(){
          while(Wire.available()){
            ang_b.b[i] = Wire.read();
            i++;
-         }    delta[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + ang_to_mm(ang_b.fval, B_AXIS);
+         }    line_lengths[B_AXIS] = INITIAL_DISTANCES[B_AXIS] + ang_to_mm(ang_b.fval, B_AXIS);
        }
        if(code_seen('C')){
          union {
@@ -829,7 +828,7 @@ void process_commands(){
          while(Wire.available()){
            ang_c.b[i] = Wire.read();
            i++;
-         }    delta[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + ang_to_mm(ang_c.fval, C_AXIS);
+         }    line_lengths[C_AXIS] = INITIAL_DISTANCES[C_AXIS] + ang_to_mm(ang_c.fval, C_AXIS);
        }
        if(code_seen('D')){
          union {
@@ -841,7 +840,7 @@ void process_commands(){
          while(Wire.available()){
            ang_d.b[i] = Wire.read();
            i++;
-         }    delta[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + ang_to_mm(ang_d.fval, D_AXIS);
+         }    line_lengths[D_AXIS] = INITIAL_DISTANCES[D_AXIS] + ang_to_mm(ang_d.fval, D_AXIS);
        }
        break;
 
@@ -850,8 +849,8 @@ void process_commands(){
         current_position[X_AXIS] = 0.0;
         current_position[Y_AXIS] = 0.0;
         current_position[Z_AXIS] = 0.0;
-        calculate_delta(current_position, delta);
-        plan_set_position(delta, destination[E_CARTH]);
+        calculate_line_lengths(current_position, line_lengths);
+        plan_set_position(line_lengths, destination[E_CARTH]);
         break;
     }
   }
@@ -1144,8 +1143,8 @@ void process_commands(){
           }
 #endif // HANGPRINTER && EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
           // Update step-count, keep old carth-position
-          calculate_delta(current_position, delta);
-          plan_set_position(delta, destination[E_CARTH]);
+          calculate_line_lengths(current_position, line_lengths);
+          plan_set_position(line_lengths, destination[E_CARTH]);
           break;
           case 114: // M114
           SERIAL_ECHOLN("Current position in Carthesian system:");
@@ -1170,13 +1169,13 @@ void process_commands(){
 
           SERIAL_PROTOCOLPGM("\n Absolute line lengths:\n");
           SERIAL_PROTOCOLPGM(" A:");
-          SERIAL_PROTOCOL(delta[A_AXIS]);
+          SERIAL_PROTOCOL(line_lengths[A_AXIS]);
           SERIAL_PROTOCOLPGM(" B:");
-          SERIAL_PROTOCOL(delta[B_AXIS]);
+          SERIAL_PROTOCOL(line_lengths[B_AXIS]);
           SERIAL_PROTOCOLPGM(" C:");
-          SERIAL_PROTOCOL(delta[C_AXIS]);
+          SERIAL_PROTOCOL(line_lengths[C_AXIS]);
           SERIAL_PROTOCOLPGM(" D:");
-          SERIAL_PROTOCOL(delta[D_AXIS]);
+          SERIAL_PROTOCOL(line_lengths[D_AXIS]);
 
           SERIAL_PROTOCOLLN("");
           break;
@@ -1285,7 +1284,7 @@ void process_commands(){
           }
           break;
 #ifdef DELTA
-          case 665: // M665 set delta config
+          case 665: // M665 set line_lengths config
 #ifdef HANGPRINTER
           // Hangprinter config:
           // Q<Ax> W<Ay> E<Az> R<Bx> T<By> Y<Bz> U<Cx> I<Cy> O<Cz> P<Dz> S<segments_per_sec>
@@ -1313,7 +1312,7 @@ void process_commands(){
           }
           break;
 
-          case 666: // M666 set delta endstop adjustemnt // ABCD needs one endstop each so axis_codes ABCD here
+          case 666: // M666 set delta endstop adjustemnt
           for(int8_t i=0; i < 3; i++){
             if(code_seen(axis_codes[i])) endstop_adj[i] = code_value();
           }
@@ -1625,15 +1624,15 @@ void process_commands(){
 #endif
 
 // array destination[3] filled with absolute coordinates is fed into this. tobben 20. may 2015
-  void calculate_delta(float cartesian[3], float delta[4])
+  void calculate_line_lengths(float cartesian[3], float line_lengths[4])
   {
-    // With current calculations delta will contain the new absolute coordinate
+    // With current calculations line_lengths will contain the new absolute coordinate
     // Geometry of hangprinter makes sq(anchor_ABC_Z - carthesian[Z_AXIS]) the smallest term in the sum.
     // Starting sum with smallest number givest smallest roundoff error.
-    delta[A_AXIS] = sqrt(sq(anchor_A_z - cartesian[Z_AXIS])
+    line_lengths[A_AXIS] = sqrt(sq(anchor_A_z - cartesian[Z_AXIS])
                        + sq(anchor_A_y - cartesian[Y_AXIS])
                        + sq(anchor_A_x - cartesian[X_AXIS]));
-    delta[B_AXIS] = sqrt(sq(anchor_B_z - cartesian[Z_AXIS])
+    line_lengths[B_AXIS] = sqrt(sq(anchor_B_z - cartesian[Z_AXIS])
                        + sq(anchor_B_y - cartesian[Y_AXIS])
                        + sq(anchor_B_x - cartesian[X_AXIS]));
     //SERIAL_ECHOLN("anchor_C_x");
@@ -1648,10 +1647,10 @@ void process_commands(){
     //SERIAL_ECHOLN(cartesian[Y_AXIS]);
     //SERIAL_ECHOLN("cartesian[Z_AXIS]");
     //SERIAL_ECHOLN(cartesian[Z_AXIS]);
-    delta[C_AXIS] = sqrt(sq(anchor_C_z - cartesian[Z_AXIS])
+    line_lengths[C_AXIS] = sqrt(sq(anchor_C_z - cartesian[Z_AXIS])
                        + sq(anchor_C_y - cartesian[Y_AXIS])
                        + sq(anchor_C_x - cartesian[X_AXIS]));
-    delta[D_AXIS] = sqrt(sq(             cartesian[X_AXIS])
+    line_lengths[D_AXIS] = sqrt(sq(             cartesian[X_AXIS])
                        + sq(             cartesian[Y_AXIS])
                        + sq(anchor_D_z - cartesian[Z_AXIS]));
 
@@ -1659,10 +1658,10 @@ void process_commands(){
     //SERIAL_ECHOPGM(" y="); SERIAL_ECHOLN(cartesian[Y_AXIS]);
     //SERIAL_ECHOPGM(" z="); SERIAL_ECHOLN(cartesian[Z_AXIS]);
 
-    //SERIAL_ECHOPGM(" a="); SERIAL_ECHOLN(delta[A_AXIS]);
-    //SERIAL_ECHOPGM(" b="); SERIAL_ECHOLN(delta[B_AXIS]);
-    //SERIAL_ECHOPGM(" c="); SERIAL_ECHOLN(delta[C_AXIS]);
-    //SERIAL_ECHOPGM(" d="); SERIAL_ECHOLN(delta[D_AXIS]);
+    //SERIAL_ECHOPGM(" a="); SERIAL_ECHOLN(line_lengths[A_AXIS]);
+    //SERIAL_ECHOPGM(" b="); SERIAL_ECHOLN(line_lengths[B_AXIS]);
+    //SERIAL_ECHOPGM(" c="); SERIAL_ECHOLN(line_lengths[C_AXIS]);
+    //SERIAL_ECHOPGM(" d="); SERIAL_ECHOLN(line_lengths[D_AXIS]);
 
   }
 
@@ -1688,10 +1687,10 @@ void process_commands(){
       for(int8_t i=0; i < 4; i++){
         destination[i] = current_position[i] + difference[i] * fraction;
       }
-      float prev_delta[DIRS];
-      memcpy(prev_delta, delta, sizeof(delta));
-      calculate_delta(destination, delta); // delta will be in absolute hangprinter abcde coords
-      plan_buffer_line(delta, prev_delta, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
+      float prev_line_lengths[DIRS];
+      memcpy(prev_line_lengths, line_lengths, sizeof(line_lengths));
+      calculate_line_lengths(destination, line_lengths); // line_lengths will be in absolute hangprinter abcde coords
+      plan_buffer_line(line_lengths, prev_line_lengths, destination[E_CARTH], feedrate*feedmultiply/60/100.0, active_extruder, true);
     }
 
     for(int8_t i=0; i < 4; i++){

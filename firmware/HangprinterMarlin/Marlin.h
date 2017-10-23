@@ -162,8 +162,8 @@ void FlushSerialRequestResend();
 void ClearToSend();
 
 void get_coordinates();
-void calculate_delta(float cartesian[3], float delta[4]);
-extern float delta[DIRS];
+void calculate_line_lengths(float cartesian[3], float line_lengths[4]);
+extern float line_lengths[DIRS];
 void prepare_move();
 void kill();
 void Stop();

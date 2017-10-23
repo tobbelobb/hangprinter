@@ -31,9 +31,7 @@
 
 #include "Marlin.h"
 #include "Configuration.h"
-//#include "ultralcd.h"
 #include "temperature.h"
-#include "watchdog.h"
 
 //#include "Sd2PinMap.h"
 // We get PID_MAX was not declared in this scope...
@@ -784,8 +782,6 @@ static void updateTemperaturesFromRawValues()
     #ifdef TEMP_SENSOR_1_AS_REDUNDANT
       redundant_temperature = analog2temp(redundant_temperature_raw, 1);
     #endif
-    //Reset the watchdog after we know we have a temperature measurement.
-    watchdog_reset();
 
     CRITICAL_SECTION_START;
     temp_meas_ready = false;
