@@ -29,8 +29,6 @@
  *  Kp[2], Ki[2], Kd[2], Kc[2]
  *  Kp[3], Ki[3], Kd[3], Kc[3]
  *
- * SCARA:
- *  axis_scaling (x3)
  *
  *
  *

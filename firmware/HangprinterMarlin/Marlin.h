@@ -203,9 +203,6 @@ extern float delta_diagonal_rod;
 extern float delta_segments_per_second;
 void recalc_delta_settings(float radius, float diagonal_rod);
 #endif
-#ifdef SCARA
-extern float axis_scaling[3];  // Build size scaling
-#endif
 extern float min_pos[DIRS];
 extern float max_pos[DIRS];
 extern bool axis_known_position[DIRS];
