@@ -198,16 +198,6 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 #define HEATER_2_MAXTEMP 275
 #define BED_MAXTEMP 150
 
-// If your bed has low resistance e.g. .6 ohm and throws the fuse you can duty cycle it to reduce the
-// average current. The value should be an integer and the heat bed will be turned on for 1 interval of
-// HEATER_BED_DUTY_CYCLE_DIVIDER intervals.
-//#define HEATER_BED_DUTY_CYCLE_DIVIDER 4
-
-// If you want the M105 heater power reported in watts, define the BED_WATTS, and (shared for all extruders) EXTRUDER_WATTS
-//#define EXTRUDER_WATTS (12.0*12.0/6.7) //  P=I^2/R
-//#define BED_WATTS (12.0*12.0/1.1)      // P=I^2/R
-
-
 //===========================================================================
 //============================= PID Settings ================================
 //===========================================================================
@@ -242,7 +232,6 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 
 #define EXTRUDE_MINTEMP 170
 #define EXTRUDE_MAXLENGTH (X_MAX_LENGTH+Y_MAX_LENGTH) //prevent extrusion of very large distances.
-
 
 //===========================================================================
 //============================= Thermal Runaway Protection ==================
@@ -457,8 +446,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
 // #define PHOTOGRAPH_PIN     23
-
-#define MAX_BED_POWER 255
 
 #include "Configuration_adv.h"
 #ifdef EXTRUDERS

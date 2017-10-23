@@ -2,7 +2,7 @@
  * ConfigurationStore.cpp
  *
  * Configuration and EEPROM storage
- *
+ * TODO: v15 / v16 document
  * V15 EEPROM Layout:
  *
  *  ver

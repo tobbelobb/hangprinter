@@ -827,6 +827,8 @@ void set_extrude_min_temp(float temp)
 #endif
 
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
+// This is used for acceleration planning
+// It is not used for calculating correct number of steps at different positions
 void calculate_axis_steps_per_unit(const float* line_lengths){
   // Divide by new radius to find new steps/mm
   axis_steps_per_unit[A_AXIS] =

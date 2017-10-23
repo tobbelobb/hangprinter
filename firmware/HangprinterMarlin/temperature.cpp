@@ -224,13 +224,8 @@ void PID_autotune(float temp, int extruder, int ncycles)
 
   disable_heater(); // switch off all heaters.
 
-  if (extruder<0)
+  if (extruder>0)
   {
-     //soft_pwm_bed = (MAX_BED_POWER)/2;
-     //bias = d = (MAX_BED_POWER)/2;
-   }
-   else
-   {
      soft_pwm[extruder] = (PID_MAX)/2;
      bias = d = (PID_MAX)/2;
   }
@@ -277,8 +272,9 @@ void PID_autotune(float temp, int extruder, int ncycles)
           t_low=t2 - t1;
           if(cycles > 0) {
             bias += (d*(t_high - t_low))/(t_low + t_high);
-            bias = constrain(bias, 20 ,(extruder<0?(MAX_BED_POWER):(PID_MAX))-20);
-            if(bias > (extruder<0?(MAX_BED_POWER):(PID_MAX))/2) d = (extruder<0?(MAX_BED_POWER):(PID_MAX)) - 1 - bias;
+            bias = constrain(bias, 20 ,PID_MAX-20);
+            if(bias > PID_MAX/2)
+              d = PID_MAX - 1 - bias;
             else d = bias;
 
             SERIAL_PROTOCOLPGM(" bias: "); SERIAL_PROTOCOL(bias);
@@ -352,7 +348,6 @@ void PID_autotune(float temp, int extruder, int ncycles)
       SERIAL_PROTOCOLLNPGM("PID Autotune finished! Put the last Kp, Ki and Kd constants from above into Configuration.h");
       return;
     }
-    //lcd_update();
   }
 }
 
@@ -604,87 +599,6 @@ void manage_heater()
   if(millis() - previous_millis_bed_heater < BED_CHECK_INTERVAL)
     return;
   previous_millis_bed_heater = millis();
-  #endif
-
-  #if TEMP_SENSOR_BED != 0
-
-    #if defined(THERMAL_RUNAWAY_PROTECTION_BED_PERIOD) && THERMAL_RUNAWAY_PROTECTION_BED_PERIOD > 0
-      thermal_runaway_protection(&thermal_runaway_bed_state_machine, &thermal_runaway_bed_timer, current_temperature_bed, target_temperature_bed, 9, THERMAL_RUNAWAY_PROTECTION_BED_PERIOD, THERMAL_RUNAWAY_PROTECTION_BED_HYSTERESIS);
-    #endif
-
-  #ifdef PIDTEMPBED
-    pid_input = current_temperature_bed;
-
-    #ifndef PID_OPENLOOP
-		  pid_error_bed = target_temperature_bed - pid_input;
-		  pTerm_bed = bedKp * pid_error_bed;
-		  temp_iState_bed += pid_error_bed;
-		  temp_iState_bed = constrain(temp_iState_bed, temp_iState_min_bed, temp_iState_max_bed);
-		  iTerm_bed = bedKi * temp_iState_bed;
-
-		  //K1 defined in Configuration.h in the PID settings
-		  #define K2 (1.0-K1)
-		  dTerm_bed= (bedKd * (pid_input - temp_dState_bed))*K2 + (K1 * dTerm_bed);
-		  temp_dState_bed = pid_input;
-
-		  pid_output = pTerm_bed + iTerm_bed - dTerm_bed;
-      if (pid_output > MAX_BED_POWER) {
-        if (pid_error_bed > 0 )  temp_iState_bed -= pid_error_bed; // conditional un-integration
-        pid_output=MAX_BED_POWER;
-      } else if (pid_output < 0){
-        if (pid_error_bed < 0 )  temp_iState_bed -= pid_error_bed; // conditional un-integration
-        pid_output=0;
-      }
-
-    #else
-      pid_output = constrain(target_temperature_bed, 0, MAX_BED_POWER);
-    #endif //PID_OPENLOOP
-
-	  if((current_temperature_bed > BED_MINTEMP) && (current_temperature_bed < BED_MAXTEMP))
-	  {
-	    soft_pwm_bed = (int)pid_output >> 1;
-	  }
-	  else {
-	    soft_pwm_bed = 0;
-	  }
-
-    #elif !defined(BED_LIMIT_SWITCHING)
-      // Check if temperature is within the correct range
-      if((current_temperature_bed > BED_MINTEMP) && (current_temperature_bed < BED_MAXTEMP))
-      {
-        if(current_temperature_bed >= target_temperature_bed)
-        {
-          soft_pwm_bed = 0;
-        }
-        else
-        {
-          soft_pwm_bed = MAX_BED_POWER>>1;
-        }
-      }
-      else
-      {
-        soft_pwm_bed = 0;
-        WRITE(HEATER_BED_PIN,LOW);
-      }
-    #else //#ifdef BED_LIMIT_SWITCHING
-      // Check if temperature is within the correct band
-      if((current_temperature_bed > BED_MINTEMP) && (current_temperature_bed < BED_MAXTEMP))
-      {
-        if(current_temperature_bed > target_temperature_bed + BED_HYSTERESIS)
-        {
-          soft_pwm_bed = 0;
-        }
-        else if(current_temperature_bed <= target_temperature_bed - BED_HYSTERESIS)
-        {
-          soft_pwm_bed = MAX_BED_POWER>>1;
-        }
-      }
-      else
-      {
-        soft_pwm_bed = 0;
-        WRITE(HEATER_BED_PIN,LOW);
-      }
-    #endif
   #endif
 }
 
