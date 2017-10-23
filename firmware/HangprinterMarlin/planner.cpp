@@ -73,11 +73,6 @@ const float steps_per_unit_times_r[DIRS] = {(float)MECHANICAL_ADVANTAGE_A*STEPS_
                                             (float)MECHANICAL_ADVANTAGE_B*STEPS_PER_SPOOL_RADIAN[B_AXIS],
                                             (float)MECHANICAL_ADVANTAGE_C*STEPS_PER_SPOOL_RADIAN[C_AXIS],
                                             (float)MECHANICAL_ADVANTAGE_D*STEPS_PER_SPOOL_RADIAN[D_AXIS]};
-// Two double lines means founr lines
-const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*POINTS_A,
-                                            MECHANICAL_ADVANTAGE_B*POINTS_B,
-                                            MECHANICAL_ADVANTAGE_C*POINTS_C,
-                                            MECHANICAL_ADVANTAGE_D*POINTS_D};
 
 const float k2[DIRS] = {-(float)nr_of_lines_in_direction[A_AXIS]*spool_buildup_factor,
                         -(float)nr_of_lines_in_direction[B_AXIS]*spool_buildup_factor,
@@ -94,10 +89,26 @@ const float spool_radii2[DIRS] = { SPOOL_RADII[A_AXIS]*SPOOL_RADII[A_AXIS],
                                    SPOOL_RADII[C_AXIS]*SPOOL_RADII[C_AXIS],
                                    SPOOL_RADII[D_AXIS]*SPOOL_RADII[D_AXIS] };
 
-const float k1[DIRS] = {spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + spool_radii2[A_AXIS],
-                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + spool_radii2[B_AXIS],
-                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + spool_radii2[C_AXIS],
-                        spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + spool_radii2[D_AXIS]};
+// NOTE: This calculation assumes that ABC spools are mounted close to the D-anchor!
+const float line_on_spool_origo[DIRS] = {(float)nr_of_lines_in_direction[A_AXIS]*(MOUNTED_LINE[A_AXIS]
+                                          // Line between D anchor and A anchor.
+                                          // This is inexact with a few centimeters depending on where lineroller_A_winch is mounted in ceiling
+                                         - sqrt((anchor_D_z - anchor_A_z)*(anchor_D_z - anchor_A_z) + anchor_A_x*anchor_A_x + anchor_A_y*anchor_A_y)
+                                          // Line between anchor a and mover
+                                         - sqrt(anchor_A_x*anchor_A_x + anchor_A_y*anchor_A_y + anchor_A_z*anchor_A_z)),
+                                          (float)nr_of_lines_in_direction[B_AXIS]*(MOUNTED_LINE[B_AXIS]
+                                         - sqrt((anchor_D_z - anchor_B_z)*(anchor_D_z - anchor_B_z) + anchor_B_x*anchor_B_x + anchor_B_y*anchor_B_y)
+                                         - sqrt(anchor_B_x*anchor_B_x + anchor_B_y*anchor_B_y + anchor_B_z*anchor_B_z)),
+                                          (float)nr_of_lines_in_direction[C_AXIS]*(MOUNTED_LINE[C_AXIS]
+                                         - sqrt((anchor_D_z - anchor_C_z)*(anchor_D_z - anchor_C_z) + anchor_C_x*anchor_C_x + anchor_C_y*anchor_C_y)
+                                         - sqrt(anchor_C_x*anchor_C_x + anchor_C_y*anchor_C_y + anchor_C_z*anchor_C_z)),
+                                          (float)nr_of_lines_in_direction[D_AXIS]*(MOUNTED_LINE[D_AXIS] - anchor_D_z)
+                                        };
+
+const float k1[DIRS] = {spool_buildup_factor*(line_on_spool_origo[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) + spool_radii2[A_AXIS],
+                        spool_buildup_factor*(line_on_spool_origo[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) + spool_radii2[B_AXIS],
+                        spool_buildup_factor*(line_on_spool_origo[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) + spool_radii2[C_AXIS],
+                        spool_buildup_factor*(line_on_spool_origo[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) + spool_radii2[D_AXIS]};
 
 const float sqrtk1[DIRS] = {sqrt(k1[A_AXIS]),
                             sqrt(k1[B_AXIS]),
@@ -837,13 +848,13 @@ void set_extrude_min_temp(float temp)
 void calculate_axis_steps_per_unit(const float* line_lengths){
   // Divide by new radius to find new steps/mm
   axis_steps_per_unit[A_AXIS] =
-    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - line_lengths[A_AXIS])) + spool_radii2[A_AXIS]);
+    steps_per_unit_times_r[A_AXIS]/sqrt(spool_buildup_factor*(line_on_spool_origo[A_AXIS] + (float)nr_of_lines_in_direction[A_AXIS]*(INITIAL_DISTANCES[A_AXIS] - line_lengths[A_AXIS])) + spool_radii2[A_AXIS]);
   axis_steps_per_unit[B_AXIS] =
-    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - line_lengths[B_AXIS])) + spool_radii2[B_AXIS]);
+    steps_per_unit_times_r[B_AXIS]/sqrt(spool_buildup_factor*(line_on_spool_origo[B_AXIS] + (float)nr_of_lines_in_direction[B_AXIS]*(INITIAL_DISTANCES[B_AXIS] - line_lengths[B_AXIS])) + spool_radii2[B_AXIS]);
   axis_steps_per_unit[C_AXIS] =
-    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - line_lengths[C_AXIS])) + spool_radii2[C_AXIS]);
+    steps_per_unit_times_r[C_AXIS]/sqrt(spool_buildup_factor*(line_on_spool_origo[C_AXIS] + (float)nr_of_lines_in_direction[C_AXIS]*(INITIAL_DISTANCES[C_AXIS] - line_lengths[C_AXIS])) + spool_radii2[C_AXIS]);
   axis_steps_per_unit[D_AXIS] =
-    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(LINE_ON_SPOOL_ORIGO[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - line_lengths[D_AXIS])) + spool_radii2[D_AXIS]);
+    steps_per_unit_times_r[D_AXIS]/sqrt(spool_buildup_factor*(line_on_spool_origo[D_AXIS] + (float)nr_of_lines_in_direction[D_AXIS]*(INITIAL_DISTANCES[D_AXIS] - line_lengths[D_AXIS])) + spool_radii2[D_AXIS]);
 }
 #endif
 

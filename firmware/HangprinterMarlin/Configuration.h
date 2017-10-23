@@ -89,21 +89,22 @@
 // If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
 #define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 
-// If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
-#define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
-
-// Mechanical advantage in each direction needed for dynamic step/mm calculations
-// One pulley along each line gives halved forces and doubled distances
+/* ----- How many lines in each direction? --- */
 #define MECHANICAL_ADVANTAGE_A 1
 #define MECHANICAL_ADVANTAGE_B 1
 #define MECHANICAL_ADVANTAGE_C 1
 #define MECHANICAL_ADVANTAGE_D 1
 
-// Action points in each direction needed for dynamic step/mm calculations
-#define POINTS_A 2
-#define POINTS_B 2
-#define POINTS_C 2
-#define POINTS_D 3
+#define ACTION_POINTS_A 2
+#define ACTION_POINTS_B 2
+#define ACTION_POINTS_C 2
+#define ACTION_POINTS_D 3
+
+/* ----- This many: -----*/
+const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*ACTION_POINTS_A,
+                                            MECHANICAL_ADVANTAGE_B*ACTION_POINTS_B,
+                                            MECHANICAL_ADVANTAGE_C*ACTION_POINTS_C,
+                                            MECHANICAL_ADVANTAGE_D*ACTION_POINTS_D};
 
 // line diameter 0.39, spool height 4.6
 // approximating volume taken by line on spool to have quadratic cross section gives
@@ -113,9 +114,10 @@
 // 0.5*0.5/(pi*8.0) = 0.009947
 #define DEFAULT_SPOOL_BUILDUP_FACTOR 0.007
 
-// Measure the total length of lines on each spool when printer is in origo
-// Two A-lines, each of length 150.0 gives total length 300.0
-const float LINE_ON_SPOOL_ORIGO[DIRS] = {7500.0,7500.0,7500.0,6000.0};
+// Total length of lines on each spool
+// Default assumes all nine lines are cut to length 7500 mm.
+// Change to whatever length you have cut your different lines to.
+const float MOUNTED_LINE[DIRS] = {7500.0,7500.0,7500.0,7500.0};
 
 // Measuring your spool radii and adjusting this number will improve your Hangprinter's precision
 const float SPOOL_RADII[DIRS] = { 50.0, 50.0, 50.0, 50.0 };
@@ -125,6 +127,9 @@ const float SPOOL_RADII[DIRS] = { 50.0, 50.0, 50.0, 50.0 };
 // Steps per motor revolution: 3200 (that is, 1/16 microstepping a motor with 200 full steps per revolution)
 // ==> Steps per spool radian = 3200/(2*pi*10/100) = 5093.0
 const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
+
+// If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
+#define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
 
 //===========================================================================
 //============================= Thermal Settings ============================
