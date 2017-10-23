@@ -5,11 +5,6 @@
 //=============================Thermal Settings  ============================
 //===========================================================================
 
-#ifdef BED_LIMIT_SWITCHING
-#define BED_HYSTERESIS 2 //only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
-#endif
-#define BED_CHECK_INTERVAL 5000 //ms between checks in bang-bang control
-
 //// Heating sanity check:
 // This waits for the watchperiod in milliseconds whenever an M104 or M109 increases the target temperature
 // If the temperature has not increased at the end of that period, the target temperature is set to zero.
@@ -312,10 +307,6 @@ const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 #define THERMISTORHEATER_2 TEMP_SENSOR_2
 #define HEATER_2_USES_THERMISTOR
 #endif
-#if TEMP_SENSOR_BED > 0
-#define THERMISTORBED TEMP_SENSOR_BED
-#define BED_USES_THERMISTOR
-#endif
 #if TEMP_SENSOR_0 == -1
 #define HEATER_0_USES_AD595
 #endif
@@ -324,9 +315,6 @@ const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 #endif
 #if TEMP_SENSOR_2 == -1
 #define HEATER_2_USES_AD595
-#endif
-#if TEMP_SENSOR_BED == -1
-#define BED_USES_AD595
 #endif
 #if TEMP_SENSOR_0 == -2
 #define HEATER_0_USES_MAX6675
@@ -342,10 +330,6 @@ const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 #if TEMP_SENSOR_2 == 0
 #undef HEATER_2_MINTEMP
 #undef HEATER_2_MAXTEMP
-#endif
-#if TEMP_SENSOR_BED == 0
-#undef BED_MINTEMP
-#undef BED_MAXTEMP
 #endif
 
 

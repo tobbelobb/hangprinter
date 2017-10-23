@@ -64,9 +64,6 @@ extern float current_temperature_bed;
   float unscalePID_d(float d);
 
 #endif
-#ifdef PIDTEMPBED
-  extern float bedKp,bedKi,bedKd;
-#endif
 
 //high level conversion routines, for use outside of temperature.cpp
 //inline so that there is no performance decrease.
@@ -170,10 +167,6 @@ void thermal_runaway_protection(int *state, unsigned long *timer, float temperat
 static int thermal_runaway_state_machine[4]; // = {0,0,0,0};
 static unsigned long thermal_runaway_timer[4]; // = {0,0,0,0};
 static bool thermal_runaway = false;
-#if TEMP_SENSOR_BED != 0
-  static int thermal_runaway_bed_state_machine;
-  static unsigned long thermal_runaway_bed_timer;
-#endif
 #endif
 
 FORCE_INLINE void autotempShutdown(){

@@ -594,12 +594,6 @@ void manage_heater()
     extruder_autofan_last_check = millis();
   }
   #endif
-
-  #ifndef PIDTEMPBED
-  if(millis() - previous_millis_bed_heater < BED_CHECK_INTERVAL)
-    return;
-  previous_millis_bed_heater = millis();
-  #endif
 }
 
 #define PGM_RD_W(x)   (short)pgm_read_word(&x)
