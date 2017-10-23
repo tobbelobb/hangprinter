@@ -90,18 +90,22 @@ const float spool_radii2[DIRS] = { SPOOL_RADII[A_AXIS]*SPOOL_RADII[A_AXIS],
                                    SPOOL_RADII[D_AXIS]*SPOOL_RADII[D_AXIS] };
 
 // NOTE: This calculation assumes that ABC spools are mounted close to the D-anchor!
-const float line_on_spool_origo[DIRS] = {(float)nr_of_lines_in_direction[A_AXIS]*(MOUNTED_LINE[A_AXIS]
+//       It also assumes that doubled lines for mechanical advantage is between mover and anchor, not between anchor and anchor.
+const float line_on_spool_origo[DIRS] = { (float)ACTION_POINTS_A*MOUNTED_LINE[A_AXIS]
                                           // Line between D anchor and A anchor.
-                                          // This is inexact with a few centimeters depending on where lineroller_A_winch is mounted in ceiling
-                                         - sqrt((anchor_D_z - anchor_A_z)*(anchor_D_z - anchor_A_z) + anchor_A_x*anchor_A_x + anchor_A_y*anchor_A_y)
+                                          // This is inexact by probably a few centimeters, depending on where lineroller_A_winch is mounted in ceiling
+                                         -(float)ACTION_POINTS_A*sqrt((anchor_D_z - anchor_A_z)*(anchor_D_z - anchor_A_z) + anchor_A_x*anchor_A_x + anchor_A_y*anchor_A_y)
                                           // Line between anchor a and mover
-                                         - sqrt(anchor_A_x*anchor_A_x + anchor_A_y*anchor_A_y + anchor_A_z*anchor_A_z)),
-                                          (float)nr_of_lines_in_direction[B_AXIS]*(MOUNTED_LINE[B_AXIS]
-                                         - sqrt((anchor_D_z - anchor_B_z)*(anchor_D_z - anchor_B_z) + anchor_B_x*anchor_B_x + anchor_B_y*anchor_B_y)
-                                         - sqrt(anchor_B_x*anchor_B_x + anchor_B_y*anchor_B_y + anchor_B_z*anchor_B_z)),
-                                          (float)nr_of_lines_in_direction[C_AXIS]*(MOUNTED_LINE[C_AXIS]
-                                         - sqrt((anchor_D_z - anchor_C_z)*(anchor_D_z - anchor_C_z) + anchor_C_x*anchor_C_x + anchor_C_y*anchor_C_y)
-                                         - sqrt(anchor_C_x*anchor_C_x + anchor_C_y*anchor_C_y + anchor_C_z*anchor_C_z)),
+                                         -(float)nr_of_lines_in_direction[A_AXIS]*sqrt(anchor_A_x*anchor_A_x + anchor_A_y*anchor_A_y + anchor_A_z*anchor_A_z),
+
+                                          (float)ACTION_POINTS_B*MOUNTED_LINE[B_AXIS]
+                                         -(float)ACTION_POINTS_B*sqrt((anchor_D_z - anchor_B_z)*(anchor_D_z - anchor_B_z) + anchor_B_x*anchor_B_x + anchor_B_y*anchor_B_y)
+                                         -(float)nr_of_lines_in_direction[B_AXIS]*sqrt(anchor_B_x*anchor_B_x + anchor_B_y*anchor_B_y + anchor_B_z*anchor_B_z),
+
+                                          (float)ACTION_POINTS_C*MOUNTED_LINE[C_AXIS]
+                                         -(float)ACTION_POINTS_C*sqrt((anchor_D_z - anchor_C_z)*(anchor_D_z - anchor_C_z) + anchor_C_x*anchor_C_x + anchor_C_y*anchor_C_y)
+                                         -(float)nr_of_lines_in_direction[C_AXIS]*sqrt(anchor_C_x*anchor_C_x + anchor_C_y*anchor_C_y + anchor_C_z*anchor_C_z),
+
                                           (float)nr_of_lines_in_direction[D_AXIS]*(MOUNTED_LINE[D_AXIS] - anchor_D_z)
                                         };
 
