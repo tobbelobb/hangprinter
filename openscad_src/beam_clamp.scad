@@ -9,6 +9,7 @@ module prev_art(){
     import("../stl/beam_clamp.stl");
 }
 
+translate([-10,0,0]) mirror([1,0,0]) beam_clamp();
 beam_clamp();
 module beam_clamp(){
   wall_th = Wall_th;
