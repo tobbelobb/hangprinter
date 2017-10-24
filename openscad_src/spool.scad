@@ -36,5 +36,7 @@ module spool(){
 
     translate([0,0,-1])
       cylinder(d=b608_outer_dia,h=Spool_height+Torx_depth-0.4+1+2);
+    translate([0,0,-1])
+      cylinder(d1=b608_outer_dia+2.5, d2=b608_outer_dia-0.1,h=2.2);
   }
 }

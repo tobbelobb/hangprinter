@@ -49,6 +49,8 @@ module spool_gear(){
     // Space for 608 bearing
     translate([0,0,-1])
       cylinder(d=b608_outer_dia,h=Gear_height+2);
+    translate([0,0,-1])
+      cylinder(d1=b608_outer_dia+2.5, d2=b608_outer_dia-0.1,h=2.2);
     // Cut bottom to avoid problems with elephant foot
     for(k=[0,1])
       translate([0,0,k*Gear_height])
