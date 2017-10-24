@@ -271,3 +271,9 @@ module nutlock(){
   rotate([-90,0,0])
   cylinder(d=3.5,h=16);
 }
+
+module teardrop(r=10, h=10){
+  cylinder(r=r, h=h);
+  rotate([0,0,45])
+    cube([r,r,h]);
+}

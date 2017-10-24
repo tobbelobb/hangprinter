@@ -51,7 +51,8 @@ module extruder_holder(){
       rotate([0,90,0])
       translate([-cw/2, -cw/2, -1]){
         Nema17_screw_holes(3.5, Wall_th+2, $fs=1);
-        cylinder(d=Nema17_ring_diameter+2, h=Wall_th+2, $fs=1);
+        rotate([0,0,90])
+          teardrop(r=(Nema17_ring_diameter+2)/2, h=Wall_th+2);
       }
     translate([Wall_th-Wiggle/2, Wall_th-Wiggle/2, -1])
       fat_beam(block_depth+2, standing=true);
