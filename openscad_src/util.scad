@@ -75,7 +75,7 @@ module rounded_cube2(v, r){
   }
 }
 
-right_rounded_cube2([20,30,2], 2);
+//right_rounded_cube2([20,30,2], 2);
 module right_rounded_cube2(v, r){
   $fs = 1;
   union(){
@@ -203,10 +203,14 @@ module quarterround_wall(v){
   }
 }
 
-module inner_round_corner(r, h){
+//translate([0,-13*(1-cos(60/2+45)) + 13*(1-sin(60/2+45)),0])
+//inner_round_corner(13, 2, 60);
+module inner_round_corner(r, h, ang=90, back = 0.1){
+  cx = r*(1-cos(ang/2+45));
+  translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45)),0])
   difference(){
-    translate([-0.1, -0.1, 0])
-    cube([r+0.1, r+0.1, h]);
+    translate([-back, -back, 0])
+    cube([cx+back, cx+back, h]);
     translate([r,r,-1])
       cylinder(r=r, h=h+2);
   }

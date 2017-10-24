@@ -12,63 +12,68 @@ module prev_art(){
 beam_clamp();
 module beam_clamp(){
   wall_th = Wall_th;
-  l = 23;
-  l2 = 30;
-  h = Beam_width + 2*wall_th;
-  little_r = 0.5;
-  step = 15*little_r;
+  l0 = 43;
+  l1 = 35;
+  edges = 0.625;
+  opening_width = Fat_beam_width - 2*edges;
+  module rot_move(){
+    translate([Fat_beam_width+2*wall_th,(l0 - (2/sqrt(3))*(Fat_beam_width+2*wall_th))/2,0])
+      rotate([0,0,-60])
+        translate([-Fat_beam_width-2*wall_th,0,0])
+          children();
+  }
+
+  module antibalk(){
+    extralen = 2;
+    translate([wall_th+edges, -extralen, wall_th])
+      cube([opening_width, l0+2*extralen, 100]);
+    translate([Beam_width+wall_th, -extralen, wall_th])
+      rotate([0,0,90])
+        beam(l0+2*extralen);
+  }
 
   difference(){
-    // Sweep up basic outline
-    sweep(my_rounded_square([l,h],0.5, step=step),
-      [translation([0,0,0]),
-       translation([0,0,h]),
-       translation([l2/2,0,h + l2*sqrt(3)/2])
-       ]);
-    // Cut top straight
-    translate([l2/2, 0, h + l2*sqrt(3)/2])
-      rotate([0,30,0])
-      translate([-1,-1,0])
-      cube(30);
-    translate([-1, wall_th, wall_th])
-      fat_beam(l+2);
-    // Diggin out angled part
-    translate([0,0,h])
-      rotate([0,30,0])
-      translate([wall_th,wall_th,-1]){
-        fat_beam(l2+2, standing=true);
-        m = 3.5;
-        translate([-wall_th-1, m/2, -2])
-          cube([Beam_width+2*wall_th+4, Beam_width - m, l2+4]);
+    union(){
+      r0 = 2; // inner round corner radius
+      a0 = 60;
+      sink0 = r0*sin(15)*2/sqrt(6);
+      r1 = 1;
+      a1 = 120;
+      sink1 = r1*2/sqrt(30);
+      rounded_cube2([Fat_beam_width+2*wall_th, l0, Fat_beam_width+2*wall_th+2], 2);
+      rot_move(){
+        translate([Fat_beam_width+2*wall_th,0,0])
+          rotate([0,0,90])
+            right_rounded_cube2([l1, Fat_beam_width+2*wall_th, Fat_beam_width+2*wall_th+2],2);
+        translate([Fat_beam_width+2*wall_th,0,0])
+          rotate([0,0,-15])
+            translate([-sink0,-sink0,0])
+              inner_round_corner(r0/(1-cos(a0/2+45)-(1-sin(a0/2+45))),
+                                 Fat_beam_width+2*wall_th+2, a0, $fn=100);
+        translate([0,(1/sqrt(3))*(Fat_beam_width+2*wall_th) + (0)*r1,0])
+          rotate([0,0,-15])
+            translate([-sink1,sink1,0])
+              rotate([0,0,90])
+                inner_round_corner(r1/(1-cos(a1/2+45)-(1-sin(a1/2+45))),
+                                   Fat_beam_width+2*wall_th+2, a1, 0.4, $fn=100);
       }
-    // Slanting the inside
-    ang = 8.5;
-    lift = h-2.25;
-    inwards = wall_th+0.25;
-    for(i=[0,1]){
-      y_tr = (i == 1) ? Beam_width+2*wall_th-inwards : inwards;
-      translate([-1,y_tr,lift])
-        rotate([ang*(2*i-1),0,0]){
-          mirror([0,i,0])
-          translate([0,0,-1])
-          cube([10,wall_th,30]);
-          translate([l-2*wall_th,0,-1])
-            mirror([0,i,0])
-            cube([10,wall_th,30]);
-        }
     }
-    // Screw holes
-    translate([l/2, -1, h/2])
-      rotate([-90,0,0])
-      cylinder(d=3.2, h=2*(Fat_beam_width + wall_th) + 2, $fs=1);
-    translate([l/3, -1, h + 4])
-      rotate([-90,0,0])
-      cylinder(d=3.2, h=2*(Fat_beam_width + wall_th) + 2, $fs=1);
-    translate([0,0,h])
-      rotate([0,30,0])
-      translate([h/2, -1, l2-h/2])
-      rotate([-90,0,0])
-      cylinder(d=3.2, h=2*(Fat_beam_width + wall_th) + 2, $fs=1);
+    scrw_fr_edg = 5;
+    antibalk();
+    rot_move()
+      antibalk();
+    for(y=[scrw_fr_edg, l0-scrw_fr_edg])
+      translate([-1, y, Fat_beam_width+2*wall_th+2-2.5])
+        rotate([0,90,0])
+          cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2);
+    for(y=[l1 - scrw_fr_edg, (Fat_beam_width+2*wall_th)/2 + scrw_fr_edg])
+      rot_move()
+        translate([-1, y, Fat_beam_width+2*wall_th+2-2.5])
+          rotate([0,90,0])
+            cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2);
+    rot_move()
+      translate([Fat_beam_width/2, (Fat_beam_width)*(1/sqrt(6)), wall_th*2])
+      cube([Fat_beam_width+2*wall_th+2, 2, 100]);
   }
 }
 
