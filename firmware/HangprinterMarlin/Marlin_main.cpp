@@ -1228,12 +1228,6 @@ void process_commands(){
             calculate_volumetric_multipliers();
           }
           break;
-
-
-
-
-
-
           case 201: // M201 // max_acceleration_units_per_sq_second is defined per abcd axis, so axis_codes ABCD here
           for(int8_t i=0; i < NUM_AXIS; i++){
             if(code_seen(axis_codes[i])){
@@ -1538,7 +1532,6 @@ void process_commands(){
   }
 
   void FlushSerialRequestResend(){
-    //char cmdbuffer[bufindr][100]="Resend:";
     MYSERIAL.flush();
     SERIAL_PROTOCOLPGM(MSG_RESEND);
     SERIAL_PROTOCOLLN(gcode_LastN + 1);
@@ -1560,14 +1553,6 @@ void process_commands(){
       next_feedrate = code_value();
       if(next_feedrate > 0.0) feedrate = next_feedrate;
     }
-    //SERIAL_ECHO("destination[0]: ");
-    //SERIAL_ECHOLN(destination[0]);
-    //SERIAL_ECHO("destination[1]: ");
-    //SERIAL_ECHOLN(destination[1]);
-    //SERIAL_ECHO("destination[2]: ");
-    //SERIAL_ECHOLN(destination[2]);
-    //SERIAL_ECHO("destination[3]: ");
-    //SERIAL_ECHOLN(destination[3]);
   }
 
   void get_arc_coordinates(){
@@ -1592,18 +1577,6 @@ void process_commands(){
     }
   }
 
-#if defined(DELTA) && !defined(HANGPRINTER) // Not available for HANGPRINTER
-  void recalc_delta_settings(float radius, float diagonal_rod){
-    delta_tower1_x= -SIN_60*radius; // front left tower
-    delta_tower1_y= -COS_60*radius;
-    delta_tower2_x=  SIN_60*radius; // front right tower
-    delta_tower2_y= -COS_60*radius;
-    delta_tower3_x= 0.0;                  // back middle tower
-    delta_tower3_y= radius;
-    delta_diagonal_rod_2= sq(diagonal_rod);
-  }
-#endif
-
 // array destination[3] filled with absolute coordinates is fed into this. tobben 20. may 2015
   void calculate_line_lengths(float cartesian[3], float line_lengths[4])
   {
@@ -1611,39 +1584,17 @@ void process_commands(){
     // Geometry of hangprinter makes sq(anchor_ABC_Z - carthesian[Z_AXIS]) the smallest term in the sum.
     // Starting sum with smallest number givest smallest roundoff error.
     line_lengths[A_AXIS] = sqrt(sq(anchor_A_z - cartesian[Z_AXIS])
-                       + sq(anchor_A_y - cartesian[Y_AXIS])
-                       + sq(anchor_A_x - cartesian[X_AXIS]));
+                              + sq(anchor_A_y - cartesian[Y_AXIS])
+                              + sq(anchor_A_x - cartesian[X_AXIS]));
     line_lengths[B_AXIS] = sqrt(sq(anchor_B_z - cartesian[Z_AXIS])
-                       + sq(anchor_B_y - cartesian[Y_AXIS])
-                       + sq(anchor_B_x - cartesian[X_AXIS]));
-    //SERIAL_ECHOLN("anchor_C_x");
-    //SERIAL_ECHOLN(anchor_C_x);
-    //SERIAL_ECHOLN("anchor_C_y");
-    //SERIAL_ECHOLN(anchor_C_y);
-    //SERIAL_ECHOLN("anchor_C_z");
-    //SERIAL_ECHOLN(anchor_C_z);
-    //SERIAL_ECHOLN("cartesian[X_AXIS]");
-    //SERIAL_ECHOLN(cartesian[X_AXIS]);
-    //SERIAL_ECHOLN("cartesian[Y_AXIS]");
-    //SERIAL_ECHOLN(cartesian[Y_AXIS]);
-    //SERIAL_ECHOLN("cartesian[Z_AXIS]");
-    //SERIAL_ECHOLN(cartesian[Z_AXIS]);
+                              + sq(anchor_B_y - cartesian[Y_AXIS])
+                              + sq(anchor_B_x - cartesian[X_AXIS]));
     line_lengths[C_AXIS] = sqrt(sq(anchor_C_z - cartesian[Z_AXIS])
-                       + sq(anchor_C_y - cartesian[Y_AXIS])
-                       + sq(anchor_C_x - cartesian[X_AXIS]));
+                              + sq(anchor_C_y - cartesian[Y_AXIS])
+                              + sq(anchor_C_x - cartesian[X_AXIS]));
     line_lengths[D_AXIS] = sqrt(sq(             cartesian[X_AXIS])
-                       + sq(             cartesian[Y_AXIS])
-                       + sq(anchor_D_z - cartesian[Z_AXIS]));
-
-    //SERIAL_ECHOPGM(" x="); SERIAL_ECHOLN(cartesian[X_AXIS]);
-    //SERIAL_ECHOPGM(" y="); SERIAL_ECHOLN(cartesian[Y_AXIS]);
-    //SERIAL_ECHOPGM(" z="); SERIAL_ECHOLN(cartesian[Z_AXIS]);
-
-    //SERIAL_ECHOPGM(" a="); SERIAL_ECHOLN(line_lengths[A_AXIS]);
-    //SERIAL_ECHOPGM(" b="); SERIAL_ECHOLN(line_lengths[B_AXIS]);
-    //SERIAL_ECHOPGM(" c="); SERIAL_ECHOLN(line_lengths[C_AXIS]);
-    //SERIAL_ECHOPGM(" d="); SERIAL_ECHOLN(line_lengths[D_AXIS]);
-
+                              + sq(             cartesian[Y_AXIS])
+                              + sq(anchor_D_z - cartesian[Z_AXIS]));
   }
 
   void prepare_move(){
