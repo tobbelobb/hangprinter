@@ -86,6 +86,19 @@ module right_rounded_cube2(v, r){
   }
 }
 
+//three_rounded_cube2([20,30,2], 2);
+module three_rounded_cube2(v, r){
+  $fs = 1;
+  union(){
+    translate([0,0,0])          cube([v[0]-  r, v[1]-r    , v[2]]);
+    translate([r,0,0])           cube([v[0]-2*r, v[1]    , v[2]]);
+    translate([0,r,0])           cube([v[0]    , v[1]-2*r, v[2]]);
+    translate([v[0]-r,r,0])      cylinder(h=v[2], r=r);
+    translate([v[0]-r,v[1]-r,0]) cylinder(h=v[2], r=r);
+    translate([r,v[1]-r,0])      cylinder(h=v[2], r=r);
+  }
+}
+
 module rounded_square(v, r){
   union(){
     translate([r,0])           square([v[0]-2*r, v[1]]);
