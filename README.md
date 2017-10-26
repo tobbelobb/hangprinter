@@ -4,7 +4,6 @@ Hangprinter ![Hangprinter logo](https://vitana.se/opr3d/tbear/bilder/logo_blue_5
 This is the main dev branch of Hangprinter v3.3.
 Read [blog](http://vitana.se/opr3d/tbear) to stay up to date with what happens here.
 
-
 Bill of Materials
 ----------------
 
@@ -40,6 +39,7 @@ Bill of Materials
     * 10 cm PTFE tube (standard bowden, 4 mm outer dia, >1.75 mm inner dia)
     * More than 20 self tapping wooden screws, length 10 - 20 mm, width ca 4 mm
     * 5 m of 15-lead ribbon wire
+    * Nuts and washers for all screws
     * Extruder + hot end (any setup that fits Nema17 mount will work)
     * Mechaduino optional addon
       * 4 x Mechaduino PCB
