@@ -13,7 +13,7 @@ translate([-10,0,0]) mirror([1,0,0]) beam_clamp();
 beam_clamp();
 module beam_clamp(){
   wall_th = Wall_th;
-  l0 = 43;
+  l0 = 46;
   l1 = 35;
   edges = 0.625;
   opening_width = Fat_beam_width - 2*edges;
@@ -67,7 +67,7 @@ module beam_clamp(){
       translate([-1, y, Fat_beam_width+2*wall_th+2-2.5])
         rotate([0,90,0])
           cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2);
-    for(y=[l1 - scrw_fr_edg, (Fat_beam_width+2*wall_th)/2 + scrw_fr_edg])
+    for(y=[l1 - scrw_fr_edg, (Fat_beam_width+2*wall_th)/2 + scrw_fr_edg + 3])
       rot_move()
         translate([-1, y, Fat_beam_width+2*wall_th+2-2.5])
           rotate([0,90,0])
