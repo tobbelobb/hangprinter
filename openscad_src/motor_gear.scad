@@ -26,10 +26,13 @@ module motor_gear(){
       translate([0,0,gear_height])
         cylinder(r=Motor_outer_radius, h=7);
     }
-    translate([0,0,-1])
-      D_shaft(37);
-    translate([0,Nema17_shaft_radius+0.5,gear_height])
-      nutlock();
+    for(k=[0,120,240])
+      rotate([0,0,k]){
+        translate([0,0,-1])
+          D_shaft(37);
+        translate([0,Nema17_shaft_radius+0.5,gear_height])
+          nutlock();
+      }
 
     // Cut bottom to avoid problems with elephant foot
     translate([0,0,-0.3])
