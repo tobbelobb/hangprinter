@@ -12,6 +12,7 @@ motor_gear();
 module motor_gear(){
 
   gear_height = Gear_height + 1; //Want extra millimeter to avoid first- and last layer problems.
+  foot_height = 7;
   module half(){
     my_gear(Motor_teeth, gear_height/2+0.1, Circular_pitch, fac=-1, slices = 2*gear_height);
   }
@@ -24,15 +25,18 @@ module motor_gear(){
           half();
       }
       translate([0,0,gear_height])
-        cylinder(r=Motor_outer_radius, h=7);
+        cylinder(r=Motor_outer_radius, h=foot_height);
     }
+
+    translate([0,0,-1])
+      D_shaft(37);
     for(k=[0,120,240])
       rotate([0,0,k]){
-        translate([0,0,-1])
-          D_shaft(37);
         translate([0,Nema17_shaft_radius+0.5,gear_height])
           nutlock();
       }
+    translate([0,0,gear_height+foot_height-1])
+      cylinder(r1=2.5, r2=4, h=3);
 
     // Cut bottom to avoid problems with elephant foot
     translate([0,0,-0.3])
