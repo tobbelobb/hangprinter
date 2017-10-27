@@ -4,9 +4,9 @@ use <util.scad>
 
 corner_clamp();
 module corner_clamp(){
-  wall_th = Wall_th;
+  wall_th = Wall_th+0.2; // A tad thicker since flex is very unwanted in this piece
   rad_b = 4;
-  a = 12;
+  a = 13;
   b = Fat_beam_width+wall_th+2-a/2;
   l0 = 40;
   l1 = (Fat_beam_width+2*wall_th)*2*sqrt(3);
@@ -53,7 +53,7 @@ module corner_clamp(){
             cube([Fat_beam_width, l0+a+2, Fat_beam_width]);
           translate([-opening_width-wall_th-edges, -l0+4, wall_th])
             cube([opening_width, l0+a+2, Fat_beam_width+20]);
-          for(y=[-scrw_fr_edg-4, -l0+(wall_th+edges)*sqrt(3)+scrw_fr_edg])
+          for(y=[-scrw_fr_edg-5.5, -l0+(wall_th+edges)*sqrt(3)+scrw_fr_edg])
           translate([0,0,Fat_beam_width+2*wall_th+2-2.5])
             rotate([0,-90,0])
               translate([0,y,-1])
@@ -62,6 +62,13 @@ module corner_clamp(){
     translate([0,l0-2*rad_b,-1])
       cylinder(d=2, h=wall_th+2, $fn=10);
 
+
+    translate([0,0,-0.5])
+    linear_extrude(height=1)
+      scale(0.15)
+      mirror([1,0])
+      translate([-150.3,-114])
+      import("logo.dxf");
 
   }
 }
