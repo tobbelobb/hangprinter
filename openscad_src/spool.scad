@@ -18,7 +18,7 @@ module spool(){
   difference(){
     union(){
       // Edge to keep line in place
-      cylinder(r = Spool_outer_radius-3, h = 1, $fn=100);
+      cylinder(r = Spool_outer_radius-6, h = 1, $fn=100);
       cylinder(r = Spool_r, h = Spool_height+1, $fn=100);
       translate([0,0,Spool_height+1-0.4]) // Sink 0.4 mm back to make extra space for torx
         torx(h=Torx_depth, female=false);
