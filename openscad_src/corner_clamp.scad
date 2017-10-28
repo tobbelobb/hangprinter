@@ -18,10 +18,6 @@ module corner_clamp(){
       translate([-l1/2,-l1/sqrt(12),0])
       linear_extrude(height=wall_th)
         polygon(points = my_rounded_eqtri(l1,rad_b,5));
-      //translate([0,-(l0-10)/2,0])
-      //  rotate([0,0,-30])
-      //    linear_extrude(height=wall_th)
-      //      circle(d=l0-10, $fn=3);
       difference(){
         for(k=[0,1])
           mirror([k,0,0])
@@ -43,7 +39,9 @@ module corner_clamp(){
             }
           }
       }
-
+      translate([0,-sqrt(2)/sqrt(5),wall_th])
+        rotate([0,0,-90-45])
+        inner_round_corner(1,Fat_beam_width+wall_th+2,120,1.0, $fn=4*8);
     }
     scrw_fr_edg = 6;
     for(k=[0,1])
@@ -70,5 +68,34 @@ module corner_clamp(){
       translate([-150.3,-114])
       import("logo.dxf");
 
+    d_hole_r = 1.5;
+    translate([0,-6,2+wall_th/2])
+      rotate([-90,0,0]){
+        translate([0,0,l0/2-0.01])
+          cylinder(r1=d_hole_r+0.01, r2=0.5, h=2,$fn=20);
+        cylinder(r=d_hole_r, h=l0/2,$fn=20);
+        translate([0,0,-2+0.01])
+          cylinder(r2=d_hole_r+0.01, r1=0.5, h=2,$fn=20);
+      }
+    fillet_r = 2.5;
+    translate([0,(wall_th+edges-fillet_r)*2,0]){
+      rotate([0,0,-90-45])
+        translate([-fillet_r, -fillet_r,wall_th])
+          translate([fillet_r*(1-cos(15)),fillet_r*(1-cos(15)),0])
+            inner_round_corner(fillet_r,30,120,2, $fn=4*8);
+    }
   }
+  extrabalk_r = 4;
+
+  translate([0,((l0-2*rad_b)+(l0/2-6))/2,0])
+    rotate([0,90,0])
+      scale([1,(((l0-2*rad_b)+(l0/2-6))/5)/extrabalk_r,1]){
+        difference(){
+          cylinder(r=extrabalk_r,   h=4, center=true);
+          cylinder(r=extrabalk_r+1, h=1, center=true);
+          translate([-wall_th/2, -15, -15])
+            cube(30);
+        }
+      }
+
 }
