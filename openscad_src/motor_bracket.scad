@@ -121,16 +121,18 @@ module motor_bracket(){
     translate([0,0,50+cw/2])
       cube(100, center=true);
 
+    screw_head_extra_h = 12;
+    screw_head_extra_r = 2;
     for(k=[0,1])
       mirror([k,0,0]){
         translate([cd/2-wall_th,-bd+wall_th,-cw/2])
           rotate([90,0,0])
           translate([flerp-flerp/2+1,flerp/2,-1])
           rotate([0,0,90]){
-            translate([0,0,-10])
-              cylinder(r1=5.0, r2=6.6, h=11);
-            translate([flerp_h-2*flerp/2,0,-10])
-              cylinder(r1=5.0, r2=6.6, h=11);
+            translate([0,0,-screw_head_extra_h+1])
+              cylinder(r1=5.0, r2=5+screw_head_extra_r, h=screw_head_extra_h);
+            translate([flerp_h-2*flerp/2,0,-screw_head_extra_h+1])
+              cylinder(r1=5.0, r2=5+screw_head_extra_r, h=screw_head_extra_h);
             cylinder(r=2.5, h=wall_th+2);
           }
       }
