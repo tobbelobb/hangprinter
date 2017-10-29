@@ -12,6 +12,7 @@ module corner_clamp(){
   l1 = (Fat_beam_width+2*wall_th)*2*sqrt(3);
   edges = 0.625;
   opening_width = Fat_beam_width - 2*edges;
+  d_hole_l = l0/2+2;
 
   difference(){
     union(){
@@ -71,11 +72,14 @@ module corner_clamp(){
     d_hole_r = 1.5;
     translate([0,-6,2+wall_th/2])
       rotate([-90,0,0]){
-        translate([0,0,l0/2-0.01])
-          cylinder(r1=d_hole_r+0.01, r2=0.5, h=2,$fn=20);
-        cylinder(r=d_hole_r, h=l0/2,$fn=20);
+        translate([0,0,d_hole_l-0.01])
+            rotate([0,0,45])
+          cylinder(r1=d_hole_r+0.01, r2=0.5, h=2,$fn=40);
+            rotate([0,0,45])
+        cylinder(r=d_hole_r, h=d_hole_l,$fn=40);
         translate([0,0,-2+0.01])
-          cylinder(r2=d_hole_r+0.01, r1=0.5, h=2,$fn=20);
+            rotate([0,0,45])
+          cylinder(r2=d_hole_r+0.01, r1=0.5, h=2,$fn=40);
       }
     fillet_r = 2.5;
     translate([0,(wall_th+edges-fillet_r)*2,0]){
@@ -85,17 +89,19 @@ module corner_clamp(){
             inner_round_corner(fillet_r,30,120,2, $fn=4*8);
     }
   }
-  extrabalk_r = 4;
 
-  translate([0,((l0-2*rad_b)+(l0/2-6))/2,0])
-    rotate([0,90,0])
-      scale([1,(((l0-2*rad_b)+(l0/2-6))/5)/extrabalk_r,1]){
+  // Channel to guide D-line and stiffen up corner
+  channel_l = ((l0-2*rad_b)+(d_hole_l-6))/4;
+  channel_r1 = 1;
+  channel_r2 = 2.5;
+  translate([0,((l0-2*rad_b)+(d_hole_l-6))/2,wall_th])
+    rotate([90,0,0])
         difference(){
-          cylinder(r=extrabalk_r,   h=4, center=true);
-          cylinder(r=extrabalk_r+1, h=1, center=true);
-          translate([-wall_th/2, -15, -15])
-            cube(30);
+          rotate([90,0,0])
+            translate([-channel_r2, -channel_l/2, -channel_r2])
+              rounded_cube2([2*channel_r2, channel_l, 2*channel_r2], 1, $fn=4*4);
+          rotate([90,0,0])
+            translate([-channel_r1, -channel_l/2-1, -channel_r1-0.5])
+             cube([2*channel_r1, channel_l+2, 2*channel_r1]);
         }
-      }
-
 }
