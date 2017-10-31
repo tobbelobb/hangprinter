@@ -40,7 +40,7 @@ module beam_slider2(){
     difference(){
       union(){
         sweep(my_sq([h, wall_th]),
-          [for(i=[0.2:0.3:w+extra_length])
+          [for(i=[0.2:0.3:w+extra_length-1])
             translation([w/2+extra_length-i,
             // Bend arm outwards, following a log graph
             -w/2 - 1.5*(log(1+w+extra_length) - log(1+i)), 0])
@@ -63,16 +63,17 @@ module beam_slider2(){
   mirror([0,1,0])
     arm();
   translate([-wall_th-Beam_width/2,-w/2,0])
-    cube([wall_th, w, h]);
+    rounded_cube2([wall_th, w, h],1,$fn=4*4);
   // Hooks for line
   hook_h = 6;
   module hook(ang=2){
-    translate([-2.5/2,w/2,0])
-      cube([2.5, 2.5, h]);
+    translate([-2.5/2,w/2-1,h-1])
+      rotate([-90,0,0])
+      rounded_cube2([2.5, h-1, 2.5+2],0.8,$fn=4*4);
     translate([0,2+w/2+2.5/2,0])
       rotate([0,0,ang])
       translate([-hook_h/2,-2.5/2,0])
-      cube([hook_h, 2.5, h]);
+      rounded_cube([hook_h, 2.5, h],1,$fn=4*3);
   }
   rotate([0,0,90])
     hook(0);
