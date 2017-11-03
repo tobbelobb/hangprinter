@@ -166,6 +166,17 @@ module mover(){
     rotate([180,0,k+180]){
       translate([-reduced_sidelength/2,-sidelength/sqrt(12)-sqrt(3), +Wall_th+0.3]){
         cube([reduced_sidelength, Beam_width, Beam_width]);
+        for(p=[0.3*reduced_sidelength, 0.69*reduced_sidelength])
+          translate([p, Beam_width/2,Beam_width/2])
+            rotate([0,90,0])
+              rotate([0,0,180])
+                color(color1, color1_alpha)
+                  if(stls){
+                    import("../openscad_stl/beam_slider.stl");
+                  } else {
+                    beam_slider();
+                  }
+
       }
       translate([0,-40+2*4 + sidelength/sqrt(3),0])
         color(color1, color1_alpha)
@@ -182,7 +193,7 @@ module mover(){
           translate([35,-sidelength/sqrt(12)-sqrt(3) - Wall_th+0.1, +0.35])
             rotate([0,0,90]){
               color(color1, color1_alpha)
-                if(false){
+                if(false){ // difference of stl always renders badly
                   difference(){
                     import("../openscad_stl/beam_clamp.stl");
                     translate([-101,-1,-1])
@@ -193,8 +204,20 @@ module mover(){
                 }
                 if(k==0){
                   rotate([0,0,30])
-                    translate([31,Wall_th,Wall_th-0.03])
+                    translate([31,Wall_th,Wall_th-0.03]){
                       cube([sidelength/2.3,Beam_width, Beam_width]);
+                      rotate([-90,0,90])
+                        translate([-Wall_th,
+                                   -Wall_th-Beam_width,
+                                   -(sidelength/2.3)/2-(Nema17_cube_width+1+2*Wall_th)/2])
+                          color(color1, color1_alpha)
+                            if(stls){
+                              import("../openscad_stl/extruder_holder.stl");
+                            } else {
+                              extruder_holder();
+                            }
+                    }
+
                 }
             }
 }
