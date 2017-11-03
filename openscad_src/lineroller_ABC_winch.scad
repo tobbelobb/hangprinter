@@ -49,8 +49,7 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
     f = 2.5; // extra x-length for swung wall
     w = Bearing_r*2+2*Bearing_wall;
 
-    //q = 0.879;
-    q = 4.0;
+    q = 3.9;
     round_part = 0.65;
     // Main block
     r2 = Bearing_bore_r+1.3;
