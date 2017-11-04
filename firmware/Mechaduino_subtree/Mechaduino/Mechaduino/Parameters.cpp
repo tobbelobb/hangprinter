@@ -37,7 +37,7 @@ volatile float vLPFb = (1.0-vLPFa)* Fs * 0.16666667;
 const int spr = 200;                // 200 steps per revolution  -- for 400 step/rev, you should only need to edit this value
 const float aps = 360.0/ spr;       // angle per step
 int cpr = 16384;                    // counts per rev
-const float stepangle = aps/32.0;   // for step/dir interrupt: aps/32 is the equivalent of 1/32 microsteps
+const float stepangle = aps/16.0;   // for step/dir interrupt: aps/16 is the equivalent of 1/16 microsteps
 
 volatile float PA = aps;            // Phase advance...aps = 1.8 for 200 steps per rev, 0.9 for 400
 
