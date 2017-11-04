@@ -39,8 +39,9 @@ function foot_shape(r, e, f, w) = concat([
 
 function wall_shape(a, w, extr) = 1 - (sin(a*90))*extr/((w/2)+extr); // a 0 -> 1
 
+// TODO: Remove tower_flerp. Guess it can be replaced with something q
 lineroller_ABC_winch(edge_start=35, edge_stop = 180-35);
-module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, tower_flerp = Tower_flerp){
+module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, tower_flerp = Tower_flerp, bearing_width=Bearing_width){
 
   module wall(){
     // Foot parameters
@@ -54,7 +55,7 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
     // Main block
     r2 = Bearing_bore_r+1.3;
     foot_shape_r = 1.0;
-    translate([0, -(Bearing_width + 2*Wall_th)/2, 0])
+    translate([0, -(bearing_width + 2*Wall_th)/2, 0])
       rotate([-90,-90,0]){
         difference(){
           union(){
@@ -92,7 +93,7 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
     b= 0.5;
     rot_r = Bearing_r+b;
     difference(){
-      translate([Bearing_r+Bearing_wall, -Bearing_width/2-0.8, tower_flerp - Bearing_wall])
+      translate([Bearing_r+Bearing_wall, -bearing_width/2-0.8, tower_flerp - Bearing_wall])
         sweep([[0,0], [0,-0.5], [b+a, -0.5], [b+a,0], [b, a], [0, a]],
             [for (ang=[edge_start+0.01:((edge_stop-edge_start)-0.03)/100:edge_stop-0.01])
             rotation([0,ang,0])
