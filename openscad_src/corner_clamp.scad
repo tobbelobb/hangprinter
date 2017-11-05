@@ -58,7 +58,7 @@ module corner_clamp(){
                 cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2, $fn=10);
         }
     translate([0,l0-2*rad_b,-1])
-      cylinder(d=2, h=wall_th+2, $fn=10);
+      cylinder(d=2.5, h=wall_th+2, $fn=10);
 
 
     translate([0,0,-0.5])
@@ -98,7 +98,7 @@ module corner_clamp(){
         difference(){
           rotate([90,0,0])
             translate([-channel_r2, -channel_l/2, -channel_r2])
-              rounded_cube2([2*channel_r2, channel_l, 2*channel_r2], 1, $fn=4*4);
+              rounded_cube2([2*channel_r2, channel_l, channel_r2+0.1], 1, $fn=4*4);
           rotate([90,0,0])
             translate([-channel_r1, -channel_l/2-1, -channel_r1-0.5])
              cube([2*channel_r1, channel_l+2, 2*channel_r1]);
