@@ -52,10 +52,9 @@ module corner_clamp(){
             cube([Fat_beam_width, l0+a+2, Fat_beam_width]);
           translate([-opening_width-wall_th-edges, -l0+4, wall_th])
             cube([opening_width, l0+a+2, Fat_beam_width+20]);
-          for(y=[-scrw_fr_edg-5.5, -l0+(wall_th+edges)*sqrt(3)+scrw_fr_edg])
-          translate([0,0,Fat_beam_width+2*wall_th+2-2.5])
+          translate([0,0,Fat_beam_width+2*wall_th+2-3])
             rotate([0,-90,0])
-              translate([0,y,-1])
+              translate([0,-l0+(wall_th+edges)*sqrt(3)+scrw_fr_edg,-1])
                 cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2, $fn=10);
         }
     translate([0,l0-2*rad_b,-1])

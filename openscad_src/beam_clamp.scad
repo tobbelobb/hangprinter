@@ -64,14 +64,13 @@ module beam_clamp(){
     rot_move()
       antibalk();
     for(y=[scrw_fr_edg, l0-scrw_fr_edg])
-      translate([-1, y, Fat_beam_width+2*wall_th+2-2.5])
+      translate([-1, y, Fat_beam_width+2*wall_th+2-3])
         rotate([0,90,0])
-          cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2);
-    for(y=[l1 - scrw_fr_edg, (Fat_beam_width+2*wall_th)/2 + scrw_fr_edg + 3])
-      rot_move()
-        translate([-1, y, Fat_beam_width+2*wall_th+2-2.5])
-          rotate([0,90,0])
-            cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2);
+          cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2, $fn=10);
+    rot_move()
+      translate([-1, l1 - scrw_fr_edg, Fat_beam_width+2*wall_th+2-3])
+        rotate([0,90,0])
+          cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2, $fn=10);
     rot_move()
       translate([Fat_beam_width/2, (Fat_beam_width)*(1/sqrt(6)), wall_th*2])
       cube([Fat_beam_width+2*wall_th+2, 2, 100]);
