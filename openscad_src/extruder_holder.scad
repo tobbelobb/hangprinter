@@ -8,7 +8,6 @@ module prev_art(){
 }
 
 cw = Nema17_cube_width; // For brevity...
-flerp = 7.2;
 wiggle = 0.54;
 r_little = 3;
 block_height = Beam_width+2*Wall_th;
@@ -26,13 +25,13 @@ module extruder_holder(){
     translate([0,-cw,0])
       rotate([90,0,90])
       linear_extrude(height=block_height, slices=1)
-      rounded_2corner([cw + wiggle + 2*Wall_th + Fat_beam_width + flerp,
+      rounded_2corner([cw + Wall_th + Fat_beam_width + 2 + Wall_th,
           block_depth],
           r_little);
     translate([(Fat_beam_width+Beam_width)/2+Wall_th-edges,0,0])
     rotate([90,0,90])
       linear_extrude(height=Wall_th+edges-(Fat_beam_width-Beam_width)/2, slices=1)
-      rounded_2corner([wiggle + 2*Wall_th + Fat_beam_width + flerp + cable_clamp_ex_l,
+      rounded_2corner([2*Wall_th + Fat_beam_width + cable_clamp_ex_l,
           block_depth],
           r_little);
   }
@@ -56,20 +55,20 @@ module extruder_holder(){
       }
     translate([Wall_th-Wiggle/2, Wall_th-Wiggle/2, -1])
       fat_beam(block_depth+2, standing=true);
-    translate([(Wall_th-Wiggle/2)+opening_width/2+edges, Fat_beam_width/2+Wall_th+flerp+1, -1])
-      cube([opening_width, Fat_beam_width+2*flerp, 2*block_depth+3], center=true);
+    translate([(Wall_th-Wiggle/2)+opening_width/2+edges, Fat_beam_width+Wall_th, -1])
+      cube([opening_width, Fat_beam_width*1.5, 2*block_depth+3], center=true);
     // Holes for clamping screws
     for(i=[8,block_depth-8])
-      translate([0,Fat_beam_width+2*Wall_th+wiggle+flerp - 4,i])
+      translate([0,Fat_beam_width+2*Wall_th+2-3,i])
         rotate([0,90,0]){
           translate([0,0,-1])
             cylinder(d=3.1, h=block_height+2, $fs=1);
         }
     // For cable holder screws
     for(i=[cable_clamp_o,block_depth-cable_clamp_o])
-      translate([0,Fat_beam_width+2*Wall_th+wiggle+flerp+cable_clamp_ex_l - 4,i])
+      translate([0,Fat_beam_width+2*Wall_th+cable_clamp_ex_l-3,i])
         rotate([0,90,0])
-        cylinder(d=3.1, h=4*Beam_width, $fs=1, center=true);
+        cylinder(d=3.1, h=4*Beam_width, $fn=10, center=true);
   }
 }
 
@@ -79,12 +78,12 @@ Flat_cable_clamper();
 module Flat_cable_clamper(){
   difference(){
     linear_extrude(height=Wall_th, slices=1)
-      rounded_2corner([flerp,
+      rounded_2corner([6,
           block_depth],
           r_little);
     for(i=[cable_clamp_o,block_depth-cable_clamp_o])
-      translate([flerp-4,i,0])
-        cylinder(d=3.1, h=block_height+2, $fs=1, center=true);
+      translate([3,i,0])
+        cylinder(d=3.1, h=block_height+2, $fn=10, center=true);
   }
 }
 
