@@ -16,3 +16,5 @@ Nema17_shaft_radius        = 5/2;
 
 b608_outer_dia = 22.2;
 b608_width = 7.05;
+
+Gap_between_sandwich_and_plate = 1.7;

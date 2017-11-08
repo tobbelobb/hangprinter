@@ -16,8 +16,7 @@ head_r = 3.5;
 screw_r = 1.5;
 screw_head_h = 2;
 screw_h = 2;
-tower_flerp = 18;
-tower_h = Bearing_r + tower_flerp;
+tower_h = 17 + Bearing_r;
 x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screws
 y_extra = -2.0; // For the two "wings" with tracks for screws
 
@@ -27,10 +26,9 @@ translate([0,-Depth_of_lineroller_base-5,0])
 lineroller_anchor();
 module lineroller_anchor(){
   // Module lineroller_ABC_winch() defined in lineroller_ABC_winch.scad
-  lineroller_ABC_winch(edge_start=35, edge_stop=90,
+  lineroller_ABC_winch(edge_start=40, edge_stop=90,
                        base_th = base_th,
-                       tower_h = tower_h,
-                       tower_flerp=tower_flerp);
+                       tower_h = tower_h);
 
   module slot_for_countersunk_screw(len){
     translate([-x_len, -Depth_of_lineroller_base/2, 0]){
@@ -95,7 +93,7 @@ module lineroller_anchor(){
 
   ptfe_guide();
   module ptfe_guide(){
-    line_z = tower_h-Bearing_wall-Bearing_r-Bearing_small_r;
+    line_z = tower_h-Bearing_r-Bearing_small_r;
     length = 9;
     width = (Ptfe_r+2)*2;
     difference(){
@@ -103,7 +101,6 @@ module lineroller_anchor(){
         translate([-x_len+length/2,0,base_th-0.1])
           linear_extrude(height=line_z-base_th+0.1, scale=[1,width/Depth_of_lineroller_base])
             square([length, Depth_of_lineroller_base], center=true);
-          //cube([length, width, line_z-base_th+0.1]);
         translate([-x_len,-width/2,base_th-0.1])
           translate([0, width/2, line_z-base_th+0.1])
             rotate([0,90,0])

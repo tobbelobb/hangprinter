@@ -20,8 +20,6 @@ ANCHOR_D_Z = 1000;
 sidelength = 380; // The distance between the two action points on the mover
 ext_sidelength = sidelength+73;
 
-sandwich_gap = 0.7;
-
 color0 = "sandybrown";
 color0_alpha = 0.55;
 color1 = [0.14,0.16,0.90];
@@ -56,7 +54,7 @@ module placed_lineroller_D(angs=[-73,68,0]){
             }
 }
 
-//translate([0,0,sandwich_gap])
+//translate([0,0,Gap_between_sandwich_and_plate])
 //sandwich();
 module sandwich(){
   color(color2, color2_alpha)
@@ -78,12 +76,12 @@ module sandwich(){
 
 //winch_unit(l=295, motor_a=-12, a=-6.6, lines=3);
 module winch_unit(l=[100,100,100], a=90, motor_a=0, with_motor=true, lines=1, angs=[0,120,240]){
-  translate([0,0,sandwich_gap])
+  translate([0,0,Gap_between_sandwich_and_plate])
     sandwich();
   rotate([0,0,motor_a])
     translate([0,Motor_pitch+Spool_pitch,0]){
       rotate([0,0,18])
-        translate([0,0,sandwich_gap-0.5]) // 0.5 since motor gear is 1 mm higher than spool gear
+        translate([0,0,Gap_between_sandwich_and_plate-0.5]) // 0.5 since motor gear is 1 mm higher than spool gear
           color(color1, color1_alpha+0.1)
           if(stls){
             import("../openscad_stl/motor_gear.stl");
@@ -104,7 +102,7 @@ module winch_unit(l=[100,100,100], a=90, motor_a=0, with_motor=true, lines=1, an
           }
       }
     }
-  translate([0,0,Gear_height+Spool_height/2])
+  translate([0,0,Gear_height+Spool_height/2+Gap_between_sandwich_and_plate])
     for(i=[1:lines])
       rotate([0,0,angs[i-1]])
         translate([Spool_r,0,0])
