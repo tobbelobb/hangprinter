@@ -8,18 +8,19 @@ Bill of Materials
 ----------------
 
   * Printed parts
-    * Beam clamp x 2
-    * Beam slider x 6
-    * Corner clamp x 3
-    * Extruder holder x 1
-    * Lineroller ABC winch x 3
+    * Beam Clamp x 2
+    * Beam Slider x 6
+    * Corner Clamp x 3
+    * Extruder Holder x 1
+    * Lineroller ABC Winch x 3
     * Lineroller D x 3
     * Lineroller Anchor x 6
-    * Motor bracket x 4
-    * Motor gear x 4
+    * Motor Bracket x 4
+    * Motor Gear x 4
     * Spool x 4
     * Spool Gear x 4
     * Spacer x 4
+    * Cable Clamp x ca 1
   * Vitamins
     * 5 x Nema17 steppers (> 40 N/cm holding torque, flat shaft)
     * 60 m FireLine 0.5 mm
