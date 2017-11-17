@@ -31,6 +31,12 @@
 #include <SPI.h>
 #endif
 
+#if defined(HAVE_TMC2130)
+#include "Configuration.h"
+#include <SPI.h>
+#include <TMC2130Stepper.h>
+#endif //defined(HAVE_TMC2130)
+
 
 //===========================================================================
 //=============================public variables  ============================
@@ -516,10 +522,85 @@ ISR(TIMER1_COMPA_vect)
   }
 }
 
+#if defined(HAVE_TMC2130)
+// Stepper objects of TMC2310 steppers used
+TMC2130Stepper stepperA(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, X_CHIP_SELECT);
+
+//TODO:  Seems weird to be using st.setCurrent when we can't set current
+//       max_current isn't used...
+void tmc2130_init(TMC2130Stepper &st, const uint16_t microsteps, const uint16_t maxcurrent){
+  // TODO: HOLD_MULTIPLIER does no difference at all...
+  // Set the max current (Seems like this is done with the potmeter)
+  //
+  // Enable spreadCycle
+  // Enable coolStep
+  //
+  // Learn how to get "torque mode" dcStep? direct_mode?
+  // Can "passive breaking" or "freewheeling" be used when dragging mover down from ceiling?
+  // M906 A1 sure works...
+  //
+  // Would really want to find the perfect bitmasks and just
+	// GCONF(GCONF_perfect);
+	// CHOPCONF(CHOPCONF_perfect);
+	// COOLCONF(COOLCONF_perfect);
+	// PWMCONF(PWMCONF_perfect);
+	// IHOLD_IRUN(IHOLD_IRUN_perfect);
+  //
+  //
+  st.begin(); // sets blank_time(24)
+  //st.toff(8); // toff set like this in begin() anyways... Hint: set to low?
+  //st.tbl(1); // tbl is set like this in begin() anyways...
+
+  //st.I_scale_analog(1); // If I don't do this, currents are very very high
+
+  // Enable the thing that makes noise less irritating?
+  // st.rndtf(1); // Didn't get less irritating...
+
+  //st.blank_time(36);
+  st.setCurrent(maxcurrent, R_SENSE, HOLD_MULTIPLIER);
+  st.microsteps(microsteps);
+  st.power_down_delay(255); // TODO: This doesn't seem to do anything...
+  st.interpolate(INTERPOLATE);
+
+  // From Marlin. Don't know what they do.
+  //st.off_time(5); // Only enables the driver if used with stealthChop
+  //st.hysterisis_start(0); // HSTRT = 1
+  //st.hysterisis_low(1); // HEND = -2
+
+#if defined(STEALTH)
+  // Stealthchop
+  // Has torque drop on movement start. Maybe tune blank_time, off_time, tbl? See in spreadsheet?
+
+  // These are from Marlin. Don't know what they do.
+  //st.coolstep_min_speed(0);
+  //st.stealth_freq(1); // f_pwm = 2/683 f_clk
+  //st.stealth_autoscale(1);
+  //st.stealth_gradient(5);
+  //st.stealth_amplitude(255);
+
+  st.stealthChop(1);
+  // Finding: There goes a line at G906 A1822. Any higher currents than that, and the motor is just porrige
+
+  //st.stealth_max_speed(1);
+#else // if STEALTH is not defined, we go for SPREADCYCLE (+ COOLSTEP eventually) instead.
+  st.chopper_mode(1);
+#endif
+
+  // Do I need this to get correct temp prewarns with M911?
+  // No. The library reads DRV_STATUS
+  //st.diag0_temp_prewarn(1); // Equivalent to st.diag0_otpw(1)
+}
+#endif // defined(HAVE_TMC2130)
+
 void st_init()
 {
   digipot_init(); //Initialize Digipot Motor Current
   microstep_init(); //Initialize Microstepping Pins
+
+#if defined(HAVE_TMC2130)
+  delay(500);  // Let power stabilize before configuring the steppers
+  tmc2130_init(stepperA, X_MICROSTEPS, X_MAXCURRENT); // TODO: Motor does start to do something, even without this. What? Why?
+#endif // defined(HAVE_TMC2130)
 
   //Initialize Dir Pins
 #if defined(X_DIR_PIN) && X_DIR_PIN > -1

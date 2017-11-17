@@ -23,6 +23,14 @@
 
 #include "planner.h"
 
+#if defined(HAVE_TMC2130)
+  #include "Configuration.h"
+  #include <SPI.h>
+  #include <TMC2130Stepper.h>
+  void tmc2130_init(TMC2130Stepper &st, const uint16_t microsteps, const uint16_t maxcurrent);
+  extern TMC2130Stepper stepperA;
+#endif // defined(HAVE_TMC2130)
+
 #if EXTRUDERS > 3
 #define WRITE_E_STEP(v) { if(current_block->active_extruder == 3) { WRITE(E3_STEP_PIN, v); } else { if(current_block->active_extruder == 2) { WRITE(E2_STEP_PIN, v); } else { if(current_block->active_extruder == 1) { WRITE(E1_STEP_PIN, v); } else { WRITE(E0_STEP_PIN, v); }}}}
 #define NORM_E_DIR() { if(current_block->active_extruder == 3) { WRITE(E3_DIR_PIN, !INVERT_E3_DIR); } else { if(current_block->active_extruder == 2) { WRITE(E2_DIR_PIN, !INVERT_E2_DIR); } else { if(current_block->active_extruder == 1) { WRITE(E1_DIR_PIN, !INVERT_E1_DIR); } else { WRITE(E0_DIR_PIN, !INVERT_E0_DIR); }}}}

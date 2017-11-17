@@ -523,6 +523,68 @@ void refresh_cmd_timeout(void){
   previous_millis_cmd = millis();
 }
 
+#if defined(HAVE_TMC2130)
+
+  static void tmc2130_print_current(const int mA, const char name) {
+    SERIAL_CHAR(name);
+    SERIAL_ECHOPGM(" axis driver current: ");
+    SERIAL_ECHOLN(mA);
+  }
+  static void tmc2130_set_current(const int mA, TMC2130Stepper &st, const char name) {
+    tmc2130_print_current(mA, name);
+    st.setCurrent(mA, 0.11, 0.5);
+  }
+  static void tmc2130_get_current(TMC2130Stepper &st, const char name) {
+    tmc2130_print_current(st.getCurrent(), name);
+  }
+  static void tmc2130_report_otpw(TMC2130Stepper &st, const char name) {
+    SERIAL_CHAR(name);
+    SERIAL_ECHOPGM(" axis temperature prewarn triggered: ");
+    serialprintPGM(st.getOTPW() ? PSTR("true") : PSTR("false"));
+  }
+  static void tmc2130_clear_otpw(TMC2130Stepper &st, const char name) {
+    st.clear_otpw();
+    SERIAL_CHAR(name);
+    SERIAL_ECHOLNPGM(" prewarn flag cleared");
+  }
+
+  /**
+   * M906: Set motor current in milliamps using axis codes A, B, C, D, E
+   *
+   * Report driver currents when no axis specified
+   */
+  inline void gcode_M906() {
+    uint16_t values[NUM_AXIS];
+    for(int8_t i=0; i < NUM_AXIS; i++){
+      if(code_seen(axis_codes[i])){
+        values[i] = code_value_ulong();
+      }else{
+        values[i] = 0;
+      }
+    }
+
+    if (values[A_AXIS]) tmc2130_set_current(values[A_AXIS], stepperA, 'A');
+    else tmc2130_get_current(stepperA, 'A');
+  }
+
+  /**
+   * M911: Report TMC2130 stepper driver overtemperature pre-warn flag
+   * The flag is held by the library and persist until manually cleared by M912
+   */
+  inline void gcode_M911() {
+      tmc2130_report_otpw(stepperA, 'A');
+  }
+
+  /**
+   * M912: Clear TMC2130 stepper driver overtemperature pre-warn flag held by the library
+   */
+  inline void gcode_M912() {
+      if (code_seen('A')) tmc2130_clear_otpw(stepperA, 'A');
+  }
+
+#endif // HAVE_TMC2130
+
+
 void process_commands(){
   unsigned long codenum; //throw away variable
   char *starpos = NULL;
@@ -1490,6 +1552,17 @@ void process_commands(){
 #endif
           }
           break;
+#if defined(HAVE_TMC2130)
+          case 906:
+            gcode_M906();
+            break;
+          case 911:
+            gcode_M911();
+            break;
+          case 912:
+            gcode_M912();
+            break;
+#endif // defined(HAVE_TMC2130)
           case 999: // M999: Restart after being stopped
           Stopped = false;
           gcode_LastN = Stopped_gcode_LastN;
@@ -1943,3 +2016,4 @@ void process_commands(){
     for (int i=0; i<EXTRUDERS; i++)
       volumetric_multiplier[i] = calculate_volumetric_multiplier(filament_size[i]);
   }
+

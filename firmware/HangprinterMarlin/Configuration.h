@@ -131,6 +131,28 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 // If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
 #define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
 
+//==========================================================================
+//============================= Driver configuration =======================
+//==========================================================================
+// Uncomment this to configure for TMC2130 drivers on all axes
+#define HAVE_TMC2130
+#if defined(HAVE_TMC2130)
+  #define STEALTH // If stealth is not defined, spreadCycle settings are used instead
+  #define R_SENSE           0.11  // R_sense resistor for SilentStepStick2130
+  #define HOLD_MULTIPLIER    0.5  // Scales down the holding current from run current
+  #define INTERPOLATE          0  // Interpolate X/Y/Z_MICROSTEPS to 256
+
+  // A motor
+  #define X_MICROSTEPS        16  // FULLSTEP..256
+  #define X_CHIP_SELECT       27  // Pin
+  #define X_MAXCURRENT       300
+  //#define Y_CHIP_SELECT       25  // Pin
+  //#define Z_CHIP_SELECT       23  // Pin
+  //#define E0_CHIP_SELECT      16  // Pin
+  //#define E1_CHIP_SELECT      17  // Pin
+#endif // defined(HAVE_TMC2130)
+
+
 //===========================================================================
 //============================= Thermal Settings ============================
 //===========================================================================
@@ -315,12 +337,12 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define DISABLE_E false // For all extruders
 #define DISABLE_INACTIVE_EXTRUDER false //disable only inactive extruders and keep active extruder enabled
 
-#define INVERT_X_DIR true
+#define INVERT_X_DIR false
 #define INVERT_Y_DIR true
-#define INVERT_Z_DIR true
+#define INVERT_Z_DIR false
 
 #define INVERT_E0_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E1_DIR true    // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
 // ENDSTOP SETTINGS:

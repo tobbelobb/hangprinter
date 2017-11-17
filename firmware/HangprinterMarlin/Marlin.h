@@ -54,6 +54,7 @@
 #define SERIAL_PROTOCOLLN(x) (MYSERIAL.print(x),MYSERIAL.write('\n'))
 #define SERIAL_PROTOCOLLNPGM(x) (serialprintPGM(PSTR(x)),MYSERIAL.write('\n'))
 
+#define SERIAL_CHAR(x) ((void)MYSERIAL.write(x))
 
 extern const char errormagic[] PROGMEM;
 extern const char echomagic[] PROGMEM;
