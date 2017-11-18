@@ -587,7 +587,7 @@ void tmc2130_init(TMC2130Stepper &st, const uint16_t microsteps, const uint16_t 
   st.vhighfs(1);
   st.tbl(0x1);
   //st.hend(0x1);
-  st.hstrt(0x4); // Reduces noise during movement a little bit
+  st.hstrt(0x4); // Reduces noise during spreadCycle movement a little bit. TODO: tune hend and hstrt a bit more...
   st.toff(0x5);
   /*
      - Short to GND protection is ON

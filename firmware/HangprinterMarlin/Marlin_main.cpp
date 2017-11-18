@@ -549,6 +549,7 @@ void refresh_cmd_timeout(void){
     SERIAL_CHAR(name);
     SERIAL_ECHOPGM(" axis temperature prewarn triggered: ");
     serialprintPGM(st.getOTPW() ? PSTR("true") : PSTR("false"));
+    SERIAL_CHAR('\n');
   }
   static void tmc2130_clear_otpw(TMC2130Stepper &st, const char name) {
     st.clear_otpw();
