@@ -87,7 +87,7 @@
 #define DIRS 4
 
 // If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
-#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+//#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 
 /* ----- How many lines in each direction? --- */
 #define MECHANICAL_ADVANTAGE_A 1
@@ -137,19 +137,17 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 // Uncomment this to configure for TMC2130 drivers on all axes
 #define HAVE_TMC2130
 #if defined(HAVE_TMC2130)
-  #define STEALTH // If stealth is not defined, spreadCycle settings are used instead
-  #define R_SENSE           0.11  // R_sense resistor for SilentStepStick2130
-  #define HOLD_MULTIPLIER    0.5  // Scales down the holding current from run current
-  #define INTERPOLATE          0  // Interpolate X/Y/Z_MICROSTEPS to 256
+  #define HOLD_MULTIPLIER    0.5  // Scales down the holding current
+  #define INTERPOLATE          1  // Interpolate X/Y/Z_MICROSTEPS to 256? 1 for yes, 0 for no
 
-  // A motor
-  #define X_MICROSTEPS        16  // FULLSTEP..256
-  #define X_CHIP_SELECT       27  // Pin
-  #define X_MAXCURRENT       300
-  //#define Y_CHIP_SELECT       25  // Pin
-  //#define Z_CHIP_SELECT       23  // Pin
-  //#define E0_CHIP_SELECT      16  // Pin
-  //#define E1_CHIP_SELECT      17  // Pin
+  #define ABCDE_MICROSTEPS    16
+  #define ABCDE_MAXCURRENT   500
+
+  #define A_CHIP_SELECT       27  // Pin
+  #define B_CHIP_SELECT       25  // Pin
+  #define C_CHIP_SELECT       23  // Pin
+  #define D_CHIP_SELECT       17  // Pin
+  #define E_CHIP_SELECT       16  // Pin
 #endif // defined(HAVE_TMC2130)
 
 
@@ -337,13 +335,13 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define DISABLE_E false // For all extruders
 #define DISABLE_INACTIVE_EXTRUDER false //disable only inactive extruders and keep active extruder enabled
 
-#define INVERT_X_DIR false
-#define INVERT_Y_DIR true
-#define INVERT_Z_DIR false
+#define INVERT_X_DIR false // INVERT_A
+#define INVERT_Y_DIR true  // INVERT_B
+#define INVERT_Z_DIR false // INVERT_C
 
-#define INVERT_E0_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
-#define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E0_DIR false   // INVERT_E
+#define INVERT_E1_DIR true    // INVERT_D
+#define INVERT_E2_DIR false
 
 // ENDSTOP SETTINGS:
 // Sets direction of endstops when homing; 1=MAX, -1=MIN
@@ -398,8 +396,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //===========================================================================
 // If EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE is enabled
 // then constant ABCD values are calculated on the fly and used only used to calculate accelerations
-#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
 #define DEFAULT_ESTEPS 410.0 // 410.0 set quite at random
+#if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {0, 0, 0, 0, DEFAULT_ESTEPS}
 #else
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {101.86, 101.86, 101.86, 101.86, DEFAULT_ESTEPS}

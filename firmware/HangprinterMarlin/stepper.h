@@ -29,6 +29,10 @@
   #include <TMC2130Stepper.h>
   void tmc2130_init(TMC2130Stepper &st, const uint16_t microsteps, const uint16_t maxcurrent);
   extern TMC2130Stepper stepperA;
+  extern TMC2130Stepper stepperB;
+  extern TMC2130Stepper stepperC;
+  extern TMC2130Stepper stepperD;
+  extern TMC2130Stepper stepperE;
 #endif // defined(HAVE_TMC2130)
 
 #if EXTRUDERS > 3

@@ -530,12 +530,20 @@ void refresh_cmd_timeout(void){
     SERIAL_ECHOPGM(" axis driver current: ");
     SERIAL_ECHOLN(mA);
   }
+  static void tmc2130_print_load(const uint16_t load, const char name) {
+    SERIAL_CHAR(name);
+    SERIAL_ECHOPGM(" axis driver load: ");
+    SERIAL_ECHOLN(load);
+  }
   static void tmc2130_set_current(const int mA, TMC2130Stepper &st, const char name) {
     tmc2130_print_current(mA, name);
     st.setCurrent(mA, 0.11, 0.5);
   }
   static void tmc2130_get_current(TMC2130Stepper &st, const char name) {
     tmc2130_print_current(st.getCurrent(), name);
+  }
+  static void tmc2130_get_load(TMC2130Stepper &st, const char name) {
+    tmc2130_print_load(st.sg_result(), name);
   }
   static void tmc2130_report_otpw(TMC2130Stepper &st, const char name) {
     SERIAL_CHAR(name);
@@ -565,6 +573,76 @@ void refresh_cmd_timeout(void){
 
     if (values[A_AXIS]) tmc2130_set_current(values[A_AXIS], stepperA, 'A');
     else tmc2130_get_current(stepperA, 'A');
+    if (values[B_AXIS]) tmc2130_set_current(values[B_AXIS], stepperB, 'B');
+    else tmc2130_get_current(stepperB, 'B');
+    if (values[C_AXIS]) tmc2130_set_current(values[C_AXIS], stepperC, 'C');
+    else tmc2130_get_current(stepperC, 'C');
+    if (values[D_AXIS]) tmc2130_set_current(values[D_AXIS], stepperD, 'D');
+    else tmc2130_get_current(stepperD, 'D');
+    if (values[E_AXIS]) tmc2130_set_current(values[E_AXIS], stepperE, 'E');
+    else tmc2130_get_current(stepperE, 'E');
+  }
+
+  /**
+   * M907: Read stallGuard load from tmc2130 using axis codes A, B, C, D, E
+   */
+  inline void gcode_M907() {
+    if(code_seen(axis_codes[A_AXIS])){
+      tmc2130_get_load(stepperA, 'A');
+    }
+    if(code_seen(axis_codes[B_AXIS])){
+      tmc2130_get_load(stepperB, 'B');
+    }
+    if(code_seen(axis_codes[C_AXIS])){
+      tmc2130_get_load(stepperC, 'C');
+    }
+    if(code_seen(axis_codes[D_AXIS])){
+      tmc2130_get_load(stepperD, 'D');
+    }
+    if(code_seen(axis_codes[E_AXIS])){
+      tmc2130_get_load(stepperE, 'E');
+    }
+  }
+
+  /**
+   * M908: Change stallGuard sensitivity using axis codes A, B, C, D, E
+   */
+  inline void gcode_M908() {
+    if(code_seen(axis_codes[A_AXIS])){
+      float val = code_value();
+      int8_t valint = (int8_t)val;
+      SERIAL_ECHOPGM("Got A: ");
+      SERIAL_ECHOLN(valint);
+      stepperA.sgt((uint8_t)valint);
+    }
+    if(code_seen(axis_codes[B_AXIS])){
+      float val = code_value();
+      int8_t valint = (int8_t)val;
+      SERIAL_ECHOPGM("Got B: ");
+      SERIAL_ECHOLN(valint);
+      stepperB.sgt((uint8_t)valint);
+    }
+    if(code_seen(axis_codes[C_AXIS])){
+      float val = code_value();
+      int8_t valint = (int8_t)val;
+      SERIAL_ECHOPGM("Got C: ");
+      SERIAL_ECHOLN(valint);
+      stepperC.sgt((uint8_t)valint);
+    }
+    if(code_seen(axis_codes[D_AXIS])){
+      float val = code_value();
+      int8_t valint = (int8_t)val;
+      SERIAL_ECHOPGM("Got D: ");
+      SERIAL_ECHOLN(valint);
+      stepperD.sgt((uint8_t)valint);
+    }
+    if(code_seen(axis_codes[E_AXIS])){
+      float val = code_value();
+      int8_t valint = (int8_t)val;
+      SERIAL_ECHOPGM("Got E: ");
+      SERIAL_ECHOLN(valint);
+      stepperE.sgt((uint8_t)valint);
+    }
   }
 
   /**
@@ -573,6 +651,10 @@ void refresh_cmd_timeout(void){
    */
   inline void gcode_M911() {
       tmc2130_report_otpw(stepperA, 'A');
+      tmc2130_report_otpw(stepperB, 'B');
+      tmc2130_report_otpw(stepperC, 'C');
+      tmc2130_report_otpw(stepperD, 'D');
+      tmc2130_report_otpw(stepperE, 'E');
   }
 
   /**
@@ -580,6 +662,10 @@ void refresh_cmd_timeout(void){
    */
   inline void gcode_M912() {
       if (code_seen('A')) tmc2130_clear_otpw(stepperA, 'A');
+      if (code_seen('B')) tmc2130_clear_otpw(stepperB, 'B');
+      if (code_seen('C')) tmc2130_clear_otpw(stepperC, 'C');
+      if (code_seen('D')) tmc2130_clear_otpw(stepperD, 'D');
+      if (code_seen('E')) tmc2130_clear_otpw(stepperE, 'E');
   }
 
 #endif // HAVE_TMC2130
@@ -1555,6 +1641,12 @@ void process_commands(){
 #if defined(HAVE_TMC2130)
           case 906:
             gcode_M906();
+            break;
+          case 907:
+            gcode_M907();
+            break;
+          case 908:
+            gcode_M908();
             break;
           case 911:
             gcode_M911();
