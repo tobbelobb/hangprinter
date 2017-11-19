@@ -1,4 +1,11 @@
-# Hangprinter-Marlin
+# TMC2130-branch notes
+The tmc2130 register fiddling are done in the stepper.cpp file's ```tmc_init()``` function.
+Default settings have been tested with Wantai 42BYGH610P1 steppers.
+  - Rated current: 1.2 A
+  - Coil resistance: 6 ohm
+  - Holding torque: 45 Ncm
+
+## Hangprinter-Marlin
 
 Hangprinter uses a modified Marlin version where the XYZ-axis are changed to ABCD-axis.
 A lot of other small changes are also done, so it is not recommended to install this version of Marlin on your own microcontroller
@@ -19,7 +26,7 @@ Most code in this repo was originally written by Marlin devs.
 Creds also to Sprinter devs and Grbl devs for various contributions.
 
 To get the original Marlin firmware, head over to
-([MarlinFirmware/Marlin] (https://github.com/MarlinFirmware/Marlin)).
+([MarlinFirmware/Marlin](https://github.com/MarlinFirmware/Marlin)).
 
 ## Licence
 

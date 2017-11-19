@@ -31,6 +31,12 @@
 #include <SPI.h>
 #endif
 
+#if defined(HAVE_TMC2130)
+#include "Configuration.h"
+#include <SPI.h>
+#include <TMC2130Stepper.h>
+#endif //defined(HAVE_TMC2130)
+
 
 //===========================================================================
 //=============================public variables  ============================
@@ -516,10 +522,147 @@ ISR(TIMER1_COMPA_vect)
   }
 }
 
+#if defined(HAVE_TMC2130)
+// Stepper objects of TMC2310 steppers used
+TMC2130Stepper stepperA(X_ENABLE_PIN, X_DIR_PIN, X_STEP_PIN, A_CHIP_SELECT);
+TMC2130Stepper stepperB(Y_ENABLE_PIN, Y_DIR_PIN, Y_STEP_PIN, B_CHIP_SELECT);
+TMC2130Stepper stepperC(Z_ENABLE_PIN, Z_DIR_PIN, Z_STEP_PIN, C_CHIP_SELECT);
+TMC2130Stepper stepperD(E1_ENABLE_PIN, E1_DIR_PIN, E1_STEP_PIN, D_CHIP_SELECT);
+TMC2130Stepper stepperE(E0_ENABLE_PIN, E0_DIR_PIN, E0_STEP_PIN, E_CHIP_SELECT);
+
+void tmc2130_init(TMC2130Stepper &st, const uint16_t microsteps, const uint16_t maxcurrent){
+  st.begin(); // sets blank_time(24)
+ /* ==== General Configuration Strategy ==================
+    - Use spreadCycle with coolStep
+    - Use spreadCycle+chopSync instead of stealthChop
+    - Stall detection is sent to diag0
+       to prepare for future upgrade that makes use of such data */
+
+  // ============== COOLSTEP THRESHOLDS ===================
+  st.mode_sw_speed(102); // Sets THIGH to 102 = 16777216/(100*1630), where 16777216 is CPU freq, 100 is mm/s, 1630 is ca steps/mm.
+  st.coolstep_min_speed(294); // Sets TCOOLTHRS = 294, roughly equal to 35 mm/s movement
+  st.sgt(11); // Sets SGT to 11. This makes stallGuard a bit less sensitive, and creates range [SEMIN*32, (SEMIN+SEMAX+1)*32] for coolStep
+  st.semin(0x1);
+  st.semax(0x3);
+  st.stealth_max_speed(0x406); // TPWMTHRS = 1030 TSTEPS
+
+  // ================  GCONF   ============================
+  // See datasheet GCONF table, page 25 of tmc2130 datasheet
+  st.stealthChop(1);
+  st.diag0_active_high(1);
+  st.diag0_stall(1);
+  /* GCONF settings:
+     - No test mode
+     - No direct mode
+     - Not emergency stopped
+     - No halved hysteresis for step frequency comparison (1/16, not 1/32)
+     - DIAG1 is active when it's low
+     - DIAG0 is active when it's high
+     - No output toggle when steps are skipped in dcStep mode
+     - No active diag1 when chopper is on (for one phase)
+     - No diag1 active on index position
+     - No diag1 active on motor stall
+     - diag0 is active on motor stall
+     - No diag0 active on over temperature prewarning
+     - No diag0 active on driver errors
+     - No inverse motor direction
+     - No commutation mode
+     ? Disable stealthChop voltage PWM mode. Or just "stealthChop".
+     - No internal rsense
+     - No analog current reference
+
+     |17|16|15|14|13|12|11|10| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0
+       0  0  0  0  0  1  0  0  0  0  1  0  0  0  0  0  0  0
+     in binary:  0b000001000010000000
+     in hex: 0x1080
+     Reference from TRAMS-Firmware
+       0  0  0  0  0  1  0  0  0  0  1  0  0  0  0  1  0  0
+  */
+
+  // ================ CHOPCONF ============================
+  // See datasheet CHOPCONF table, page 34 of tmc2130 datasheet
+  st.microsteps(microsteps);
+  //st.sync(0x6); // No autible difference
+  st.vhighchm(1);
+  st.vhighfs(1);
+  st.tbl(0x1);
+  //st.hend(0x1);
+  st.hstrt(0x4); // Reduces noise during spreadCycle movement a little bit. TODO: tune hend and hstrt a bit more...
+  st.toff(0x5);
+  /*
+     - Short to GND protection is ON
+     - Disable double edge step pulses
+     - Disable interpolation to 256 microsteps
+     - Set 1/16 microstepping
+     - SYNC for chopSync function: 6: see page 53 of datasheet
+     - High velocity chopper mode (which switch from spreadCycle to fast decay at high speeds > VHIGH)
+     - Switch to fullstep at high velocities
+     - Sense resistor voltage based current scaling: Low sensitivity, high sense resistor voltage
+     - Set comparator blank time to 24 clocks
+     - Chopper mode: spreadCycle
+     - Random toff time is disabled
+     - (Only applies in fast decay mode): Does not disable current comparator usage for termination of fast decay cycle
+     - (Only applies in fast decay mode): most significant byte of fast decay setting TFD is zero
+     - Hysteresis is 0 for the hysteresis chopper (stock Marlin sets this to -2. TRAMS-Firmware sets it to 0)
+     - Hysteresis start value is 4. Stock Marlin sets this to 1. TRAMS-Firmware sets it to 4.
+     - toff time is 5. Stock Marlin uses 8. TRAMS-Firmware uses 5.
+
+     |31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0
+       0  0  0  0  0  1  0  0  0  1  1  0  1  1  0  0  1  0  0  0  0  0  0  1  1  1  0  1  0  1  0  1
+
+       in binary: 0b00000100011011001000000111010101
+       in hex: 0x46C81D5
+
+     Reference: What Trinamic used in their TRAMS-Firmware
+       0  0  0  1  0  1  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  1  1  1  0  1  0  1  0  1
+  */
+
+  // ================ COOLCONF ============================
+  // See datasheet COOLCONF table, page 36 of tmc2130 datasheet
+  // SGT, SEMIN, SEMAX is set above, see COOLSTEP THRESHOLDS
+  st.sfilt(1);
+  st.sedn(0x1);
+  st.seup(0x3);
+  // * filtering for stallGuard2 data, not high time resolution
+  // * Require +11 torque to indicate stallGuard2 stall
+  // * Minimum current: 1/2 of irun
+  // * For each 8 stallGuard2 value decrease current step speed by one
+  // * Medium stallGuard2 hysteresis value for smart current control
+  // * Maximum current increment step width
+  // * Medium stallGuard2 value threshold for smartCurrent control, and smart current control is enabled
+  //                  |25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10| 9| 8| 7| 6| 5| 4| 3| 2| 1| 0
+  // the_COOLCONF = 0b  0  1  0  0  0  0  1  0  1  1  0  0  1  0  0  0  1  1  0  1  1  0  0  0  0  1
+  // in bin: 0b01000010110010001101100001
+  // in hex: 0x10B2361
+  //
+
+  // ================ PWMCONF ============================
+  // See page 39 and onwards in datasheet for these settings
+  // stealthChop enabled in GCONF
+  st.stealth_amplitude(255);
+  st.stealth_gradient(10); // Allow big PWM change. (15 is max but not recommended)
+  st.stealth_autoscale(1);
+  st.stealth_freq(0);
+
+  st.power_down_delay(255);
+  st.interpolate(INTERPOLATE);
+  st.setCurrent(maxcurrent, 0.11, HOLD_MULTIPLIER); // Sense resistor is 0.11 ohm
+}
+#endif // defined(HAVE_TMC2130)
+
 void st_init()
 {
   digipot_init(); //Initialize Digipot Motor Current
   microstep_init(); //Initialize Microstepping Pins
+
+#if defined(HAVE_TMC2130)
+  delay(500);  // Let power stabilize before configuring the steppers
+  tmc2130_init(stepperA, ABCDE_MICROSTEPS, ABCDE_MAXCURRENT);
+  tmc2130_init(stepperB, ABCDE_MICROSTEPS, ABCDE_MAXCURRENT);
+  tmc2130_init(stepperC, ABCDE_MICROSTEPS, ABCDE_MAXCURRENT);
+  tmc2130_init(stepperD, ABCDE_MICROSTEPS, ABCDE_MAXCURRENT);
+  tmc2130_init(stepperE, ABCDE_MICROSTEPS, ABCDE_MAXCURRENT);
+#endif // defined(HAVE_TMC2130)
 
   //Initialize Dir Pins
 #if defined(X_DIR_PIN) && X_DIR_PIN > -1
