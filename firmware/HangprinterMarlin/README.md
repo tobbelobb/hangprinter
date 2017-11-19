@@ -1,4 +1,4 @@
-# TMC2130-branch notes
+# TMC2130 notes
 The tmc2130 register fiddling are done in the stepper.cpp file's ```tmc_init()``` function.
 Default settings have been tested with Wantai 42BYGH610P1 steppers.
   - Rated current: 1.2 A
