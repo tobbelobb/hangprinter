@@ -109,8 +109,10 @@ module lineroller_anchor(){
       translate([-x_len,-width/2,base_th-0.1])
         translate([0, width/2, line_z-base_th+0.1])
         rotate([0,90,0])
-        translate([0,0,-1])
-        cylinder(r=Ptfe_r, h=length+2, $fn=4*10);
+        translate([0,0,-1]){
+          cylinder(r=Ptfe_r, h=length, $fn=4*10);
+          cylinder(r=Ptfe_r-0.5, h=length+2, $fn=4*10);
+        }
       for(k=[0,1])
         mirror([0,k,0])
           translate([-x_len,-Depth_of_lineroller_base/2,-1])
