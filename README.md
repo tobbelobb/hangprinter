@@ -27,7 +27,7 @@ Bill of Materials
     * ca 47x47 cm MDF or plywood sheet
     * 1 x Arduino Mega
     * 1 x RAMPS
-    * 5 x stepstick stepper drivers (or only 1 x, if Mechaduino addon is wanted)
+    * 5 x drivers (Special configuration options exist if you use Mechaduinos or tmc2130SilentStepSticks)
     * 1 x USB cable, type B plug
     * 15x15 mm wooden beams (Tobben/core team uses lengths 3x40 cm + 1x20 cm)
     * 1 x Power supply (12 V, 10 A recommended)
@@ -46,3 +46,5 @@ Bill of Materials
       * 4 x Mechaduino PCB
       * More than 20 jumper wires (if Mechaduinos)
       * 5V->3V3 level converter for i2c usage (if Mechaduinos)
+    * Tmc2130SilentStepStick addon
+      * A few more jumper wires
