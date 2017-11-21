@@ -17,6 +17,33 @@ module beam_clamp(){
   l1 = 35;
   edges = 0.625;
   opening_width = Fat_beam_width - 2*edges;
+
+  module opening_top(){
+    translate([wall_th+edges, 0, 2*wall_th+Fat_beam_width+2])
+      rotate([0,90,90])
+      translate([0,0,-1])
+      inner_round_corner(r=2, h=l0+2, $fn=4*5);
+    mirror([1,0,0])
+      translate([-wall_th-Fat_beam_width+edges, 0, 2*wall_th+Fat_beam_width+2])
+      rotate([0,90,90])
+      translate([0,0,-1])
+      inner_round_corner(r=2, h=l0+2, $fn=4*5);
+  }
+
+  module opening_corners(){
+    translate([wall_th+Fat_beam_width,0,wall_th])
+      inner_round_corner(r=2, h=Fat_beam_width, back=2, $fn=4*5);
+    translate([wall_th,0,wall_th])
+      rotate([0,0,90])
+      inner_round_corner(r=2, h=Fat_beam_width, back=2, $fn=4*5);
+
+    translate([wall_th+Fat_beam_width-edges,0,wall_th])
+      inner_round_corner(r=2, h=Fat_beam_width+2*wall_th+1, back=2, $fn=4*5);
+    translate([wall_th+edges,0,wall_th])
+      rotate([0,0,90])
+      inner_round_corner(r=2, h=Fat_beam_width+2*wall_th+2, back=2, $fn=4*5);
+  }
+
   module rot_move(){
     translate([Fat_beam_width+2*wall_th,(l0 - (2/sqrt(3))*(Fat_beam_width+2*wall_th))/2,0])
       rotate([0,0,-60])
@@ -28,9 +55,9 @@ module beam_clamp(){
     extralen = 2;
     translate([wall_th+edges, -extralen, wall_th])
       cube([opening_width, l0+2*extralen, 100]);
-    translate([Beam_width+wall_th, -extralen, wall_th])
+    translate([Fat_beam_width+wall_th, -extralen, wall_th])
       rotate([0,0,90])
-        beam(l0+2*extralen);
+        fat_beam(l0+2*extralen);
   }
 
   difference(){
@@ -74,6 +101,20 @@ module beam_clamp(){
     rot_move()
       translate([Fat_beam_width/2, (Fat_beam_width)*(1/sqrt(6)), wall_th*2])
       cube([Fat_beam_width+2*wall_th+2, 2, 100]);
+
+    opening_corners();
+    mirror([0,1,0])
+      translate([0,-l0,0])
+      opening_corners();
+    rot_move()
+      mirror([0,1,0])
+      translate([0,-l1,0])
+      opening_corners();
+    opening_top();
+    rot_move()
+      translate([0,-2,0])
+      opening_top();
+
   }
 }
 
