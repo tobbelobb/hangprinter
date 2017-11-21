@@ -32,7 +32,7 @@ module beam_slider2(){
   wall_th = Wall_th;
   h = 10;
   extra_length = 6;
-  w = Beam_width+2*wall_th;
+  w = Fat_beam_width+2*wall_th;
 
   module arm(){
     function my_sq(v) =
@@ -50,7 +50,7 @@ module beam_slider2(){
             * scaling([1, (i < 3) ? log(1 + 9*i/3) : 1, 1])
             * translation([0,-2*wall_th/3,0])]);
         rotate([0,0,-4])
-          translate([Fat_beam_width/2+0.9,-Fat_beam_width/2-wall_th,0])
+          translate([Fat_beam_width/2+1.5,-Fat_beam_width/2-wall_th,0])
           scale([1.3,1,1])
           standing_ls_tri(wall_th+1.4, h);
       }
@@ -62,7 +62,7 @@ module beam_slider2(){
   arm();
   mirror([0,1,0])
     arm();
-  translate([-wall_th-Beam_width/2,-w/2,0])
+  translate([-wall_th-Fat_beam_width/2,-w/2,0])
     rounded_cube2([wall_th, w, h],1,$fn=4*4);
   // Hooks for line
   hook_h = 6;
