@@ -2,26 +2,9 @@ include <parameters.scad>
 use <util.scad>
 use <sweep.scad>
 
-//beam_slider();
-module beam_slider(){
-  wall_th = Wall_th;
-  h = 10;
-  extra_length = 6;
-  w = Beam_width+2*wall_th;
-  difference(){
-    translate([-Beam_width/2 - wall_th, -Beam_width/2 - wall_th, 0])
-      cube([w+extra_length, w, h]);
-    translate([-Fat_beam_width/2, -Fat_beam_width/2, -1])
-      cube([Fat_beam_width+extra_length+wall_th+1, Fat_beam_width, h+2]);
-    translate([Beam_width/2+3.5/2+2, 0, h/2])
-      rotate([90,0,0])
-      cylinder(d=3.5, h=w+2, center=true, $fs=1);
-  }
-}
-
 // Bends arms outwards, so pressure is distributed over beam flat-sides
-beam_slider2();
-module beam_slider2(){
+beam_slider();
+module beam_slider(){
   wall_th = Wall_th;
   h = 10;
   extra_length = 6;
