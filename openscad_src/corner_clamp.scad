@@ -22,21 +22,31 @@ module corner_clamp(){
       difference(){
         for(k=[0,1])
           mirror([k,0,0])
-            rotate([0,0,-30])
-              translate([-(Fat_beam_width+2*wall_th), -l0+(wall_th+edges)*sqrt(3), 0])
-                three_rounded_cube3([Fat_beam_width+2*wall_th, l0+a, Fat_beam_width+2*wall_th+2],
+            rotate([0,0,-30]){
+              translate([-(Fat_beam_width+wall_th)+1, -l0+(wall_th+edges)*sqrt(3), 0]){
+                one_rounded_cube4([Fat_beam_width+wall_th-1, l0+a, Fat_beam_width+2*wall_th+2],
                     2, $fn=4*4);
+                translate([-wall_th-1,0,0])
+                  cube([2*wall_th, l0+a, wall_th]);
 
+               translate([Fat_beam_width/2-1, 0, Fat_beam_width/2+wall_th])
+                 rotate([0,-90,-90])
+                 clamp_wall(l0+a, lift_tri=1.0, w=Fat_beam_width+2*wall_th, edge=edges);
+
+                }
+              }
+
+        extra_height_to_diff_of_clamp_wall = 2.30;
         for(k=[0,1])
           mirror([k,0,0])
         rotate([0,-90,30])
           translate([wall_th+a/2,(wall_th+edges)*sqrt(3)+a,-Fat_beam_width-2*wall_th-1]){
             cylinder(r=a/2, h=wall_th+edges+2, $fn=4*10);
             rotate([0,0,2*90])
-            translate([-Fat_beam_width-wall_th-2+a/2,+a/2,0]){
+            translate([-Fat_beam_width-wall_th-2-extra_height_to_diff_of_clamp_wall+a/2,+a/2,-1]){
               inner_round_corner(r=a/2, h=wall_th+edges+2,back=10, $fn=4*10);
-              translate([0,-b,0])
-                cube([b,b, wall_th+edges+2]);
+              translate([extra_height_to_diff_of_clamp_wall,-b,0])
+                cube([b,b, wall_th+edges+2+Clamp_wall_extra_length]);
             }
           }
       }
@@ -52,10 +62,10 @@ module corner_clamp(){
             cube([Fat_beam_width, l0+a+2, Fat_beam_width]);
           translate([-opening_width-wall_th-edges, -l0+4, wall_th])
             cube([opening_width, l0+a+2, Fat_beam_width+20]);
-          translate([0,0,Fat_beam_width+2*wall_th+2-3])
+          translate([0,0,Fat_beam_width+2*wall_th+2-2])
             rotate([0,-90,0])
-              translate([0,-l0+(wall_th+edges)*sqrt(3)+scrw_fr_edg,-1])
-                cylinder(d=3.3, h=Fat_beam_width+2*wall_th+2, $fn=10);
+              translate([0,-l0+(wall_th+edges)*sqrt(3)+scrw_fr_edg,-2])
+                cylinder(d=3.3, h=Fat_beam_width+2*wall_th+4, $fn=10);
         }
     translate([0,l0-2*rad_b,-1])
       cylinder(d=2.5, h=wall_th+2, $fn=10);

@@ -18,3 +18,6 @@ b608_outer_dia = 22.2;
 b608_width = 7.05;
 
 Gap_between_sandwich_and_plate = 1.7;
+
+Clamp_wall_extra_length = 4.5;
+Clamp_wall_flex_factor = 1.5;

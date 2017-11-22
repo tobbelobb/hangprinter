@@ -1,4 +1,5 @@
 include <parameters.scad>
+include <sweep.scad>
 
 //!rounded_cube([40,61,42], 8, center=true);
 module rounded_cube(v, r, center=false){
@@ -100,11 +101,21 @@ module left_rounded_cube2(v, r){
 //one_rounded_cube2([20,30,2], 2);
 module one_rounded_cube2(v, r){
   $fs = 1;
-  union(){
-    translate([r,0,0])           cube([v[0]-  r, v[1]  , v[2]]);
-    translate([0,r,0])           cube([v[0]   , v[1]-r, v[2]]);
-    translate([r,r,0])           cylinder(h=v[2], r=r);
-  }
+  translate([r,0,0]) cube([v[0]-  r, v[1]  , v[2]]);
+  translate([0,r,0]) cube([v[0]   , v[1]-r, v[2]]);
+  translate([r,r,0]) cylinder(h=v[2], r=r);
+}
+
+module one_rounded_cube3(v, r){
+  translate([0,0,0])           cube([v[0]-  r, v[1]  , v[2]]);
+  translate([0,0,0])           cube([v[0]   , v[1]-r, v[2]]);
+  translate([v[0]-r,v[1]-r,0]) cylinder(h=v[2], r=r);
+}
+
+module one_rounded_cube4(v, r){
+  translate([0,0,0])      cube([v[0]-  r, v[1]  , v[2]]);
+  translate([0,r,0])      cube([v[0]   , v[1]-r, v[2]]);
+  translate([v[0]-r,r,0]) cylinder(h=v[2], r=r);
 }
 
 
@@ -328,4 +339,28 @@ module teardrop(r=10, h=10){
   cylinder(r=r, h=h);
   rotate([0,0,45])
     cube([r,r,h]);
+}
+
+function sq_pts(v) = [[0,0], [v[0],0], [v[0], v[1]], [0, v[1]]];
+
+module clamp_wall(h=10,
+                  extra_length=Clamp_wall_extra_length,
+                  w=Fat_beam_width+2*Wall_th,
+                  flex_factor=Clamp_wall_flex_factor,
+                  edge=1.4,
+                  lift_tri=1.5){
+  sweep(sq_pts([h, Wall_th]),
+    [for(i=[0.2:0.3:w+extra_length-1])
+      translation([w/2+extra_length-i,
+      // Bend arm outwards, following a log graph
+      -w/2 - flex_factor*(log(1+w+extra_length) - log(1+i)), 0])
+      * rotation([0, -90, 0])
+      // Round off tip of arm...
+      * translation([0,2*Wall_th/3,0])
+      * scaling([1, (i < 3) ? log(1 + 9*i/3) : 1, 1])
+      * translation([0,-2*Wall_th/3,0])]);
+  rotate([0,0,-4])
+    translate([Fat_beam_width/2+lift_tri,-Fat_beam_width/2-Wall_th,0])
+    scale([1.3,1,1])
+    standing_ls_tri(Wall_th+edge, h);
 }
