@@ -31,7 +31,7 @@ module corner_clamp(){
 
                translate([Fat_beam_width/2-1, 0, Fat_beam_width/2+wall_th])
                  rotate([0,-90,-90])
-                 clamp_wall(l0+a, lift_tri=1.0, w=Fat_beam_width+2*wall_th, edge=edges);
+                 clamp_wall(l0+a, lift_tri=1.0, w=Fat_beam_width+2*wall_th, wall_th=wall_th, edge=edges);
 
                 }
               }
@@ -58,14 +58,23 @@ module corner_clamp(){
     for(k=[0,1])
       mirror([k,0,0])
         rotate([0,0,-30]){
-          translate([-Fat_beam_width-wall_th, -l0+4, wall_th])
+          translate([-Fat_beam_width-wall_th, -l0+4, wall_th]){
             cube([Fat_beam_width, l0+a+2, Fat_beam_width]);
-          translate([-opening_width-wall_th-edges, -l0+4, wall_th])
+          }
+          translate([-opening_width-wall_th-edges, -l0+4, wall_th]){
             cube([opening_width, l0+a+2, Fat_beam_width+20]);
+            translate([-wall_th-edges,0,-wall_th]){
+              opening_top(exclude_left = true, wall_th=wall_th, edges=edges, l=l0+2);
+              translate([-0.0,wall_th-1,0])
+              opening_corners(left_one_height=2*Fat_beam_width, wall_th=wall_th, edges=edges);
+            }
+
+          }
           translate([0,0,Fat_beam_width+2*wall_th+2-2])
             rotate([0,-90,0])
               translate([0,-l0+(wall_th+edges)*sqrt(3)+scrw_fr_edg,-2])
                 cylinder(d=3.3, h=Fat_beam_width+2*wall_th+4, $fn=10);
+
         }
     translate([0,l0-2*rad_b,-1])
       cylinder(d=2.5, h=wall_th+2, $fn=10);
@@ -97,6 +106,8 @@ module corner_clamp(){
           translate([fillet_r*(1-cos(15)),fillet_r*(1-cos(15)),0])
             inner_round_corner(fillet_r,30,120,2, $fn=4*8);
     }
+
+
   }
 
   // Channel to guide D-line and stiffen up corner

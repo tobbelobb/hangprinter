@@ -12,38 +12,6 @@ module beam_clamp(){
   edges = 0.625;
   opening_width = Fat_beam_width - 2*edges;
 
-
-  module opening_top(exclude_left=false, exclude_right=false){
-    if(!exclude_left){
-      translate([wall_th+edges, 0, 2*wall_th+Fat_beam_width+2])
-        rotate([0,90,90])
-        translate([0,0,-1])
-        inner_round_corner(r=2, h=l0+2, $fn=4*5);
-    }
-    if(!exclude_right){
-      mirror([1,0,0])
-        translate([-wall_th-Fat_beam_width+edges, 0, 2*wall_th+Fat_beam_width+2])
-        rotate([0,90,90])
-        translate([0,0,-1])
-        inner_round_corner(r=2, h=l0+2, $fn=4*5);
-    }
-  }
-
-  module opening_corners(left_one_height=Fat_beam_width,
-                         right_one_height=Fat_beam_width){
-    translate([wall_th+Fat_beam_width,0,wall_th])
-      inner_round_corner(r=2, h=right_one_height, back=2, $fn=4*5);
-    translate([wall_th,0,wall_th])
-      rotate([0,0,90])
-      inner_round_corner(r=2, h=left_one_height, back=2, $fn=4*5);
-
-    translate([wall_th+Fat_beam_width-edges,0,wall_th])
-      inner_round_corner(r=2, h=Fat_beam_width+2*wall_th+1, back=2, $fn=4*5);
-    translate([wall_th+edges,0,wall_th])
-      rotate([0,0,90])
-      inner_round_corner(r=2, h=Fat_beam_width+2*wall_th+2, back=2, $fn=4*5);
-  }
-
   module rot_move(){
     translate([Fat_beam_width+2*wall_th,(l0 - (2/sqrt(3))*(Fat_beam_width+2*wall_th))/2,0])
       rotate([0,0,-60])
@@ -119,18 +87,18 @@ module beam_clamp(){
       translate([Fat_beam_width/2, (Fat_beam_width)*(1/sqrt(6)), wall_th*2])
       cube([Fat_beam_width+2*wall_th+2, 2, 100]);
 
-    opening_corners(left_one_height=2*Fat_beam_width);
+    opening_corners(left_one_height=2*Fat_beam_width, wall_th=wall_th, edges=edges);
     mirror([0,1,0])
       translate([0,-l0,0])
-      opening_corners(left_one_height=2*Fat_beam_width);
+      opening_corners(left_one_height=2*Fat_beam_width, wall_th=wall_th, edges=edges);
     rot_move()
       mirror([0,1,0])
       translate([0,-l1,0])
-      opening_corners(right_one_height=2*Fat_beam_width);
-    opening_top(exclude_left = true);
+      opening_corners(right_one_height=2*Fat_beam_width, wall_th=wall_th, edges=edges);
+    opening_top(exclude_left = true, wall_th=wall_th, edges=edges, l=l0+2);
     rot_move()
       translate([0,-2,0])
-      opening_top(exclude_right=true);
+      opening_top(exclude_right = true, wall_th=wall_th, edges=edges, l=l0+2);
 
   }
 }

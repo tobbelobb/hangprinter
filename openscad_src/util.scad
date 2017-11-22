@@ -346,21 +346,55 @@ function sq_pts(v) = [[0,0], [v[0],0], [v[0], v[1]], [0, v[1]]];
 module clamp_wall(h=10,
                   extra_length=Clamp_wall_extra_length,
                   w=Fat_beam_width+2*Wall_th,
+                  wall_th=Wall_th,
                   flex_factor=Clamp_wall_flex_factor,
                   edge=1.4,
                   lift_tri=1.5){
-  sweep(sq_pts([h, Wall_th]),
+  sweep(sq_pts([h, wall_th]),
     [for(i=[0.2:0.3:w+extra_length-1])
       translation([w/2+extra_length-i,
       // Bend arm outwards, following a log graph
       -w/2 - flex_factor*(log(1+w+extra_length) - log(1+i)), 0])
       * rotation([0, -90, 0])
       // Round off tip of arm...
-      * translation([0,2*Wall_th/3,0])
+      * translation([0,2*wall_th/3,0])
       * scaling([1, (i < 3) ? log(1 + 9*i/3) : 1, 1])
-      * translation([0,-2*Wall_th/3,0])]);
+      * translation([0,-2*wall_th/3,0])]);
   rotate([0,0,-4])
-    translate([Fat_beam_width/2+lift_tri,-Fat_beam_width/2-Wall_th,0])
+    translate([Fat_beam_width/2+lift_tri,-Fat_beam_width/2-wall_th,0])
     scale([1.3,1,1])
-    standing_ls_tri(Wall_th+edge, h);
+    standing_ls_tri(wall_th+edge, h);
+}
+
+// These are used by beam_clamp and corner_clamp
+module opening_top(exclude_left=false, exclude_right=false, wall_th, edges, l){
+  if(!exclude_left){
+    translate([wall_th+edges, 0, 2*wall_th+Fat_beam_width+2])
+      rotate([0,90,90])
+      translate([0,0,-1])
+      inner_round_corner(r=2, h=l, $fn=4*5);
+  }
+  if(!exclude_right){
+    mirror([1,0,0])
+      translate([-wall_th-Fat_beam_width+edges, 0, 2*wall_th+Fat_beam_width+2])
+      rotate([0,90,90])
+      translate([0,0,-1])
+      inner_round_corner(r=2, h=l, $fn=4*5);
+  }
+}
+
+module opening_corners(left_one_height=Fat_beam_width,
+                       right_one_height=Fat_beam_width,
+                       wall_th, edges){
+  translate([wall_th+Fat_beam_width,0,wall_th])
+    inner_round_corner(r=2, h=right_one_height, back=2, $fn=4*5);
+  translate([wall_th,0,wall_th])
+    rotate([0,0,90])
+    inner_round_corner(r=2, h=left_one_height, back=2, $fn=4*5);
+
+  translate([wall_th+Fat_beam_width-edges,0,wall_th])
+    inner_round_corner(r=2, h=Fat_beam_width+2*wall_th+1, back=2, $fn=4*5);
+  translate([wall_th+edges,0,wall_th])
+    rotate([0,0,90])
+    inner_round_corner(r=2, h=Fat_beam_width+2*wall_th+2, back=2, $fn=4*5);
 }
