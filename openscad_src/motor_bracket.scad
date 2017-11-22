@@ -3,13 +3,6 @@ include <gear_parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
-//%prev_art();
-module prev_art(){
-  import("../stl/motor_holder.stl");
-}
-
-
-
 motor_bracket();
 module motor_bracket(){
   cw = Nema17_cube_width+6;

@@ -5,13 +5,6 @@ use <util.scad>
 use <gear_util.scad>
 use <gears.scad>
 
-//translate([0,0,13.5])
-//%prev_art();
-module prev_art(){
-  translate([0,0,5])
-  import("../stl/spool_herringbone.stl");
-}
-
 spool_gear();
 module spool_gear(){
   module half(){

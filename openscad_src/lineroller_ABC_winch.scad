@@ -3,11 +3,6 @@ include <lineroller_parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
-//%prev_art();
-module prev_art(){
-  import("../stl/lineroller.stl");
-}
-
 base();
 module base(base_th = Base_th, flerp0 = 6, flerp1 = 6){
   l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;

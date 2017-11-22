@@ -2,11 +2,6 @@ include <parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
-//%prev_art();
-module prev_art(){
-  import("../stl/extruder_holder.stl");
-}
-
 cw = Nema17_cube_width; // For brevity...
 wiggle = 0.54;
 r_little = 3;

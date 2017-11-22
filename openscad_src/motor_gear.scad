@@ -3,11 +3,6 @@ include <gear_parameters.scad>
 use <util.scad>
 use <gears.scad>
 
-//%prev_art();
-module prev_art(){
-  import("../stl/hgear_6t_setscrew.stl");
-}
-
 motor_gear();
 module motor_gear(){
 

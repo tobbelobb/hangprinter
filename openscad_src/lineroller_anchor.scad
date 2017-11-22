@@ -4,11 +4,6 @@ use <sweep.scad>
 use <util.scad>
 use <lineroller_ABC_winch.scad>
 
-//#prev_art();
-module prev_art(){
-  import("../stl/lineroller_ptfe.stl");
-}
-
 base_th = 6;
 l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall;
 track_l = l;

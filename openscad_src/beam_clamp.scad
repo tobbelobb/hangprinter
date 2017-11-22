@@ -2,13 +2,6 @@ include <parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
-//%prev_art();
-module prev_art(){
-  translate([0,15+2*2.5,0])
-    rotate([180,0,0])
-    import("../stl/beam_clamp.stl");
-}
-
 translate([-10,0,0]) mirror([1,0,0]) beam_clamp();
 beam_clamp();
 module beam_clamp(){

@@ -4,12 +4,6 @@ use <sweep.scad>
 use <util.scad>
 use <lineroller_ABC_winch.scad>
 
-//%prev_art();
-module prev_art(){
-  import("../stl/lineroller_D.stl");
-}
-
-
 height = Tower_h+6;
 foot_shape_r = 1.0;
 base_th = Base_th;

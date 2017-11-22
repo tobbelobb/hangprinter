@@ -2,13 +2,6 @@ include <parameters.scad>
 use <util.scad>
 use <sweep.scad>
 
-//%prev_art();
-module prev_art(){
-  //translate([0,15+2*2.5,0])
-    rotate([0,0,-90])
-    import("../stl/linetensioner.stl");
-}
-
 //beam_slider();
 module beam_slider(){
   wall_th = Wall_th;
