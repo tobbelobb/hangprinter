@@ -30,17 +30,17 @@ This repo contains code from many places. Some of them:
 * [Marlin firmware](https://github.com/MarlinFirmware/Marlin)
 * [scad-utils](https://github.com/openscad/scad-utils)
 
-The project has been supported economically by
+Currently donating $25 or more:
+* [Add:north](https://addnorth.com/)
 * [Aleph Objects](https://www.alephobjects.com/)
+* [Alexander Osika](https://www.bountysource.com/people/49454-alexander-osika)
 * [Bondtech](http://www.bondtech.se/)
 * [David Lang](https://www.bountysource.com/people/50149-david-lang)
 * [E3D](https://e3d-online.com)
-* [Grégory Herreman](https://www.bountysource.com/people/49670-gregory-herreman)
 * [Joshua Congleton](https://www.bountysource.com/people/49918-joshua-congleton)
-* [Paul Fisher](https://www.bountysource.com/people/50118-paul-fisher)
 * [Rob Brisky](https://www.bountysource.com/people/49764-rob-brisky)
-* [3Dnet.no](https://3dnet.no)
 
 Lists sorted alphabetically.
+More info on donations in the [Bountysource Salt campaign](https://salt.bountysource.com/teams/hangprinter).
 
 /tobbelobb
