@@ -36,6 +36,7 @@ Currently donating $25 or more:
 * [Alexander Osika](https://www.bountysource.com/people/49454-alexander-osika)
 * [Bondtech](http://www.bondtech.se/)
 * [David Lang](https://www.bountysource.com/people/50149-david-lang)
+* [Delloman](https://www.bountysource.com/people/56602-delloman)
 * [E3D](https://e3d-online.com)
 * [Joshua Congleton](https://www.bountysource.com/people/49918-joshua-congleton)
 * [Rob Brisky](https://www.bountysource.com/people/49764-rob-brisky)
