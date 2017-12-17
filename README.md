@@ -14,7 +14,7 @@ Bill of Materials
     * Extruder Holder x 1
     * Lineroller ABC Winch x 3
     * Lineroller D x 3
-    * Lineroller Anchor x 6
+    * Lineroller Anchor x 6 (The stl contains 2. Print <code>lineroller_anchor.stl</code> 3 times.)
     * Motor Bracket x 4
     * Motor Gear x 4
     * Spool x 4
