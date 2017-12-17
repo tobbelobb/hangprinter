@@ -800,7 +800,7 @@ void process_commands(){
         }
         break;
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
-      case 95: // G95 Set servo torque mode status. Accepts 0 or 1.
+      case 95: // G95 Set servo torque mode.
         float torque;
         byte cmd[5];
         cmd[0] = 0x5f; // 95 in hexadecimal is 0x5f
