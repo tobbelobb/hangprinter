@@ -12,10 +12,18 @@ module beam_slider(){
 
   module arm(){
     difference(){
-      clamp_wall(10);
+      union(){
+        clamp_wall(10,extra_length=Clamp_wall_extra_length+1.45);
+        translate([Beam_width/2+3.5/2+2.4, -Beam_width/2-3.2, h/2])
+          rotate([90,0,0])
+          cylinder(d=5.6/cos(30)+2, h=1.5, $fn=6);
+      }
       translate([Beam_width/2+3.5/2+2.4, 0, h/2])
         rotate([90,0,0])
         cylinder(d=3.5, h=w+10, center=true, $fs=1);
+      translate([Beam_width/2+3.5/2+2.4, -Beam_width/2-3.2, h/2])
+        rotate([90,0,0])
+        cylinder(d=5.6/cos(30), h=3, $fn=6);
     }
   }
   arm();
