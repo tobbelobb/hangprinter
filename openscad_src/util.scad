@@ -367,16 +367,16 @@ module clamp_wall(h=10,
 }
 
 // These are used by beam_clamp and corner_clamp
-module opening_top(exclude_left=false, exclude_right=false, wall_th, edges, l){
+module opening_top(exclude_left=false, exclude_right=false, wall_th, edges, l, extra_h=2){
   if(!exclude_left){
-    translate([wall_th+edges, 0, 2*wall_th+Fat_beam_width+2])
+    translate([wall_th+edges, 0, 2*wall_th+Fat_beam_width+extra_h])
       rotate([0,90,90])
       translate([0,0,-1])
       inner_round_corner(r=2, h=l, $fn=4*5);
   }
   if(!exclude_right){
     mirror([1,0,0])
-      translate([-wall_th-Fat_beam_width+edges, 0, 2*wall_th+Fat_beam_width+2])
+      translate([-wall_th-Fat_beam_width+edges, 0, 2*wall_th+Fat_beam_width+extra_h])
       rotate([0,90,90])
       translate([0,0,-1])
       inner_round_corner(r=2, h=l, $fn=4*5);
