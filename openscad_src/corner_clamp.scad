@@ -24,7 +24,7 @@ module corner_clamp(){
               one_rounded_cube4([Fat_beam_width+wall_th-1, l0+a, Fat_beam_width+2*wall_th],
                   2, $fn=4*4);
               translate([-wall_th-1,0,0])
-                rounded_cube2([2*wall_th, l0+a, wall_th],2,$fn=4*4);
+                rounded_cube2([2*wall_th+1, l0+a, wall_th],2,$fn=4*4);
               }
             }
       translate([0,-sqrt(2)/sqrt(5),wall_th])
@@ -68,14 +68,8 @@ module corner_clamp(){
           }
 
         }
-    translate([0,l0-2*rad_b,-1])
+    translate([0,l1/sqrt(3)-2*rad_b-1.3,-1]) // 1.3 chosen arbitrarily
       cylinder(d=2.5, h=wall_th+2, $fn=10);
-    translate([0,0,-0.5])
-      linear_extrude(height=1)
-        scale(0.15)
-        mirror([1,0])
-        translate([-150.3,-114])
-        import("logo.dxf");
     d_hole_r = 1.5;
     translate([0,-6,2+wall_th/2])
       rotate([-90,0,0]){
@@ -100,17 +94,19 @@ module corner_clamp(){
   }
 
   // Channel to guide D-line and stiffen up corner
-  channel_l = ((l0-2*rad_b)+(d_hole_l-6))/4;
+  channel_l = l1/sqrt(3)-2*rad_b-1.3-2.5/2;
   channel_r1 = 1;
   channel_r2 = 2.5;
-  translate([0,((l0-2*rad_b)+(d_hole_l-6))/2,wall_th])
-    rotate([90,0,0])
+  channel_h = 3.5;
+  translate([0,l1/sqrt(3)-2*rad_b-1.3-2.5/2-0.5,wall_th])
+    rotate([180,0,0])
         difference(){
-          rotate([90,0,0])
-            translate([-channel_r2, -channel_l/2, -channel_r2])
-              rounded_cube2([2*channel_r2, channel_l, channel_r2+0.1], 1, $fn=4*4);
-          rotate([90,0,0])
-            translate([-channel_r1, -channel_l/2-1, -channel_r1-0.5])
-              cube([2*channel_r1, channel_l+2, 2*channel_r1]);
+            translate([-channel_r2, 0, -channel_h])
+              rounded_cube2([2*channel_r2, channel_l, channel_h+0.1], 1, $fn=4*4);
+            translate([-channel_r1, -1, -channel_h-0.5])
+              cube([2*channel_r1, channel_l+2, channel_h+1]);
+            rotate([180+45,0,0])
+              translate([-channel_r2-1,0,0])
+                cube(2*channel_r2+2);
         }
 }
