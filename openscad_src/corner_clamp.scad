@@ -46,7 +46,7 @@ module corner_clamp(){
           max_beam_width = 17.5;
           zip_th = 2;
           zip_h = zip_th + max_beam_width - min_beam_width;
-          zip_w = 4;
+          zip_w = 4.5;
           zip_l = 15+wall_th+zip_h;
           for(k=[0,1]){
             translate([-(zip_l-zip_h),
