@@ -7,27 +7,26 @@ use <lineroller_ABC_winch.scad>
 height = Tower_h+6;
 foot_shape_r = 1.0;
 base_th = Base_th;
-bearing_width = Bearing_width+0.1; // Give extra space for bearing in this part
+shoulder=0.4;
+extra_bearing_width = shoulder+0.3;
+bearing_width = Bearing_width + extra_bearing_width; // Give extra space for bearing in this part
 
 module topping(){
-  stop_h_fac = 0.5011;
-  extra_bearing_width = 0.4; // Only used for antimateria of PTFE-tower
-  bw = bearing_width + extra_bearing_width;
   difference(){
     tx = Depth_of_lineroller_base/2+2.25; // Nothing magic about 2.25. Just for looks
-    ty = Bearing_width+extra_bearing_width+2*Lineroller_wall_th+0.1;
+    ty = Bearing_width+extra_bearing_width+2*Lineroller_wall_th + extra_bearing_width;
     translate([Bearing_r+Bearing_wall+1,0,0])
       linear_extrude(height = height, slices=1, scale=[0.8646,1]) // Nothing magic about 0.8646
         translate([-tx,-ty/2])
         rounded_square([tx, ty], foot_shape_r,$fn=4*6);
 
     bearing_bore_z = Tower_h-Bearing_r;
-    translate([-0.001,-(bw)/2,0])
-      cube([100, bw, bearing_bore_z]);
+    translate([-0.001,-(bearing_width+extra_bearing_width)/2,0])
+      cube([100, bearing_width+extra_bearing_width, bearing_bore_z]);
     translate([Bearing_wall+Bearing_r,0, bearing_bore_z]){
       rounded_cube([30,3,3], center=true, 0.6);
       rotate([90,0,0]){
-        cylinder(r=Bearing_r+2, h=bw, center=true);
+        cylinder(r=Bearing_r+2, h=bearing_width+extra_bearing_width, center=true);
         cylinder(d=4.5, h=20, center=true);
       }
     }
@@ -43,5 +42,7 @@ module topping(){
 }
 topping();
 
-lineroller_ABC_winch(edge_start=90, edge_stop=180-40, bearing_width=bearing_width);
+lineroller_ABC_winch(edge_start=90, edge_stop=180-40,
+                     bearing_width=bearing_width+extra_bearing_width-shoulder,
+                     shoulder=shoulder);
 base();

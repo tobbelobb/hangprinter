@@ -35,7 +35,7 @@ function foot_shape(r, e, f, w) = concat([
 function wall_shape(a, w, extr) = 1 - (sin(a*90))*extr/((w/2)+extr); // a 0 -> 1
 
 lineroller_ABC_winch(edge_start=40, edge_stop = 180-40);
-module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, bearing_width=Bearing_width){
+module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, bearing_width=Bearing_width, shoulder=0.4){
 
   module wall(){
     // Foot parameters
@@ -75,7 +75,7 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
                      ));
 
             translate([tower_h-Bearing_r,Bearing_r+Bearing_wall,0])
-              cylinder(r=r2, h=Lineroller_wall_th+0.4, $fs=1);
+              cylinder(r=r2, h=Lineroller_wall_th+shoulder, $fs=1);
           }
           translate([tower_h-Bearing_r,Bearing_r+Bearing_wall,-1])
             cylinder(d=Bearing_bore_r*2+0.3, h=Lineroller_wall_th+0.5+2, $fs=1);
