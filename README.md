@@ -8,7 +8,6 @@ Bill of Materials
 ----------------
 
   * Printed parts
-    * Beam Clamp x 2
     * Beam Slider x 6
     * Corner Clamp x 3
     * Extruder Holder x 1
@@ -23,28 +22,33 @@ Bill of Materials
     * Cable Clamp x ca 12
   * Vitamins
     * 5 x Nema17 steppers (> 40 N/cm holding torque, flat shaft)
-    * 60 m FireLine 0.5 mm
-    * ca 47x47 cm MDF or plywood sheet
+    * 60 m FireLine 0.5 mm (0.39 mm also works)
+    * ca 50x50 cm MDF or plywood sheet, thickness 10-14 mm
     * 1 x Arduino Mega
     * 1 x RAMPS
     * 5 x drivers (Special configuration options exist if you use Mechaduinos or tmc2130SilentStepSticks)
     * 1 x USB cable, type B plug
-    * 15x15 mm wooden beams (Tobben/core team uses lengths 3x40 cm + 1x20 cm)
+    * 3 x 40 cm rectangular/square beams, widths from 12.5 mm to 17.5 mm supported
+    * 1 x 25 cm rectangular/square beam
     * 1 x Power supply (12 V, 10 A recommended)
-    * 13 x M3 screws, length 25 mm
+    * 18 x zipties, widths between 3 and 4.5 mm recommended
+    * 6 x M3 screws, length 25 mm
     * 16 x M3 screws, length 5 mm
-    * 2  x M3 screws, length 10 mm
+    * 6  x M3 screws, length 12 mm
     * 4  x M8 screws, length > 50 mm, head countersunk
-    * 8  x 608 bearing
-    * 12 x 623 V-groove bearing
+    * 8  x 608 bearings
+    * 12 x 623 V-groove bearings
     * 10 cm PTFE tube (standard bowden, 4 mm outer dia, >1.75 mm inner dia)
-    * More than 20 self tapping wooden screws, length 10 - 20 mm, width ca 4 mm
+    * ca 75 self tapping wood screws, thickness 2-4 mm, length 10 mm, head diameter 7-12 mm
+    * 4 x self tapping wood screws, thickness ca 2 mm, head diameter ca 4 mm. For mounting Mega onto sheet material.
     * 5 m of 15-lead ribbon wire
     * Nuts and washers for all screws
     * Extruder + hot end (any setup that fits Nema17 mount will work)
+    * Ca 0.5 m red and black power cable for connecting 12 V to RAMPS
     * Mechaduino optional addon
       * 4 x Mechaduino PCB
-      * More than 20 jumper wires (if Mechaduinos)
+      * More than 20 jumper cables (if Mechaduinos)
       * 5V->3V3 level converter for i2c usage (if Mechaduinos)
+      * Ca 2 m red and black power cable for connecting 12 V to Mechaduinos
     * Tmc2130SilentStepStick addon
       * A few more jumper wires
