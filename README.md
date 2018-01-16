@@ -34,12 +34,12 @@ Bill of Materials
     * 18 x zipties, widths between 3 and 4.5 mm recommended
     * 6 x M3 screws, length 25 mm
     * 16 x M3 screws, length 5 mm
-    * 6  x M3 screws, length 12 mm
+    * 8  x M3 screws, length 12 mm
     * 4  x M8 screws, length > 50 mm, head countersunk
     * 8  x 608 bearings
     * 12 x 623 V-groove bearings
     * 10 cm PTFE tube (standard bowden, 4 mm outer dia, >1.75 mm inner dia)
-    * ca 75 self tapping wood screws, thickness 2-4 mm, length 10 mm, head diameter 7-12 mm, flat head.
+    * ca 75 self tapping wood screws, thickness 2-4 mm, length 10 mm, head diameter 7-12 mm, not countersunk head.
     * 4 x self tapping wood screws, thickness ca 2 mm, head diameter ca 4 mm. For mounting Mega onto sheet material.
     * 5 m of 15-lead ribbon wire
     * Nuts and washers for all screws
