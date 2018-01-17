@@ -153,19 +153,6 @@
 #define BTN_ENC 35
 
 #define SDCARDDETECT 49
-#elif defined(LCD_I2C_PANELOLU2)
-#define BTN_EN1 47  // reverse if the encoder turns the wrong way.
-#define BTN_EN2 43
-#define BTN_ENC 32
-#define LCD_SDSS 53
-#define SDCARDDETECT -1
-#define KILL_PIN 41
-#elif defined(LCD_I2C_VIKI)
-#define BTN_EN1 22  // reverse if the encoder turns the wrong way.
-#define BTN_EN2 7
-#define BTN_ENC -1
-#define LCD_SDSS 53
-#define SDCARDDETECT 49
 #else
 // arduino pin which triggers an piezzo beeper
 #define BEEPER 33  // Beeper on AUX-4
