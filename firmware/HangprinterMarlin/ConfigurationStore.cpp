@@ -226,19 +226,12 @@ void Config_ResetDefault() {
   endstop_adj[A_AXIS] = endstop_adj[B_AXIS] = endstop_adj[C_AXIS] = endstop_adj[D_AXIS] = 0;
 
 #ifdef PIDTEMP
-#ifdef PID_PARAMS_PER_EXTRUDER
-  for (int e = 0; e < EXTRUDERS; e++)
-#else
-    int e = 0; // only need to write once
-#endif
-  {
-    PID_PARAM(Kp, e) = DEFAULT_Kp;
-    PID_PARAM(Ki, e) = scalePID_i(DEFAULT_Ki);
-    PID_PARAM(Kd, e) = scalePID_d(DEFAULT_Kd);
-#ifdef PID_ADD_EXTRUSION_RATE
-    PID_PARAM(Kc, e) = DEFAULT_Kc;
-#endif
-  }
+  Kp = DEFAULT_Kp;
+  Ki = scalePID_i(DEFAULT_Ki);
+  Kd = scalePID_d(DEFAULT_Kd);
+  #ifdef PID_ADD_EXTRUSION_RATE
+    Kc = DEFAULT_Kc;
+  #endif
   // call updatePID (similar to when we have processed M301)
   updatePID();
 #endif // PIDTEMP
@@ -386,9 +379,9 @@ void Config_PrintSettings(bool forReplay) {
     SERIAL_ECHOLNPGM("PID settings:");
     SERIAL_ECHO_START;
   }
-  SERIAL_ECHOPAIR("   M301 P", PID_PARAM(Kp, 0)); // for compatibility with hosts, only echos values for E0
-  SERIAL_ECHOPAIR(" I", unscalePID_i(PID_PARAM(Ki, 0)));
-  SERIAL_ECHOPAIR(" D", unscalePID_d(PID_PARAM(Kd, 0)));
+  SERIAL_ECHOPAIR("   M301 P", Kp); // for compatibility with hosts, only echos values for E0
+  SERIAL_ECHOPAIR(" I", unscalePID_i(Ki));
+  SERIAL_ECHOPAIR(" D", unscalePID_d(Kd));
   SERIAL_EOL;
 #endif // PIDTEMP
 
