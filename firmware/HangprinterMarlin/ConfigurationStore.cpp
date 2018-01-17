@@ -2,38 +2,6 @@
  * ConfigurationStore.cpp
  *
  * Configuration and EEPROM storage
- * TODO: v15 / v16 document
- * V15 EEPROM Layout:
- *
- *  ver
- *  axis_steps_per_unit (x4)
- *  max_feedrate (x4)
- *  max_acceleration_units_per_sq_second (x4)
- *  acceleration
- *  retract_acceleration
- *  minimumfeedrate
- *  mintravelfeedrate
- *  minsegmenttime
- *  max_xy_jerk
- *  max_z_jerk
- *  max_e_jerk
- *  add_homing (x3)
- *
- * DELTA:
- *  endstop_adj (x3)
- *  delta_segments_per_second
- *
- * PIDTEMP:
- *  Kp[0], Ki[0], Kd[0], Kc[0]
- *  Kp[1], Ki[1], Kd[1], Kc[1]
- *  Kp[2], Ki[2], Kd[2], Kc[2]
- *  Kp[3], Ki[3], Kd[3], Kc[3]
- *
- *
- *
- *
- *  filament_size (x4)
- *
  */
 #include "Marlin.h"
 #include "planner.h"
@@ -98,7 +66,7 @@ void Config_StoreSettings()  {
   EEPROM_WRITE_VAR(i, max_z_jerk);
 #ifdef EXTRUDERS
   EEPROM_WRITE_VAR(i, max_e_jerk);
-#endif // ifdef EXTRUDERS
+#endif
   EEPROM_WRITE_VAR(i, add_homing);
 
   EEPROM_WRITE_VAR(i, endstop_adj);               // 3 floats
@@ -113,7 +81,6 @@ void Config_StoreSettings()  {
   EEPROM_WRITE_VAR(i, anchor_C_y);                // 1 float
   EEPROM_WRITE_VAR(i, anchor_C_z);                // 1 float
   EEPROM_WRITE_VAR(i, anchor_D_z);                // 1 float
-
 
   int storageSize = i;
 
@@ -133,9 +100,10 @@ void Config_RetrieveSettings() {
   char stored_ver[4];
   char ver[4] = EEPROM_VERSION;
   EEPROM_READ_VAR(i, stored_ver); //read stored version
-  //  SERIAL_ECHOLN("Version: [" << ver << "] Stored version: [" << stored_ver << "]");
+  SERIAL_ECHOLN("Version: [" << ver << "] Stored version: [" << stored_ver << "]");
 
   if (strncmp(ver, stored_ver, 3) != 0) {
+    SERIAL_ECHOLN("Version numbers don't match. Fallin back to default settings.");
     Config_ResetDefault();
   }
   else {
@@ -158,7 +126,7 @@ void Config_RetrieveSettings() {
     EEPROM_READ_VAR(i, max_z_jerk);
 #ifdef EXTRUDERS
     EEPROM_READ_VAR(i, max_e_jerk);
-#endif // ifdef EXTRUDERS
+#endif
     EEPROM_READ_VAR(i, add_homing);
 
     EEPROM_READ_VAR(i, endstop_adj);                // 3 floats
