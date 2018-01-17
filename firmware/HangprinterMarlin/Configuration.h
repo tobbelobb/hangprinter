@@ -49,7 +49,7 @@
 // This defines the number of extruders
 // If you have no extruders, uncomment this and code is more likely to compile
 // (implemented while developing Hangprinter)
-#define EXTRUDERS 1
+//#define EXTRUDERS 1
 
 //// The following define selects which power supply you have. Please choose the one that matches your setup
 // 1 = ATX

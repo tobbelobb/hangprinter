@@ -33,11 +33,9 @@ void manage_heater(); //it is critical that this is called periodically.
 
 // low level conversion routines
 // do not use these routines and variables outside of temperature.cpp
-extern int target_temperature[EXTRUDERS];
-extern float current_temperature[EXTRUDERS];
-#ifdef SHOW_TEMP_ADC_VALUES
-  extern int current_temperature_raw[EXTRUDERS];
-  extern int current_temperature_bed_raw;
+#ifdef EXTRUDERS
+  extern int target_temperature[EXTRUDERS];
+  extern float current_temperature[EXTRUDERS];
 #endif
 extern int target_temperature_bed;
 extern float current_temperature_bed;
@@ -61,16 +59,6 @@ extern float current_temperature_bed;
 FORCE_INLINE float degHotend(uint8_t extruder) {
   return current_temperature[extruder];
 };
-
-#ifdef SHOW_TEMP_ADC_VALUES
-  FORCE_INLINE float rawHotendTemp(uint8_t extruder) {
-    return current_temperature_raw[extruder];
-  };
-
-  FORCE_INLINE float rawBedTemp() {
-    return current_temperature_bed_raw;
-  };
-#endif
 
 FORCE_INLINE float degBed() {
   return current_temperature_bed;
