@@ -42,29 +42,24 @@ module corner_clamp(){
             }
 
           }
-          min_beam_width = 12.5;
-          max_beam_width = 17.5;
-          zip_th = 2;
-          zip_h = zip_th + max_beam_width - min_beam_width;
-          zip_w = 4.5;
-          zip_l = 15+wall_th+zip_h;
+          zip_l = 15+wall_th+Zip_h;
           for(k=[0,1]){
-            translate([-(zip_l-zip_h),
+            translate([-(zip_l-Zip_h),
                     k*(-l0+wall_th*sqrt(3)+2*zip_fr_edg)-zip_fr_edg-2,
-                wall_th+min_beam_width]){
-              translate([zip_l-zip_h,0,0])
+                wall_th+Min_beam_width]){
+              translate([zip_l-Zip_h,0,0])
                 rotate([0,90,0])
-                translate([0,-zip_w/2,0])
-                cube([zip_l, zip_w, zip_th]);
+                translate([0,-Zip_w/2,0])
+                cube([zip_l, Zip_w, Zip_th]);
               rotate([0,0,0])
-                translate([0,-zip_w/2,0])
-                  cube([zip_l, zip_w, zip_h]);
+                translate([0,-Zip_w/2,0])
+                  cube([zip_l, Zip_w, Zip_h]);
             }
-            translate([-zip_h-wall_th-min_beam_width,
+            translate([-Zip_h-wall_th-Min_beam_width,
                     k*(-l0+wall_th*sqrt(3)+2*zip_fr_edg)-zip_fr_edg-2,
                 -1])
-              translate([0,-zip_w/2,0])
-                cube([zip_h, zip_w, zip_l]);
+              translate([0,-Zip_w/2,0])
+                cube([Zip_h, Zip_w, zip_l]);
           }
 
         }
