@@ -65,12 +65,17 @@ module extruder_holder(){
       rotate([0,0,k*90])
       for(i=[5,z_depth-5-Zip_w])
         translate([0,Min_beam_width,i])
-          cube([k == 0 ? x_depth+10 : Zip_th, Zip_h+k*10, Zip_w]);
+          cube([x_depth+10, Zip_h+k*10, Zip_w]);
     // For cable holder screws
     for(i=[cable_clamp_o,z_depth-cable_clamp_o])
       translate([0,flange_l-Zip_w-3,i-Zip_th/2])
         cube([x_depth+10, Zip_w, Zip_th]);
   }
+
+  // Pillar to support cornered ziptie openings
+  rotate([0,0,-45])
+    translate([0.5,-0.5,0])
+    cube([sqrt(2)*wall_th-1,1,z_depth]);
 
   // Rounded support for cable clamp ziptie
   Placed_cable_clamper();
