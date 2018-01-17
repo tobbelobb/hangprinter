@@ -369,9 +369,6 @@ void setup(){
   SET_OUTPUT(CONTROLLERFAN_PIN); //Set pin used for driver cooling fan
 #endif
 
-#ifdef DIGIPOT_I2C
-  digipot_i2c_init();
-#endif
   setup_homepin();
 // Hangprinter needs it motors always enabled
 #if defined(HANGPRINTER)
