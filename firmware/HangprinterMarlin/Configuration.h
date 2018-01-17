@@ -187,7 +187,6 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 // 147 is Pt100 with 4k7 pullup
 // 110 is Pt100 with 1k pullup (non standard)
 
-#ifdef EXTRUDERS
 #define TEMP_SENSOR_0 5 // Setting gotten from wiki.e3d-online.net instructions for V6 hot end
 #define TEMP_SENSOR_1 -1
 #define TEMP_SENSOR_2 0
@@ -278,7 +277,6 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 #define THERMAL_RUNAWAY_PROTECTION_PERIOD 180 //in seconds
 #define THERMAL_RUNAWAY_PROTECTION_HYSTERESIS 10 // in degree Celsius
 
-#endif // #ifdef EXTRUDERS
 //===========================================================================
 //============================= Mechanical Settings =========================
 //===========================================================================
@@ -432,7 +430,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 //#define EEPROM_CHITCHAT
 
 // Preheat Constants
-#ifdef EXTRUDERS
 #define PLA_PREHEAT_HOTEND_TEMP 180
 #define PLA_PREHEAT_HPB_TEMP 70
 #define PLA_PREHEAT_FAN_SPEED 255   // Insert Value between 0 and 255
@@ -440,7 +437,6 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define ABS_PREHEAT_HOTEND_TEMP 240
 #define ABS_PREHEAT_HPB_TEMP 100
 #define ABS_PREHEAT_FAN_SPEED 255   // Insert Value between 0 and 255
-#endif
 
 // Increase the FAN pwm frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
@@ -461,7 +457,5 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 // #define PHOTOGRAPH_PIN     23
 
 #include "Configuration_adv.h"
-#ifdef EXTRUDERS
 #include "thermistortables.h"
-#endif
 #endif //__CONFIGURATION_H
