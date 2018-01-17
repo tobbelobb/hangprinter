@@ -99,8 +99,6 @@ static volatile bool temp_meas_ready = false;
   static float pid_error_bed;
   static float temp_iState_min_bed;
   static float temp_iState_max_bed;
-#else //PIDTEMPBED
-	static unsigned long  previous_millis_bed_heater;
 #endif //PIDTEMPBED
   static unsigned char soft_pwm[EXTRUDERS];
 
@@ -1046,8 +1044,6 @@ ISR(TIMER0_COMPB_vect)
   static unsigned char temp_count = 0;
   static unsigned long raw_temp_0_value = 0;
   static unsigned long raw_temp_1_value = 0;
-  static unsigned long raw_temp_2_value = 0;
-  static unsigned long raw_temp_3_value = 0;
   static unsigned long raw_temp_bed_value = 0;
   static unsigned char temp_state = 12;
   static unsigned char pwm_count = (1 << SOFT_PWM_SCALE);
@@ -1496,9 +1492,6 @@ ISR(TIMER0_COMPB_vect)
       temp_state = 7;
       break;
     case 7: // Measure TEMP_2
-      #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-        raw_temp_2_value += ADC;
-      #endif
       temp_state = 8;
       break;
     case 8: // Prepare TEMP_3
@@ -1515,9 +1508,6 @@ ISR(TIMER0_COMPB_vect)
       temp_state = 9;
       break;
     case 9: // Measure TEMP_3
-      #if defined(TEMP_3_PIN) && (TEMP_3_PIN > -1)
-        raw_temp_3_value += ADC;
-      #endif
       temp_state = 10; //change so that Filament Width is also measured
       break;
     case 10: //Prepare FILWIDTH
@@ -1568,12 +1558,6 @@ ISR(TIMER0_COMPB_vect)
 #if EXTRUDERS > 1
       current_temperature_raw[1] = raw_temp_1_value;
 #endif
-#if EXTRUDERS > 2
-      current_temperature_raw[2] = raw_temp_2_value;
-#endif
-#if EXTRUDERS > 3
-      current_temperature_raw[3] = raw_temp_3_value;
-#endif
       current_temperature_bed_raw = raw_temp_bed_value;
     }
 
@@ -1587,8 +1571,6 @@ ISR(TIMER0_COMPB_vect)
     temp_count = 0;
     raw_temp_0_value = 0;
     raw_temp_1_value = 0;
-    raw_temp_2_value = 0;
-    raw_temp_3_value = 0;
     raw_temp_bed_value = 0;
 
 #if HEATER_0_RAW_LO_TEMP > HEATER_0_RAW_HI_TEMP
