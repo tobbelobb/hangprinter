@@ -34,10 +34,6 @@ http://reprap.org/pipermail/reprap-dev/2011-May/003323.html
 #include "Configuration.h"
 #include "pins.h"
 
-#if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
-#include <SPI.h>
-#endif
-
 #if defined(HAVE_TMC2130)
 #include <SPI.h>
 #include <TMC2130Stepper.h>

@@ -27,9 +27,6 @@
 #include "temperature.h"
 #include "language.h"
 #include "speed_lookuptable.h"
-#if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
-#include <SPI.h>
-#endif
 
 #if defined(HAVE_TMC2130)
 #include "Configuration.h"
@@ -652,7 +649,6 @@ void tmc2130_init(TMC2130Stepper &st, const uint16_t microsteps, const uint16_t 
 
 void st_init()
 {
-  digipot_init(); //Initialize Digipot Motor Current
   microstep_init(); //Initialize Microstepping Pins
 
 #if defined(HAVE_TMC2130)
@@ -907,53 +903,6 @@ void quickStop()
     plan_discard_current_block();
   current_block = NULL;
   ENABLE_STEPPER_DRIVER_INTERRUPT();
-}
-
-void digitalPotWrite(int address, int value) // From Arduino DigitalPotControl example
-{
-#if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
-  digitalWrite(DIGIPOTSS_PIN,LOW); // take the SS pin low to select the chip
-  SPI.transfer(address); //  send in the address and value via SPI:
-  SPI.transfer(value);
-  digitalWrite(DIGIPOTSS_PIN,HIGH); // take the SS pin high to de-select the chip:
-  //delay(10);
-#endif
-}
-
-void digipot_init() //Initialize Digipot Motor Current
-{
-#if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
-  const uint8_t digipot_motor_current[] = DIGIPOT_MOTOR_CURRENT;
-
-  SPI.begin();
-  pinMode(DIGIPOTSS_PIN, OUTPUT);
-  for(int i=0;i<=4;i++)
-    //digitalPotWrite(digipot_ch[i], digipot_motor_current[i]);
-    digipot_current(i,digipot_motor_current[i]);
-#endif
-#ifdef MOTOR_CURRENT_PWM_XY_PIN
-  pinMode(MOTOR_CURRENT_PWM_XY_PIN, OUTPUT);
-  pinMode(MOTOR_CURRENT_PWM_Z_PIN, OUTPUT);
-  pinMode(MOTOR_CURRENT_PWM_E_PIN, OUTPUT);
-  digipot_current(0, motor_current_setting[0]);
-  digipot_current(1, motor_current_setting[1]);
-  digipot_current(2, motor_current_setting[2]);
-  //Set timer5 to 31khz so the PWM of the motor power is as constant as possible. (removes a buzzing noise)
-  TCCR5B = (TCCR5B & ~(_BV(CS50) | _BV(CS51) | _BV(CS52))) | _BV(CS50);
-#endif
-}
-
-void digipot_current(uint8_t driver, int current)
-{
-#if defined(DIGIPOTSS_PIN) && DIGIPOTSS_PIN > -1
-  const uint8_t digipot_ch[] = DIGIPOT_CHANNELS;
-  digitalPotWrite(digipot_ch[driver], current);
-#endif
-#ifdef MOTOR_CURRENT_PWM_XY_PIN
-  if (driver == 0) analogWrite(MOTOR_CURRENT_PWM_XY_PIN, (long)current * 255L / (long)MOTOR_CURRENT_PWM_RANGE);
-  if (driver == 1) analogWrite(MOTOR_CURRENT_PWM_Z_PIN, (long)current * 255L / (long)MOTOR_CURRENT_PWM_RANGE);
-  if (driver == 2) analogWrite(MOTOR_CURRENT_PWM_E_PIN, (long)current * 255L / (long)MOTOR_CURRENT_PWM_RANGE);
-#endif
 }
 
 void microstep_init()

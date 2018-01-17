@@ -18,7 +18,6 @@
 #define E0_MS2_PIN -1
 #define E1_MS1_PIN -1
 #define E1_MS2_PIN -1
-#define DIGIPOTSS_PIN -1
 #define HEATER_3_PIN -1
 #define TEMP_3_PIN -1
 
