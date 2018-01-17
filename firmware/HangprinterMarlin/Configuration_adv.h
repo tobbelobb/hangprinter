@@ -272,10 +272,6 @@ const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 //=============================  Define Defines  ============================
 //===========================================================================
 
-#if EXTRUDERS > 1 && defined TEMP_SENSOR_1_AS_REDUNDANT
-#error "You cannot use TEMP_SENSOR_1_AS_REDUNDANT if EXTRUDERS > 1"
-#endif
-
 #if EXTRUDERS > 1 && defined HEATERS_PARALLEL
 #error "You cannot use HEATERS_PARALLEL if EXTRUDERS > 1"
 #endif
