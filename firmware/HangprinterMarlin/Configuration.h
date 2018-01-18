@@ -46,9 +46,6 @@
 // You can use an online service to generate a random UUID. (eg http://www.uuidgenerator.net/version4)
 // #define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 
-// This defines the number of extruders
-#define EXTRUDERS 1
-
 //// The following define selects which power supply you have. Please choose the one that matches your setup
 // 1 = ATX
 // 2 = X-Box 360 203Watts (the blue wire connected to PS_ON and the red wire to VCC)
@@ -65,24 +62,26 @@
 // and processor overload (too many expensive sqrt calls).
 #define DELTA_SEGMENTS_PER_SECOND 40
 
-// NOTE! all values here MUST be floating point, so always have a decimal point in them
-// Measure from fish eye to anchor point along Carthesian axis
-// Or do other measurments and calculate Carthesian axis lengths by trigonometry
+// Measure from pivot point to pivot point of line
 // See Hangprinter calibration manual for help:
-// https://vitana.se/opr3d/tbear/index.html#hangprinter_project_21
-#define ANCHOR_A_X 0.0
-#define ANCHOR_A_Y -2163.0
-#define ANCHOR_A_Z -75.5
-#define ANCHOR_B_X -1841.0
-#define ANCHOR_B_Y 741.0
-#define ANCHOR_B_Z -75.5
-#define ANCHOR_C_X 1639.0
-#define ANCHOR_C_Y 1404.0
-#define ANCHOR_C_Z -75.5
-#define ANCHOR_D_Z 3250.5
+// http://reprap.org/wiki/Links_Into_Hangprinter_v3_Build_Video#Now_going_into_an_hour_of_measuring_this
+#define ANCHOR_A_X     0 // mm
+#define ANCHOR_A_Y -2163
+#define ANCHOR_A_Z   -75
+#define ANCHOR_B_X  1841
+#define ANCHOR_B_Y   741
+#define ANCHOR_B_Z   -75
+#define ANCHOR_C_X -1639
+#define ANCHOR_C_Y  1404
+#define ANCHOR_C_Z   -75
+#define ANCHOR_D_Z  3250
 
-#define NUM_AXIS 5 // The axis order: A_AXIS, B_AXIS, C_AXIS, D_AXIS, E_AXIS
-#define DIRS 4
+// Comment this out if you plan to place your anchors at unconventional places
+// See Configuration_adv.h for exact definition of the tested convention
+#define CONVENTIONAL_GEOMETRY
+
+#define NUM_AXIS 5 // The axis order:    A_AXIS, B_AXIS, C_AXIS, D_AXIS, E_AXIS
+#define DIRS 4     // The four dirs are: A_AXIS, B_AXIS, C_AXIS, D_AXIS
 
 // If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
 //#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE

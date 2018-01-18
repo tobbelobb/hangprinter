@@ -68,10 +68,10 @@ extern float axis_steps_per_unit[NUM_AXIS];
 void plan_init();
 
 // Initial distances to anchor point needed for dynamic step/mm calculations
-const float INITIAL_DISTANCES[DIRS] = {sqrt(ANCHOR_A_X*ANCHOR_A_X + ANCHOR_A_Y*ANCHOR_A_Y + ANCHOR_A_Z*ANCHOR_A_Z),
-                                       sqrt(ANCHOR_B_X*ANCHOR_B_X + ANCHOR_B_Y*ANCHOR_B_Y + ANCHOR_B_Z*ANCHOR_B_Z),
-                                       sqrt(ANCHOR_C_X*ANCHOR_C_X + ANCHOR_C_Y*ANCHOR_C_Y + ANCHOR_C_Z*ANCHOR_C_Z),
-                                       ANCHOR_D_Z};
+const float INITIAL_DISTANCES[DIRS] = {sqrt(float(ANCHOR_A_X)*float(ANCHOR_A_X) + float(ANCHOR_A_Y)*float(ANCHOR_A_Y) + float(ANCHOR_A_Z)*float(ANCHOR_A_Z)),
+                                       sqrt(float(ANCHOR_B_X)*float(ANCHOR_B_X) + float(ANCHOR_B_Y)*float(ANCHOR_B_Y) + float(ANCHOR_B_Z)*float(ANCHOR_B_Z)),
+                                       sqrt(float(ANCHOR_C_X)*float(ANCHOR_C_X) + float(ANCHOR_C_Y)*float(ANCHOR_C_Y) + float(ANCHOR_C_Z)*float(ANCHOR_C_Z)),
+                                       float(ANCHOR_D_Z)};
 
 // Add a new linear movement to the buffer. line_lengths contains the absolute target position in
 // millimeters. Feed rate specifies the speed of the motion.

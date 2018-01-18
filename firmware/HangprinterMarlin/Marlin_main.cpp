@@ -108,31 +108,10 @@ bool axis_relative_modes[] = AXIS_RELATIVE_MODES;
 int feedmultiply = 100; //100->1 200->2
 int saved_feedmultiply;
 int extrudemultiply = 100; //100->1 200->2
-int extruder_multiply[EXTRUDERS] = { 100
-#if EXTRUDERS > 1
-  , 100
-#if EXTRUDERS > 2
-    , 100
-#endif
-#endif
-};
+int extruder_multiply[1] = { 100 };
 bool volumetric_enabled = false;
-float filament_size[EXTRUDERS] = { DEFAULT_NOMINAL_FILAMENT_DIA
-#if EXTRUDERS > 1
-  , DEFAULT_NOMINAL_FILAMENT_DIA
-#if EXTRUDERS > 2
-    , DEFAULT_NOMINAL_FILAMENT_DIA
-#endif
-#endif
-};
-float volumetric_multiplier[EXTRUDERS] = {1.0
-#if EXTRUDERS > 1
-  , 1.0
-#if EXTRUDERS > 2
-    , 1.0
-#endif
-#endif
-};
+float filament_size[1] = { DEFAULT_NOMINAL_FILAMENT_DIA };
+float volumetric_multiplier[1] = { 1.0 };
 
 float current_position[4] = { 0.0, 0.0, 0.0, 0.0 }; //gcode carthesian
 float add_homing[DIRS] = { 0 };
@@ -172,9 +151,8 @@ const char axis_codes[5] = {'A', 'B', 'C', 'D', 'E'};
 static float destination[4] = { 0, 0, 0, 0 };
 
 static float offset[3] = { 0, 0, 0 };
-static bool home_all_axis = true;
 static float feedrate = 1500.0, next_feedrate, saved_feedrate;
-static long gcode_N, gcode_LastN, Stopped_gcode_LastN = 0;
+static long gcode_LastN, Stopped_gcode_LastN = 0;
 
 static bool relative_mode = false;
 
@@ -193,8 +171,6 @@ const int sensitive_pins[] = SENSITIVE_PINS; ///< Sensitive pin list for M42
 
 // Inactivity shutdown
 static unsigned long previous_millis_cmd = 0;
-//static unsigned long max_inactive_time = 0;
-static unsigned long stepper_inactive_time = DEFAULT_STEPPER_DEACTIVE_TIME*1000l;
 
 unsigned long starttime = 0; ///< Print job start time
 unsigned long stoptime = 0;  ///< Print job stop time
@@ -472,15 +448,6 @@ XYZ_CONSTS_FROM_CONFIG(float, max_length,      MAX_LENGTH);
 XYZ_CONSTS_FROM_CONFIG(float, home_retract_mm, HOME_RETRACT_MM);
 XYZ_CONSTS_FROM_CONFIG(signed char, home_dir,  HOME_DIR);
 
-static void axis_is_at_home(int axis){
-  current_position[axis] = base_home_pos(axis) + add_homing[axis];
-  min_pos[axis] =          base_min_pos(axis) + add_homing[axis];
-  max_pos[axis] =          base_max_pos(axis) + add_homing[axis];
-}
-
-// TODO: Homing procedure goes here. tobben 8. sep 2015
-static void homeaxis(int axis) { }
-
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
 // Ang is angle moved away from origo position
 // Output is line length from origo in mm
@@ -667,7 +634,6 @@ void refresh_cmd_timeout(void){
 
 void process_commands(){
   unsigned long codenum; //throw away variable
-  char *starpos = NULL;
   if(code_seen('G')){
     switch((int)code_value()){
       case 0: // G0 -> G1
@@ -675,7 +641,6 @@ void process_commands(){
         if(Stopped == false){
           get_coordinates(); // Put X Y Z E into destination[] and update feedrate based on F
           prepare_move();
-          //ClearToSend();
         }
         break;
       // G4 P100 means dwell for 100 milliseconds
@@ -1071,14 +1036,12 @@ void process_commands(){
         SERIAL_PROTOCOLPGM(" /");
         SERIAL_PROTOCOL_F(degTargetBed(),1);
 #endif //TEMP_BED_PIN
-        for (int8_t cur_extruder = 0; cur_extruder < EXTRUDERS; ++cur_extruder){
-          SERIAL_PROTOCOLPGM(" T");
-          SERIAL_PROTOCOL(cur_extruder);
-          SERIAL_PROTOCOLPGM(":");
-          SERIAL_PROTOCOL_F(degHotend(cur_extruder),1);
-          SERIAL_PROTOCOLPGM(" /");
-          SERIAL_PROTOCOL_F(degTargetHotend(cur_extruder),1);
-        }
+        SERIAL_PROTOCOLPGM(" T");
+        SERIAL_PROTOCOL(0);
+        SERIAL_PROTOCOLPGM(":");
+        SERIAL_PROTOCOL_F(degHotend(0),1);
+        SERIAL_PROTOCOLPGM(" /");
+        SERIAL_PROTOCOL_F(degTargetHotend(0),1);
 #else
         SERIAL_ERROR_START;
         SERIAL_ERRORLNPGM(MSG_ERR_NO_THERMISTORS);
@@ -1331,18 +1294,16 @@ void process_commands(){
           //TODO: update for all axis, use for loop
           case 200: // M200 D<millimeters> set filament diameter and set E axis units to cubic millimeters (use S0 to set back to millimeters).
           {
-
             tmp_extruder = active_extruder;
             if(code_seen('T')){
               tmp_extruder = code_value();
-              if(tmp_extruder >= EXTRUDERS){
+              if(tmp_extruder >= 1){
                 SERIAL_ECHO_START;
                 SERIAL_ECHO(MSG_M200_INVALID_EXTRUDER);
                 break;
               }
             }
 
-            float area = .0;
             if(code_seen('D')){
               float diameter = code_value();
               // setting any extruder filament size disables volumetric on the assumption that
@@ -1353,7 +1314,7 @@ void process_commands(){
 
                 filament_size[tmp_extruder] = diameter;
                 // make sure all extruders have some sane value for the filament size
-                for (int i=0; i<EXTRUDERS; i++)
+                for (int i=0; i<1; i++)
                   if(! filament_size[i]) filament_size[i] = DEFAULT_NOMINAL_FILAMENT_DIA;
               }
             } else {
@@ -1364,18 +1325,18 @@ void process_commands(){
           }
           break;
           case 201: // M201 // max_acceleration_units_per_sq_second is defined per abcd axis, so axis_codes ABCD here
-          for(int8_t i=0; i < NUM_AXIS; i++){
-            if(code_seen(axis_codes[i])){
-              max_acceleration_units_per_sq_second[i] = code_value();
+            for(int8_t i=0; i < NUM_AXIS; i++){
+              if(code_seen(axis_codes[i])){
+                max_acceleration_units_per_sq_second[i] = code_value();
+              }
             }
-          }
-          // steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
-          reset_acceleration_rates();
+            // steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
+            reset_acceleration_rates();
           break;
           case 203: // M203 max feedrate mm/sec // max_feedrate[NUM_AXIS] is abcd axis, do axis_codes ABCD here
-          for(int8_t i=0; i < NUM_AXIS; i++){
-            if(code_seen(axis_codes[i])) max_feedrate[i] = code_value();
-          }
+            for(int8_t i=0; i < NUM_AXIS; i++){
+              if(code_seen(axis_codes[i])) max_feedrate[i] = code_value();
+            }
           break;
           case 204: // M204 acclereration S normal moves T filmanent only moves
           {
@@ -1507,7 +1468,7 @@ void process_commands(){
             if(code_seen('E')){
               e = (int)code_value();
             }
-            if(e < EXTRUDERS) // catch bad input value
+            if(e < 1) // catch bad input value
             {
 
               if(code_seen('P')) Kp = code_value();
@@ -1584,7 +1545,7 @@ void process_commands(){
           break;
           case 503: // M503 print settings currently in memory
           {
-            Config_PrintSettings(code_seen('S') && code_value == 0);
+            Config_PrintSettings(code_seen('S') && code_value() == 0);
           }
           break;
 #ifdef ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
@@ -1648,15 +1609,13 @@ void process_commands(){
 
     else if(code_seen('T')){
       tmp_extruder = code_value();
-      if(tmp_extruder >= EXTRUDERS){
+      if(tmp_extruder >= 1){
         SERIAL_ECHO_START;
         SERIAL_ECHO("T");
         SERIAL_ECHO(tmp_extruder);
         SERIAL_ECHOLN(MSG_INVALID_EXTRUDER);
       }else {
-        boolean make_move = false;
         if(code_seen('F')){
-          make_move = true;
           next_feedrate = code_value();
           if(next_feedrate > 0.0){
             feedrate = next_feedrate;
@@ -1795,15 +1754,6 @@ void process_commands(){
       lastMotorCheck = millis();
 
       if(!READ(X_ENABLE_PIN) || !READ(Y_ENABLE_PIN) || !READ(Z_ENABLE_PIN) || (soft_pwm_bed > 0)
-#if EXTRUDERS > 2
-          || !READ(E2_ENABLE_PIN)
-#endif
-#if EXTRUDERS > 1
-#if defined(X2_ENABLE_PIN) && X2_ENABLE_PIN > -1
-          || !READ(X2_ENABLE_PIN)
-#endif
-          || !READ(E1_ENABLE_PIN)
-#endif
           || !READ(E0_ENABLE_PIN)) //If any of the drivers are enabled...
       {
         lastMotor = millis(); //... set time to NOW so the fan will turn on
@@ -1832,7 +1782,7 @@ void process_commands(){
     float max_temp = 0.0;
     if(millis() > stat_update){
       stat_update += 500; // Update every 0.5s
-      for (int8_t cur_extruder = 0; cur_extruder < EXTRUDERS; ++cur_extruder){
+      for (int8_t cur_extruder = 0; cur_extruder < 1; ++cur_extruder){
         max_temp = max(max_temp, degHotend(cur_extruder));
         max_temp = max(max_temp, degTargetHotend(cur_extruder));
       }
@@ -1856,88 +1806,63 @@ void process_commands(){
   }
 #endif
 
-  void manage_inactivity(bool ignore_stepper_queue) //default argument false set in Marlin.h
-  {
+  void manage_inactivity(){ //default argument false set in Marlin.h
+    #if defined(KILL_PIN) && KILL_PIN > -1
+      static int killCount = 0;   // make the inactivity button a bit less responsive
+      const int KILL_DELAY = 10000;
+    #endif
+    #if defined(HOME_PIN) && HOME_PIN > -1
+      static int homeDebounceCount = 0;   // poor man's debouncing count
+      const int HOME_DEBOUNCE_DELAY = 10000;
+    #endif
+    if(buflen < (BUFSIZE-1)) get_command();
 
-#if defined(KILL_PIN) && KILL_PIN > -1
-    static int killCount = 0;   // make the inactivity button a bit less responsive
-    const int KILL_DELAY = 10000;
-#endif
-
-#if defined(HOME_PIN) && HOME_PIN > -1
-    static int homeDebounceCount = 0;   // poor man's debouncing count
-    const int HOME_DEBOUNCE_DELAY = 10000;
-#endif
-
-
-    if(buflen < (BUFSIZE-1))
-      get_command();
-
-    // G4 dwell uses this function. Don't kill. Never kill.
-    //if( (millis() - previous_millis_cmd) >  max_inactive_time )
-    //  if(max_inactive_time)
-    //    kill();
-    //
-    // Hangprinter needs to keep lines tight at all times. Never disable.
-    //if(stepper_inactive_time){
-    //  if( (millis() - previous_millis_cmd) >  stepper_inactive_time ){
-    //    if(blocks_queued() == false && ignore_stepper_queue == false){
-    //      disable_x();
-    //      disable_y();
-    //      disable_z();
-    //      disable_e0();
-    //      disable_e1();
-    //    }
-    //  }
-    //}
-
-#ifdef CHDK //Check if pin should be set to LOW after M240 set it to HIGH
-    if(chdkActive && (millis() - chdkHigh > CHDK_DELAY)){
-      chdkActive = false;
-      WRITE(CHDK, LOW);
-    }
-#endif
-
-#if defined(KILL_PIN) && KILL_PIN > -1
-
-    // Check if the kill button was pressed and wait just in case it was an accidental
-    // key kill key press
-    // -------------------------------------------------------------------------------
-    if( 0 == READ(KILL_PIN) ){
-      killCount++;
-    }else if(killCount > 0){
-      killCount--;
-    }
-    // Exceeded threshold and we can confirm that it was not accidental
-    // KILL the machine
-    // ----------------------------------------------------------------
-    if( killCount >= KILL_DELAY){
-      kill();
-    }
-#endif
-
-#if defined(HOME_PIN) && HOME_PIN > -1
-    // Check to see if we have to home, use poor man's debouncer
-    // ---------------------------------------------------------
-    if( 0 == READ(HOME_PIN) ){
-      if(homeDebounceCount == 0){
-        enquecommand_P((PSTR("G28")));
-        homeDebounceCount++;
-        LCD_ALERTMESSAGEPGM(MSG_AUTO_HOME);
-      }else if(homeDebounceCount < HOME_DEBOUNCE_DELAY){
-        homeDebounceCount++;
-      }else{
-        homeDebounceCount = 0;
+    #ifdef CHDK //Check if pin should be set to LOW after M240 set it to HIGH
+      if(chdkActive && (millis() - chdkHigh > CHDK_DELAY)){
+        chdkActive = false;
+        WRITE(CHDK, LOW);
       }
-    }
-#endif
+    #endif
 
-#if defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1
-    controllerFan(); //Check if fan should be turned on to cool stepper drivers down
-#endif
-#ifdef TEMP_STAT_LEDS
-    handle_status_leds();
-#endif
+    #if defined(KILL_PIN) && KILL_PIN > -1
+      // Check if the kill button was pressed and wait just in case it was an accidental
+      // key kill key press
+      // -------------------------------------------------------------------------------
+      if( 0 == READ(KILL_PIN) ){
+        killCount++;
+      }else if(killCount > 0){
+        killCount--;
+      }
+      // Exceeded threshold and we can confirm that it was not accidental
+      // KILL the machine
+      // ----------------------------------------------------------------
+      if( killCount >= KILL_DELAY){
+        kill();
+      }
+    #endif
+
+    #if defined(HOME_PIN) && HOME_PIN > -1
+      // Check to see if we have to home, use poor man's debouncer
+      // ---------------------------------------------------------
+      if( 0 == READ(HOME_PIN) ){
+        if(homeDebounceCount == 0){
+          enquecommand_P((PSTR("G28")));
+          homeDebounceCount++;
+          LCD_ALERTMESSAGEPGM(MSG_AUTO_HOME);
+        }else if(homeDebounceCount < HOME_DEBOUNCE_DELAY){
+          homeDebounceCount++;
+        }else{
+          homeDebounceCount = 0;
+        }
+      }
+    #endif
+
+    #if defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1
+      controllerFan(); //Check if fan should be turned on to cool stepper drivers down
+    #endif
+    #ifdef TEMP_STAT_LEDS
+      handle_status_leds();
+    #endif
     check_axes_activity();
   }
 
@@ -2048,7 +1973,7 @@ void process_commands(){
     tmp_extruder = active_extruder;
     if(code_seen('T')){
       tmp_extruder = code_value();
-      if(tmp_extruder >= EXTRUDERS){
+      if(tmp_extruder >= 1){
         SERIAL_ECHO_START;
         switch(code){
           case 104:
@@ -2088,7 +2013,7 @@ void process_commands(){
   }
 
   void calculate_volumetric_multipliers(){
-    for (int i=0; i<EXTRUDERS; i++)
+    for (int i=0; i<1; i++)
       volumetric_multiplier[i] = calculate_volumetric_multiplier(filament_size[i]);
   }
 

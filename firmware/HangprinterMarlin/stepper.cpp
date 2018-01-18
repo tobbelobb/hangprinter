@@ -67,20 +67,15 @@ static volatile bool endstop_x_hit=false;
 static volatile bool endstop_y_hit=false;
 static volatile bool endstop_z_hit=false;
 #ifdef ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
-bool abort_on_endstop_hit = false;
+  bool abort_on_endstop_hit = false;
 #endif
 #ifdef MOTOR_CURRENT_PWM_XY_PIN
-int motor_current_setting[3] = DEFAULT_PWM_MOTOR_CURRENT;
+  int motor_current_setting[3] = DEFAULT_PWM_MOTOR_CURRENT;
 #endif
 
-static bool old_x_min_endstop=false;
-static bool old_x_max_endstop=false;
-static bool old_y_min_endstop=false;
-static bool old_y_max_endstop=false;
-static bool old_z_min_endstop=false;
-static bool old_z_max_endstop=false;
-
 static bool check_endstops = true;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 volatile long count_position[NUM_AXIS] = { lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) - sqrtk1[A_AXIS])),
                                            lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) - sqrtk1[B_AXIS])),
@@ -93,6 +88,7 @@ volatile long count_position[NUM_AXIS] = { INITIAL_DISTANCES[A_AXIS]*tmp_def_ax_
                                            INITIAL_DISTANCES[C_AXIS]*tmp_def_ax_st_p_u[C_AXIS],
                                            INITIAL_DISTANCES[D_AXIS]*tmp_def_ax_st_p_u[D_AXIS], 0 }; // Assume we start in origo.
 #endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+#pragma GCC diagnostic pop
 volatile signed char count_direction[NUM_AXIS] = { 1, 1, 1, 1, 1};
 
 //===========================================================================
@@ -669,17 +665,9 @@ void st_init()
 #endif
 #if defined(Y_DIR_PIN) && Y_DIR_PIN > -1
   SET_OUTPUT(Y_DIR_PIN);
-
-#if defined(Y_DUAL_STEPPER_DRIVERS) && defined(Y2_DIR_PIN) && (Y2_DIR_PIN > -1)
-  SET_OUTPUT(Y2_DIR_PIN);
-#endif
 #endif
 #if defined(Z_DIR_PIN) && Z_DIR_PIN > -1
   SET_OUTPUT(Z_DIR_PIN);
-
-#if defined(Z_DUAL_STEPPER_DRIVERS) && defined(Z2_DIR_PIN) && (Z2_DIR_PIN > -1)
-  SET_OUTPUT(Z2_DIR_PIN);
-#endif
 #endif
 #if defined(E0_DIR_PIN) && E0_DIR_PIN > -1
   SET_OUTPUT(E0_DIR_PIN);
@@ -707,20 +695,10 @@ void st_init()
 #if defined(Y_ENABLE_PIN) && Y_ENABLE_PIN > -1
   SET_OUTPUT(Y_ENABLE_PIN);
   if(!Y_ENABLE_ON) WRITE(Y_ENABLE_PIN,HIGH);
-
-#if defined(Y_DUAL_STEPPER_DRIVERS) && defined(Y2_ENABLE_PIN) && (Y2_ENABLE_PIN > -1)
-  SET_OUTPUT(Y2_ENABLE_PIN);
-  if(!Y_ENABLE_ON) WRITE(Y2_ENABLE_PIN,HIGH);
-#endif
 #endif
 #if defined(Z_ENABLE_PIN) && Z_ENABLE_PIN > -1
   SET_OUTPUT(Z_ENABLE_PIN);
   if(!Z_ENABLE_ON) WRITE(Z_ENABLE_PIN,HIGH);
-
-#if defined(Z_DUAL_STEPPER_DRIVERS) && defined(Z2_ENABLE_PIN) && (Z2_ENABLE_PIN > -1)
-  SET_OUTPUT(Z2_ENABLE_PIN);
-  if(!Z_ENABLE_ON) WRITE(Z2_ENABLE_PIN,HIGH);
-#endif
 #endif
 #if defined(E0_ENABLE_PIN) && (E0_ENABLE_PIN > -1)
   SET_OUTPUT(E0_ENABLE_PIN);
@@ -798,19 +776,11 @@ void st_init()
 #if defined(Y_STEP_PIN) && (Y_STEP_PIN > -1)
   SET_OUTPUT(Y_STEP_PIN);
   WRITE(Y_STEP_PIN,INVERT_Y_STEP_PIN);
-#if defined(Y_DUAL_STEPPER_DRIVERS) && defined(Y2_STEP_PIN) && (Y2_STEP_PIN > -1)
-  SET_OUTPUT(Y2_STEP_PIN);
-  WRITE(Y2_STEP_PIN,INVERT_Y_STEP_PIN);
-#endif
   disable_y();
 #endif
 #if defined(Z_STEP_PIN) && (Z_STEP_PIN > -1)
   SET_OUTPUT(Z_STEP_PIN);
   WRITE(Z_STEP_PIN,INVERT_Z_STEP_PIN);
-#if defined(Z_DUAL_STEPPER_DRIVERS) && defined(Z2_STEP_PIN) && (Z2_STEP_PIN > -1)
-  SET_OUTPUT(Z2_STEP_PIN);
-  WRITE(Z2_STEP_PIN,INVERT_Z_STEP_PIN);
-#endif
   disable_z();
 #endif
 #if defined(E0_STEP_PIN) && (E0_STEP_PIN > -1)
@@ -905,30 +875,15 @@ void quickStop()
   ENABLE_STEPPER_DRIVER_INTERRUPT();
 }
 
-void microstep_init()
-{
-  const uint8_t microstep_modes[] = MICROSTEP_MODES;
-
+void microstep_init(){
 #if defined(E1_MS1_PIN) && E1_MS1_PIN > -1
   pinMode(E1_MS1_PIN,OUTPUT);
   pinMode(E1_MS2_PIN,OUTPUT);
 #endif
 
-#if defined(X_MS1_PIN) && X_MS1_PIN > -1
-  pinMode(X_MS1_PIN,OUTPUT);
-  pinMode(X_MS2_PIN,OUTPUT);
-  pinMode(Y_MS1_PIN,OUTPUT);
-  pinMode(Y_MS2_PIN,OUTPUT);
-  pinMode(Z_MS1_PIN,OUTPUT);
-  pinMode(Z_MS2_PIN,OUTPUT);
-  pinMode(E0_MS1_PIN,OUTPUT);
-  pinMode(E0_MS2_PIN,OUTPUT);
-  for(int i=0;i<=4;i++) microstep_mode(i,microstep_modes[i]);
-#endif
 }
 
-void microstep_ms(uint8_t driver, int8_t ms1, int8_t ms2)
-{
+void microstep_ms(uint8_t driver, int8_t ms1, int8_t ms2){
   if(ms1 > -1) switch(driver)
   {
     case 0: digitalWrite( X_MS1_PIN,ms1); break;

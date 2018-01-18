@@ -62,18 +62,6 @@
 // before setting a PWM value. (Does not work with software PWM for fan on Sanguinololu)
 //#define FAN_KICKSTART_TIME 100
 
-// Extruder cooling fans
-// Configure fan pin outputs to automatically turn on/off when the associated
-// extruder temperature is above/below EXTRUDER_AUTO_FAN_TEMPERATURE.
-// Multiple extruders can be assigned to the same pin in which case
-// the fan will turn on when any selected extruder is above the threshold.
-#define EXTRUDER_0_AUTO_FAN_PIN   -1
-#define EXTRUDER_1_AUTO_FAN_PIN   -1
-#define EXTRUDER_2_AUTO_FAN_PIN   -1
-#define EXTRUDER_AUTO_FAN_TEMPERATURE 50
-#define EXTRUDER_AUTO_FAN_SPEED   255  // == full speed
-
-
 //===========================================================================
 //=============================Mechanical Settings===========================
 //===========================================================================
@@ -127,34 +115,6 @@
 #endif //End auto min/max positions
 //END AUTOSET LOCATIONS OF LIMIT SWITCHES -ZP
 
-
-// A single Z stepper driver is usually used to drive 2 stepper motors.
-// Uncomment this define to utilize a separate stepper driver for each Z axis motor.
-// Only a few motherboards support this, like RAMPS, which have dual extruder support (the 2nd, often unused, extruder driver is used
-// to control the 2nd Z axis stepper motor). The pins are currently only defined for a RAMPS motherboards.
-// On a RAMPS (or other 5 driver) motherboard, using this feature will limit you to using 1 extruder.
-//#define Z_DUAL_STEPPER_DRIVERS
-
-#ifdef Z_DUAL_STEPPER_DRIVERS
-#undef EXTRUDERS
-#define EXTRUDERS 1
-#endif
-
-// Same again but for Y Axis.
-//#define Y_DUAL_STEPPER_DRIVERS
-
-// Define if the two Y drives need to rotate in opposite directions
-#define INVERT_Y2_VS_Y_DIR true
-
-#ifdef Y_DUAL_STEPPER_DRIVERS
-#undef EXTRUDERS
-#define EXTRUDERS 1
-#endif
-
-#if defined (Z_DUAL_STEPPER_DRIVERS) && defined (Y_DUAL_STEPPER_DRIVERS)
-#error "You cannot have dual drivers for both Y and Z"
-#endif
-
 //homing hits the endstop, then retracts by this distance, before it tries to slowly bump again:
 #define X_HOME_RETRACT_MM 5
 #define Y_HOME_RETRACT_MM 5
@@ -173,9 +133,6 @@
 #define INVERT_Z_STEP_PIN  false
 #define INVERT_E_STEP_PIN  false
 #define INVERT_E1_STEP_PIN false
-
-//default stepper release if idle
-#define DEFAULT_STEPPER_DEACTIVE_TIME 60
 
 #define DEFAULT_MINIMUMFEEDRATE       0.0     // minimum feedrate
 #define DEFAULT_MINTRAVELFEEDRATE     0.0
@@ -230,24 +187,21 @@ const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 // Power Signal Control Definitions
 // By default use ATX definition
 #ifndef POWER_SUPPLY
-#define POWER_SUPPLY 1
+  #define POWER_SUPPLY 1
 #endif
 // 1 = ATX
 #if (POWER_SUPPLY == 1)
-#define PS_ON_AWAKE  LOW
-#define PS_ON_ASLEEP HIGH
+  #define PS_ON_AWAKE  LOW
+  #define PS_ON_ASLEEP HIGH
 #endif
 // 2 = X-Box 360 203W
 #if (POWER_SUPPLY == 2)
-#define PS_ON_AWAKE  HIGH
-#define PS_ON_ASLEEP LOW
+  #define PS_ON_AWAKE  HIGH
+  #define PS_ON_ASLEEP LOW
 #endif
 
-// Control heater 0 and heater 1 in parallel.
-//#define HEATERS_PARALLEL
-
 //===========================================================================
-//=============================Buffers           ============================
+//============================ Buffers ======================================
 //===========================================================================
 
 // The number of linear motions that can be in the plan at any give time.
@@ -259,55 +213,61 @@ const unsigned int dropsegments=1;   //set to 1 while we only use full steps
 #define BUFSIZE 4
 
 #ifdef FILAMENTCHANGEENABLE
-#ifdef EXTRUDER_RUNOUT_PREVENT
-#error EXTRUDER_RUNOUT_PREVENT currently incompatible with FILAMENTCHANGE
+  #ifdef EXTRUDER_RUNOUT_PREVENT
+    #error EXTRUDER_RUNOUT_PREVENT currently incompatible with FILAMENTCHANGE
+  #endif
 #endif
+
+//===========================================================================
+//=======================  Geometry conventions check  ======================
+//===========================================================================
+#if defined(CONVENTIONAL_GEOMETRY)
+  #if !(ANCHOR_A_X == 0)
+    #error "ANCHOR_A_X should be set to 0 by convention."
+  #endif
+  #if !(ANCHOR_A_Y < 0)
+    #error "ANCHOR_A_Y should be a negative number by convention."
+  #endif
+  #if !(ANCHOR_B_X*ANCHOR_C_X < 0)
+    #error "ANCHOR_B_X and ANCHOR_C_X should have different signs by convention."
+  #endif
+  #if !(ANCHOR_B_Y > 0)
+    #error "ANCHOR_B_Y should be a positive number by convention."
+  #endif
+  #if !(ANCHOR_C_Y > 0)
+    #error "ANCHOR_C_Y should be a positive number by convention."
+  #endif
+  #if !(ANCHOR_A_Z < 0)
+    #error "ANCHOR_A_Z should be a negative number by convention."
+  #endif
+  #if !(ANCHOR_B_Z < 0)
+    #error "ANCHOR_B_Z should be a negative number by convention."
+  #endif
+  #if !(ANCHOR_C_Z < 0)
+    #error "ANCHOR_C_Z should be a negative number by convention."
+  #endif
+  #if !(ANCHOR_D_Z > 0)
+    #error "ANCHOR_D_Z should be a positive number by convention."
+  #endif
 #endif
 
 //===========================================================================
 //=============================  Define Defines  ============================
 //===========================================================================
 
-#if EXTRUDERS > 1 && defined HEATERS_PARALLEL
-#error "You cannot use HEATERS_PARALLEL if EXTRUDERS > 1"
-#endif
-
 #if TEMP_SENSOR_0 > 0
-#define THERMISTORHEATER_0 TEMP_SENSOR_0
-#define HEATER_0_USES_THERMISTOR
-#endif
-#if TEMP_SENSOR_1 > 0
-#define THERMISTORHEATER_1 TEMP_SENSOR_1
-#define HEATER_1_USES_THERMISTOR
-#endif
-#if TEMP_SENSOR_2 > 0
-#define THERMISTORHEATER_2 TEMP_SENSOR_2
-#define HEATER_2_USES_THERMISTOR
+  #define THERMISTORHEATER_0 TEMP_SENSOR_0
+  #define HEATER_0_USES_THERMISTOR
 #endif
 #if TEMP_SENSOR_0 == -1
-#define HEATER_0_USES_AD595
-#endif
-#if TEMP_SENSOR_1 == -1
-#define HEATER_1_USES_AD595
-#endif
-#if TEMP_SENSOR_2 == -1
-#define HEATER_2_USES_AD595
+  #define HEATER_0_USES_AD595
 #endif
 #if TEMP_SENSOR_0 == -2
-#define HEATER_0_USES_MAX6675
+  #define HEATER_0_USES_MAX6675
 #endif
 #if TEMP_SENSOR_0 == 0
-#undef HEATER_0_MINTEMP
-#undef HEATER_0_MAXTEMP
+  #undef HEATER_0_MINTEMP
+  #undef HEATER_0_MAXTEMP
 #endif
-#if TEMP_SENSOR_1 == 0
-#undef HEATER_1_MINTEMP
-#undef HEATER_1_MAXTEMP
-#endif
-#if TEMP_SENSOR_2 == 0
-#undef HEATER_2_MINTEMP
-#undef HEATER_2_MAXTEMP
-#endif
-
 
 #endif //__CONFIGURATION_ADV_H

@@ -133,18 +133,21 @@ unsigned long axis_steps_per_sqr_second[NUM_AXIS];
 
 float axis_steps_per_unit[NUM_AXIS] = DEFAULT_AXIS_STEPS_PER_UNIT;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
 #ifdef EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
-long position[NUM_AXIS] = {lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) - sqrtk1[A_AXIS])),
-                           lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) - sqrtk1[B_AXIS])),
-                           lround(k0[C_AXIS]*(sqrt(k1[C_AXIS] + k2[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) - sqrtk1[C_AXIS])),
-                           lround(k0[D_AXIS]*(sqrt(k1[D_AXIS] + k2[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) - sqrtk1[D_AXIS])), 0};
-// The current position of the tool in absolute steps
+  // The current position of the tool in absolute steps
+  long position[NUM_AXIS] = {lround(k0[A_AXIS]*(sqrt(k1[A_AXIS] + k2[A_AXIS]*INITIAL_DISTANCES[A_AXIS]) - sqrtk1[A_AXIS])),
+                             lround(k0[B_AXIS]*(sqrt(k1[B_AXIS] + k2[B_AXIS]*INITIAL_DISTANCES[B_AXIS]) - sqrtk1[B_AXIS])),
+                             lround(k0[C_AXIS]*(sqrt(k1[C_AXIS] + k2[C_AXIS]*INITIAL_DISTANCES[C_AXIS]) - sqrtk1[C_AXIS])),
+                             lround(k0[D_AXIS]*(sqrt(k1[D_AXIS] + k2[D_AXIS]*INITIAL_DISTANCES[D_AXIS]) - sqrtk1[D_AXIS])), 0};
 #else
-long position[NUM_AXIS] = {INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS],
-                           INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS],
-                           INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS],
-                           INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS], 0};
-#endif // EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+  long position[NUM_AXIS] = {INITIAL_DISTANCES[A_AXIS]*axis_steps_per_unit[A_AXIS],
+                             INITIAL_DISTANCES[B_AXIS]*axis_steps_per_unit[B_AXIS],
+                             INITIAL_DISTANCES[C_AXIS]*axis_steps_per_unit[C_AXIS],
+                             INITIAL_DISTANCES[D_AXIS]*axis_steps_per_unit[D_AXIS], 0};
+#endif
+#pragma GCC diagnostic pop
 
 static float previous_speed[NUM_AXIS]; // Speed of previous path line segment
 static float previous_nominal_speed; // Nominal speed of previous path line segment
@@ -275,7 +278,7 @@ FORCE_INLINE float max_allowable_speed(float acceleration, float target_velocity
 }
 
 // The kernel called by planner_recalculate() when scanning the plan from last to first entry.
-void planner_reverse_pass_kernel(block_t *previous, block_t *current, block_t *next) {
+void planner_reverse_pass_kernel(block_t *current, block_t *next) {
   if(!current) {
     return;
   }
@@ -320,13 +323,13 @@ void planner_reverse_pass() {
       block[2]= block[1];
       block[1]= block[0];
       block[0] = &block_buffer[block_index];
-      planner_reverse_pass_kernel(block[0], block[1], block[2]);
+      planner_reverse_pass_kernel(block[1], block[2]);
     }
   }
 }
 
 // The kernel called by planner_recalculate() when scanning the plan from first to last entry.
-void planner_forward_pass_kernel(block_t *previous, block_t *current, block_t *next) {
+void planner_forward_pass_kernel(block_t *previous, block_t *current) {
   if(!previous) {
     return;
   }
@@ -360,10 +363,10 @@ void planner_forward_pass() {
     block[0] = block[1];
     block[1] = block[2];
     block[2] = &block_buffer[block_index];
-    planner_forward_pass_kernel(block[0],block[1],block[2]);
+    planner_forward_pass_kernel(block[0],block[1]);
     block_index = next_block_index(block_index);
   }
-  planner_forward_pass_kernel(block[1], block[2], NULL);
+  planner_forward_pass_kernel(block[1], block[2]);
 }
 
 // Recalculates the trapezoid speed profiles for all blocks in the plan according to the
@@ -486,9 +489,7 @@ void getHighESpeed()
     t=AUTOTEMP_OLDWEIGHT*oldt+(1-AUTOTEMP_OLDWEIGHT)*t;
   }
   oldt=t;
-#ifdef EXTRUDERS
   setTargetHotend0(t);
-#endif
 }
 #endif
 

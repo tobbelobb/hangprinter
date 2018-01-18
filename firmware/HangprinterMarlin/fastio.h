@@ -89,7 +89,7 @@ while (0)
    added as necessary or if I feel like it- not a comprehensive list!
    */
 
-#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328__) || defined (__AVR_ATmega328P__)
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
 // UART
 #define	RXD					DIO0
 #define	TXD					DIO1
@@ -424,7 +424,7 @@ while (0)
 #define PD7_PWM			NULL
 #endif	/*	_AVR_ATmega{168,328,328P}__ */
 
-#if defined (__AVR_ATmega644__) || defined (__AVR_ATmega644P__) || defined (__AVR_ATmega644PA__) || defined (__AVR_ATmega1284P__)
+#if defined(__AVR_ATmega644__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__) || defined(__AVR_ATmega1284P__)
 // UART
 #define	RXD					DIO8
 #define	TXD					DIO9
@@ -927,7 +927,7 @@ while (0)
 #define PD7_PWM			OCR2A
 #endif	/*	_AVR_ATmega{644,644P,644PA}__ */
 
-#if defined (__AVR_ATmega1280__) || defined (__AVR_ATmega2560__)
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 // UART
 #define	RXD					DIO0
 #define	TXD					DIO1
@@ -2022,7 +2022,7 @@ while (0)
 
 #endif
 
-#if defined (__AVR_ATmega1281__) || defined (__AVR_ATmega2561__)
+#if defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__)
 // UART
 #define	RXD					DIO0
 #define	TXD					DIO1

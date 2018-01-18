@@ -7,6 +7,7 @@
 #include "planner.h"
 #include "temperature.h"
 #include "language.h"
+#include "Configuration.h"
 #include "ConfigurationStore.h"
 
 void _EEPROM_writeData(int &pos, uint8_t* value, uint8_t size) {
@@ -64,9 +65,7 @@ void Config_StoreSettings()  {
   EEPROM_WRITE_VAR(i, minsegmenttime);
   EEPROM_WRITE_VAR(i, max_xy_jerk);
   EEPROM_WRITE_VAR(i, max_z_jerk);
-#ifdef EXTRUDERS
   EEPROM_WRITE_VAR(i, max_e_jerk);
-#endif
   EEPROM_WRITE_VAR(i, add_homing);
 
   EEPROM_WRITE_VAR(i, endstop_adj);               // 3 floats
@@ -124,9 +123,7 @@ void Config_RetrieveSettings() {
     EEPROM_READ_VAR(i, minsegmenttime);
     EEPROM_READ_VAR(i, max_xy_jerk);
     EEPROM_READ_VAR(i, max_z_jerk);
-#ifdef EXTRUDERS
     EEPROM_READ_VAR(i, max_e_jerk);
-#endif
     EEPROM_READ_VAR(i, add_homing);
 
     EEPROM_READ_VAR(i, endstop_adj);                // 3 floats
@@ -179,16 +176,16 @@ void Config_ResetDefault() {
   max_e_jerk = DEFAULT_EJERK;
   add_homing[A_AXIS] = add_homing[B_AXIS] = add_homing[C_AXIS] = add_homing[D_AXIS] = 0;
 #if defined(HANGPRINTER)
-  anchor_A_x = ANCHOR_A_X;
-  anchor_A_y = ANCHOR_A_Y;
-  anchor_A_z = ANCHOR_A_Z;
-  anchor_B_x = ANCHOR_B_X;
-  anchor_B_y = ANCHOR_B_Y;
-  anchor_B_z = ANCHOR_B_Z;
-  anchor_C_x = ANCHOR_C_X;
-  anchor_C_y = ANCHOR_C_Y;
-  anchor_C_z = ANCHOR_C_Z;
-  anchor_D_z = ANCHOR_D_Z;
+  anchor_A_x = float(ANCHOR_A_X);
+  anchor_A_y = float(ANCHOR_A_Y);
+  anchor_A_z = float(ANCHOR_A_Z);
+  anchor_B_x = float(ANCHOR_B_X);
+  anchor_B_y = float(ANCHOR_B_Y);
+  anchor_B_z = float(ANCHOR_B_Z);
+  anchor_C_x = float(ANCHOR_C_X);
+  anchor_C_y = float(ANCHOR_C_Y);
+  anchor_C_z = float(ANCHOR_C_Z);
+  anchor_D_z = float(ANCHOR_D_Z);
 #endif
   delta_segments_per_second =  DELTA_SEGMENTS_PER_SECOND;
   endstop_adj[A_AXIS] = endstop_adj[B_AXIS] = endstop_adj[C_AXIS] = endstop_adj[D_AXIS] = 0;
@@ -204,20 +201,9 @@ void Config_ResetDefault() {
   updatePID();
 #endif // PIDTEMP
 
-#ifdef EXTRUDERS
   volumetric_enabled = false;
   filament_size[0] = DEFAULT_NOMINAL_FILAMENT_DIA;
-#if EXTRUDERS > 1
-  filament_size[1] = DEFAULT_NOMINAL_FILAMENT_DIA;
-#if EXTRUDERS > 2
-  filament_size[2] = DEFAULT_NOMINAL_FILAMENT_DIA;
-#if EXTRUDERS > 3
-  filament_size[3] = DEFAULT_NOMINAL_FILAMENT_DIA;
-#endif
-#endif
-#endif
   calculate_volumetric_multipliers();
-#endif
 
   SERIAL_ECHO_START;
   SERIAL_ECHOLNPGM("Hardcoded Default Settings Loaded");
@@ -238,9 +224,7 @@ void Config_PrintSettings(bool forReplay) {
   SERIAL_ECHOPAIR(" B", axis_steps_per_unit[B_AXIS]);
   SERIAL_ECHOPAIR(" C", axis_steps_per_unit[C_AXIS]);
   SERIAL_ECHOPAIR(" D", axis_steps_per_unit[D_AXIS]);
-#ifdef EXTRUDERS
   SERIAL_ECHOPAIR(" E", axis_steps_per_unit[E_AXIS]);
-#endif // ifdef EXTRUDERS
   SERIAL_EOL;
 
   SERIAL_ECHO_START;
@@ -253,9 +237,7 @@ void Config_PrintSettings(bool forReplay) {
   SERIAL_ECHOPAIR(" B", max_feedrate[B_AXIS]);
   SERIAL_ECHOPAIR(" C", max_feedrate[C_AXIS]);
   SERIAL_ECHOPAIR(" D", max_feedrate[D_AXIS]);
-#ifdef EXTRUDERS
   SERIAL_ECHOPAIR(" E", max_feedrate[E_AXIS]);
-#endif // ifdef EXTRUDERS
   SERIAL_EOL;
 
   SERIAL_ECHO_START;
@@ -267,9 +249,7 @@ void Config_PrintSettings(bool forReplay) {
   SERIAL_ECHOPAIR(" B", max_acceleration_units_per_sq_second[B_AXIS] );
   SERIAL_ECHOPAIR(" C", max_acceleration_units_per_sq_second[C_AXIS] );
   SERIAL_ECHOPAIR(" D", max_acceleration_units_per_sq_second[D_AXIS] );
-#ifdef EXTRUDERS
   SERIAL_ECHOPAIR(" E", max_acceleration_units_per_sq_second[E_AXIS]);
-#endif // ifdef EXTRUDERS
   SERIAL_EOL;
   SERIAL_ECHO_START;
   if (!forReplay) {
@@ -290,9 +270,7 @@ void Config_PrintSettings(bool forReplay) {
   SERIAL_ECHOPAIR(" B", minsegmenttime );
   SERIAL_ECHOPAIR(" X", max_xy_jerk );
   SERIAL_ECHOPAIR(" Z", max_z_jerk);
-#ifdef EXTRUDERS
   SERIAL_ECHOPAIR(" E", max_e_jerk);
-#endif // ifdef EXTRUDERS
   SERIAL_EOL;
 
   SERIAL_ECHO_START;
@@ -361,23 +339,6 @@ void Config_PrintSettings(bool forReplay) {
     }
     SERIAL_ECHOPAIR("   M200 D", filament_size[0]);
     SERIAL_EOL;
-
-#if EXTRUDERS > 1
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR("   M200 T1 D", filament_size[1]);
-    SERIAL_EOL;
-#if EXTRUDERS > 2
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR("   M200 T2 D", filament_size[2]);
-    SERIAL_EOL;
-#if EXTRUDERS > 3
-    SERIAL_ECHO_START;
-    SERIAL_ECHOPAIR("   M200 T3 D", filament_size[3]);
-    SERIAL_EOL;
-#endif
-#endif
-#endif
-
   } else {
     if (!forReplay) {
       SERIAL_ECHOLNPGM("Filament settings: Disabled");

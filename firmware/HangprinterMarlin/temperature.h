@@ -33,10 +33,8 @@ void manage_heater(); //it is critical that this is called periodically.
 
 // low level conversion routines
 // do not use these routines and variables outside of temperature.cpp
-#ifdef EXTRUDERS
-  extern int target_temperature[EXTRUDERS];
-  extern float current_temperature[EXTRUDERS];
-#endif
+extern int target_temperature[1];
+extern float current_temperature[1];
 extern int target_temperature_bed;
 extern float current_temperature_bed;
 
@@ -101,50 +99,11 @@ FORCE_INLINE bool isCoolingBed() {
 #define setTargetHotend0(_celsius) setTargetHotend((_celsius), 0)
 #define isHeatingHotend0() isHeatingHotend(0)
 #define isCoolingHotend0() isCoolingHotend(0)
-#if EXTRUDERS > 1
-#define degHotend1() degHotend(1)
-#define degTargetHotend1() degTargetHotend(1)
-#define setTargetHotend1(_celsius) setTargetHotend((_celsius), 1)
-#define isHeatingHotend1() isHeatingHotend(1)
-#define isCoolingHotend1() isCoolingHotend(1)
-#else
-#define setTargetHotend1(_celsius) do{}while(0)
-#endif
-#if EXTRUDERS > 2
-#define degHotend2() degHotend(2)
-#define degTargetHotend2() degTargetHotend(2)
-#define setTargetHotend2(_celsius) setTargetHotend((_celsius), 2)
-#define isHeatingHotend2() isHeatingHotend(2)
-#define isCoolingHotend2() isCoolingHotend(2)
-#else
-#define setTargetHotend2(_celsius) do{}while(0)
-#endif
-#if EXTRUDERS > 3
-#define degHotend3() degHotend(3)
-#define degTargetHotend3() degTargetHotend(3)
-#define setTargetHotend3(_celsius) setTargetHotend((_celsius), 3)
-#define isHeatingHotend3() isHeatingHotend(3)
-#define isCoolingHotend3() isCoolingHotend(3)
-#else
-#define setTargetHotend3(_celsius) do{}while(0)
-#endif
-#if EXTRUDERS > 4
-#error Invalid number of extruders
-#endif
-
-
 
 int getHeaterPower(int heater);
 void disable_heater();
 void setWatch();
 void updatePID();
-
-#if defined (THERMAL_RUNAWAY_PROTECTION_PERIOD) && THERMAL_RUNAWAY_PROTECTION_PERIOD > 0
-void thermal_runaway_protection(int *state, unsigned long *timer, float temperature, float target_temperature, int heater_id, int period_seconds, int hysteresis_degc);
-static int thermal_runaway_state_machine[4]; // = {0,0,0,0};
-static unsigned long thermal_runaway_timer[4]; // = {0,0,0,0};
-static bool thermal_runaway = false;
-#endif
 
 FORCE_INLINE void autotempShutdown(){
 #ifdef AUTOTEMP
