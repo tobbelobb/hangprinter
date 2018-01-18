@@ -30,17 +30,25 @@ module extruder_holder(){
           z_depth],
           r_little, $fn=30);
     // A stronger back where it risks to bend
-    extra_back=3;
-    translate([0,-(wall_th-extra_back),0])
-    for(k=[0,1])
-      translate([x_depth+wall_th,k*(Min_beam_width-2*extra_back+wall_th),0])
-        difference(){
-          cylinder(r=extra_back, h=z_depth, $fn=20);
-          translate([-2*extra_back,-2*extra_back,-1])
-            cube([2*extra_back,12,z_depth+2]);
-        }
-     translate([x_depth+wall_th-0.1,-(wall_th-extra_back),0])
-       cube([extra_back+0.1,Min_beam_width-2*extra_back+wall_th,z_depth]);
+    extra_back_th=3;
+    extra_back_h=13+3;
+    difference(){
+      for(zh = [0, z_depth-extra_back_h]){
+        translate([0,-(wall_th-extra_back_th), zh])
+        for(k=[0,1])
+          translate([x_depth+wall_th,k*(Min_beam_width-2*extra_back_th+wall_th),0])
+            difference(){
+              cylinder(r=extra_back_th, h=extra_back_h, $fn=20);
+              translate([-2*extra_back_th,-2*extra_back_th,-1])
+                cube([2*extra_back_th,12,z_depth+2]);
+            }
+         translate([x_depth+wall_th-0.1,-(wall_th-extra_back_th), zh])
+           cube([extra_back_th+0.1,Min_beam_width-2*extra_back_th+wall_th, extra_back_h]);
+      }
+      translate([x_depth+wall_th-(z_depth/2-extra_back_h), -extra_back_th-0.1, z_depth/2])
+        rotate([0,45,0])
+        cube(z_depth - 2*extra_back_h);
+    }
   }
   ex_l = sqrt((cw+wall_th+Zip_th)*(cw+wall_th+Zip_th) + x_depth*x_depth) + wall_th;
 
@@ -65,7 +73,7 @@ module extruder_holder(){
       rotate([0,0,k*90])
       for(i=[5,z_depth-5-Zip_w])
         translate([0,Min_beam_width,i])
-          cube([x_depth+10, Zip_h+k*10, Zip_w]);
+          cube([x_depth+10, Zip_h+2.5+k*10, Zip_w]);
     // For cable holder screws
     for(i=[cable_clamp_o,z_depth-cable_clamp_o])
       translate([0,flange_l-Zip_w-3,i-Zip_th/2])
@@ -83,7 +91,6 @@ module extruder_holder(){
 
 // Use this part to screw tight
 translate([0,4,0])
-//rotate([0,-90,0])
 Flat_cable_clamper();
 module Flat_cable_clamper(){
   x_l = 6+Zip_w;
@@ -100,6 +107,16 @@ module Flat_cable_clamper(){
     for(i=[cable_clamp_o-Zip_th/2,z_depth-cable_clamp_o-Zip_th/2])
       translate([x_l-Zip_w-3,i,-1])
         cube([Zip_w, Zip_th, x_depth+10]);
+  }
+}
+
+translate([-13,4,0])
+One_half_cable_clamper();
+module One_half_cable_clamper(){
+  difference(){
+    Flat_cable_clamper();
+    translate([-1,-1-z_depth/2,-1])
+      cube(z_depth/1+1);
   }
 }
 
