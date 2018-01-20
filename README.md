@@ -53,3 +53,12 @@ Bill of Materials
       * Ca 2 m red and black power cable for connecting 12 V to Mechaduinos
     * Tmc2130SilentStepStick addon
       * A few more jumper wires
+
+Using Nema23?
+----------------
+Then you need different sized motor brackets, extruder holders and motor gears.
+To compile those do
+```
+make nema23
+```
+This compiles the files and puts them in the `openscad_stl_nema23/` directory.
