@@ -1195,11 +1195,6 @@ void process_commands(){
           break;
 
           case 92: // M92
-#if defined(HANGPRINTER) && defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
-          if(code_seen('S')){
-            spool_buildup_factor = code_value();
-          }
-#else
           for(int8_t i=0; i < NUM_AXIS; i++){
             if(code_seen(axis_codes[i])){
               if(i == E_AXIS){ // E
@@ -1220,7 +1215,6 @@ void process_commands(){
               }
             }
           }
-#endif // HANGPRINTER && EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
           // Update step-count, keep old carth-position
           calculate_line_lengths(current_position, line_lengths);
           plan_set_position(line_lengths, destination[E_CARTH]);
