@@ -763,10 +763,7 @@ void process_commands(){
         byte cmd[5];
         cmd[0] = 0x5f; // 95 in hexadecimal is 0x5f
         if(code_seen('A')){
-          torque = code_value();
-          if(torque > 0.0){
-            torque = -torque;
-          }
+          torque = -fabs(code_value());
           if(!INVERT_X_DIR){
             torque = -torque;
           }
@@ -776,10 +773,7 @@ void process_commands(){
           Wire.endTransmission(0x0a);
         }
         if(code_seen('B')){
-          torque = code_value();
-          if(torque > 0.0){
-            torque = -torque;
-          }
+          torque = -fabs(code_value());
           if(!INVERT_Y_DIR){
             torque = -torque;
           }
@@ -789,10 +783,7 @@ void process_commands(){
           Wire.endTransmission(0x0b);
         }
         if(code_seen('C')){
-          torque = code_value();
-          if(torque > 0.0){
-            torque = -torque;
-          }
+          torque = -fabs(code_value());
           if(!INVERT_Z_DIR){
             torque = -torque;
           }
@@ -802,10 +793,7 @@ void process_commands(){
           Wire.endTransmission(0x0c);
         }
         if(code_seen('D')){
-          torque = code_value();
-          if(torque > 0.0){
-            torque = -torque;
-          }
+          torque = -fabs(code_value());
           if(!INVERT_E1_DIR){
             torque = -torque;
           }
