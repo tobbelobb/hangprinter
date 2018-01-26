@@ -51,7 +51,6 @@ void _EEPROM_readData(int &pos, uint8_t* value, uint8_t size) {
 #ifdef EEPROM_SETTINGS
 
 void Config_StoreSettings()  {
-  float dummy = 0.0f;
   char ver[4] = "000";
   int i = EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i, ver); // invalidate data first
@@ -81,8 +80,6 @@ void Config_StoreSettings()  {
   EEPROM_WRITE_VAR(i, anchor_C_z);                // 1 float
   EEPROM_WRITE_VAR(i, anchor_D_z);                // 1 float
 
-  int storageSize = i;
-
   char ver2[4] = EEPROM_VERSION;
   int j = EEPROM_OFFSET;
   EEPROM_WRITE_VAR(j, ver2); // validate data
@@ -99,15 +96,17 @@ void Config_RetrieveSettings() {
   char stored_ver[4];
   char ver[4] = EEPROM_VERSION;
   EEPROM_READ_VAR(i, stored_ver); //read stored version
-  SERIAL_ECHOLN("Version: [" << ver << "] Stored version: [" << stored_ver << "]");
+  SERIAL_ECHO("Version: [");
+  SERIAL_ECHO(ver);
+  SERIAL_ECHO("] Stored version: [");
+  SERIAL_ECHO(stored_ver);
+  SERIAL_ECHOLN("]");
 
   if (strncmp(ver, stored_ver, 3) != 0) {
     SERIAL_ECHOLN("Version numbers don't match. Fallin back to default settings.");
     Config_ResetDefault();
   }
   else {
-    float dummy = 0;
-
     // version number match
     EEPROM_READ_VAR(i, axis_steps_per_unit);
     EEPROM_READ_VAR(i, max_feedrate);
