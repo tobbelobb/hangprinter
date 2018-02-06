@@ -129,6 +129,13 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 #define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
 #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
   #define MICROSTEPPING 16.0
+  // To flip the sign of encoder readings (M114 S1), flip these.
+  // Only needed if motor connector is inserted with different orientations on different Mechaduinos
+  // Make G6-moves work correctly by adjusting INVERT_X_DIR, INVERT_Y_DIR, INVERT_Z_DIR, INVERT_E1_DIR before flipping these
+  #define FLIPPED_A_CONNECTOR_ON_MECHADUINO false
+  #define FLIPPED_B_CONNECTOR_ON_MECHADUINO false
+  #define FLIPPED_C_CONNECTOR_ON_MECHADUINO false
+  #define FLIPPED_D_CONNECTOR_ON_MECHADUINO false
 #endif
 
 //==========================================================================

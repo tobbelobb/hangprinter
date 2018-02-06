@@ -1147,13 +1147,17 @@ void process_commands(){
                         float fval;
                       } angle;
                 const int addr[DIRS] = { 0x0a, 0x0b, 0x0c, 0x0d };
-                const byte inv[DIRS] = { INVERT_X_DIR, INVERT_Y_DIR, INVERT_Z_DIR, INVERT_E1_DIR };
+                const bool inv[DIRS] = { INVERT_X_DIR, INVERT_Y_DIR, INVERT_Z_DIR, INVERT_E1_DIR };
+                const bool flip[DIRS] = { FLIPPED_A_CONNECTOR_ON_MECHADUINO,
+                                          FLIPPED_B_CONNECTOR_ON_MECHADUINO,
+                                          FLIPPED_C_CONNECTOR_ON_MECHADUINO,
+                                          FLIPPED_D_CONNECTOR_ON_MECHADUINO};
 
                 SERIAL_ERROR("[ ");
                 for(int axis = A_AXIS; axis <= D_AXIS; axis++){
                   Wire.requestFrom(addr[axis], 4);
                   for(int i = 0; Wire.available(); i++) angle.b[i] = Wire.read();
-                  if(!inv[axis]) angle.fval = -angle.fval;
+                  if(inv[axis] == flip[axis]) angle.fval = -angle.fval;
                   SERIAL_ERROR(ang_to_mm(angle.fval, axis));
                   if(axis != D_AXIS)
                     SERIAL_ERROR(", ");
