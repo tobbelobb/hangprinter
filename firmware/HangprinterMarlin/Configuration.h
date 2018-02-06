@@ -127,6 +127,9 @@ const float STEPS_PER_SPOOL_RADIAN[DIRS] = {5093.0, 5093.0, 5093.0, 5093.0};
 
 // If you want the experimental auto calibration feature with your Hangprinter, uncomment this.
 #define EXPERIMENTAL_AUTO_CALIBRATION_FEATURE
+#if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+  #define MICROSTEPPING 16.0
+#endif
 
 //==========================================================================
 //============================= Driver configuration =======================

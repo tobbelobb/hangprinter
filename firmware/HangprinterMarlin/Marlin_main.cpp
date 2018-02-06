@@ -455,18 +455,12 @@ float ang_to_mm(float ang, int axis){
   if(axis < 0 || axis > D_AXIS){
     return 0.0;
   }
-  if((axis == A_AXIS && !INVERT_X_DIR)
-      || (axis == B_AXIS && !INVERT_Y_DIR)
-      || (axis == C_AXIS && !INVERT_Z_DIR)
-      || (axis == D_AXIS && !INVERT_E1_DIR)){
-    ang = -ang;
-  }
 #if defined(EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE)
   float abs_step_in_origo = k0[axis]*(sqrtf(k1[axis] + k2[axis]*INITIAL_DISTANCES[axis]) - sqrtk1[axis]);
 #else
   float abs_step_in_origo = INITIAL_DISTANCES[axis]*axis_steps_per_unit[axis];
 #endif
-  float microstepping = 32.0; // TODO: all configuration constants should be defined in Configuration.h...
+  float microstepping = MICROSTEPPING;
   float steps_per_rot = 200.0*microstepping;
   float steps_per_ang = steps_per_rot/360.0;
   float step_diff = steps_per_ang*ang;
@@ -825,68 +819,6 @@ void process_commands(){
           Wire.endTransmission(0x0d);
         }
         break;
-      case 97: // G97 Get sensor servo length travelled since last G96
-        if(code_seen('A')){
-          union {
-                  byte b[4]; // hard coded 4 instead of sizeof(float)
-                  float fval;
-                } ang_a;
-          Wire.requestFrom(0x0a, 4);
-          int i = 0;
-          while(Wire.available()){
-            ang_a.b[i] = Wire.read();
-            i++;
-          }
-          SERIAL_ERROR("A: ");
-          SERIAL_ERROR(ang_to_mm(ang_a.fval, A_AXIS));
-          SERIAL_ERROR(" ");
-        }
-        if(code_seen('B')){
-          union {
-                  byte b[4]; // hard coded 4 instead of sizeof(float)
-                  float fval;
-                } ang_b;
-          Wire.requestFrom(0x0b, 4);
-          int i = 0;
-          while(Wire.available()){
-            ang_b.b[i] = Wire.read();
-            i++;
-          }
-          SERIAL_ERROR("B: ");
-          SERIAL_ERROR(ang_to_mm(ang_b.fval, B_AXIS));
-          SERIAL_ERROR(" ");
-        }
-        if(code_seen('C')){
-          union {
-                  byte b[4]; // hard coded 4 instead of sizeof(float)
-                  float fval;
-                } ang_c;
-          Wire.requestFrom(0x0c, 4);
-          int i = 0;
-          while(Wire.available()){
-            ang_c.b[i] = Wire.read();
-            i++;
-          }
-          SERIAL_ERROR("C: ");
-          SERIAL_ERROR(ang_to_mm(ang_c.fval, C_AXIS));
-          SERIAL_ERROR(" ");
-        }
-        if(code_seen('D')){
-          union {
-                  byte b[4]; // hard coded 4 instead of sizeof(float)
-                  float fval;
-                } ang_d;
-          Wire.requestFrom(0x0d, 4);
-          int i = 0;
-          while(Wire.available()){
-            ang_d.b[i] = Wire.read();
-            i++;
-          }
-          SERIAL_ERROR("D: ");
-          SERIAL_ERROR(ang_to_mm(ang_d.fval, D_AXIS));
-        }
-        SERIAL_ERROR("\n");
-        break;
       case 98: // G98 Set absolute line length based on servo encoder output
         if(code_seen('A')){
          union {
@@ -1208,37 +1140,60 @@ void process_commands(){
           plan_set_position(line_lengths, destination[E_CARTH]);
           break;
           case 114: // M114
-          SERIAL_ECHOLN("Current position in Carthesian system:");
-          SERIAL_PROTOCOLPGM("X:");
-          SERIAL_PROTOCOL(current_position[X_AXIS]);
-          SERIAL_PROTOCOLPGM(" Y:");
-          SERIAL_PROTOCOL(current_position[Y_AXIS]);
-          SERIAL_PROTOCOLPGM(" Z:");
-          SERIAL_PROTOCOL(current_position[Z_AXIS]);
-          SERIAL_PROTOCOLPGM(" E:");
-          SERIAL_PROTOCOL(current_position[E_CARTH]);
+            #if defined(EXPERIMENTAL_AUTO_CALIBRATION_FEATURE)
+              if(code_seen('S') && code_value_ulong() == 1){ // Encoder flag. Read encoder instead of internal state to determine position.
+                union {
+                        byte b[4]; // hard coded 4 instead of sizeof(float)
+                        float fval;
+                      } angle;
+                const int addr[DIRS] = { 0x0a, 0x0b, 0x0c, 0x0d };
+                const byte inv[DIRS] = { INVERT_X_DIR, INVERT_Y_DIR, INVERT_Z_DIR, INVERT_E1_DIR };
 
-          SERIAL_PROTOCOLPGM("\nStep count along each motor abcd-axis:\nA:");
-          SERIAL_PROTOCOLPGM(" A:");
-          SERIAL_PROTOCOL(st_get_position(A_AXIS));
-          SERIAL_PROTOCOLPGM(" B:");
-          SERIAL_PROTOCOL(st_get_position(B_AXIS));
-          SERIAL_PROTOCOLPGM(" C:");
-          SERIAL_PROTOCOL(st_get_position(C_AXIS));
-          SERIAL_PROTOCOLPGM(" D:");
-          SERIAL_PROTOCOL(st_get_position(D_AXIS));
+                SERIAL_ERROR("[ ");
+                for(int axis = A_AXIS; axis <= D_AXIS; axis++){
+                  Wire.requestFrom(addr[axis], 4);
+                  for(int i = 0; Wire.available(); i++) angle.b[i] = Wire.read();
+                  if(!inv[axis]) angle.fval = -angle.fval;
+                  SERIAL_ERROR(ang_to_mm(angle.fval, axis));
+                  if(axis != D_AXIS)
+                    SERIAL_ERROR(", ");
+                  else
+                    SERIAL_ERROR("],\n");
+                }
+              } else
+            #endif
+            {
+              SERIAL_ECHOLN("Current position in Carthesian system:");
+              SERIAL_PROTOCOLPGM("X:");
+              SERIAL_PROTOCOL(current_position[X_AXIS]);
+              SERIAL_PROTOCOLPGM(" Y:");
+              SERIAL_PROTOCOL(current_position[Y_AXIS]);
+              SERIAL_PROTOCOLPGM(" Z:");
+              SERIAL_PROTOCOL(current_position[Z_AXIS]);
+              SERIAL_PROTOCOLPGM(" E:");
+              SERIAL_PROTOCOL(current_position[E_CARTH]);
 
-          SERIAL_PROTOCOLPGM("\n Absolute line lengths:\n");
-          SERIAL_PROTOCOLPGM(" A:");
-          SERIAL_PROTOCOL(line_lengths[A_AXIS]);
-          SERIAL_PROTOCOLPGM(" B:");
-          SERIAL_PROTOCOL(line_lengths[B_AXIS]);
-          SERIAL_PROTOCOLPGM(" C:");
-          SERIAL_PROTOCOL(line_lengths[C_AXIS]);
-          SERIAL_PROTOCOLPGM(" D:");
-          SERIAL_PROTOCOL(line_lengths[D_AXIS]);
+              SERIAL_PROTOCOLPGM("\nStep count along each motor abcd-axis:\nA:");
+              SERIAL_PROTOCOLPGM(" A:");
+              SERIAL_PROTOCOL(st_get_position(A_AXIS));
+              SERIAL_PROTOCOLPGM(" B:");
+              SERIAL_PROTOCOL(st_get_position(B_AXIS));
+              SERIAL_PROTOCOLPGM(" C:");
+              SERIAL_PROTOCOL(st_get_position(C_AXIS));
+              SERIAL_PROTOCOLPGM(" D:");
+              SERIAL_PROTOCOL(st_get_position(D_AXIS));
 
-          SERIAL_PROTOCOLLN("");
+              SERIAL_PROTOCOLPGM("\n Absolute line lengths:\n");
+              SERIAL_PROTOCOLPGM(" A:");
+              SERIAL_PROTOCOL(line_lengths[A_AXIS]);
+              SERIAL_PROTOCOLPGM(" B:");
+              SERIAL_PROTOCOL(line_lengths[B_AXIS]);
+              SERIAL_PROTOCOLPGM(" C:");
+              SERIAL_PROTOCOL(line_lengths[C_AXIS]);
+              SERIAL_PROTOCOLPGM(" D:");
+              SERIAL_PROTOCOL(line_lengths[D_AXIS]);
+              SERIAL_PROTOCOLLN("");
+            }
           break;
           case 120: // M120
           enable_endstops(false) ;
