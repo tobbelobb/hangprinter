@@ -55,7 +55,6 @@
 // G92 - Set current position to coordinates given
 // G95 - Set servo torque mode status
 // G96 - Tell sensor servo to mark its reference point
-// G97 - Get sensor servo length travelled since last G96
 // G98 - Set absolute line length based on servo encoder output
 
 // M Codes
@@ -73,6 +72,7 @@
 //        IF AUTOTEMP is enabled, S<mintemp> B<maxtemp> F<factor>. Exit autotemp by any M109 without F
 // M112 - Emergency stop
 // M114 - Output current position to serial port
+//      - S1 Compute length travelled since last G96 from  encoder poistion data
 // M119 - Output Endstop status to serial port
 // M140 - Set bed target temp
 // M190 - Sxxx Wait for bed current temp to reach target temp. Waits only when heating
