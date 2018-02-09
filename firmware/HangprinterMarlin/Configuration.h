@@ -84,7 +84,7 @@
 #define DIRS 4     // The four dirs are: A_AXIS, B_AXIS, C_AXIS, D_AXIS
 
 // If you want the experimental line buildup compensation feature with your Hangprinter, uncomment this.
-//#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
+#define EXPERIMENTAL_LINE_BUILDUP_COMPENSATION_FEATURE
 
 /* ----- How many lines in each direction? --- */
 #define MECHANICAL_ADVANTAGE_A 1
