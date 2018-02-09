@@ -29,7 +29,7 @@ Bill of Materials
     * 5 x drivers (Special configuration options exist if you use Mechaduinos or tmc2130SilentStepSticks)
     * 1 x USB cable, type B plug
     * 3 x 40 cm rectangular/square beams, widths from 12.5 mm to 17.5 mm supported
-    * 1 x 25 cm rectangular/square beam
+    * 1 x 27.5 cm rectangular/square beam
     * 1 x Power supply (12 V, 12.5 A or higher recommended)
     * 18 x zipties, widths between 3 and 4.5 mm recommended
     * 6 x M3 screws, length 25 mm
