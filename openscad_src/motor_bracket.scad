@@ -13,16 +13,20 @@ module motor_bracket(){
   flerp_h = cw;
   flerp_r = 6;
 
-  //windowed_cube([cd, bd-1, wall_th]);
-  module windowed_cube(v){
-      difference(){
-        cube(v);
-        // Hole to reach set screw
-        window_w = 15;
-        window_h = 15;
-        translate([-window_w/2 + v[0]/2,v[1]-window_h-wall_th-1,-1])
-          rounded_cube([window_w, window_h, v[2]+2], 1);
-      }
+  //crossed_cube([cd, bd-1, wall_th]);
+  module crossed_cube(v){
+    cross_w = 2;
+    cube(v);
+    intersection(){
+      for(i=[0,1])
+        translate([i*v[0],0,0])
+          mirror([i,0,0])
+            rotate([0,0,atan(v[1]/v[0])])
+              translate([0,-cross_w/2,0])
+                cube([sqrt(v[0]*v[0]+v[1]*v[1]), cross_w, v[2]+cross_w]);
+      translate([0,0,-1])
+        cube([v[0], v[1], v[2]+cross_w+2]);
+    }
   }
 
   difference(){
@@ -62,11 +66,11 @@ module motor_bracket(){
             }
           translate([-(-cd/2),-bd,-cw/2+0.3])
             rotate([0,-90,0])
-            windowed_cube([cd-0.3, bd-3, wall_th]);
+            crossed_cube([cd-0.3, bd-3, wall_th]);
         }
 
       translate([-cd/2, -bd, -cw/2])
-        windowed_cube([cd, bd-3, wall_th]);
+        crossed_cube([cd, bd-3, wall_th]);
 
 
       for(k=[0,1])
