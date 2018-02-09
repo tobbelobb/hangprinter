@@ -8,7 +8,8 @@ Bill of Materials
 ----------------
 
   * Printed parts
-    * Beam Slider x 6
+    * Beam Slider ABC x 3 (End points for ABC-lines)
+    * Beam Slider D x 3 (End points for D-lines)
     * Corner Clamp x 3
     * Extruder Holder x 1
     * Lineroller ABC Winch x 3

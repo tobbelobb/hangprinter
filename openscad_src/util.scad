@@ -398,3 +398,9 @@ module opening_corners(left_one_height=Fat_beam_width,
     rotate([0,0,90])
     inner_round_corner(r=2, h=Fat_beam_width+2*wall_th+2, back=2, $fn=4*5);
 }
+
+function circle_sector(max_ang, r0, r1, steps=100) =
+  concat([for (a=[0:max_ang/steps:max_ang+0.5])
+            r0*[cos(a), sin(a)]],
+         [for (a=[-0:(max_ang)/steps:max_ang+0.01])
+           r1*[cos(max_ang-a), sin(max_ang-a)]]);

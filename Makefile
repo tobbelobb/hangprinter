@@ -26,7 +26,8 @@ nema23: | $(STL_NEMA23_DIR) $(STL_NEMA23_DIR)/motor_gear.stl \
 	$(STL_NEMA23_DIR)/motor_bracket.stl \
 	$(STL_NEMA23_DIR)/extruder_holder.stl
 
-$(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider.scad \
+$(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
+	$(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/corner_clamp.scad \
 	$(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/gear_parameters.scad \
@@ -47,7 +48,8 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider.scad \
 	$(SRC_DIR)/util.scad
 	openscad -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-all: | $(STL_DIR) $(STL_DIR)/beam_slider.stl \
+all: | $(STL_DIR) $(STL_DIR)/beam_slider_ABC.stl \
+	$(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/corner_clamp.stl \
 	$(STL_DIR)/extruder_holder.stl \
 	$(STL_DIR)/lineroller_ABC_winch.stl \
