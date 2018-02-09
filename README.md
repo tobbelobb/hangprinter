@@ -33,9 +33,8 @@ Bill of Materials
     * 1 x 27.5 cm rectangular/square beam
     * 1 x Power supply (12 V, 12.5 A or higher recommended)
     * 18 x zipties, widths between 3 and 4.5 mm recommended
-    * 6 x M3 screws, length 25 mm
     * 16 x M3 screws, length 5 mm
-    * 8  x M3 screws, length 12 mm
+    * 12 x M3 screws, length 12 mm
     * 4  x M8 screws, length > 50 mm, head countersunk
     * 8  x 608 bearings
     * 12 x 623 V-groove bearings
