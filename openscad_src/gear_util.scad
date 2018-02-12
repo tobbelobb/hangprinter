@@ -8,7 +8,7 @@ use <util.scad>
 // inr is the radius of those rounded corners
 // dd is width of circle band to be formed inside of wallr
 module decoration(height=10, wallr = 50, dd=10.2, lou=6.9, inr=9, skip_ang = 8.9, push_in_center=1,
-extr = 0.6){
+extr = 0.6, diff = 0){
   d = 2;
   shpr = 2; // Radius of the bend that shape has
   trou = wallr+shpr-lou;
@@ -75,14 +75,14 @@ extr = 0.6){
         * translation([-lou+inr-shpr,0,0])]));
   }
 
-  function circle_sector(max_ang, r0, r1, steps=100) =
-    concat([for (a=[0:max_ang/steps:max_ang+0.5])
+  function circle_sector(max_ang, r0, r1, steps=100, diff=0) =
+    concat([for (a=[-diff:(max_ang+diff)/steps:(max_ang+diff)+0.5])
               r0*[cos(a), sin(a)]],
            [for (a=[-extr:(max_ang+2*extr)/steps:max_ang+extr+0.01])
              r1*[cos(max_ang-a), sin(max_ang-a)]]);
   translate([0,0,-d])
     rotate([0,0,-last_ang/2+start_ang/2+skip_ang/2]){
-      sweep(circle_sector(last_ang-start_ang-skip_ang, push_in_center, wallr-inr/10),
+      sweep(circle_sector(last_ang-start_ang-skip_ang, push_in_center, wallr-inr/10, diff=diff),
           [translation([0,0,0]),translation([0,0,height+2*d+2])]);
       //sweep(circle_sector(last_ang-start_ang-skip_ang*2, wallr-dd, wallr-2*dd/3+1.0),
       //    [translation([0,0,0]),translation([0,0,height+2*d+2])]);
@@ -100,8 +100,10 @@ module spool_decoration(){
       inr = inr_inner,
       dd = dd_inner,
       lou = lou_inner,
-      push_in_center = wallr_inner-25.1,
-      skip_ang=17.0,
+      //push_in_center = wallr_inner-25.1,
+      push_in_center = max(wallr_inner-25.1, b608_outer_dia/2+inr_inner+4),
+      diff = 1.5*(50-Spool_r)/14,
+      skip_ang=16.0+(50/Spool_r),
       extr = 6);
 }
 

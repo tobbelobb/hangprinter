@@ -1,5 +1,6 @@
 // Parameters shared between modules
 
+Base_th = 2.8;
 Beam_width = 15;
 Wiggle = 0.25;
 Fat_beam_width = Beam_width + Wiggle;
@@ -23,7 +24,12 @@ Nema17_shaft_radius        = 5/2;
 b608_outer_dia = 22.2;
 b608_width = 7.05;
 
-Gap_between_sandwich_and_plate = 1.7;
+Gap_between_sandwich_and_plate = 1.5 + Base_th; // 1.5 mm for wiggle
 
 Clamp_wall_extra_length = 4.5;
 Clamp_wall_flex_factor = 1.5;
+
+Motor_bracket_flerp_r = 6;
+Motor_bracket_flerp = 14;
+Motor_bracket_cw = Nema17_cube_width + 6;
+Motor_bracket_att_ang = 50;

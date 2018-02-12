@@ -55,7 +55,15 @@ module spool_gear(){
               translate([Spool_pitch-3.5,-1])
                 rotate([0,0,-60])
                   square([4,7]);
+    screw_head_dist_from_origin = Bearing_r + Bearing_wall + Spool_core_flerp0/2 + 6/2 + 2;
+    screw_head_d = 16;
+    screw_head_h = 6;
+    translate([0,0,(screw_head_h+1)/2-1])
+      rotate_extrude()
+        translate([screw_head_dist_from_origin,0])
+          square([screw_head_d,(screw_head_h+1)], center=true);
   }
+
 }
 
 echo("Spool gear outer radius",  Spool_outer_radius);

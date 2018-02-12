@@ -40,9 +40,14 @@ module topping(){
       cylinder(r1=flerp0+0.3, r2=4.4, h=16);
   }
 }
-topping();
 
-lineroller_ABC_winch(edge_start=90, edge_stop=180-40,
-                     bearing_width=bearing_width+extra_bearing_width-shoulder,
-                     shoulder=shoulder);
-base();
+lineroller_D();
+module lineroller_D(twod=false){
+  if(!twod){
+    topping();
+    lineroller_ABC_winch(edge_start=90, edge_stop=180-40,
+                         bearing_width=bearing_width+extra_bearing_width-shoulder,
+                         shoulder=shoulder);
+  }
+  base(twod=twod,openings=[true,false,false,false]);
+}

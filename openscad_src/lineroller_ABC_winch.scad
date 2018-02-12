@@ -3,19 +3,32 @@ include <lineroller_parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
-base();
-module base(base_th = Base_th, flerp0 = 6, flerp1 = 6){
+//base(center=true, twod=true, openings=[true,false,true,true]);
+module base(base_th = Base_th, flerp0 = 6, flerp1 = 6, center=false, twod=false, openings=[false, false, false, false]){
   l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
   for(k=[0,1])
   translate([+k*(l/2+Depth_of_lineroller_base/2),-k*(l/2-Depth_of_lineroller_base/2),0])
-    translate([-Depth_of_lineroller_base/2-flerp0, -Depth_of_lineroller_base/2, 0])
+    translate([center ? -l/2 : -Depth_of_lineroller_base/2-flerp0, -Depth_of_lineroller_base/2, 0])
     rotate([0,0,k*90])
     difference(){
-      rounded_cube2([l, Depth_of_lineroller_base, base_th], Lineroller_base_r, $fn=13*4);
+      if(twod){
+        rounded_cube2([l, Depth_of_lineroller_base], Lineroller_base_r, $fn=13*4);
+      } else {
+        rounded_cube2([l, Depth_of_lineroller_base, base_th], Lineroller_base_r, $fn=13*4);
+      }
       for(x=[Depth_of_lineroller_base/2-2, l - (Depth_of_lineroller_base/2-2)])
         translate([x, Depth_of_lineroller_base/2, -1])
-          cylinder(d=4, h=base_th+2, $fs=1);
+          if(twod)
+            circle(d=4, $fs=1);
+          else
+            cylinder(d=4, h=base_th+2, $fs=1);
     }
+  for(i=[0:4])
+    if(twod && openings[i])
+      translate([center ? 0 : l/2-Depth_of_lineroller_base/2-flerp0,0,0])
+      rotate([0,0,i*90])
+        translate([l/2-1,-1])
+          square([6,2]);
 }
 
 function foot_shape(r, e, f, w) = concat([
@@ -34,9 +47,8 @@ function foot_shape(r, e, f, w) = concat([
 
 function wall_shape(a, w, extr) = 1 - (sin(a*90))*extr/((w/2)+extr); // a 0 -> 1
 
-lineroller_ABC_winch(edge_start=40, edge_stop = 180-40);
-module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, bearing_width=Bearing_width, shoulder=0.4){
-
+lineroller_ABC_winch(edge_start=40, edge_stop = 180-40, with_base=true);
+module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, bearing_width=Bearing_width, shoulder=0.4, with_base=false, twod = false){
   module wall(){
     // Foot parameters
     c = 10;
@@ -104,7 +116,11 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
     }
   }
 
-  wall();
-  mirror([0,1,0])
+  if(!twod){
     wall();
+    mirror([0,1,0])
+      wall();
+  }
+  if(with_base)
+    base(twod=twod, openings=[true,false,true,false]);
 }

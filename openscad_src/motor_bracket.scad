@@ -5,13 +5,13 @@ use <util.scad>
 
 motor_bracket();
 module motor_bracket(){
-  cw = Nema17_cube_width+6;
+  cw = Motor_bracket_cw;
   cd = cw;
   wall_th = Wall_th + 0.5;
   bd = Motor_bracket_depth;
-  flerp = 14;
+  flerp = Motor_bracket_flerp;
   flerp_h = cw;
-  flerp_r = 6;
+  flerp_r = Motor_bracket_flerp_r;
 
   //crossed_cube([cd, bd-1, wall_th]);
   module crossed_cube(v){
@@ -108,7 +108,7 @@ module motor_bracket(){
         inner_round_corner(r=1, h=cd-1, $fn=8*4);
     }
 
-    rotate([0,50,0])
+    rotate([0,Motor_bracket_att_ang,0])
       translate([-(Spool_pitch+Motor_pitch),0,0])
       rotate([-90,0,0])
       cylinder(r=Spool_outer_radius+1.5, h = 200, center=true, $fn = 50);
