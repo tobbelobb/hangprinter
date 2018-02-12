@@ -11,9 +11,6 @@ connect_l = 0.5;
 ang = atan((wedge_st*(max_i+1))/x_w);
 shorten_beam = 5*x_w/6;
 
-translate([(x_w-connect_l-max_i*pl_w)/2,0,0])
-hook(0);
-
 // Hooks for line
 hook_h = 6;
 wall_th = Wall_th;
@@ -29,8 +26,11 @@ module hook(ang=2){
     rounded_cube([hook_h, 2.5, h],1,$fn=4*3);
 }
 
-sled_slider();
-module sled_slider(){
+beam_slider_D();
+module beam_slider_D(){
+  // Hook
+  translate([(x_w-connect_l-max_i*pl_w)/2,0,0])
+    hook(0);
   // wedge steps
   intersection(){
     for(i=[0:max_i])

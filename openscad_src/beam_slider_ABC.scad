@@ -3,8 +3,8 @@ use <util.scad>
 use <sweep.scad>
 
 // Bends arms outwards, so pressure is distributed over beam flat-sides
-beam_slider();
-module beam_slider(){
+beam_slider_ABC();
+module beam_slider_ABC(){
   wall_th = Wall_th;
   h = 10;
   extra_length = 6;
