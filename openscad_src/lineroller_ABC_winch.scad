@@ -4,7 +4,12 @@ use <sweep.scad>
 use <util.scad>
 
 //base(center=true, twod=true, openings=[true,false,true,true]);
-module base(base_th = Base_th, flerp0 = 6, flerp1 = 6, center=false, twod=false, openings=[false, false, false, false]){
+module base(base_th = Base_th,
+            flerp0 = 6,
+            flerp1 = 6,
+            center=false,
+            twod=false,
+            openings=[false, false, false, false]){
   l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
   for(k=[0,1])
   translate([+k*(l/2+Depth_of_lineroller_base/2),-k*(l/2-Depth_of_lineroller_base/2),0])
@@ -19,9 +24,9 @@ module base(base_th = Base_th, flerp0 = 6, flerp1 = 6, center=false, twod=false,
       for(x=[Depth_of_lineroller_base/2-2, l - (Depth_of_lineroller_base/2-2)])
         translate([x, Depth_of_lineroller_base/2, -1])
           if(twod)
-            circle(d=4, $fs=1);
+            circle(d=Mounting_screw_d, $fs=1);
           else
-            cylinder(d=4, h=base_th+2, $fs=1);
+            cylinder(d=Mounting_screw_d, h=base_th+2, $fs=1);
     }
   for(i=[0:4])
     if(twod && openings[i])

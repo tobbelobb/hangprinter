@@ -3,7 +3,6 @@ include <lineroller_parameters.scad>
 use <util.scad>
 
 bit_width = 12;
-screw_head_dia = 16; // Slightly unofficially supporting 14 mm dia wood screw heads
 cable_r=2.5;
 
 difference(){
@@ -20,11 +19,11 @@ difference(){
   translate([bit_width/2, 0, bit_width/2])
     rotate([90,0,0])
     translate([0,0,-1])
-    cylinder(d=4, h=Base_th+2, $fs=1);
+    cylinder(d=Mounting_screw_d, h=Base_th+2, $fs=1);
   translate([bit_width/2, 0, bit_width/2])
     rotate([90,0,0])
     translate([0,0,Base_th])
-    cylinder(d2=screw_head_dia-4, d1=screw_head_dia, h=12, $fs=1);
+    cylinder(d2=Mounting_screw_head_d-4, d1=Mounting_screw_head_d, h=12, $fs=1);
   // cable...
     translate([bit_width+cable_r+Base_th,-Base_th/2,-1])
       cylinder(r=cable_r, h=bit_width+2, $fs=1);

@@ -20,9 +20,15 @@ module spool_core(twod = false){
     }
     if(twod)
       circle(r=2.4);
-    else
+    else{
       translate([0,0,-1])
         cylinder(r=2.4, h=big_h+2);
+      for(ang=[0:90:359])
+        rotate([0,0,ang])
+          for(y = [-Depth_of_lineroller_base/2:1:Depth_of_lineroller_base/2])
+            translate([abs(y), -0.05 + y, -1])
+              cube([Spool_core_flerp0+10,0.1, Base_th+2]);
+    }
   }
 
   if(!twod)

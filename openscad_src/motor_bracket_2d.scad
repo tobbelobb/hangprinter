@@ -12,7 +12,7 @@ module motor_bracket_2d(){
     for(mirr=[[0,0], [1,0], [0,1]])
       mirror(mirr)
         translate([x_l/2-Motor_bracket_flerp/2+1,y_l/2-Motor_bracket_flerp/2])
-          circle(r=2.5);
+          circle(d=Mounting_screw_d+0.5);
     rotate([0,0,Motor_bracket_att_ang])
       translate([-(Spool_pitch+Motor_pitch),0])
         circle(r=Spool_outer_radius+1.5, center=true, $fn = 50);

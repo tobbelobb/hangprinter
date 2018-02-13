@@ -33,3 +33,6 @@ Motor_bracket_flerp_r = 6;
 Motor_bracket_flerp = 14;
 Motor_bracket_cw = Nema17_cube_width + 6;
 Motor_bracket_att_ang = 50;
+
+Mounting_screw_d = 4.5;
+Mounting_screw_head_d = 14;
