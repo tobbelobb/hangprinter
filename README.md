@@ -41,7 +41,7 @@ Bill of Materials
     * 12 x 623 V-groove bearings
     * 10 cm PTFE tube (standard bowden, 4 mm outer dia, >1.75 mm inner dia)
     * ca 90 self tapping wood screws, thickness 2.5-4.5 mm, length 10 mm, head diameter 8-14 mm, non-countersunk head.
-    * 4 x self tapping wood screws, thickness ca 4 mm, head diameter ca 8 mm, length ca 45 mm. Forfastening spool core.
+    * 4 x self tapping wood screws, thickness ca 4 mm, head diameter ca 8 mm, length ca 45 mm. For fastening spool core.
     * 4 x self tapping wood screws, thickness ca 2 mm, head diameter ca 4 mm. For mounting Mega onto sheet material.
     * 18 x self tapping wood screws, thickness ca 2 mm, head diameter 5 mm, length 10 mm, countersunk head. For attaching linerollers on ABC anchors.
     * 5 m of 15-lead ribbon wire

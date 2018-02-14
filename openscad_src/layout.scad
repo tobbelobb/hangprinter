@@ -172,7 +172,7 @@ module full_winch(){
   //translate([-ext_sidelength/2+edg,-ext_sidelength/2+55,0])
   translate([-ext_sidelength/2+Spool_outer_radius,
              -ext_sidelength/2+yshift_top_plate+Spool_outer_radius,0])
-    winch_unit(l=[185,1339,534], motor_a=-110, a=-6.6, lines=3, angs=[60,176.75,123.85]);
+    winch_unit(l=[185,339,534], motor_a=-110, a=-6.6, lines=3, angs=[60,176.75,123.85]);
   // A
   translate([-136,-7,0])
     rotate([0,0,90])
