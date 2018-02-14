@@ -1,13 +1,14 @@
 Circular_pitch = 262;
 
 Motor_teeth = 10;
-Gear_height = 21.4;
+//Gear_height = 21.4;
+Gear_height = 21.4-3;
 Motor_pitch                      = (Motor_teeth*Circular_pitch/360);
 Motor_pitch_diametrial           = Motor_teeth/(2*Motor_pitch);
 Motor_outer_radius               = Motor_pitch + 1/Motor_pitch_diametrial;
 
 Spool_teeth = 100;
-Spool_r = 50;
+Spool_r = 55;
 Spool_height = 8;
 Spool_pitch                      = (Spool_teeth*Circular_pitch/360);
 Spool_pitch_diametrial           = Spool_teeth/(2*Spool_pitch);

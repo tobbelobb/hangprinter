@@ -7,14 +7,13 @@ use <util.scad>
 // Wallr is radius out to outermost edge of this decoration
 // inr is the radius of those rounded corners
 // dd is width of circle band to be formed inside of wallr
-module decoration(height=10, wallr = 50, dd=10.2, lou=6.9, inr=9, skip_ang = 8.9, push_in_center=1,
-extr = 0.6, diff = 0){
+module decoration(height=10, wallr = 50, dd=10.2, lou=6.9, inr=9){
   d = 2;
   shpr = 2; // Radius of the bend that shape has
   trou = wallr+shpr-lou;
   stp = 6;
-  start_ang = (180/3.14)*(inr/wallr);
-  start_ang2 = (180/3.14)*(inr/(wallr-dd-inr));
+  start_ang = (180/PI)*(inr/wallr);
+  start_ang2 = (180/PI)*(inr/(wallr-dd-inr));
   last_ang = 60;
   stop_ang = last_ang - start_ang;
   stop_ang2 = last_ang - start_ang2;
@@ -75,18 +74,21 @@ extr = 0.6, diff = 0){
         * translation([-lou+inr-shpr,0,0])]));
   }
 
-  function circle_sector(max_ang, r0, r1, steps=100, diff=0) =
-    concat([for (a=[-diff:(max_ang+diff)/steps:(max_ang+diff)+0.5])
+  function circle_sector(max_ang, r0, r1, steps=100) =
+    concat([for (a=[-max_ang/2:max_ang/steps-0.00001:max_ang/2])
               r0*[cos(a), sin(a)]],
-           [for (a=[-extr:(max_ang+2*extr)/steps:max_ang+extr+0.01])
-             r1*[cos(max_ang-a), sin(max_ang-a)]]);
-  translate([0,0,-d])
-    rotate([0,0,-last_ang/2+start_ang/2+skip_ang/2]){
-      sweep(circle_sector(last_ang-start_ang-skip_ang, push_in_center, wallr-inr/10, diff=diff),
+           [[0,0,0]]);
+  difference(){
+    translate([0,0,-d])
+      sweep(circle_sector(last_ang, wallr-0.15),
           [translation([0,0,0]),translation([0,0,height+2*d+2])]);
-      //sweep(circle_sector(last_ang-start_ang-skip_ang*2, wallr-dd, wallr-2*dd/3+1.0),
-      //    [translation([0,0,0]),translation([0,0,height+2*d+2])]);
-    }
+    for(i=[0,60,120])
+      rotate([0,0,i+30])
+        cube([2*wallr-0.1,8.9,2*(height+2*d+4)], center=true); // TODO: Eker tjockled parametrisera
+    translate([0,0,-1])
+      cylinder(r=wallr-dd-2*inr+8.5, h=height+2*d+3);
+
+  }
 
 }
 
@@ -95,16 +97,12 @@ module spool_decoration(){
   inr_inner = 5.2;
   dd_inner = wallr_inner - inr_inner - b608_outer_dia/2 - 6;
   lou_inner = 2.8;
-  decoration(height=Spool_height+1+Gear_height,
+  decoration(
+      height=Spool_height+1+Gear_height,
       wallr = wallr_inner,
       inr = inr_inner,
       dd = dd_inner,
-      lou = lou_inner,
-      //push_in_center = wallr_inner-25.1,
-      push_in_center = max(wallr_inner-25.1, b608_outer_dia/2+inr_inner+4),
-      diff = 1.5*(50-Spool_r)/14,
-      skip_ang=16.0+(50/Spool_r),
-      extr = 6);
+      lou = lou_inner);
 }
 
 //torx(remale=true);

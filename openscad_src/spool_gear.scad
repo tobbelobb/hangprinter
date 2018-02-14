@@ -56,12 +56,17 @@ module spool_gear(){
                 rotate([0,0,-60])
                   square([4,7]);
     screw_head_dist_from_origin = Bearing_r + Bearing_wall + Spool_core_flerp0/2 + 6/2 + 2;
-    screw_head_d = 16;
-    screw_head_h = 6;
+    screw_head_h = 4;
+    translate([0,0,Gear_height-Torx_depth-4])
+      cylinder(r=Spool_r-8, h = Gear_height);
+    translate([0,0,Gear_height-Torx_depth])
+      rotate_extrude($fn=40)
+        translate([Spool_r-8,0])
+          circle(r=4,$fn=40);
     translate([0,0,(screw_head_h+1)/2-1])
       rotate_extrude()
         translate([screw_head_dist_from_origin,0])
-          square([screw_head_d,(screw_head_h+1)], center=true);
+          square([Mounting_screw_head_d,(screw_head_h+1)], center=true);
   }
 
 }

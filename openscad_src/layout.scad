@@ -22,12 +22,12 @@ stls = true;
 //twod = true;
 twod = false;
 
-mounted_in_ceiling = true;
-//mounted_in_ceiling = false;
+//mounted_in_ceiling = true;
+mounted_in_ceiling = false;
 
 // Render the mover
-mover = true;
-//mover = false;
+//mover = true;
+mover = false;
 
 ANCHOR_D_Z = 1000;
 
@@ -55,7 +55,7 @@ module top_plate(){
 }
 
 //placed_lineroller_D();
-module placed_lineroller_D(angs=[-62.3,62,4.5]){
+module placed_lineroller_D(angs=[-63,60,3.5]){
   center_it = -2.5;
   three = [0,120,240];
   for(k=[0:2])
@@ -148,7 +148,7 @@ module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,
 }
 
 //abc_winch();
-module abc_winch(with_motor=true,dist=160, motor_a = 0){
+module abc_winch(with_motor=true,dist=160, motor_a = 280){
   translate([dist,Spool_r,0])
     color(color2, color2_alpha)
     if(stls && !twod){
@@ -159,7 +159,7 @@ module abc_winch(with_motor=true,dist=160, motor_a = 0){
   winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a, angs=[90,0,0]);
 }
 
-if(mounted_in_ceiling){
+if(mounted_in_ceiling && !twod){
   translate([0,0,43+ANCHOR_D_Z])
     rotate([180,0,0])
       full_winch();
@@ -172,23 +172,22 @@ module full_winch(){
   //translate([-ext_sidelength/2+edg,-ext_sidelength/2+55,0])
   translate([-ext_sidelength/2+Spool_outer_radius,
              -ext_sidelength/2+yshift_top_plate+Spool_outer_radius,0])
-    winch_unit(l=[185,339,534], motor_a=-110, a=-6.6, lines=3, angs=[61.5,177.6,124.4]);
+    winch_unit(l=[185,1339,534], motor_a=-110, a=-6.6, lines=3, angs=[60,176.75,123.85]);
   // A
   translate([-136,-7,0])
     rotate([0,0,90])
-      abc_winch(motor_a=199);
+      abc_winch();
 
   // B
   translate([-17,-140,0])
     rotate([0,0,180-30])
       mirror([1,0,0])
-        abc_winch(motor_a=-151);
+        abc_winch();
 
   // C
   translate([98,151,0])
-    rotate([0,0,30])
-      mirror([1,0,0])
-        abc_winch(motor_a=-99);
+    rotate([0,0,180+30])
+      abc_winch();
 
   color(color1, color1_alpha)
     placed_lineroller_D();
@@ -197,7 +196,7 @@ module full_winch(){
     top_plate();
 }
 
-if(mover)
+if(mover && !twod)
   mover();
 module mover(){
   beam_length = 400;
@@ -251,7 +250,7 @@ module mover(){
             }
 }
 
-if(mover)
+if(mover && !twod)
   d_lines();
 module d_lines(){
   color("yellow")
