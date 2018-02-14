@@ -117,7 +117,7 @@ const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*ACTION_POINTS
 const float MOUNTED_LINE[DIRS] = {7500.0,7500.0,7500.0,7500.0};
 
 // Measuring your spool radii and adjusting this number will improve your Hangprinter's precision
-const float SPOOL_RADII[DIRS] = { 50.0, 50.0, 50.0, 50.0 };
+const float SPOOL_RADII[DIRS] = { 55.0, 55.0, 55.0, 55.0 };
 
 // Motor gear teeth: 10
 // Sandwich gear teeth: 100
