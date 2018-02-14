@@ -24,16 +24,6 @@ module spool_gear(){
     inr_outer = 4.6;
     dd_outer = wallr_outer - inr_outer - Spool_r - 3.5;
     lou_outer = 2.5;
-    // Outermost decoration
-    for(i=[0:60:359])
-      rotate([0,0,i])
-        decoration(Gear_height,
-                   wallr = wallr_outer,
-                   inr = inr_outer,
-                   dd = dd_outer,
-                   lou = lou_outer,
-                   skip_ang = 4.50,
-                   push_in_center = wallr_outer-6.9);
 
     for(i=[0:60:359])
       rotate([0,0,i])
