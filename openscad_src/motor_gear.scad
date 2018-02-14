@@ -32,6 +32,12 @@ module motor_gear(){
       }
     translate([0,0,gear_height+foot_height-1])
       cylinder(r1=2.5, r2=4, h=3);
+    translate([0,0,gear_height+foot_height-7])
+      cylinder(r=2.5, h=8);
+    translate([-0.5,0,gear_height+foot_height-0.3])
+      cube([1,Motor_outer_radius+1,1]);
+    translate([-0.5,0,-0.7])
+      cube([1,Motor_outer_radius+1,1]);
 
     // Cut bottom to avoid problems with elephant foot
     translate([0,0,-0.3])
