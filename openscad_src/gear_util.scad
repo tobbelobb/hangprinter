@@ -105,7 +105,7 @@ module spool_decoration(){
       lou = lou_inner);
 }
 
-//torx(remale=true);
+torx(female=true);
 module torx(h = Spool_height + 2, r = Spool_r, female=false){
   circs = 12;
   intersection(){
@@ -119,9 +119,12 @@ module torx(h = Spool_height + 2, r = Spool_r, female=false){
         translate([r-5,0,-1])
         cylinder(r=r/4.2, h=h+2, $fn=50);
       if(female){
-        rotate([0,0,360/(2*circs)])
-          translate([r-7,0,-1])
-          cylinder(r2=1, r1=r/1.9, h=h+2, $fn=50);
+        rotate([0,0,360/(2*circs)]){
+           translate([r/2 + 16,0,-1])
+             cylinder(r2=1, r1=r/1.9, h=h+2, $fn=50);
+           translate([r-10-3.5,0,-1])
+             cylinder(r=10, h=h+2, $fn=50);
+          }
         }
       }
   }
