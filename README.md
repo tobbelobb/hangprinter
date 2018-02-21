@@ -1,13 +1,12 @@
 Hangprinter ![Hangprinter logo](https://vitana.se/opr3d/tbear/bilder/logo_blue_50.png)
 ===========
 
-This is the main dev branch of Hangprinter v3.3.
+This is the main dev branch of Hangprinter v3.
 Read [blog](http://vitana.se/opr3d/tbear) to stay up to date with what happens here.
 
 Bill of Materials
 ----------------
-A small part of the revenue is forwarded to the developer of this repo if you buy parts through the affiliate links below.
-
+You can help fund future development of this project by using the affiliate links below when sourcing vitamins.
   * Printed parts
     * Beam Slider ABC x 3 (End points for ABC-lines)
     * Beam Slider D x 3 (End points for D-lines)
@@ -64,3 +63,4 @@ To compile those do
 make nema23
 ```
 This compiles the files and puts them in the `openscad_stl_nema23/` directory.
+
