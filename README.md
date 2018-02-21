@@ -42,7 +42,7 @@ Bill of Materials
     * ca 90 self tapping wood screws, thickness 2.5-4.5 mm, length 10 mm, head diameter 8-14 mm, non-countersunk head. [affiliate link](https://www.ebay.com/itm/M3-M4-Phillips-Truss-Head-Self-Tapping-Screws-A4-Marine-Stainless-Steel-G316/272989838286?hash=item3f8f765bce:m:mItjJDdPrHtWtEWfCkRMWvQ)
     * 4 x self tapping wood screws, thickness ca 4 mm, head diameter ca 8 mm, length ca 45 mm. For fastening spool core. [affiliate link](https://www.ebay.com/itm/M3-M4-Phillips-Truss-Head-Self-Tapping-Screws-A4-Marine-Stainless-Steel-G316/272989838286?hash=item3f8f765bce:m:mItjJDdPrHtWtEWfCkRMWvQ)
     * 4 x self tapping wood screws, thickness ca 2 mm, head diameter ca 4 mm. For mounting Mega onto sheet material. [affiliate link](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2FM2-M3-5-Socket-Cap-Head-Screws-Allen-Key-Self-Tapping-Tappers-8-8-High-Tensile%2F273011763636%3Fhash%3Ditem3f90c4e9b4%3Am%3Am1iJL-UyDpUQE8KKQp_WCcQ)
-    * 18 x self tapping wood screws, thickness ca 3 mm, head diameter 7 mm, length 10 mm, countersunk head. For attaching linerollers on ABC anchors.
+    * 18 x self tapping wood screws, thickness ca 3 mm, head diameter 7 mm, length 10 mm, countersunk head. For attaching linerollers on ABC anchors. [affiliate link](https://www.ebay.com/itm/M3-5-M4-2-Thread-Forming-Phillips-Flat-Head-Self-Tapping-Screws-Wood-Bolts/332429620615?hash=item4d66597587:m:m4WJ8Dqnvx-EgeRF9Q1SUUA)
     * 5 m of 15-lead ribbon wire
     * Nuts and washers for all screws
     * Extruder + hot end (any setup that fits Nema17 mount will work)
