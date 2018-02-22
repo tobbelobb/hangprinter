@@ -23,6 +23,7 @@ A Google Spreadsheet version for a Mechaduino-driven setup, up to date as of Feb
     * Spacer x 4
     * Spool Core x 4
     * Cable Clamp x ca 12
+    * Layout x 1 (2d-printed part)
   * Vitamins
     * 5 x Nema17 steppers (> 40 N/cm holding torque, flat shaft) [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2FEU-UK-5PCS-Nema17-Stepper-Motor-40Ncm-56oz-in-1-7A-D-Shaft-Connector-42BYGHW609%2F282269299534%3Fhash%3Ditem41b88fb34e%3Ag%3A1RIAAOSwa~BYOSvo)
     * 60 m FireLine 0.5 mm (0.39 mm also works) [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2FBerkley-Fireline-Fused-Braid-270m-200m-Red-or-Flame-Green-HALF-RRP%2F152722109171%3Fhash%3Ditem238ef272f3%3Am%3AmlH_QITtLjoiiv5Mi0Va5ww)
