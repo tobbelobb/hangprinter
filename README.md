@@ -4,6 +4,13 @@ Hangprinter ![Hangprinter logo](https://vitana.se/opr3d/tbear/bilder/logo_blue_5
 This is the main dev branch of Hangprinter v3.
 Read [blog](http://vitana.se/opr3d/tbear) to stay up to date with what happens here.
 
+Branch Status
+--------
+This is the working branch of the Hangprinter repository.
+Breaking changes may occur from time to time.
+The Hangprinter repo does not yet have a stable branch.
+This branch will become our (first!) stable branch when stock Marlin v2 is ready to be included as the default Hangprinter firmware.
+
 Bill of Materials
 ----------------
 You can help fund future development of this project by using the affiliate links below when sourcing vitamins.
