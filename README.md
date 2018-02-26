@@ -33,7 +33,7 @@ A Google Spreadsheet version for a Mechaduino-driven setup, up to date as of Feb
     * Layout x 1 (2d-printed part)
   * Vitamins
     * 5 x Nema17 steppers (> 40 N/cm holding torque, flat shaft) [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2FEU-UK-5PCS-Nema17-Stepper-Motor-40Ncm-56oz-in-1-7A-D-Shaft-Connector-42BYGHW609%2F282269299534%3Fhash%3Ditem41b88fb34e%3Ag%3A1RIAAOSwa~BYOSvo)
-    * 60 m FireLine 0.5 mm (0.39 mm also works) [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2FBerkley-Fireline-Fused-Braid-270m-200m-Red-or-Flame-Green-HALF-RRP%2F152722109171%3Fhash%3Ditem238ef272f3%3Am%3AmlH_QITtLjoiiv5Mi0Va5ww)
+    * 60 m FireLine 0.5 mm (0.39 mm also works. 60 m ~= 2x(7.5+7.5+7.5) + 3x4 m. See [this post](http://forums.reprap.org/read.php?1,792937,809736#msg-809736) for details.) [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2FBerkley-Fireline-Fused-Braid-270m-200m-Red-or-Flame-Green-HALF-RRP%2F152722109171%3Fhash%3Ditem238ef272f3%3Am%3AmlH_QITtLjoiiv5Mi0Va5ww)
     * ca 50x50 cm MDF or plywood sheet, thickness 10-14 mm
     * 1 x Arduino Mega [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2FArduino-Mega-2560-R3-Development-Board-3D-Printer-Controller-Kit-RAMPS-1-4%2F172861877756%3Fhash%3Ditem283f5eedfc%3Ag%3Au70AAOSwAHtaQ~tD)
     * 1 x RAMPS
