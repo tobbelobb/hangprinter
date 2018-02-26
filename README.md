@@ -58,9 +58,11 @@ A Google Spreadsheet version for a Mechaduino-driven setup, up to date as of Feb
     * Ca 0.5 m red and black power cable for connecting 12 V to RAMPS
     * Mechaduino optional addon
       * 4 x Mechaduino PCB
-      * More than 20 jumper cables (if Mechaduinos) [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2F120pcs-Dupont-Wire-Male-to-Male-Male-to-Female-Female-to-Female-Jumper-Cable%2F400932483189%3Fhash%3Ditem5d59703075%3Ag%3AFEgAAOSw42dZLnrH)
+      * More than 20 jumper cables [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2F120pcs-Dupont-Wire-Male-to-Male-Male-to-Female-Female-to-Female-Jumper-Cable%2F400932483189%3Fhash%3Ditem5d59703075%3Ag%3AFEgAAOSw42dZLnrH)
       * 5V->3V3 level converter for i2c usage (if Mechaduinos) [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2F2Pcs-4-Channel-IIC-I2C-Logic-Level-Converter-Bi-Directional-Module-5V-3-3V%2F221919114584%3Fhash%3Ditem33ab68f558%3Ag%3ANvIAAOSw5VFWJwmj)
       * Ca 2 m red and black power cable for connecting 12 V to Mechaduinos
+      * 16 x M3 screws, ca 1 cm longer than your Nema17 motor body.
+      * 16 x 2-4 mm standoffs to separate your Nema17 motor body from your Mechaduino PCB.
     * Tmc2130SilentStepStick addon
       * A few more jumper wires [Ebay](https://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_id=114&ipn=icep&toolid=20004&campid=5338261873&mpre=https%3A%2F%2Fwww.ebay.com%2Fitm%2F120pcs-Dupont-Wire-Male-to-Male-Male-to-Female-Female-to-Female-Jumper-Cable%2F400932483189%3Fhash%3Ditem5d59703075%3Ag%3AFEgAAOSw42dZLnrH)
 
