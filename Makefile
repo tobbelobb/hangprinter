@@ -4,6 +4,14 @@
 STL_DIR = ./openscad_stl
 STL_NEMA23_DIR = ./openscad_stl_nema23
 SRC_DIR = ./openscad_src
+OS := $(shell uname)
+
+# macOS for some reason hides the openscad binary
+ifeq ($(OS),Darwin)
+  OPENSCAD_BIN = /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD
+else
+  OPENSCAD_BIN = openscad
+endif
 
 $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/parameters.scad \
@@ -15,7 +23,7 @@ $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/motor_bracket.scad \
 	$(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/util.scad
-	openscad -D Nema17_cube_width=56 \
+	$(OPENSCAD_BIN) -D Nema17_cube_width=56 \
          -D Nema17_screw_hole_width=66.61 \
          -D Nema17_ring_diameter=38 \
          -D Nema17_cube_height=56 \
@@ -49,7 +57,7 @@ layout.dxf: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/cable_clamp.scad \
 	$(SRC_DIR)/util.scad \
 	$(SRC_DIR)/layout.scad
-	openscad -D twod=true \
+	$(OPENSCAD_BIN) -D twod=true \
 		-D mover=false \
 		-D mounted_in_ceiling=false \
 		-o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -75,7 +83,7 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/sweep.scad \
 	$(SRC_DIR)/cable_clamp.scad \
 	$(SRC_DIR)/util.scad
-	openscad -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 all: | $(STL_DIR) $(STL_DIR)/beam_slider_ABC.stl \
 	$(STL_DIR)/beam_slider_D.stl \
