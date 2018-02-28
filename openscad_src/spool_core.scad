@@ -9,7 +9,7 @@ use <lineroller_ABC_winch.scad>
 
 spool_core();
 module spool_core(twod = false){
-  big_h = Gap_between_sandwich_and_plate + Spool_height + Gear_height + 5;
+  big_h = Gap_between_sandwich_and_plate + Spool_height + Gear_height - 0.1;
   difference(){
     union(){
     base(center=true, flerp0=Spool_core_flerp0, twod = twod);
@@ -25,14 +25,4 @@ module spool_core(twod = false){
         cylinder(r=2.4, h=big_h+2);
     }
   }
-
-  if(!twod)
-    rotate([0,0,45])
-      translate([30,0,0])
-        // A little ring to lock the top
-        difference(){
-          cylinder(d=8+4, h=2);
-          translate([0,0,-1])
-            cylinder(d=8, h=2+2);
-        }
 }
