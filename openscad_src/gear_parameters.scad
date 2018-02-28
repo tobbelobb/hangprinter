@@ -16,4 +16,4 @@ Spool_outer_radius               = Spool_pitch + 1/Spool_pitch_diametrial;
 Torx_depth = 5;
 Motor_bracket_depth = Gear_height+1+7+Nema17_ring_height+1+Gap_between_sandwich_and_plate;
 
-Spool_core_flerp0 = 16+7;
+Spool_core_flerp0 = 16+3;
