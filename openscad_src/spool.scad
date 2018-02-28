@@ -17,6 +17,13 @@ module spool_outer(){
     }
     translate([0,0,-1])
       cylinder(r=Spool_r-Spool_outer_wall_th, h=Spool_height+Torx_depth+2,$fn=150);
+    for(v=[0:120:359])
+      rotate([0,0,v])
+        translate([0, Spool_r/2, 1+Spool_height/2])
+          rotate([-90,00,0])
+            for(i=[-2.2,2.2])
+              translate([i,0,0])
+                cylinder(r=1.2, h=Spool_r);
   }
 }
 
