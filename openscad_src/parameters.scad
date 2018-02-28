@@ -36,3 +36,5 @@ Motor_bracket_att_ang = 50;
 
 Mounting_screw_d = 4.5;
 Mounting_screw_head_d = 14;
+
+Spool_outer_wall_th = 4;

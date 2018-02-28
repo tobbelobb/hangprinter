@@ -1,7 +1,6 @@
 Circular_pitch = 262;
 
 Motor_teeth = 10;
-//Gear_height = 21.4;
 Gear_height = 21.4-3;
 Motor_pitch                      = (Motor_teeth*Circular_pitch/360);
 Motor_pitch_diametrial           = Motor_teeth/(2*Motor_pitch);
@@ -17,4 +16,4 @@ Spool_outer_radius               = Spool_pitch + 1/Spool_pitch_diametrial;
 Torx_depth = 5;
 Motor_bracket_depth = Gear_height+1+7+Nema17_ring_height+1+Gap_between_sandwich_and_plate;
 
-Spool_core_flerp0 = 16 + 34/2;
+Spool_core_flerp0 = 16+7;
