@@ -3,6 +3,18 @@ include <lineroller_parameters.scad>
 use <sweep.scad>
 use <util.scad>
 
+//screws_space();
+module screws_space(){
+  flerp0 = 6;
+  flerp1 = 6;
+  l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
+  translate([Depth_of_lineroller_base/2-2,0,0])
+    for(a=[0:90:359])
+      rotate([0,0,a])
+        translate([Depth_of_lineroller_base/2+flerp0,0,0])
+          cylinder(d1=Mounting_screw_head_d, d2=Mounting_screw_head_d-4, h=12);
+}
+
 //base(center=true, twod=true, openings=[true,false,true,true]);
 module base(base_th = Base_th,
             flerp0 = 6,
@@ -122,9 +134,14 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
   }
 
   if(!twod){
-    wall();
-    mirror([0,1,0])
-      wall();
+    difference(){
+      union(){
+        wall();
+        mirror([0,1,0])
+          wall();
+      }
+      screws_space();
+    }
   }
   if(with_base)
     base(twod=twod, openings=[true,false,true,false]);

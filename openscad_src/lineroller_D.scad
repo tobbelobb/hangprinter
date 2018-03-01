@@ -21,8 +21,8 @@ module topping(){
         rounded_square([tx, ty], foot_shape_r,$fn=4*6);
 
     bearing_bore_z = Tower_h-Bearing_r;
-    translate([-0.001,-(bearing_width+extra_bearing_width)/2,0])
-      cube([100, bearing_width+extra_bearing_width, bearing_bore_z]);
+    translate([-0.001,-(bearing_width+extra_bearing_width)/2,-1])
+      cube([100, bearing_width+extra_bearing_width, bearing_bore_z+1]);
     translate([Bearing_wall+Bearing_r,0, bearing_bore_z]){
       rounded_cube([30,3,3], center=true, 0.6);
       rotate([90,0,0]){
@@ -33,21 +33,29 @@ module topping(){
     translate([Bearing_wall + Bearing_r - Bearing_small_r,0,Tower_h-Bearing_r-Bearing_wall])
     cylinder(r=Ptfe_r, h=100, $fs=0.2);
 
-    flerp0 = 6;
-    flerp1 = 6;
-    le = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
-    translate([-2-flerp0,0,base_th])
-      cylinder(r1=flerp0+0.3, r2=4.4, h=16);
+  }
+  slide_r = 2*Tower_h/5;
+  difference(){
+    translate([-0.001,-(bearing_width+extra_bearing_width)/2,0])
+      cube([slide_r, bearing_width+extra_bearing_width, base_th+slide_r]);
+    translate([slide_r, 0, base_th+slide_r])
+      rotate([90,0,0])
+        cylinder(r=slide_r, h=bearing_width+extra_bearing_width+2, center=true);
   }
 }
 
 lineroller_D();
 module lineroller_D(twod=false){
   if(!twod){
-    topping();
-    lineroller_ABC_winch(edge_start=90, edge_stop=180-40,
-                         bearing_width=bearing_width+extra_bearing_width-shoulder,
-                         shoulder=shoulder);
+    difference(){
+      union(){
+        topping();
+        lineroller_ABC_winch(edge_start=90, edge_stop=180-40,
+                             bearing_width=bearing_width+extra_bearing_width-shoulder,
+                             shoulder=shoulder);
+      }
+      screws_space();
+    }
   }
   base(twod=twod,openings=[true,false,false,false]);
 }
