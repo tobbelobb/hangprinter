@@ -55,7 +55,10 @@ module spool_gear_center(){
                   rotate([0,0,45])
                     square(20);
           }
-
+    for(i=[0:60:359])
+      rotate([0,0,i])
+        translate([0,screw_head_dist_from_origin,-1])
+          cylinder(d2=Mounting_screw_head_d-4, d1=Mounting_screw_head_d, h=12, $fs=1);
   }
 }
 
