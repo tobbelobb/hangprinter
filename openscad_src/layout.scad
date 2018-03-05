@@ -91,12 +91,12 @@ module sandwich(){
 }
 
 //winch_unit(motor_a=0);
-module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,120,240]){
+module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,120,240], clockwise = 1){
   if(!twod)
     translate([0,0,Gap_between_sandwich_and_plate])
       sandwich();
   rotate([0,0,motor_a]){
-    translate([0,Motor_pitch+Spool_pitch,0]){
+    translate([0,Motor_pitch+Spool_pitch+0.5,0]){
       if(!twod)
         rotate([0,0,18])
           translate([0,0,Gap_between_sandwich_and_plate-0.5]) // 0.5 since motor gear is 1 mm higher than spool gear
@@ -108,7 +108,8 @@ module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,
               }
       if(twod)
         rotate([0,0,90-Motor_bracket_att_ang])
-          motor_bracket_2d();
+          translate([0,(Wall_th+0.5)/2])
+            motor_bracket_2d();
       else {
         translate([0,0,Motor_bracket_depth]){
           if(with_motor){
@@ -120,11 +121,12 @@ module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,
           }
           rotate([90,0,90-Motor_bracket_att_ang]){
             color(color2, color2_alpha-0.2){
-              if(stls){
-                import("../openscad_stl/motor_bracket.stl");
-              } else {
-                motor_bracket();
-              }
+              translate([0,0,-(Wall_th+0.5)/2])
+                if(stls){
+                  import("../openscad_stl/motor_bracket.stl");
+                } else {
+                  motor_bracket();
+                }
             }
           }
         }
@@ -135,7 +137,7 @@ module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,
     translate([0,0,Gear_height+Spool_height/2+Gap_between_sandwich_and_plate])
       for(i=[1:lines])
         rotate([0,0,angs[i-1]])
-          translate([Spool_r,0,0])
+          translate([clockwise*Spool_r,0,0])
           rotate([90,0,0])
           color("yellow")
           cylinder(r=0.9, h=l[i-1]);
@@ -148,15 +150,15 @@ module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,
 }
 
 //abc_winch();
-module abc_winch(with_motor=true,dist=160, motor_a = 280){
-  translate([dist,Spool_r,0])
+module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1){
+  translate([dist,clockwise*Spool_r,0])
     color(color2, color2_alpha)
     if(stls && !twod){
       import("../openscad_stl/lineroller_ABC_winch.stl");
     } else {
       lineroller_ABC_winch(the_wall=false, with_base=true, twod=twod);
     }
-  winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a, angs=[90,0,0]);
+  winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a, angs=[90,0,0], clockwise=clockwise);
 }
 
 if(mounted_in_ceiling && !twod){
@@ -180,9 +182,8 @@ module full_winch(){
 
   // B
   translate([-17,-140,0])
-    rotate([0,0,180-30])
-      mirror([1,0,0])
-        abc_winch();
+    rotate([0,0,-30])
+      abc_winch(clockwise=-1);
 
   // C
   translate([98,151,0])
