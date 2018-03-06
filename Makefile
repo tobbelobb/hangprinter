@@ -13,6 +13,12 @@ else
   OPENSCAD_BIN = openscad
 endif
 
+NEMA23_CMD = $(OPENSCAD_BIN) -D Nema17_cube_width=56 \
+                             -D Nema17_screw_hole_width=66.61 \
+                             -D Nema17_ring_diameter=38 \
+                             -D Nema17_cube_height=56 \
+                             -D Nema17_shaft_radius=3.175
+
 $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/sweep.scad \
@@ -23,16 +29,18 @@ $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/motor_bracket.scad \
 	$(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/util.scad
-	$(OPENSCAD_BIN) -D Nema17_cube_width=56 \
-         -D Nema17_screw_hole_width=66.61 \
-         -D Nema17_ring_diameter=38 \
-         -D Nema17_cube_height=56 \
-         -D Nema17_shaft_radius=3.175 \
-         -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+	$(NEMA23_CMD) \
+    -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 nema23: | $(STL_NEMA23_DIR) $(STL_NEMA23_DIR)/motor_gear.stl \
 	$(STL_NEMA23_DIR)/motor_bracket.stl \
 	$(STL_NEMA23_DIR)/extruder_holder.stl
+	$(NEMA23_CMD) \
+    -D twod=true \
+    -D mover=false \
+    -D mounted_in_ceiling=false \
+    -o layout_nema23.dxf $(SRC_DIR)/layout.scad
+
 
 layout.dxf: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/beam_slider_D.scad \

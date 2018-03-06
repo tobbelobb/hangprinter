@@ -1,5 +1,6 @@
 include <parameters.scad>
 include <gear_parameters.scad>
+include <layout_parameters.scad>
 use <motor_bracket.scad>
 use <motor_bracket_2d.scad>
 use <motor_gear.scad>
@@ -31,8 +32,6 @@ mover = false;
 
 ANCHOR_D_Z = 1000;
 
-sidelength = 452; // The distance between the two action points on the mover
-ext_sidelength = sidelength+77;
 yshift_top_plate = -25;
 additional_added_plate_side_length = 10;
 
@@ -43,14 +42,18 @@ color1_alpha = 0.9;
 color2 = [0.99,0.99,0.99];
 color2_alpha = 0.8;
 
+// Sometimes, Nema17_cube_width will have another value,
+// so that a different motor can fit
+_motor_ang = ((Nema17_cube_width-42.43)/(sqrt(2)*Spool_outer_radius))*(180/PI);
+
 //top_plate();
 module top_plate(){
   if(!twod){
-    translate([-(ext_sidelength + additional_added_plate_side_length)/2,
-               -(ext_sidelength + additional_added_plate_side_length)/2+yshift_top_plate,
+    translate([-(Ext_sidelength + additional_added_plate_side_length)/2,
+               -(Ext_sidelength + additional_added_plate_side_length)/2+yshift_top_plate,
                -12])
-      cube([ext_sidelength + additional_added_plate_side_length,
-            ext_sidelength + additional_added_plate_side_length, 12]);
+      cube([Ext_sidelength + additional_added_plate_side_length,
+            Ext_sidelength + additional_added_plate_side_length, 12]);
   }
 }
 
@@ -60,7 +63,7 @@ module placed_lineroller_D(angs=[-63,60,3.5]){
   three = [0,120,240];
   for(k=[0:2])
     rotate([0,0,-30+three[k]])
-      translate([-sidelength/sqrt(3),0,0])
+      translate([-Sidelength/sqrt(3),0,0])
         rotate([0,0,angs[k]])
           translate([center_it,0,0])
             if(stls && !twod){
@@ -158,7 +161,7 @@ module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1){
     } else {
       lineroller_ABC_winch(the_wall=false, with_base=true, twod=twod);
     }
-  winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a, angs=[90,0,0], clockwise=clockwise);
+  winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a-clockwise*_motor_ang, angs=[90,0,0], clockwise=clockwise);
 }
 
 if(mounted_in_ceiling && !twod){
@@ -171,10 +174,10 @@ if(mounted_in_ceiling && !twod){
 module full_winch(){
   // D
   edg = 10;
-  //translate([-ext_sidelength/2+edg,-ext_sidelength/2+55,0])
-  translate([-ext_sidelength/2+Spool_outer_radius,
-             -ext_sidelength/2+yshift_top_plate+Spool_outer_radius,0])
-    winch_unit(l=[185,339,534], motor_a=-110, a=-6.6, lines=3, angs=[60,176.75,123.85]);
+  //translate([-Ext_sidelength/2+edg,-Ext_sidelength/2+55,0])
+  translate([-Ext_sidelength/2+Spool_outer_radius,
+             -Ext_sidelength/2+yshift_top_plate+Spool_outer_radius,0])
+    winch_unit(l=[185,339,534], motor_a=-110-_motor_ang, a=-6.6, lines=3, angs=[60,176.75,123.85]);
   // A
   translate([-136,-7,0])
     rotate([0,0,90])
@@ -183,7 +186,7 @@ module full_winch(){
   // B
   translate([-17,-140,0])
     rotate([0,0,-30])
-      abc_winch(clockwise=-1);
+      abc_winch(clockwise=-1, motor_a=-99);
 
   // C
   translate([98,151,0])
@@ -203,7 +206,7 @@ module mover(){
   beam_length = 400;
   for(k=[0,120,240])
     rotate([180,0,k+180]){
-      translate([-beam_length/2,-sidelength/sqrt(12)-sqrt(3), 0]){
+      translate([-beam_length/2,-Sidelength/sqrt(12)-sqrt(3), 0]){
         cube([beam_length, Beam_width, Beam_width]);
         translate([0.3*beam_length, Beam_width/2+Wall_th,Beam_width/2-Wall_th])
           rotate([0,90,0])
@@ -223,7 +226,7 @@ module mover(){
                 }
 
       }
-      translate([0,-40+2*4 + sidelength/sqrt(3),-Wall_th])
+      translate([0,-40+2*4 + Sidelength/sqrt(3),-Wall_th])
         color(color1, color1_alpha)
           if(stls){
             import("../openscad_stl/corner_clamp.stl");
@@ -233,10 +236,10 @@ module mover(){
 
     }
     sidelength_frac = 1.5;
-    shorter_beam = sidelength/sidelength_frac;
+    shorter_beam = Sidelength/sidelength_frac;
     offcenter_frac = 25;
-          //translate([0,-sidelength/sqrt(12)-sqrt(3) - Wall_th+0.1, +0.35])
-            translate([-shorter_beam/2,sidelength/offcenter_frac,0]){
+          //translate([0,-Sidelength/sqrt(12)-sqrt(3) - Wall_th+0.1, +0.35])
+            translate([-shorter_beam/2,Sidelength/offcenter_frac,0]){
               cube([shorter_beam,Beam_width, Beam_width]);
               rotate([90,0,90])
                 translate([-2*Wall_th,
@@ -257,6 +260,6 @@ module d_lines(){
   color("yellow")
   for(k=[0,120,240])
     rotate([0,0,k])
-      translate([0,sidelength/sqrt(3),0])
+      translate([0,Sidelength/sqrt(3),0])
         cylinder(r=0.9, h=ANCHOR_D_Z);
 }
