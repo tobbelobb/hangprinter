@@ -12,14 +12,20 @@ module spool_core(twod = false){
   big_h = Gap_between_sandwich_and_plate + Spool_height + Gear_height - 0.1;
   difference(){
     union(){
-    base(center=true, flerp0=Spool_core_flerp0, twod = twod);
-      if(!twod)
+      if(!twod){
+        base(center=true, flerp0=Spool_core_flerp0, twod = twod);
         cylinder(d=8.12, h=big_h, $fn=4*5);
-      if(!twod)
         cylinder(d=12, h=Gap_between_sandwich_and_plate, $fn=4*5);
+      } else {
+        circle(r=Spool_outer_radius);
+      }
     }
-    if(twod)
-      circle(r=2.4);
+    if(twod){
+      difference(){
+        base(center=true, flerp0=Spool_core_flerp0, twod = twod);
+        circle(r=2.4);
+      }
+    }
     else{
       translate([0,0,-1])
         cylinder(r=2.4, h=big_h+2);
