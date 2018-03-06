@@ -32,8 +32,6 @@ mover = false;
 
 ANCHOR_D_Z = 1000;
 
-yshift_top_plate = -25;
-additional_added_plate_side_length = 10;
 
 color0 = "sandybrown";
 color0_alpha = 0.55;
@@ -49,11 +47,11 @@ _motor_ang = ((Nema17_cube_width-42.43)/(sqrt(2)*Spool_outer_radius))*(180/PI);
 //top_plate();
 module top_plate(){
   if(!twod){
-    translate([-(Ext_sidelength + additional_added_plate_side_length)/2,
-               -(Ext_sidelength + additional_added_plate_side_length)/2+yshift_top_plate,
+    translate([-(Ext_sidelength + Additional_added_plate_side_length)/2,
+               -(Ext_sidelength + Additional_added_plate_side_length)/2+Yshift_top_plate,
                -12])
-      cube([Ext_sidelength + additional_added_plate_side_length,
-            Ext_sidelength + additional_added_plate_side_length, 12]);
+      cube([Ext_sidelength + Additional_added_plate_side_length,
+            Ext_sidelength + Additional_added_plate_side_length, 12]);
   }
 }
 
@@ -176,7 +174,7 @@ module full_winch(){
   edg = 10;
   //translate([-Ext_sidelength/2+edg,-Ext_sidelength/2+55,0])
   translate([-Ext_sidelength/2+Spool_outer_radius,
-             -Ext_sidelength/2+yshift_top_plate+Spool_outer_radius,0])
+             -Ext_sidelength/2+Yshift_top_plate+Spool_outer_radius,0])
     winch_unit(l=[185,339,534], motor_a=-110-_motor_ang, a=-6.6, lines=3, angs=[60,176.75,123.85]);
   // A
   translate([-136,-7,0])
