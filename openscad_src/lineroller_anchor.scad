@@ -23,7 +23,8 @@ module lineroller_anchor(){
   // Module lineroller_ABC_winch() defined in lineroller_ABC_winch.scad
   lineroller_ABC_winch(edge_start=40, edge_stop=90,
                        base_th = base_th,
-                       tower_h = tower_h);
+                       tower_h = tower_h,
+                       bearing_width=Bearing_width+0.2);
 
   module slot_for_countersunk_screw(len){
     translate([-x_len, -Depth_of_lineroller_base/2, 0]){
