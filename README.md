@@ -74,4 +74,23 @@ To compile those do
 make nema23
 ```
 This compiles the files and puts them in the `openscad_stl_nema23/` directory.
+It also creates the `layout_nema23.dxf` file.
+To make a 2d-printable pdf of the layout, do
+```
+make layout_nema23_a4.pdf
+```
 
+Using letter sized paper?
+-------------------------
+You can wedge that into the make-calls, like
+```
+make layout_letter.pdf
+```
+The following works if you're using nema23:
+```
+make layout_nema23_letter.pdf
+```
+If Inkscape pops up dialogs, just press "OK". (No automatic scaling, manual scale factor set to 1.0)
+
+The pdf creation command has been tested on a Ubuntu 14.04 system
+with Inkscape v0.48.4, sed v4.2.2, and Ghostscript v9.10.

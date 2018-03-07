@@ -13,11 +13,91 @@ else
   OPENSCAD_BIN = openscad
 endif
 
+# We let Make abuse some constants,
+# like Nema17_cube_width and a4_width
+# to get some flexibility
 NEMA23_CMD = $(OPENSCAD_BIN) -D Nema17_cube_width=56 \
                              -D Nema17_screw_hole_width=66.61 \
                              -D Nema17_ring_diameter=38 \
                              -D Nema17_cube_height=56 \
                              -D Nema17_shaft_radius=3.175
+
+# Tell Openscad to output some custom sized dxfs
+# Then tell inkscape to make postscript files out of them
+# Then use sed to increase line width from 0.8 to 2.5 (fragile hack).
+# Then use Ghostscript to glue together the pdf
+# Then clean up dxf and ps files
+make_layout_pdf_ = $(OPENSCAD_BIN) -D page=1 \
+                 -D 'layout_file=$(1)' \
+                 -D a4_width=$(3) \
+                 -D a4_length=$(4) \
+                 -o p1.dxf $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=2 \
+                 -D 'layout_file=$(1)' \
+                 -D a4_width=$(3) \
+                 -D a4_length=$(4) \
+                 -o p2.dxf $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=3 \
+                 -D 'layout_file=$(1)' \
+                 -D a4_width=$(3) \
+                 -D a4_length=$(4) \
+                 -o p3.dxf $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN)	-D page=4 \
+                 -D 'layout_file=$(1)' \
+                 -D a4_width=$(3) \
+                 -D a4_length=$(4) \
+                 -o p4.dxf $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=5 \
+                 -D 'layout_file=$(1)' \
+                 -D a4_width=$(3) \
+                 -D a4_length=$(4) \
+                 -o p5.dxf $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=6 \
+                 -D 'layout_file=$(1)' \
+                 -D a4_width=$(3) \
+                 -D a4_length=$(4) \
+                 -o p6.dxf $(SRC_DIR)/layout_slicer.scad; \
+               inkscape -f p1.dxf --without-gui --export-area-drawing --export-ps p1.ps; \
+               inkscape -f p2.dxf --without-gui --export-area-drawing --export-ps p2.ps; \
+               inkscape -f p3.dxf --without-gui --export-area-drawing --export-ps p3.ps; \
+               inkscape -f p4.dxf --without-gui --export-area-drawing --export-ps p4.ps; \
+               inkscape -f p5.dxf --without-gui --export-area-drawing --export-ps p5.ps; \
+               inkscape -f p6.dxf --without-gui --export-area-drawing --export-ps p6.ps; \
+               sed -e "s/^0\.8 w/2\.5 w/" p1.ps > p1_sed.ps; \
+               sed -e "s/^0\.8 w/2\.5 w/" p2.ps > p2_sed.ps; \
+               sed -e "s/^0\.8 w/2\.5 w/" p3.ps > p3_sed.ps; \
+               sed -e "s/^0\.8 w/2\.5 w/" p4.ps > p4_sed.ps; \
+               sed -e "s/^0\.8 w/2\.5 w/" p5.ps > p5_sed.ps; \
+               sed -e "s/^0\.8 w/2\.5 w/" p6.ps > p6_sed.ps; \
+               gs -o $(2) -sDEVICE=pdfwrite \
+               -dAntiAliasColorImage=false \
+               -dAntiAliasGrayImage=false \
+               -dAntiAliasMonoImage=false \
+               -dAutoFilterColorImages=false \
+               -dAutoFilterGrayImages=false \
+               -dDownsampleColorImages=false  \
+               -dDownsampleGrayImages=false \
+               -dDownsampleMonoImages=false \
+               -dColorConversionStrategy=/LeaveColorUnchanged \
+               -dConvertCMYKImagesToRGB=false \
+               -dConvertImagesToIndexed=false \
+               -dUCRandBGInfo=/Preserve \
+               -dPreserveHalftoneInfo=true \
+               -dPreserveOPIComments=true \
+               -dPreserveOverprintSettings=true \
+               p1_sed.ps p2_sed.ps p3_sed.ps p4_sed.ps p5_sed.ps p6_sed.ps; \
+               rm p1.dxf p1.ps p1_sed.ps \
+                  p2.dxf p2.ps p2_sed.ps \
+                  p3.dxf p3.ps p3_sed.ps \
+                  p4.dxf p4.ps p4_sed.ps \
+                  p5.dxf p5.ps p5_sed.ps \
+                  p6.dxf p6.ps p6_sed.ps
+
+# Magic numbers are size of A4 paper in mm
+make_layout_pdf_a4 = $(call make_layout_pdf_,$(1),$(2),210,297)
+
+# Magic numbers are size of letter paper in mm
+make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),215.9,279.4)
 
 $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/parameters.scad \
@@ -32,14 +112,35 @@ $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(NEMA23_CMD) \
     -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-nema23: | $(STL_NEMA23_DIR) $(STL_NEMA23_DIR)/motor_gear.stl \
-	$(STL_NEMA23_DIR)/motor_bracket.stl \
-	$(STL_NEMA23_DIR)/extruder_holder.stl
+layout_nema23.dxf: $(SRC_DIR)/layout.scad \
+	$(SRC_DIR)/util.scad \
+	$(SRC_DIR)/spool_core.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/motor_bracket_2d.scad \
+	$(SRC_DIR)/lineroller_parameters.scad \
+	$(SRC_DIR)/lineroller_D.scad \
+	$(SRC_DIR)/lineroller_ABC_winch.scad \
+	$(SRC_DIR)/gear_parameters.scad \
+	$(SRC_DIR)/layout.scad
 	$(NEMA23_CMD) \
     -D twod=true \
     -D mover=false \
     -D mounted_in_ceiling=false \
-    -o layout_nema23.dxf $(SRC_DIR)/layout.scad
+    -o $@ $(SRC_DIR)/layout.scad;
+
+nema23: | $(STL_NEMA23_DIR) $(STL_NEMA23_DIR)/motor_gear.stl \
+	$(STL_NEMA23_DIR)/motor_bracket.stl \
+	$(STL_NEMA23_DIR)/extruder_holder.stl \
+	layout_nema23.dxf
+
+layout_nema23_a4.pdf: layout_nema23.dxf
+	$(call make_layout_pdf_a4,"../layout_nema23.dxf",$@)
+
+layout_nema23_letter.pdf: layout_nema23.dxf
+	$(call make_layout_pdf_letter,"../layout_nema23.dxf",$@)
+
+layout_letter.pdf: layout.dxf
+	$(call make_layout_pdf_letter,"../layout.dxf",$@)
 
 layout.dxf: $(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/util.scad \
@@ -69,59 +170,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/gear_parameters.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/layout_slicer.scad
-	$(OPENSCAD_BIN) \
-		-D page=1 \
-		-o p1.dxf $(SRC_DIR)/layout_slicer.scad; \
-	$(OPENSCAD_BIN) \
-		-D page=2 \
-		-o p2.dxf $(SRC_DIR)/layout_slicer.scad; \
-	$(OPENSCAD_BIN) \
-		-D page=3 \
-		-o p3.dxf $(SRC_DIR)/layout_slicer.scad; \
-	$(OPENSCAD_BIN) \
-		-D page=4 \
-		-o p4.dxf $(SRC_DIR)/layout_slicer.scad; \
-	$(OPENSCAD_BIN) \
-		-D page=5 \
-		-o p5.dxf $(SRC_DIR)/layout_slicer.scad; \
-	$(OPENSCAD_BIN) \
-		-D page=6 \
-		-o p6.dxf $(SRC_DIR)/layout_slicer.scad; \
-	inkscape -f p1.dxf --without-gui --export-area-drawing --export-ps p1.ps; \
-	inkscape -f p2.dxf --without-gui --export-area-drawing --export-ps p2.ps; \
-	inkscape -f p3.dxf --without-gui --export-area-drawing --export-ps p3.ps; \
-	inkscape -f p4.dxf --without-gui --export-area-drawing --export-ps p4.ps; \
-	inkscape -f p5.dxf --without-gui --export-area-drawing --export-ps p5.ps; \
-	inkscape -f p6.dxf --without-gui --export-area-drawing --export-ps p6.ps; \
-  sed -e "s/^0\.8 w/2\.5 w/" p1.ps > p1_sed.ps; \
-  sed -e "s/^0\.8 w/2\.5 w/" p2.ps > p2_sed.ps; \
-  sed -e "s/^0\.8 w/2\.5 w/" p3.ps > p3_sed.ps; \
-  sed -e "s/^0\.8 w/2\.5 w/" p4.ps > p4_sed.ps; \
-  sed -e "s/^0\.8 w/2\.5 w/" p5.ps > p5_sed.ps; \
-  sed -e "s/^0\.8 w/2\.5 w/" p6.ps > p6_sed.ps; \
-  gs -o layout_a4.pdf -sDEVICE=pdfwrite \
-  -dAntiAliasColorImage=false \
-  -dAntiAliasGrayImage=false \
-  -dAntiAliasMonoImage=false \
-  -dAutoFilterColorImages=false \
-  -dAutoFilterGrayImages=false \
-  -dDownsampleColorImages=false  \
-  -dDownsampleGrayImages=false \
-  -dDownsampleMonoImages=false \
-  -dColorConversionStrategy=/LeaveColorUnchanged \
-  -dConvertCMYKImagesToRGB=false \
-  -dConvertImagesToIndexed=false \
-  -dUCRandBGInfo=/Preserve \
-  -dPreserveHalftoneInfo=true \
-  -dPreserveOPIComments=true \
-  -dPreserveOverprintSettings=true \
-  p1_sed.ps p2_sed.ps p3_sed.ps p4_sed.ps p5_sed.ps p6_sed.ps; \
-	rm p1.dxf p1.ps p1_sed.ps \
-	   p2.dxf p2.ps p2_sed.ps \
-	   p3.dxf p3.ps p3_sed.ps \
-	   p4.dxf p4.ps p4_sed.ps \
-	   p5.dxf p5.ps p5_sed.ps \
-	   p6.dxf p6.ps p6_sed.ps
+	$(call make_layout_pdf_a4,"../layout.dxf",$@)
 
 $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/beam_slider_D.scad \
@@ -160,7 +209,8 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_ABC.stl \
 	$(STL_DIR)/spool_core.stl \
 	$(STL_DIR)/spacer.stl \
 	$(STL_DIR)/cable_clamp.stl \
-	layout.dxf
+	layout.dxf \
+	layout_a4.pdf
 
 $(STL_DIR):
 	@echo "Creating STL_DIR $(STL_DIR)"

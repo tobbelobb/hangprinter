@@ -6,6 +6,7 @@ margin = 5;
 y_overlap = 40;
 x_overlap = 40;
 page = 1; // To be defined in call via Makefile
+layout_file = "../layout.dxf";
 
 x0 = -a4_width*3/2 + x_overlap;
 x1 = -a4_width/2;
@@ -58,11 +59,11 @@ module layout_slice(){
   difference(){
     page_tr()
       page();
-    import("../layout.dxf");
+    import(layout_file);
   }
   // Add back the crosshairs that were diffed out
   intersection(){
-    import("../layout.dxf");
+    import(layout_file);
     page_tr()
       crosshairs();
   }
