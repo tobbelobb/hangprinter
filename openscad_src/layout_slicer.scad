@@ -13,31 +13,57 @@ x2 = a4_width/2 - x_overlap;
 y0 = -y_overlap/2;
 y1 = -a4_length + y_overlap/2;
 
-//x0 = -(Ext_sidelength+Additional_added_plate_side_length)/2-margin;
-//x1 = -a4_width/2;
-//x2 = (Ext_sidelength+Additional_added_plate_side_length)/2+margin-a4_width;
-//y0 = -a4_length+(Ext_sidelength+Additional_added_plate_side_length)/2+margin;
-//y1 = -(Ext_sidelength+Additional_added_plate_side_length)/2- margin + Yshift_top_plate;
+module crosshairs(){
+  translate([-0.05+x_overlap/2, 0])
+    square([0.1, a4_length]);
+  translate([-0.05+a4_width-x_overlap/2, 0])
+    square([0.1, a4_length]);
+  translate([0, -0.05 + y_overlap/2])
+    square([a4_width, 0.1]);
+  translate([0, -0.05 + a4_length - y_overlap/2])
+    square([a4_width, 0.1]);
+}
 
-difference(){
+module page(){
+  difference(){
+    square([a4_width, a4_length]);
+    crosshairs();
+  }
+}
+
+module page_tr(){
   translate([0,Yshift_top_plate])
     if(page==1)
       translate([x0, y0])
-        square([a4_width, a4_length]);
+        children(0);
     else if(page==2)
       translate([x1, y0])
-        square([a4_width, a4_length]);
+        children(0);
     else if(page==3)
       translate([x2, y0])
-        square([a4_width, a4_length]);
+        children(0);
     else if(page==4)
       translate([x0, y1])
-        square([a4_width, a4_length]);
+        children(0);
     else if(page==5)
       translate([x1, y1])
-        square([a4_width, a4_length]);
+        children(0);
     else if(page==6)
       translate([x2, y1])
-        square([a4_width, a4_length]);
+        children(0);
+}
+
+layout_slice();
+module layout_slice(){
+  difference(){
+    page_tr()
+      page();
     import("../layout.dxf");
+  }
+  // Add back the crosshairs that were diffed out
+  intersection(){
+    import("../layout.dxf");
+    page_tr()
+      crosshairs();
+  }
 }
