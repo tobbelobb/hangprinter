@@ -6,6 +6,8 @@ margin = 5;
 y_overlap = 40;
 x_overlap = 40;
 page = 1; // To be defined in call via Makefile
+//all = true; // Used only for quick visual double-checking
+all = false;
 layout_file = "../layout.dxf";
 
 x0 = -a4_width*3/2 + x_overlap;
@@ -33,25 +35,24 @@ module page(){
 }
 
 module page_tr(){
-  translate([0,Yshift_top_plate])
-    if(page==1)
-      translate([x0, y0])
-        children(0);
-    else if(page==2)
-      translate([x1, y0])
-        children(0);
-    else if(page==3)
-      translate([x2, y0])
-        children(0);
-    else if(page==4)
-      translate([x0, y1])
-        children(0);
-    else if(page==5)
-      translate([x1, y1])
-        children(0);
-    else if(page==6)
-      translate([x2, y1])
-        children(0);
+  if(page==1 || all)
+    translate([x0, y0+Yshift_top_plate])
+      children(0);
+  if(page==2 || all)
+    translate([x1, y0+Yshift_top_plate])
+      children(0);
+  if(page==3 || all)
+    translate([x2, y0+Yshift_top_plate])
+      children(0);
+  if(page==4 || all)
+    translate([x0, y1+Yshift_top_plate])
+      children(0);
+  if(page==5 || all)
+    translate([x1, y1+Yshift_top_plate])
+      children(0);
+  if(page==6 || all)
+    translate([x2, y1+Yshift_top_plate])
+      children(0);
 }
 
 layout_slice();

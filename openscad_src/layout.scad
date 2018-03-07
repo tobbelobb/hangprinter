@@ -20,8 +20,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-//twod = true;
-twod = false;
+twod = true;
+//twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -92,7 +92,7 @@ module sandwich(){
 }
 
 //winch_unit(motor_a=0);
-module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,120,240], clockwise = 1){
+module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,120,240], clockwise = 1, letter="A"){
   if(!twod)
     translate([0,0,Gap_between_sandwich_and_plate])
       sandwich();
@@ -142,16 +142,22 @@ module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,
           rotate([90,0,0])
           color("yellow")
           cylinder(r=0.9, h=l[i-1]);
+  else
+    translate([0,0,Gear_height+Spool_height/2+Gap_between_sandwich_and_plate])
+      for(i=[1:lines])
+        rotate([0,0,angs[i-1]])
+          translate([clockwise*Spool_r-0.5,-l[i-1],0])
+          square([1, l[i-1]]);
 
   color(color2)
     if(stls && !twod)
       import("../openscad_stl/spool_core.stl");
     else
-      spool_core(twod=twod);
+      spool_core(twod=twod, letter=letter);
 }
 
 //abc_winch();
-module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1){
+module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1, letter="A"){
   translate([dist,clockwise*Spool_r,0])
     color(color2, color2_alpha)
     if(stls && !twod){
@@ -159,7 +165,7 @@ module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1){
     } else {
       lineroller_ABC_winch(the_wall=false, with_base=true, twod=twod);
     }
-  winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a-clockwise*_motor_ang, angs=[90,0,0], clockwise=clockwise);
+  winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a-clockwise*_motor_ang, angs=[90,0,0], clockwise=clockwise, letter=letter);
 }
 
 if(mounted_in_ceiling && !twod){
@@ -175,21 +181,22 @@ module full_winch(){
   //translate([-Ext_sidelength/2+edg,-Ext_sidelength/2+55,0])
   translate([-Ext_sidelength/2+Spool_outer_radius,
              -Ext_sidelength/2+Yshift_top_plate+Spool_outer_radius,0])
-    winch_unit(l=[185,339,534], motor_a=-110-_motor_ang, a=-6.6, lines=3, angs=[60,176.75,123.85]);
+    winch_unit(l=[185,339,534], motor_a=-110-_motor_ang, a=-6.6, lines=3, angs=[60,176.75,123.85],
+      letter="D");
   // A
   translate([-136,-7,0])
     rotate([0,0,90])
-      abc_winch();
+      abc_winch(letter="A");
 
   // B
   translate([-17,-140,0])
     rotate([0,0,-30])
-      abc_winch(clockwise=-1, motor_a=-99);
+      abc_winch(clockwise=-1, motor_a=-99, letter="B");
 
   // C
   translate([98,151,0])
     rotate([0,0,180+30])
-      abc_winch();
+      abc_winch(letter="C");
 
   color(color1, color1_alpha)
     placed_lineroller_D();

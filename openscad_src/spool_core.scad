@@ -8,7 +8,7 @@ use <gears.scad>
 use <lineroller_ABC_winch.scad>
 
 spool_core();
-module spool_core(twod = false){
+module spool_core(twod = false, letter="A"){
   big_h = Gap_between_sandwich_and_plate + Spool_height + Gear_height - 0.1;
   difference(){
     union(){
@@ -25,6 +25,8 @@ module spool_core(twod = false){
         base(center=true, flerp0=Spool_core_flerp0, twod = twod);
         circle(r=2.4);
       }
+      translate([Spool_outer_radius/2,0])
+        text(letter);
     }
     else{
       translate([0,0,-1])
