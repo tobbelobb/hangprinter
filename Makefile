@@ -52,12 +52,12 @@ make_layout_pdf_ = \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p4_sed2.svg > p4_sed3.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p5_sed2.svg > p5_sed3.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p6_sed2.svg > p6_sed3.svg; \
-               inkscape -f p1_sed3.svg --without-gui --export-area-drawing --export-pdf p1.pdf; \
-               inkscape -f p2_sed3.svg --without-gui --export-area-drawing --export-pdf p2.pdf; \
-               inkscape -f p3_sed3.svg --without-gui --export-area-drawing --export-pdf p3.pdf; \
-               inkscape -f p4_sed3.svg --without-gui --export-area-drawing --export-pdf p4.pdf; \
-               inkscape -f p5_sed3.svg --without-gui --export-area-drawing --export-pdf p5.pdf; \
-               inkscape -f p6_sed3.svg --without-gui --export-area-drawing --export-pdf p6.pdf; \
+               cairosvg p1_sed3.svg -o p1.pdf; \
+               cairosvg p2_sed3.svg -o p2.pdf; \
+               cairosvg p3_sed3.svg -o p3.pdf; \
+               cairosvg p4_sed3.svg -o p4.pdf; \
+               cairosvg p5_sed3.svg -o p5.pdf; \
+               cairosvg p6_sed3.svg -o p6.pdf; \
                gs -o $(2) -sDEVICE=pdfwrite \
                -dAntiAliasColorImage=false \
                -dAntiAliasGrayImage=false \
