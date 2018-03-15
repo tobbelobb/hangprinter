@@ -15,6 +15,7 @@ tower_h = 17 + Bearing_r;
 x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screws
 y_extra = -2.0; // For the two "wings" with tracks for screws
 
+
 translate([0,-Depth_of_lineroller_base-5,0])
   mirror([0,1,0])
     lineroller_anchor();
@@ -24,7 +25,9 @@ module lineroller_anchor(){
   lineroller_ABC_winch(edge_start=40, edge_stop=90,
                        base_th = base_th,
                        tower_h = tower_h,
-                       bearing_width=Bearing_width+0.2);
+                       bearing_width=Bearing_width+0.2,
+                       big_y_r=40,
+                       big_z_r=29);
 
   module slot_for_countersunk_screw(len){
     translate([-x_len, -Depth_of_lineroller_base/2, 0]){
