@@ -1,5 +1,4 @@
 include <parameters.scad>
-use <sweep.scad>
 use <util.scad>
 
 corner_clamp();

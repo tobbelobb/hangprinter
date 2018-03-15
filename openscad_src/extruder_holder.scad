@@ -1,5 +1,4 @@
 include <parameters.scad>
-use <sweep.scad>
 use <util.scad>
 
 wall_th = Wall_th + 0; // Beef up part...

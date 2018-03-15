@@ -90,7 +90,6 @@ make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),216,279)
 
 $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/sweep.scad \
 	$(SRC_DIR)/gear_parameters.scad \
 	$(SRC_DIR)/gear_util.scad \
 	$(SRC_DIR)/gears.scad \
@@ -179,7 +178,6 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/spool.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/spacer.scad \
-	$(SRC_DIR)/sweep.scad \
 	$(SRC_DIR)/cable_clamp.scad \
 	$(SRC_DIR)/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad

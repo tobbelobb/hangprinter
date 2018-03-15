@@ -1,6 +1,5 @@
 include <parameters.scad>
 use <util.scad>
-use <sweep.scad>
 
 // Bends arms outwards, so pressure is distributed over beam flat-sides
 beam_slider_ABC();

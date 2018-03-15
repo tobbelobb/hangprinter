@@ -1,6 +1,5 @@
 include <parameters.scad>
 include <lineroller_parameters.scad>
-use <sweep.scad>
 use <util.scad>
 
 //screws_space();

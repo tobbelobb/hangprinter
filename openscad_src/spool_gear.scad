@@ -1,7 +1,6 @@
 include <parameters.scad>
 include <gear_parameters.scad>
 include <lineroller_parameters.scad>
-use <sweep.scad>
 use <util.scad>
 use <gear_util.scad>
 use <gears.scad>

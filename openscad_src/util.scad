@@ -1,5 +1,4 @@
 include <parameters.scad>
-include <sweep.scad>
 
 //!rounded_cube([40,61,42], 8, center=true);
 module rounded_cube(v, r, center=false){
@@ -189,7 +188,6 @@ module standing_ls_tri(l, h){
   }
 }
 
-// Functions for use with sweep
 function my_square(v) = [[-v[0]/2, -v[1]/2],
                          [ v[0]/2, -v[1]/2],
                          [ v[0]/2,  v[1]/2],
@@ -353,29 +351,6 @@ module teardrop(r=10, h=10){
 }
 
 function sq_pts(v) = [[0,0], [v[0],0], [v[0], v[1]], [0, v[1]]];
-
-module clamp_wall(h=10,
-                  extra_length=Clamp_wall_extra_length,
-                  w=Fat_beam_width+2*Wall_th,
-                  wall_th=Wall_th,
-                  flex_factor=Clamp_wall_flex_factor,
-                  edge=1.4,
-                  lift_tri=1.5){
-  sweep(sq_pts([h, wall_th]),
-    [for(i=[0.2:0.3:w+extra_length-1])
-      translation([w/2+extra_length-i,
-      // Bend arm outwards, following a log graph
-      -w/2 - flex_factor*(log(1+w+extra_length) - log(1+i)), 0])
-      * rotation([0, -90, 0])
-      // Round off tip of arm...
-      * translation([0,2*wall_th/3,0])
-      * scaling([1, (i < 3) ? log(1 + 9*i/3) : 1, 1])
-      * translation([0,-2*wall_th/3,0])]);
-  rotate([0,0,-4])
-    translate([Fat_beam_width/2+lift_tri,-Fat_beam_width/2-wall_th,0])
-    scale([1.3,1,1])
-    standing_ls_tri(wall_th+edge, h);
-}
 
 // These are used by beam_clamp and corner_clamp
 module opening_top(exclude_left=false, exclude_right=false, wall_th, edges, l, extra_h=2){
