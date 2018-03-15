@@ -22,53 +22,42 @@ NEMA23_CMD = $(OPENSCAD_BIN) -D Nema17_cube_width=56 \
                              -D Nema17_cube_height=56 \
                              -D Nema17_shaft_radius=3.175
 
-# Tell Openscad to output some custom sized dxfs
-# Then tell inkscape to make postscript files out of them
-# Then use sed to increase line width from 0.8 to 2.5 (fragile hack).
+# Tell Openscad to output some custom sized svgs
+# Edit some of their parameters with sed
+# Then tell inkscape to make pdf files out of them
 # Then use Ghostscript to glue together the pdf
-# Then clean up dxf and ps files
-make_layout_pdf_ = $(OPENSCAD_BIN) -D page=1 \
-                 -D 'layout_file=$(1)' \
-                 -D a4_width=$(3) \
-                 -D a4_length=$(4) \
-                 -o p1.dxf $(SRC_DIR)/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=2 \
-                 -D 'layout_file=$(1)' \
-                 -D a4_width=$(3) \
-                 -D a4_length=$(4) \
-                 -o p2.dxf $(SRC_DIR)/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=3 \
-                 -D 'layout_file=$(1)' \
-                 -D a4_width=$(3) \
-                 -D a4_length=$(4) \
-                 -o p3.dxf $(SRC_DIR)/layout_slicer.scad; \
-               $(OPENSCAD_BIN)	-D page=4 \
-                 -D 'layout_file=$(1)' \
-                 -D a4_width=$(3) \
-                 -D a4_length=$(4) \
-                 -o p4.dxf $(SRC_DIR)/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=5 \
-                 -D 'layout_file=$(1)' \
-                 -D a4_width=$(3) \
-                 -D a4_length=$(4) \
-                 -o p5.dxf $(SRC_DIR)/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=6 \
-                 -D 'layout_file=$(1)' \
-                 -D a4_width=$(3) \
-                 -D a4_length=$(4) \
-                 -o p6.dxf $(SRC_DIR)/layout_slicer.scad; \
-               inkscape -f p1.dxf --without-gui --export-area-drawing --export-ps p1.ps; \
-               inkscape -f p2.dxf --without-gui --export-area-drawing --export-ps p2.ps; \
-               inkscape -f p3.dxf --without-gui --export-area-drawing --export-ps p3.ps; \
-               inkscape -f p4.dxf --without-gui --export-area-drawing --export-ps p4.ps; \
-               inkscape -f p5.dxf --without-gui --export-area-drawing --export-ps p5.ps; \
-               inkscape -f p6.dxf --without-gui --export-area-drawing --export-ps p6.ps; \
-               sed -e "s/^0\.8 w/2\.5 w/" p1.ps > p1_sed.ps; \
-               sed -e "s/^0\.8 w/2\.5 w/" p2.ps > p2_sed.ps; \
-               sed -e "s/^0\.8 w/2\.5 w/" p3.ps > p3_sed.ps; \
-               sed -e "s/^0\.8 w/2\.5 w/" p4.ps > p4_sed.ps; \
-               sed -e "s/^0\.8 w/2\.5 w/" p5.ps > p5_sed.ps; \
-               sed -e "s/^0\.8 w/2\.5 w/" p6.ps > p6_sed.ps; \
+# Then clean up
+make_layout_pdf_ = \
+               $(OPENSCAD_BIN) -D page=1 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p1.svg $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=2 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p2.svg $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=3 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p3.svg $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=4 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p4.svg $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=5 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p5.svg $(SRC_DIR)/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=6 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p6.svg $(SRC_DIR)/layout_slicer.scad; \
+               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p1.svg > p1_sed.svg; \
+               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p2.svg > p2_sed.svg; \
+               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p3.svg > p3_sed.svg; \
+               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p4.svg > p4_sed.svg; \
+               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p5.svg > p5_sed.svg; \
+               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p6.svg > p6_sed.svg; \
+               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p1_sed.svg > p1_sed2.svg; \
+               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p2_sed.svg > p2_sed2.svg; \
+               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p3_sed.svg > p3_sed2.svg; \
+               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p4_sed.svg > p4_sed2.svg; \
+               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p5_sed.svg > p5_sed2.svg; \
+               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p6_sed.svg > p6_sed2.svg; \
+               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p1_sed2.svg > p1_sed3.svg; \
+               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p2_sed2.svg > p2_sed3.svg; \
+               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p3_sed2.svg > p3_sed3.svg; \
+               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p4_sed2.svg > p4_sed3.svg; \
+               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p5_sed2.svg > p5_sed3.svg; \
+               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p6_sed2.svg > p6_sed3.svg; \
+               inkscape -f p1_sed3.svg --without-gui --export-area-drawing --export-pdf p1.pdf; \
+               inkscape -f p2_sed3.svg --without-gui --export-area-drawing --export-pdf p2.pdf; \
+               inkscape -f p3_sed3.svg --without-gui --export-area-drawing --export-pdf p3.pdf; \
+               inkscape -f p4_sed3.svg --without-gui --export-area-drawing --export-pdf p4.pdf; \
+               inkscape -f p5_sed3.svg --without-gui --export-area-drawing --export-pdf p5.pdf; \
+               inkscape -f p6_sed3.svg --without-gui --export-area-drawing --export-pdf p6.pdf; \
                gs -o $(2) -sDEVICE=pdfwrite \
                -dAntiAliasColorImage=false \
                -dAntiAliasGrayImage=false \
@@ -85,19 +74,19 @@ make_layout_pdf_ = $(OPENSCAD_BIN) -D page=1 \
                -dPreserveHalftoneInfo=true \
                -dPreserveOPIComments=true \
                -dPreserveOverprintSettings=true \
-               p1_sed.ps p2_sed.ps p3_sed.ps p4_sed.ps p5_sed.ps p6_sed.ps; \
-               rm p1.dxf p1.ps p1_sed.ps \
-                  p2.dxf p2.ps p2_sed.ps \
-                  p3.dxf p3.ps p3_sed.ps \
-                  p4.dxf p4.ps p4_sed.ps \
-                  p5.dxf p5.ps p5_sed.ps \
-                  p6.dxf p6.ps p6_sed.ps
+               p1.pdf p2.pdf p3.pdf p4.pdf p5.pdf p6.pdf; \
+               rm p1.svg p1_sed.svg p1_sed2.svg p1_sed3.svg p1.pdf \
+                  p2.svg p2_sed.svg p2_sed2.svg p2_sed3.svg p2.pdf \
+                  p3.svg p3_sed.svg p3_sed2.svg p3_sed3.svg p3.pdf \
+                  p4.svg p4_sed.svg p4_sed2.svg p4_sed3.svg p4.pdf \
+                  p5.svg p5_sed.svg p5_sed2.svg p5_sed3.svg p5.pdf \
+                  p6.svg p6_sed.svg p6_sed2.svg p6_sed3.svg p6.pdf
 
 # Magic numbers are size of A4 paper in mm
 make_layout_pdf_a4 = $(call make_layout_pdf_,$(1),$(2),210,297)
 
-# Magic numbers are size of letter paper in mm
-make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),215.9,279.4)
+# Magic numbers are size of letter paper in mm. Must be integers for openscad svg export to work.
+make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),216,279)
 
 $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/parameters.scad \
