@@ -77,12 +77,10 @@ Lists sorted alphabetically.
 
 Supporting This Project With Money
 ==================================
-Monthly donations can be set up at [Bountysource Salt campaign](https://salt.bountysource.com/teams/hangprinter).
+Monthly donations can be set up via the [Bountysource Salt Campaign](https://salt.bountysource.com/teams/hangprinter).
 
 Merchandise can be bought here: [Mechadise Sweden](http://spreadshirt.se/shops/hangprinter-merchandise).
 And here: [Mechadise US](http://spreadshirt.com/shops/hangprinter-merchandise).
 
 Bitcoin donations are accepted on: 1BwobkC5Tb7psWkzCugtcH21ufj6Lc9mgY
 ... or in QR format:<br />![BTC Donations QR code](https://hangprinter.org/images/BTC_donations.png)
-
-
