@@ -1,9 +1,9 @@
-# Hangprinter Manual
+# Hangprinter Documentation
 This directory contains manuals written within the Hanpgrinter Project.
 The files listed here are served at [hangprinter.org/doc](https://hangprinter.org/doc).
 
 ## Structure
-Every manual is contained in its own subdirectory (for example `v3/`), and consists of many small xml-documents.
+Every documentation manual is contained in its own subdirectory (for example `v3/`), and consists of many small xml-documents.
 Each xml describes prerequisities, tips, and end goal of a very small build step.
 Use `index.xml` as a template for your xml, and don't forget to link to other xmls/pages within your xml.
 
@@ -25,4 +25,4 @@ Make sure your html5 is also valid xml by
 
 If you want to specify your own tags, or make `post` bahave differently, specify this in `manual-template.xsl`.
 
-Finished xml-files indended for user consumption must be added manually to the file list in `catalouge.xml`.
+Finished xml-files indended for user consumption must be added manually to the file list in `catalouge.xml` to be inserted into the manual's rss-feed (not crucial).
