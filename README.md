@@ -43,7 +43,7 @@ The pdf creation command has been tested on a Ubuntu 14.04 system
 with Cairosvg v1.0.4, sed v4.2.2, and Ghostscript v9.10.
 
 Credits
-============
+-------
 See [contributors](https://github.com/tobbelobb/hangprinter/graphs/contributors) for committer stats.
 Note that almost all ideas implemented by the commits have come up in conversations among fellow Reprappers.
 None mentioned, none forgotten, but you know who you are.
@@ -67,7 +67,7 @@ Currently donating $25 or more:
 Lists sorted alphabetically.
 
 Contributing Improvements
-====================
+-------------------------
 Your design improvements will help the rest of the community if you build your machine according to the files and instructions found in this repo.
 The maintainers (me) are super grateful if you can structure your improvement into a pull request, and submit it to this repo.
 See for example [this page](https://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request#14681796) for help with creating a pull request.
@@ -76,7 +76,7 @@ If your improvement can't be structured into a pull request, the second best opt
 [forum thread](http://forums.reprap.org/read.php?1,792937,796309).
 
 Supporting This Project With Money
-==================================
+----------------------------------
 Monthly donations can be set up via the [Bountysource Salt Campaign](https://salt.bountysource.com/teams/hangprinter).
 
 Merchandise can be bought here: [Mechadise Sweden](http://spreadshirt.se/shops/hangprinter-merchandise).
