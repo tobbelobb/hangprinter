@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="manual-template.xsl"?>
+<page>
+<post id="different-views" heading="Different Views Into The Manual">
+  <p>
+    Top-down is how manuals usually are: Starts with hardware, ends with software, avoids failure.
+    Top-down language is coherent and precise, like the Oxford dictionary.
+    Person 1 might think top-down explanations are exquisite, clear, delightful.
+    Person 2 might think they're stiff, boring, ignorable.
+  </p>
+  <p>
+    Bottom-up view gets lights flashing and motors moving ASAP.
+    It's organized as a series of increasingly sophisticated failures.
+    Person 1 might think it's inelegant and fragmented, but Person 2 might feel like "Yeah! The bottom-up view makes things happen!"
+    <!--Bottom-up manual language is more like <a href="https://www.urbandictionary.com/">urban dictionary</a>.
+      Just press print!
+      Just press print!
+    It is for Person 2, who wants to press print and is looking for a button. -->
+  </p>
+  <p>
+    They both deserve a good manual.
+    Being Person 1 in the morning, and Person 2 in the evening is perfectly normal.
+  </p>
+  <p>
+    Then there's also Person 3, who wants to skim, but not really follow any manual, regardless of what's in there.
+    Person 3 will typically not read the second sentence in a paragraph like this one.
+    So since you're here, you're probably not person 3 right now.
+    Person 3 also deserves some prepared material:
+  </p>
+  <ul>
+    <li><a href="superficial-view">The Superficial View</a></li>
+    <li><a href="afterthought-view">The Afterthought View</a></li>
+  </ul>
+</post>
+</page>
