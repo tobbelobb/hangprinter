@@ -42,15 +42,6 @@ make layout_nema23_letter.pdf
 The pdf creation command has been tested on a Ubuntu 14.04 system
 with Cairosvg v1.0.4, sed v4.2.2, and Ghostscript v9.10.
 
-Contributing Improvements
-====================
-Your design improvements will help the rest of the community if you build your machine according to the files and instructions found in this repo.
-The maintainers (me) are super grateful if you can structure your improvement into a pull request, and submit it to this repo.
-See for example [this page](https://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request#14681796) for help with creating a pull request.
-
-If your improvement can't be structured into a pull request, the second best option is to make an issue here on GitHub, or to contact us via the
-[forum thread](http://forums.reprap.org/read.php?1,792937,796309).
-
 Credits
 ============
 See [contributors](https://github.com/tobbelobb/hangprinter/graphs/contributors) for committer stats.
@@ -74,6 +65,15 @@ Currently donating $25 or more:
 * [Rob Brisky](https://www.bountysource.com/people/49764-rob-brisky)
 
 Lists sorted alphabetically.
+
+Contributing Improvements
+====================
+Your design improvements will help the rest of the community if you build your machine according to the files and instructions found in this repo.
+The maintainers (me) are super grateful if you can structure your improvement into a pull request, and submit it to this repo.
+See for example [this page](https://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request#14681796) for help with creating a pull request.
+
+If your improvement can't be structured into a pull request, the second best option is to make an issue here on GitHub, or to contact us via the
+[forum thread](http://forums.reprap.org/read.php?1,792937,796309).
 
 Supporting This Project With Money
 ==================================
