@@ -61,6 +61,28 @@
       ... and push them onto your spool cores.
     </figcaption>
   </figure>
+  <p>
+    Now might be a good time to measure your spools' radii with a pair of calipers.
+    Note the radii onto the spools themselves.
+    This will be needed for firmware calibration later on.
+  </p>
+  <p>
+    It is also a good time to attach line to the spools.
+    One spool gets three lines, each of length 5 m.
+    Three spools get two lines, each of length 7.5 m.
+    (A more detailed guide on choosing line lengths <a href="http://forums.reprap.org/read.php?1,792937,809736#msg-809736">here</a>.
+     If you use custom line lengths, this must be specified in firmware settings later on.)
+  </p>
+  <p>
+    See these linked images for a knot you can use to tie lines onto spools:
+    [<a href="https://vitana.se/opr3d/tbear/bilder/HP3/12_Hangprinter_Hitch_0.JPG">1</a>],
+    [<a href="https://vitana.se/opr3d/tbear/bilder/HP3/13_Hangprinter_Hitch_1.JPG">2</a>],
+    [<a href="https://vitana.se/opr3d/tbear/bilder/HP3/14_Hangprinter_Hitch_2.JPG">3</a>],
+    [<a href="https://vitana.se/opr3d/tbear/bilder/HP3/15_Hangprinter_Hitch_3.JPG">4</a>],
+    [<a href="https://vitana.se/opr3d/tbear/bilder/HP3/16_Hangprinter_Hitch_4.JPG">5</a>],
+    [<a href="https://vitana.se/opr3d/tbear/bilder/HP3/17_Hangprinter_Hitch_5.JPG">6</a>],
+    [<a href="https://vitana.se/opr3d/tbear/bilder/HP3/18_Hangprinter_Hitch_6.JPG">7</a>].
+  </p>
   <figure>
     <a href="./media/008.jpg">
       <img src="./media/small_008.jpg" alt="" width="500" height="333" />
@@ -175,7 +197,7 @@
     </a>
     <figcaption>
       Now put together your electronics.
-      It's recommended to use Mechaduinos on the A, B, C, and D-motors.
+      It's recommended to use Mechaduinos on the A, B, C, and D-motors, even though stepsticks are shown in the picture.
       See <a href="https://github.com/tobbelobb/hangprinter/tree/Openscad_version_3/firmware">instructions in the repo</a> for directions on setting up Mechaduinos.
     </figcaption>
   </figure>
@@ -324,7 +346,8 @@
       <img src="./media/small_040.jpg" alt="" width="500" height="333" />
     </a>
     <figcaption>
-      Use two ziptie like in the picture if needed and tighten as hard as you can without snapping them.
+      Use two zipties like shown in the picture, or use one longer ziptie.
+      Tighten as hard as you can.
     </figcaption>
   </figure>
   <figure>
@@ -373,7 +396,7 @@
       <img src="./media/small_046.jpg" alt="" width="500" height="333" />
     </a>
     <figcaption>
-      Place them so lines shines through. Ideally on a window or a glass table.
+      Place them so lines shine through. Ideally on a window or a glass table.
     </figcaption>
   </figure>
   <figure>
@@ -381,7 +404,7 @@
       <img src="./media/small_047.jpg" alt="" width="500" height="333" />
     </a>
     <figcaption>
-      Align the overlapping parts perfectly on top of each other.
+      Align the overlaps perfectly on top of each other.
     </figcaption>
   </figure>
   <figure>
@@ -397,7 +420,7 @@
       <img src="./media/small_049.jpg" alt="" width="500" height="333" />
     </a>
     <figcaption>
-      Place your template on your ceiling plate sheet.
+      Place your finished 2d-template on your ceiling plate.
     </figcaption>
   </figure>
   <figure>
@@ -405,7 +428,7 @@
       <img src="./media/small_050.jpg" alt="" width="500" height="333" />
     </a>
     <figcaption>
-      Attach the template with a few screws to make it flat and stationary.
+      Screw the template flat onto the ceiling plate.
     </figcaption>
   </figure>
   <figure>
