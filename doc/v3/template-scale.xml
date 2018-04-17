@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="manual-template.xsl"?>
+<page>
+<post id="template-scale" heading="Check That Your Template is the Right Scale">
+  <p>
+    Use a 3d-printed part to check that it fits the template exactly.
+  </p>
+  <figure>
+    <a href="./media/print_template_to_scale.JPG">
+      <img src="./media/print_template_to_scale_liten.JPG" alt="" width="500" height="333" />
+    </a>
+  </figure>
+  <p>
+    If it fits, go on to <a href="template-assembly">"Tape Together Your 2d-Template"</a>.
+  </p>
+  <p>
+    If it doesn't fit, check your 2d-printer's settings.
+    Many printers have a setting called "scale to fit page" or similar.
+    You probably need to turn off that setting and try 2d-printing the template again.
+  </p>
+  <p>
+    If you're using US letter sized paper, see <a href="https://github.com/tobbelobb/hangprinter/tree/Openscad_version_3#using-letter-sized-paper">special instructions in the repo</a>.
+  </p>
+</post>
+</page>

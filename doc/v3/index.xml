@@ -2,14 +2,497 @@
 <?xml-stylesheet type="text/xsl" href="manual-template.xsl"?>
 <page>
 <post heading="Welcome" id="welcome">
-<p>
-  There are two views into this manual.
-  <ul>
-    <li><a href="top-down">The Top-Down View</a></li>
-    <li><a href="bottom-up">The Bottom-Up View</a></li>
-  </ul>
-  The first is for reference, the second is for assembly workshops.<br />
-  More on views <a href="views-explained">here</a>.
-</p>
+  <figure>
+    <a href="./media/000.jpg">
+      <img src="./media/small_000.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Welcome to Hangprinter version 3 hardware assembly.
+      Please click on the pictures to see larger versions.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/001.jpg">
+      <img src="./media/small_001.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Hardware for a non-Mechaduino build, excluding USB cable. Note that the rectangular sheet material in the top right is a stack of three.
+      The white printed parts will be in contact with motors.
+      They should be printed in a heat resistant plastic should the motors ever run warm.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/002.jpg">
+      <img src="./media/small_002.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Push spools and spool gears onto the 608 bearings.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/003.jpg">
+      <img src="./media/small_003.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Repeat for all spools and spool gears.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/004.jpg">
+      <img src="./media/small_004.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Push spools with 608 bearings onto spool cores.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/005.jpg">
+      <img src="./media/small_005.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Now grab your spacers.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/006.jpg">
+      <img src="./media/small_006.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      ... and push them onto your spool cores.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/007.jpg">
+      <img src="./media/small_007.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The four spacers previously at the bottom left are now used.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/008.jpg">
+      <img src="./media/small_008.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Push the spool gears onto the spools.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/009.jpg">
+      <img src="./media/small_009.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The four spool gears are now used.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/010.jpg">
+      <img src="./media/small_010.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Insert PTFE tube into anchor linerollers and cut flush with front.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/011.jpg">
+      <img src="./media/small_011.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Do the same with D-linerollers.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/012.jpg">
+      <img src="./media/small_012.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      PTFE tubes should fit tightly in D-linerollers. Push them in the like this.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/013.jpg">
+      <img src="./media/small_013.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      PTFE tubes inserted.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/014.jpg">
+      <img src="./media/small_014.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Mount v-groove 623 bearings into all linerollers.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/015.jpg">
+      <img src="./media/small_015.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Now grap your motors and motor gears.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/016.jpg">
+      <img src="./media/small_016.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The motor gears have D-shaped holes and a notch to help you align them with the motors shafts.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/017.jpg">
+      <img src="./media/small_017.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Hammer the motor gear gently in place with many small hits of a light, soft, and rounded object.
+      Don't hit hard.
+      If your motor gear holes are too tight, drill/file it wider, or just print new ones.
+      If your motor gear holes are too wide, insert nuts from below and tighten with set-screws.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/018.jpg">
+      <img src="./media/small_018.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Gap between motor gear and motor should be ca 1 mm.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/019.jpg">
+      <img src="./media/small_019.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Now grab your motor brackets.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/020.jpg">
+      <img src="./media/small_020.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Insert the three screws in their holes first.
+      It will be more fiddly to do later.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/021.jpg">
+      <img src="./media/small_021.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Mount motor brackets onto motors.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/022.jpg">
+      <img src="./media/small_022.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Now put together your electronics.
+      It's recommended to use Mechaduinos on the A, B, C, and D-motors.
+      See <a href="https://github.com/tobbelobb/hangprinter/tree/Openscad_version_3/firmware">instructions in the repo</a> for directions on setting up Mechadions.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/023.jpg">
+      <img src="./media/small_023.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Insert your drivers' step/dir into the RAMPS board's step/dir outputs.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/024.jpg">
+      <img src="./media/small_024.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Mount your RAMPS shield tightly onto your Arduino Mega.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/025.jpg">
+      <img src="./media/small_025.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Grab your mover parts.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/026.jpg">
+      <img src="./media/small_026.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Your 40cm beam should be pushed right up to the root of the separator wall.
+      This is important in order to get the correct width of your mover triangle.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/027.jpg">
+      <img src="./media/small_027.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Attach with zipties loosely.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/028.jpg">
+      <img src="./media/small_028.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Ensure beams are flush with the root of the separator wall.
+      Then tighten as hard as you can without snapping the zipties.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/029.jpg">
+      <img src="./media/small_029.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The finished triangle should feel reasonably stiff.
+      It will not experience great forces during print, but it should not change dimensions easily.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/030.jpg">
+      <img src="./media/small_030.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Leave a few mm of ziptie, so you can after-tighten them later if needed.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/031.jpg">
+      <img src="./media/small_031.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      If you use wooden beams, you can drill a mounting hole right through your triangle side and your cross beam.
+      If you use carbon fibre beams, attach cross beam with zipties instead, like shown in <a href="./media/ziptied_crossbeam.jpg">this linked picture</a>.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/032.jpg">
+      <img src="./media/small_032.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Use washers on both sides of the M3 screw.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/033.jpg">
+      <img src="./media/small_033.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Make the screw quite tight. If your wood is soft, the washer should slightly sink into the wood.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/034.jpg">
+      <img src="./media/small_034.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Now grab your beam sliders.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/035.jpg">
+      <img src="./media/small_035.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The ABC-beam sliders should be ziptied quite tightly.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/036.jpg">
+      <img src="./media/small_036.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The D-beam sliders should be ziptied more loosely at first.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/037.jpg">
+      <img src="./media/small_037.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Tighten D-beam sliders by wedging them farther into the ziptie, pointing towards the closest corner.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/038.jpg">
+      <img src="./media/small_038.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Put ABC-sliders and D-sliders in opposite ends of each triangle side.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/039.jpg">
+      <img src="./media/small_039.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Route a ziptie over your crossbeam and through your extruder holder as shown.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/040.jpg">
+      <img src="./media/small_040.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Use two ziptie like in the picture if needed and tighten as hard as you can without snapping them.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/041.jpg">
+      <img src="./media/small_041.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Add two more zipties, in straight loops around the beam.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/042.jpg">
+      <img src="./media/small_042.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Use the printed wedge to tighten the long ziptie(s).
+      Your extruder holder should now be very tightly attached to your cross beam.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/043.jpg">
+      <img src="./media/small_043.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The ribbon cable is ziptied to the extruder holder for strain relief.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/044.jpg">
+      <img src="./media/small_044.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Mount your extruder+hot end of choice and put away the finished mover.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/045.jpg">
+      <img src="./media/small_045.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Grab your template 2d-prints.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/046.jpg">
+      <img src="./media/small_046.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Place them so lines shines through. Ideally on a window or a glass table.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/047.jpg">
+      <img src="./media/small_047.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Align the overlapping parts perfectly on top of each other.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/048.jpg">
+      <img src="./media/small_048.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Tape together.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/049.jpg">
+      <img src="./media/small_049.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Place your template on your ceiling plate sheet.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/050.jpg">
+      <img src="./media/small_050.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Attach the template with a few screws to make it flat and stationary.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/051.jpg">
+      <img src="./media/small_051.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Hammer in markings through the centers of all the little circles.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/052.jpg">
+      <img src="./media/small_052.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The template with all the markings hammered looks like this.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/053.jpg">
+      <img src="./media/small_053.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The ceiling plate below should have visible marks like this.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/054.jpg">
+      <img src="./media/small_054.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Now mount your prepared spools and linerollers.
+      Mind the orientation of the linerollers so line can enter like specified on the template.
+      Marking the spools with names A, B, C, and D, as specified on the template is useful.
+      Note the long screw through the center of the spool core.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/055.jpg">
+      <img src="./media/small_055.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Don't mount your motor too tightly towards the spool gear.
+      A bit of play in the gears is harmless because the lines will pre-tension the gears anyways.
+      Gears that mesh badly or roll unevenly because of a too tight fit might cause problems later on.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/056.jpg">
+      <img src="./media/small_056.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Pointing wires away from spool center is nice, but not critical.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/057.jpg">
+      <img src="./media/small_057.jpg" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Clamp down the motor wires as close to the motor bracket as you can.
+    </figcaption>
+  </figure>
+  <figure>
+    <video width="500" height="333" controls="yes">
+      <source src="./media/mounting_parts_onto_ceiling_plate.webm" type="video/webm" />
+      Your browser does not support the video tag.
+    </video>
+    <figcaption>
+      Video of mounting parts to the ceiling plate.
+    </figcaption>
+  </figure>
 </post>
 </page>
