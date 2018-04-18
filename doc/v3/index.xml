@@ -71,11 +71,15 @@
     This will be needed for firmware calibration later on.
   </p>
   <p>
-    It is also a good time to attach line to the spools.
-    One spool gets three lines, each of length 5 m.
-    Three spools get two lines, each of length 7.5 m.
-    (A more detailed guide on choosing line lengths <a href="http://forums.reprap.org/read.php?1,792937,809736#msg-809736">here</a>.
-     If you use custom line lengths, this must be specified in firmware settings later on.)
+    It might also be a good time to attach lines to your spools.
+    Nine lines are required to drive the printer.
+    By default, three of them are 4m long, the remaining six are 7.5m long.
+    Attach the 4m ones onto one spool.
+    Attach pairs of 7.5m ones onto the remaining three spools.
+  </p>
+  <p>
+    A more detailed guide on choosing line lengths is found <a href="http://forums.reprap.org/read.php?1,792937,809736#msg-809736">here</a>.
+    If you use custom line lengths or line thickness, you need to specifiy this in firmware settings later on.
   </p>
   <p>
     See these linked images for a knot you can use to tie lines onto spools:

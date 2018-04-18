@@ -112,9 +112,8 @@ const int nr_of_lines_in_direction[DIRS] = {MECHANICAL_ADVANTAGE_A*ACTION_POINTS
 #define DEFAULT_SPOOL_BUILDUP_FACTOR 0.007
 
 // Total length of lines on each spool
-// Default assumes all nine lines are cut to length 7500 mm.
-// Change to whatever length you have cut your different lines to.
-const float MOUNTED_LINE[DIRS] = {7500.0,7500.0,7500.0,7500.0};
+// Change if you have cur your lines to custom lengths.
+const float MOUNTED_LINE[DIRS] = {7500.0,7500.0,7500.0,4000.0};
 
 // Measuring your spool radii and adjusting this number will improve your Hangprinter's precision
 const float SPOOL_RADII[DIRS] = { 55.0, 55.0, 55.0, 55.0 };
