@@ -9,6 +9,8 @@
     <figcaption>
       Welcome to Hangprinter version 3 hardware assembly.
       Please click on the pictures to see larger versions.
+      The below instructions assume you have completed the sourcing step.
+      If you have not, the <a href="https://docs.google.com/spreadsheets/d/1lOPZoF1P2OSdJcijZRVrwAEVFh3LLAnf6-s6k-hlbZU/edit#gid=0">bill of materials</a> might be of help.
     </figcaption>
   </figure>
   <figure>
@@ -16,9 +18,11 @@
       <img src="./media/small_001.jpg" alt="" width="500" height="333" />
     </a>
     <figcaption>
-      Hardware for a non-Mechaduino build, excluding USB cable. Note that the rectangular sheet material in the top right is a stack of three.
+      Hardware for a non-Mechaduino build, excluding USB cable and screws.
+      Note that the rectangular sheet material is for building ABC anchors.
+      They should a stack of three.
       The white printed parts will be in contact with motors.
-      They should be printed in a heat resistant plastic should the motors ever run warm.
+      Print them in a heat resistant plastic in case your motors ever run warm.
     </figcaption>
   </figure>
   <figure>
