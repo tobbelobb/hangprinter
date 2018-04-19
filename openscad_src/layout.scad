@@ -20,17 +20,20 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-twod = true;
-//twod = false;
+//twod = true;
+twod = false;
 
-//mounted_in_ceiling = true;
-mounted_in_ceiling = false;
+mounted_in_ceiling = true;
+//mounted_in_ceiling = false;
 
 // Render the mover
-//mover = true;
-mover = false;
+mover = true;
+//mover = false;
 
-ANCHOR_D_Z = 1000;
+bottom_triangle = false;
+//bottom_triangle = true;
+
+ANCHOR_D_Z = 2300;
 
 
 color0 = "sandybrown";
@@ -266,5 +269,20 @@ module d_lines(){
   for(k=[0,120,240])
     rotate([0,0,k])
       translate([0,Sidelength/sqrt(3),0])
-        cylinder(r=0.9, h=ANCHOR_D_Z);
+        cylinder(r=4.9, h=ANCHOR_D_Z);
+}
+
+if(bottom_triangle)
+  bottom_triangle();
+module bottom_triangle(){
+  for(i=[0,120,240])
+    rotate([0,0,i])
+      translate([0,-3000*sqrt(2)/sqrt(6),0]){
+        color("sandybrown")
+          rotate([0,0,30])
+          translate([-45/2,0,-45])
+            cube([45, 3000, 45]);
+        translate([0,200,0])
+          cube([500, 100, 12], center=true);
+      }
 }

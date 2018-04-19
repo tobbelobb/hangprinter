@@ -114,6 +114,7 @@ layout_nema23.dxf: $(SRC_DIR)/layout.scad \
     -D twod=true \
     -D mover=false \
     -D mounted_in_ceiling=false \
+		-D bottom_triangle=false \
     -o $@ $(SRC_DIR)/layout.scad;
 
 nema23: | $(STL_NEMA23_DIR) $(STL_NEMA23_DIR)/motor_gear.stl \
@@ -144,6 +145,7 @@ layout.dxf: $(SRC_DIR)/layout.scad \
 		-D twod=true \
 		-D mover=false \
 		-D mounted_in_ceiling=false \
+		-D bottom_triangle=false \
 		-o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 layout_a4.pdf: layout.dxf \
