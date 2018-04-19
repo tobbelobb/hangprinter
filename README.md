@@ -14,6 +14,10 @@ Bill of Materials
 You can help fund future development of this project by using the affiliate links below when sourcing vitamins.
 A Google Spreadsheet version for a Mechaduino-driven setup, up to date as of Apr 4 2018, is found here: [Google docs](https://docs.google.com/spreadsheets/d/1lOPZoF1P2OSdJcijZRVrwAEVFh3LLAnf6-s6k-hlbZU/edit?usp=sharing)
 
+Assembly Instructions
+---------------------
+The documentation hosted in this repo is published at [hangprinter.org/doc/v3](https://hangprinter.org/doc/v3).
+
 Using Nema23?
 ----------------
 Then you need different sized motor brackets, extruder holders and motor gears.
