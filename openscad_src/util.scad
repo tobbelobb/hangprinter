@@ -344,6 +344,14 @@ module nutlock(){
   cylinder(d=3.5,h=16);
 }
 
+module hexagon_for_nut(h = 1.5){
+  difference(){
+    cylinder(d=5.6/cos(30)+2, h=h, $fn=6);
+    translate([0,0,-1])
+    cylinder(d=5.6/cos(30), h=h+2, $fn=6);
+  }
+}
+
 module teardrop(r=10, h=10){
   cylinder(r=r, h=h);
   rotate([0,0,45])

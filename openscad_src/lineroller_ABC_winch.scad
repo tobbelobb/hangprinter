@@ -108,8 +108,13 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
                   translate([-0.1-tower_h+Bearing_r,-(w+f+2*foot_shape_r+20)/2,-15])
                     cube([base_th, w+f+2*foot_shape_r+20, 30]);
                 }
-            translate([tower_h-Bearing_r,Bearing_r+Bearing_wall,0])
+            translate([tower_h-Bearing_r,Bearing_r+Bearing_wall,0]){
               cylinder(r=r2, h=Lineroller_wall_th+shoulder, $fs=1);
+              dpth = 1.5;
+              translate([0,0,-dpth])
+              hexagon_for_nut(h=dpth);
+            }
+
           }
           translate([tower_h-Bearing_r,Bearing_r+Bearing_wall,-1])
             cylinder(d=Bearing_bore_r*2+0.3, h=Lineroller_wall_th+0.5+2, $fs=1);
