@@ -104,6 +104,7 @@ void configureStepDir() {
   pinMode(dir_pin, INPUT);
   attachInterrupt(step_pin, stepInterrupt, RISING);
   attachInterrupt(dir_pin, dirInterrupt, CHANGE);
+  dirInterrupt(); // Ensure right direction from start
 }
 
 void configureEnablePin() {
