@@ -20,11 +20,11 @@
       </script>
     </xsl:when>
   </xsl:choose>
-  <title>Hangprinter v3 Manual</title>
+  <title>Hangprinter Assembly</title>
 </head>
 <body>
 <div id="SiteName">
-  <div class="left">Hangprinter v3 Manual </div>
+  Hangprinter v3 Assembly Manual
 </div>
 <div id="MainContent">
   <figure>

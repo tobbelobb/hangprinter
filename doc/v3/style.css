@@ -1,5 +1,6 @@
 body {
 	background-color:#ffffff;
+  text-align: center;
 }
 #header {
 	position:absolute;
@@ -11,10 +12,9 @@ body {
 	z-index:1;
 }
 #SiteName {
-	position:absolute;
-	margin-left:15%;
+	margin: auto;
 	top:50px;
-	width:555px;
+	max-width:600px;
 	height:45px;
 	z-index:2;
 	font-size:35px;
@@ -51,16 +51,22 @@ h3 a:link, h3 a:visited, h3 a:hover, h3 a:active {
   margin-bottom: 10px;
 }
 #MainContent {
-	position:relative;
-	top:110px;
-	width:606px;
-	z-index:6;
-	margin-left:15%;
-	font-size:14px;
-	line-height:150%;
-	color:#30424c;
-  padding:0px 0px 30px;
+	max-width:600px;
+	margin: 0 auto;
+	color:#191A1D;
+	padding:0px 0px 30px 0px;
+}
+p, ul {
+  text-align: left;
+  margin: auto auto 20px auto;
+  max-width: 500px;
 }
 figure {
-  margin: 0 auto;
+  display: block;
+  padding: 0px 0px 35px 0px;
+}
+figcaption {
+  text-align: left;
+  margin: auto;
+  max-width: 500px;
 }
