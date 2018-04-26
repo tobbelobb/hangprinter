@@ -8,8 +8,6 @@ l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall;
 track_l = l;
 head_r = 3.5;
 screw_r = 1.5;
-screw_head_h = 2;
-screw_h = 2;
 tower_h = 17 + Bearing_r;
 x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screws
 y_extra = -2.0; // For the two "wings" with tracks for screws
@@ -32,7 +30,7 @@ module lineroller_anchor(){
     translate([-x_len, -Depth_of_lineroller_base/2, 0]){
       translate([len-Depth_of_lineroller_base/2, Depth_of_lineroller_base/2, -0.1]){
         rotate([0,0,180]){
-          translate([0,0,screw_h+screw_head_h-0.01])
+          translate([0,0,Screw_h+Screw_head_h-0.01])
             linear_extrude(height=1)
             scale(1+(head_r-screw_r)/screw_r)
             translate([0,-screw_r])
@@ -41,15 +39,15 @@ module lineroller_anchor(){
               translate([0,screw_r])
                 circle(r=screw_r,$fn=4*10);
             }
-          linear_extrude(height=screw_h+1)
+          linear_extrude(height=Screw_h+1)
             translate([0,-screw_r])
             union(){
               square([track_l-screw_r, 2*screw_r]);
               translate([0,screw_r])
                 circle(r=screw_r,$fn=4*10);
             }
-          translate([0,0,screw_h])
-            linear_extrude(height=screw_head_h, scale=1+(head_r-screw_r)/screw_r)
+          translate([0,0,Screw_h])
+            linear_extrude(height=Screw_head_h, scale=1+(head_r-screw_r)/screw_r)
             translate([0,-screw_r])
             union(){
               square([track_l-screw_r, 2*screw_r]);

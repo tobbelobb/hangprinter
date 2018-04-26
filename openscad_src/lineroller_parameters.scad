@@ -16,3 +16,5 @@ Ptfe_r = 2.1;
 
 Lineroller_base_r = Depth_of_lineroller_base/2-1*(Ptfe_r+2);
 
+Screw_h = 2;
+Screw_head_h = 2;
