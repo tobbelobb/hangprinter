@@ -265,7 +265,7 @@
     <figcaption>
       Now put together your electronics.
       It's recommended to use Mechaduinos on the A, B, C, and D-motors, even though stepsticks are shown in the picture.
-      See <a href="https://github.com/tobbelobb/hangprinter/tree/Openscad_version_3/firmware" target="_blank">instructions in the repo</a> for directions on setting up Mechaduinos.
+      See <a href="#Mechaduino_assembly" target="_blank">Mechaduino assembly instructions</a>.
     </figcaption>
   </figure>
   <figure>
@@ -567,6 +567,202 @@
     </video>
     <figcaption>
       Video of mounting parts to the ceiling plate.
+    </figcaption>
+  </figure>
+</post>
+<post heading="Mechaduino Assembly" id="Mechaduino_assembly">
+  <figure>
+    <a href="./media/Mechaduino_assembly/000.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_000.JPG" alt="" width="500" height="334" />
+    </a>
+    <figcaption>
+      Solder pins onto D0, D1, D20, D21, 3V3, VIN, GND, and V+.
+      The motor pins (near bottom with no rectangle around)
+      came pre-soldered on this board, so I will use a dupont connector for the motors.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/001.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_001.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      The motor wires only need to reach the motor pins.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/002.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_002.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Crimp or solder your motor cables.
+      Making clean crimps like the above requires some special tools and practice.
+      Soldering directly onto motor pins or into motor pin-holes gives a more secure connection.
+      It might also save you time, if you manage to do it right on the first try.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/003.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_003.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Remove one screw from the bottom of your motor.
+      Warning: If you remove all four at once, and the motor separates into its two halves,
+      some magnetization is lost and your motor's performance is permanently reduced by a few percent.
+      No big catastrophy, but let's avoid it.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/004.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_004.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Get a screw that is a few mm longer than the one you just removed, and use standoffs between motor and PCB.
+      For good looks, make sure your motor's cable opening and your PCB's motor pins end up on the same side.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/005.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_005.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Cut down protruding pins on the backside of the PCB.
+      The PCB should get close to the motor, but no part of the PCB should touch the motor when rotated in place with its screw tight.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/006.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_006.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Add the three other Mechaduino screws with the same amnount of standoffs as the first screw.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/008.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_008.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Attach the motor bracket to your motor and remove the three remaining motor screws.
+      Make your already attached screw loose enough so that you can rotate your PCB into place.
+      Put a drop of super glue on the magnet before attaching it on the motor shaft.
+      The magnet must be fairly centered, but perfection is not required.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/009.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_009.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Your motors+PCBs are now servos.
+      Mark your servos with A, B, C, and D.
+      These names will be encoded into their individual firmwares later, so it will be important to be able to tell them apart.
+    </figcaption>
+  </figure>
+</post>
+<post heading="Mechaduino Firmware" id="mechaduino_firmware">
+  <figure>
+    <a href="./media/Mechaduino_assembly/parameters_dot_h_i2c_addr.png" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_parameters_dot_h_i2c_addr.png" alt="" width="500" height="281" />
+    </a>
+    <figcaption>
+      Now open Arduino IDE, and find the <code>Parameters.h</code> file of the Mechaduino firmware.
+      Make sure the <code>I2C_ID</code> matches the servo you're flashing.
+      Servo A should get <code>I2C_ID 0x0a</code>, servo B should get <code>I2C_ID 0x0b</code> and so on.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/tools_menu2.png" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_tools_menu2.png" alt="" width="500" height="281" />
+    </a>
+    <figcaption>
+      Uploading to the Mechaduino requires a special library.
+      If you're using HAWs this library is pre-installed.
+      Otherwise, open <code>Tools->Boards Manager...</code>.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/zeroboard.png" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_zeroboard.png" alt="" width="500" height="281" />
+    </a>
+    <figcaption>
+      Within the Boards Manager, find the library <code>Arduino SAMD Boards (32-bits ARM Coretex-M0+)</code>,
+      for example by entering <code>zero</code> into the search field, and hit install.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/upload_mechaduino_firmware.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_upload_mechaduino_firmware.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Specify that you're using a <code>Arduino/Genuino Zero (Native USB port)</code>.
+      Check that your board is listed under <code>Tools->Port</code>.
+      If not, try with another USB cable.
+      Beware of charger cables, they're often unable to transmit data.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/verbose_upload_e.png" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_verbose_upload_e.png" alt="" width="500" height="281" />
+    </a>
+    <figcaption>
+      Now try to hit upload (top left corner).
+      You might have to double-click the white button on the PCB after you've hit upload.
+      This is to convince your Mechaduino to accept the upload.
+      Arduino IDE can tell you if it the Mechaduino requires more convincing if you
+      enable the verbose upload option within <code>File->Preferences</code>.
+      A couple of false starts is perfectly normal.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/serial_monitor_usage_e.png" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_serial_monitor_usage_e.png" alt="" width="500" height="281" />
+    </a>
+    <figcaption>
+      Now, with firmware uploaded, try talking to it in the serial monitor.
+      Sent it an <code>m</code> to have it print the menu.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/010.JPG" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_010.JPG" alt="" width="500" height="333" />
+    </a>
+    <figcaption>
+      Close the seral monitor and unplug the USB cable.
+      Connect the motor cables.
+      <i>Warning: the motor cables must remain plugged when the Mechaduino is powered with 12V.</i>
+      Attach the 12V cables of your unplugged power supply.
+      Double check that you've got the 12V polarity right.
+      Plug in your 12V supply, then plug in your USB again.
+      Your motor will probably start rotating or vibrating.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="./media/Mechaduino_assembly/lookup.png" target="_blank">
+      <img src="./media/Mechaduino_assembly/small_lookup.png" alt="" width="500" height="272" />
+    </a>
+    <figcaption>
+      Open up the serial monitor again, and send <code>n</code> to calm the motor.
+      Send <code>c</code> to start the routine that creates a lookup table.
+      If the routine doesn't finish, try reducing the <code>iMAX</code> variable in <code>Parameters.cpp</code>.
+      A very long lookup table should get printed to your serial monitor at the end of the routine.
+      Copy and paste this into <code>Parameters.cpp</code> as shown in the image.
+      The table may not render once it's printed, but marking it and copy-pasting it works regardless.
+      Remove, or comment out, eventual lookup tables of other servos.
+      Now that your code contains the right <code>I2C_ID</code> and the right lookup table,
+      you can upload firmware again using the same steps as before.
+    </figcaption>
+  </figure>
+  <figure>
+    <video width="500" height="282" controls="true">
+      <source src="./media/Mechaduino_assembly/Mechaduino_working.MP4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <figcaption>
+      Wait a few seconds after upload is done, then try to rotate the servo by hand.
+      It should act almost as if it was spring loaded.
+      If the servo vibrates a lot, some PID-tuning can make it more silent.
+      PID variables are found in <code>Parameters.cpp</code>.
+      Details about how to PID-tune are not covered here.
     </figcaption>
   </figure>
   <p>
