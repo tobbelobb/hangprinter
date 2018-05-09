@@ -11,7 +11,7 @@ Min_beam_width = 12.5;
 Max_beam_width = 17.5;
 Zip_th = 2;
 Zip_h = Zip_th + Max_beam_width - Min_beam_width;
-Zip_w = 4.5;
+Zip_w = 5.0;
 
 Nema17_cube_width          = 42.43;
 Nema17_screw_hole_width    = 43.74; // Opposite corner screws
