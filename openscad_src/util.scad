@@ -398,3 +398,9 @@ function circle_sector(max_ang, r0, r1, steps=100) =
             r0*[cos(a), sin(a)]],
          [for (a=[-0:(max_ang)/steps:max_ang+0.01])
            r1*[cos(max_ang-a), sin(max_ang-a)]]);
+
+//chamfer45([10, 19], 1);
+module chamfer45(v0, h){
+  linear_extrude(height=h, slices=1, convexity=2, scale=[(v0[0]-2*h)/v0[0], (v0[1]-2*h)/v0[1]])
+    square(v0, center=true);
+}

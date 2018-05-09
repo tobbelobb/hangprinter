@@ -50,6 +50,12 @@ module corner_clamp(){
               }
               zip_l = 15+wall_th+Zip_h;
               for(k=[0,1]){
+                translate([-Zip_h-wall_th-Min_beam_width-1,
+                           k*(-l0+wall_th*sqrt(3)+2*zip_fr_edg)-zip_fr_edg-2-1.0,
+                           -0.10])
+                  translate([-0,-Zip_w/2,0])
+                    translate([(Zip_h+2)/2,(Zip_w+2)/2,0])
+                      chamfer45([Zip_h+2, Zip_w+2], h=1);
                 translate([-(zip_l-Zip_h),
                         k*(-l0+wall_th*sqrt(3)+2*zip_fr_edg)-zip_fr_edg-2,
                     wall_th+Min_beam_width]){
@@ -61,6 +67,8 @@ module corner_clamp(){
                     translate([0,-Zip_w/2,0])
                       cube([zip_l, Zip_w, Zip_h]);
                 }
+                translate([(Zip_th+1)/2-1/2,-zip_fr_edg-2,-0.1])
+                  chamfer45([Zip_th+2, Zip_w+2], h=1);
                 translate([-Zip_h-wall_th-Min_beam_width,
                         k*(-l0+wall_th*sqrt(3)+2*zip_fr_edg)-zip_fr_edg-2,
                     -1])
