@@ -224,12 +224,19 @@ module rounded_2corner(v, r){
 
 module Nema17_screw_translate(corners){
   for (i=[0:90:90*corners - 1]){
-    rotate([0,0,i+45]) translate([Nema17_screw_hole_width/2,0,0]) children();
+    rotate([0,0,i+45])
+      translate([Nema17_screw_hole_width/2,0,0])
+        rotate([0,0,-i-45])
+          children();
   }
 }
 
-module Nema17_screw_holes(d, h, corners=4){
-  Nema17_screw_translate(corners) cylinder(r=d/2,h=h);
+module Nema17_screw_holes(d, h, corners=4, teardrop=false){
+  Nema17_screw_translate(corners)
+    if(teardrop)
+      teardrop(r=d/2,h=h);
+    else
+      cylinder(r=d/2,h=h);
 }
 
 module centered_u_groove_bearing(){
