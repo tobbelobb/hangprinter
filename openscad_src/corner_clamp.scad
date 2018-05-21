@@ -3,16 +3,14 @@ use <util.scad>
 
 corner_clamp();
 module corner_clamp(){
-  wall_th = Wall_th+0.2; // A tad thicker since flex is very unwanted in this piece
-  rad_b = 4;
+  wall_th = Wall_th;
   a = 13;
   b = Fat_beam_width+wall_th+2-a/2;
   l0 = 40;
-  l1 = (Fat_beam_width+2*wall_th)*2*sqrt(3);
   d_hole_l = l0/2+2;
 
   // Channel to guide D-line and stiffen up corner
-  channel_l = l1/sqrt(3)-2*rad_b-1.3-2.5/2;
+  channel_l = Cc_action_point_from_mid-2.5/2;
   channel_r1 = 1;
   channel_r2 = 3;
 
@@ -20,9 +18,9 @@ module corner_clamp(){
     union(){
       difference(){
         union(){
-          translate([-l1/2,-l1/sqrt(12),0])
-          linear_extrude(height=wall_th)
-            polygon(points = my_rounded_eqtri(l1,rad_b,5));
+          translate([-Cc_l1/2,-Cc_l1/sqrt(12),0])
+            linear_extrude(height=wall_th)
+              polygon(points = my_rounded_eqtri(Cc_l1,Cc_rad_b,5));
           for(k=[0,1])
             mirror([k,0,0])
               rotate([0,0,-30]){
@@ -77,7 +75,7 @@ module corner_clamp(){
               }
 
             }
-        translate([0,l1/sqrt(3)-2*rad_b-1.3,-1]) // 1.3 chosen arbitrarily
+        translate([0,Cc_action_point_from_mid,-1])
           cylinder(d=2.5, h=wall_th+2, $fn=10);
         fillet_r = 2.5;
         translate([0,(wall_th-fillet_r)*2,0]){
@@ -87,6 +85,7 @@ module corner_clamp(){
                 inner_round_corner(fillet_r,30,120,2, $fn=4*8);
         }
       } // end diff
+      // Slanting beam towards action point
       difference(){
         translate([-channel_r2/2,0,0])
           rounded_cube2([channel_r2, channel_l-1, Min_beam_width+wall_th], 1, $fn=20);
@@ -94,6 +93,20 @@ module corner_clamp(){
           rotate([90-atan(Min_beam_width/channel_l),0,0])
             cube([channel_r2+2,16,sqrt(channel_l*channel_l + Min_beam_width*Min_beam_width)]);
       }
+      edg_h = 1.5;
+      edg_w = 1.5;
+      rh = 2.8;
+      for(k=[0,1])
+        mirror([k,0,0])
+          rotate([0,0,60]){
+            rounded_cube2([edg_w, Fat_beam_width+2*wall_th, wall_th+edg_h], 0.5, $fn=20);
+            difference(){
+              cube([edg_w, 2*wall_th, wall_th+edg_h+rh], 1, $fn=20);
+              translate([-1,5,wall_th+edg_h+rh])
+                rotate([0,90,0])
+                  cylinder(r=rh, h=edg_w+2, $fn=16);
+            }
+          }
     } // end union
     translate([0,channel_l,wall_th])
       rotate([90-atan((Min_beam_width-1.3)/(channel_l)),0,0])

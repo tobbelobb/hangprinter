@@ -1,6 +1,5 @@
 include <parameters.scad>
 include <gear_parameters.scad>
-include <layout_parameters.scad>
 use <motor_bracket.scad>
 use <motor_bracket_2d.scad>
 use <motor_gear.scad>
@@ -232,9 +231,8 @@ module mover(){
                 } else {
                   beam_slider_D();
                 }
-
       }
-      translate([0,-40+2*4 + Sidelength/sqrt(3),-Wall_th])
+      translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
         color(color1, color1_alpha)
           if(stls){
             import("../openscad_stl/corner_clamp.stl");

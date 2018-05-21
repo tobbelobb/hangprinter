@@ -35,3 +35,18 @@ Mounting_screw_d = 4.5;
 Mounting_screw_head_d = 14;
 
 Spool_outer_wall_th = 4;
+
+// Corner clamp parameters
+Cc_l1 = (Fat_beam_width+2*Wall_th)*2*sqrt(3);
+Cc_rad_b = 4;
+Cc_action_point_from_mid = Cc_l1/sqrt(3)-2*Cc_rad_b-1.3;  // 1.3 chosen arbitrarily
+Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
+                       - (Cc_action_point_from_mid/2)*(Cc_action_point_from_mid/2));
+
+// The distance between the two action points on the mover
+Sidelength = Beam_length + 2*Cc_plastic_length;
+
+/////// Layout parameters ////////////
+Ext_sidelength = Sidelength+77;
+Additional_added_plate_side_length = 10;
+Yshift_top_plate = -25;

@@ -1,4 +1,4 @@
-include <layout_parameters.scad>
+include <parameters.scad>
 
 a4_width = 210;
 a4_length = 297;
