@@ -88,11 +88,10 @@ module extruder_holder(){
   Placed_cable_clamper();
 }
 
+x_l = 6+Zip_w;
 // Use this part to screw tight
-translate([0,4,0])
-Flat_cable_clamper();
+//Flat_cable_clamper();
 module Flat_cable_clamper(){
-  x_l = 6+Zip_w;
   difference(){
     intersection(){
       rounded_cube2([x_l,
@@ -103,6 +102,15 @@ module Flat_cable_clamper(){
         translate([0,0,-1])
         cylinder(d=z_depth, h=x_l+2);
     }
+  }
+}
+
+// Use this part to screw tight
+translate([0,4,0])
+Flat_cable_clamper_zipties();
+module Flat_cable_clamper_zipties(){
+  difference(){
+    Flat_cable_clamper();
     for(i=[cable_clamp_o-Zip_th/2,z_depth-cable_clamp_o-Zip_th/2])
       translate([x_l-Zip_w-3,i,-1])
         cube([Zip_w, Zip_th, x_depth+10]);
@@ -110,6 +118,17 @@ module Flat_cable_clamper(){
 }
 
 translate([-13,4,0])
+Flat_cable_clamper_screws();
+module Flat_cable_clamper_screws(){
+  difference(){
+    Flat_cable_clamper();
+    for(i=[cable_clamp_o,z_depth-cable_clamp_o])
+      translate([x_l/2,i,-1])
+        cylinder(d=Mounting_screw_d, h=5);
+  }
+}
+
+translate([-13*2,4,0])
 One_half_cable_clamper();
 module One_half_cable_clamper(){
   difference(){
