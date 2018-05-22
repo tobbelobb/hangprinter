@@ -19,7 +19,7 @@ translate([0,-Depth_of_lineroller_base-5,0])
 lineroller_anchor();
 module lineroller_anchor(){
   // Module lineroller_ABC_winch() defined in lineroller_ABC_winch.scad
-  lineroller_ABC_winch(edge_start=40, edge_stop=90,
+  lineroller_ABC_winch(edge_start=0, edge_stop=120,
                        base_th = base_th,
                        tower_h = tower_h,
                        bearing_width=Bearing_width+0.2,

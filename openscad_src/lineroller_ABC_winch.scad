@@ -63,7 +63,7 @@ function foot_shape(r, e, f, w) = concat([
 
 function wall_shape(a, w, extr) = 1 - (sin(a*90))*extr/((w/2)+extr); // a 0 -> 1
 
-lineroller_ABC_winch(edge_start=40, edge_stop = 180-40, with_base=true);
+lineroller_ABC_winch(edge_start=0, edge_stop = 180, with_base=true);
 module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, bearing_width=Bearing_width, shoulder=0.4, with_base=false, twod = false, big_y_r = 190, big_z_r=94){
   module wall(){
     // Foot parameters
@@ -121,7 +121,7 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
         }
       }
     // Edge to prevent line from falling of...
-    a = 1.5;
+    a = 1.75;
     b= 0.8;
     rot_r = Bearing_r+b;
     difference(){
