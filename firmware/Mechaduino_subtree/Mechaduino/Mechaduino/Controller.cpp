@@ -25,6 +25,21 @@ void TC5_Handler() { // Gets called with FPID frequency
           else if (ITerm < -150.0) ITerm = -150.0;
           DTerm = pLPFa*DTerm -  pLPFb*pKd*(yw-yw_1);
           u = (pKp * e) + ITerm + DTerm;
+          if(fabs(e) > 1800.0){ // We're faaar off. Someone might be stuck. Lower power for safety.
+            if(fabs(e) < 3600.0){
+              if(u > 0.0){
+                u = 2.0*uMAX/3.0;
+              } else {
+                u = -2.0*uMAX/3.0;
+              }
+            } else { // We're even further off. Lower more.
+              if(u > 0.0){
+                u = uMAX/2.0;
+              } else {
+                u = -uMAX/2.0;
+              }
+            }
+          }
           break;
         case 'v': // Velocity control
           v = vLPFa*v +  vLPFb*(yw-yw_1);   // Filtered velocity called "DTerm" because it is similar to derivative action in position loop
