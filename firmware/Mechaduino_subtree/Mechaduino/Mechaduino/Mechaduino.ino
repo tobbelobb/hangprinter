@@ -1,4 +1,3 @@
-
 /*
   -------------------------------------------------------------
   Mechaduino 0.1 & 0.2 Firmware  v0.1.4
@@ -36,9 +35,7 @@
  g  -  generate sine commutation table
  m  -  print main menu
 
-
   ...see serialCheck() in Utils for more details
-
 */
 
 #include "Utils.h"
@@ -46,15 +43,7 @@
 #include "State.h"
 #include "analogFastWrite.h"
 
-//////////////////////////////////////
-/////////////////SETUP////////////////
-//////////////////////////////////////
-
-
-
-void setup()        // This code runs once at startup
-{
-
+void setup() {
   digitalWrite(ledPin,HIGH);        // turn LED on
   setupPins();                      // configure pins
   setupTCInterrupts();              // configure controller interrupt
@@ -66,7 +55,6 @@ void setup()        // This code runs once at startup
   setupI2C();
   digitalWrite(ledPin,LOW);         // turn LED off
 
-
   // Uncomment the below lines as needed for your application.
   // Leave commented for initial calibration and tuning.
 
@@ -74,25 +62,9 @@ void setup()        // This code runs once at startup
   //    configureEnablePin();         // Active low, for use wath RAMPS 1.4 or similar
   enableTCInterrupts();         // uncomment this line to start in closed loop
   mode = 'x';                   // start in position mode
-
+  r = lookup[readEncoder()];
 }
 
-
-
-//////////////////////////////////////
-/////////////////LOOP/////////////////
-//////////////////////////////////////
-
-
-void loop()                 // main loop
-{
-
+void loop() {
   serialCheck();              //must have this execute in loop for serial commands to function
-
-  //r=0.1125*step_count;      //Don't use this anymore. Step interrupts enabled above by "configureStepDir()", adjust step size ("stepangle")in parameters.cpp
-
 }
-
-
-
-
