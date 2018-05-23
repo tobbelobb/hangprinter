@@ -145,17 +145,49 @@ module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,
           color("yellow")
           cylinder(r=0.9, h=l[i-1]);
   else
-    translate([0,0,Gear_height+Spool_height/2+Gap_between_sandwich_and_plate])
-      for(i=[1:lines])
-        rotate([0,0,angs[i-1]])
-          translate([clockwise*Spool_r-0.5,-l[i-1],0])
-          square([1, l[i-1]]);
+    difference(){
+      translate([0,0]){
+        for(i=[1:lines])
+          rotate([0,0,angs[i-1]]){
+            translate([clockwise*Spool_r-0.5,-l[i-1],0]){
+              square([1, l[i-1]]);
+            }
+          }
+            difference(){
+              circle(r=Spool_r+0.5);
+              circle(r=Spool_r-0.5);
+            }
+          }
+          spool_core(twod=twod, letter=letter);
+    }
 
   color(color2)
     if(stls && !twod)
       import("../openscad_stl/spool_core.stl");
     else
-      spool_core(twod=twod, letter=letter);
+      difference(){
+        spool_core(twod=twod, letter=letter);
+        translate([0,0]){
+          for(i=[1:lines])
+            rotate([0,0,angs[i-1]]){
+              translate([clockwise*Spool_r-0.5,-l[i-1],0]){
+                square([1, l[i-1]]);
+              }
+            }
+          difference(){
+            circle(r=Spool_r+0.5);
+            circle(r=Spool_r-0.5);
+          }
+          for(v=[0:120:359])
+            rotate([0,0,v])
+              translate([Spool_r*clockwise,0]){
+                rotate([0,0,45])
+                  square([1,10]);
+                rotate([0,0,-45])
+                  square([1,10]);
+          }
+        }
+      }
 }
 
 //abc_winch();
