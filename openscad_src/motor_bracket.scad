@@ -1,5 +1,4 @@
 include <parameters.scad>
-include <gear_parameters.scad>
 use <util.scad>
 
 motor_bracket();

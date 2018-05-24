@@ -1,5 +1,4 @@
 include <parameters.scad>
-include <lineroller_parameters.scad>
 use <util.scad>
 use <lineroller_ABC_winch.scad>
 use <lineroller_anchor.scad>

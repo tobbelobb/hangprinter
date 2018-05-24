@@ -1,5 +1,4 @@
 include <parameters.scad>
-include <gear_parameters.scad>
 
 sandwich_height = Spool_height+0.7+Gear_height;
 

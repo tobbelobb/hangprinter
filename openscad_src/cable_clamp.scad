@@ -1,5 +1,4 @@
 include <parameters.scad>
-include <lineroller_parameters.scad>
 use <util.scad>
 
 bit_width = 12;
