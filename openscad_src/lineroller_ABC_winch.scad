@@ -5,7 +5,7 @@ use <util.scad>
 module screws_space(){
   flerp0 = 6;
   flerp1 = 6;
-  l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
+  l = Depth_of_lineroller_base + 2*b623_vgroove_big_r + 2*Bearing_wall + flerp0 + flerp1;
   translate([Depth_of_lineroller_base/2-2,0,0])
     for(a=[0:90:359])
       rotate([0,0,a])
@@ -20,7 +20,7 @@ module base(base_th = Base_th,
             center=false,
             twod=false,
             openings=[false, false, false, false]){
-  l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall + flerp0 + flerp1;
+  l = Depth_of_lineroller_base + 2*b623_vgroove_big_r + 2*Bearing_wall + flerp0 + flerp1;
   for(k=[0,1])
   translate([+k*(l/2+Depth_of_lineroller_base/2),-k*(l/2-Depth_of_lineroller_base/2),0])
     translate([center ? -l/2 : -Depth_of_lineroller_base/2-flerp0, -Depth_of_lineroller_base/2, 0])
@@ -63,23 +63,23 @@ function foot_shape(r, e, f, w) = concat([
 function wall_shape(a, w, extr) = 1 - (sin(a*90))*extr/((w/2)+extr); // a 0 -> 1
 
 lineroller_ABC_winch(edge_start=0, edge_stop = 180, with_base=true);
-module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, bearing_width=Bearing_width, shoulder=0.4, with_base=false, twod = false, big_y_r = 190, big_z_r=94){
+module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, tower_h = Tower_h, bearing_width=b623_width, shoulder=0.4, with_base=false, twod = false, big_y_r = 190, big_z_r=94){
   module wall(){
     // Foot parameters
     c = 10;
     e = 5.52;
     //f = 2.5; // extra x-length for swung wall
-    w = Bearing_r*2+2*Bearing_wall;
+    w = b623_vgroove_big_r*2+2*Bearing_wall;
 
     q = 3.9;
     round_part = 0.65;
     // Main block
-    r2 = Bearing_bore_r+1.3;
+    r2 = b623_bore_r+1.3;
     foot_shape_r = 1.0;
     f = Depth_of_lineroller_base-w-2*foot_shape_r; // extra x-length for swung wall
 
     b_th = Lineroller_wall_th+e;
-    top_off_r = -foot_shape_r+Bearing_r;
+    top_off_r = -foot_shape_r+b623_vgroove_big_r;
 
     translate([0, -(bearing_width + 2*Wall_th)/2, 0])
       rotate([-90,-90,0]){
@@ -87,9 +87,9 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
           union(){
             // Foot with a swing
             translate([0,0,Lineroller_wall_th])
-              translate([tower_h-Bearing_r,w/2,0])
+              translate([tower_h-b623_vgroove_big_r,w/2,0])
                 difference(){
-                  translate([-tower_h+Bearing_r, -(w+f+2*foot_shape_r)/2, -b_th])
+                  translate([-tower_h+b623_vgroove_big_r, -(w+f+2*foot_shape_r)/2, -b_th])
                     cube([tower_h-foot_shape_r, w+f+2*foot_shape_r, b_th]);
                   translate([0,-big_y_r-w/2,-15])
                     cylinder(r=big_y_r, h=30, $fn=250);
@@ -104,10 +104,10 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
                   translate([0,0,-big_z_r-Wall_th])
                     rotate([90,0,0])
                       cylinder(r=big_z_r, h=30, center=true, $fn=250);
-                  translate([-0.1-tower_h+Bearing_r,-(w+f+2*foot_shape_r+20)/2,-15])
+                  translate([-0.1-tower_h+b623_vgroove_big_r,-(w+f+2*foot_shape_r+20)/2,-15])
                     cube([base_th, w+f+2*foot_shape_r+20, 30]);
                 }
-            translate([tower_h-Bearing_r,Bearing_r+Bearing_wall,0]){
+            translate([tower_h-b623_vgroove_big_r,b623_vgroove_big_r+Bearing_wall,0]){
               cylinder(r=r2, h=Lineroller_wall_th+shoulder, $fs=1);
               dpth = 1.5;
               translate([0,0,-dpth])
@@ -115,16 +115,16 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
             }
 
           }
-          translate([tower_h-Bearing_r,Bearing_r+Bearing_wall,-1])
-            cylinder(d=Bearing_bore_r*2+0.3, h=Lineroller_wall_th+0.5+2, $fs=1);
+          translate([tower_h-b623_vgroove_big_r,b623_vgroove_big_r+Bearing_wall,-1])
+            cylinder(d=b623_bore_r*2+0.3, h=Lineroller_wall_th+0.5+2, $fs=1);
         }
       }
     // Edge to prevent line from falling of...
     a = 1.75;
     b= 0.8;
-    rot_r = Bearing_r+b;
+    rot_r = b623_vgroove_big_r+b;
     difference(){
-      translate([Bearing_r+Bearing_wall, -bearing_width/2-0.8, tower_h - Bearing_r])
+      translate([b623_vgroove_big_r+Bearing_wall, -bearing_width/2-0.8, tower_h - b623_vgroove_big_r])
         rotate([-90,0,0])
           difference(){
             rotate_extrude(angle=180, convexity=10, $fn=60)
@@ -145,7 +145,7 @@ module lineroller_ABC_winch(base_th = Base_th, edge_start=0, edge_stop=180, towe
           }
       translate([-10,-10,0])
         cube([10,10,tower_h]);
-      translate([2*Bearing_r+2*Bearing_wall,-10,0])
+      translate([2*b623_vgroove_big_r+2*Bearing_wall,-10,0])
         cube([10,10,tower_h]);
     }
   }

@@ -38,8 +38,10 @@ module spool_gear_outer(){
 module spool_gear_center(){
   difference(){
     spool_center();
-
-    screw_head_dist_from_origin = Bearing_r + Bearing_wall + Spool_core_flerp0/2 + 6/2 + 2;
+    screw_head_dist_from_origin = b608_outer_dia/2
+                                 + Spool_center_bearing_wall_th
+                                 + Mounting_screw_head_d/2
+                                 - 1.6;
     screw_head_h = 2.5;
     translate([0,0,(screw_head_h+1)/2-1])
       rotate_extrude()
