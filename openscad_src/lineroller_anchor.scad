@@ -4,11 +4,11 @@ use <util.scad>
 use <lineroller_ABC_winch.scad>
 
 base_th = 6;
-l = Depth_of_lineroller_base + 2*Bearing_r + 2*Bearing_wall;
+l = Depth_of_lineroller_base + 2*b623_vgroove_big_r + 2*Bearing_wall;
 track_l = l;
 head_r = 3.5;
 screw_r = 1.5;
-tower_h = 17 + Bearing_r;
+tower_h = 17 + b623_vgroove_big_r;
 x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screws
 y_extra = -2.0; // For the two "wings" with tracks for screws
 
@@ -22,7 +22,7 @@ module lineroller_anchor(){
   lineroller_ABC_winch(edge_start=0, edge_stop=120,
                        base_th = base_th,
                        tower_h = tower_h,
-                       bearing_width=Bearing_width+0.2,
+                       bearing_width=b623_width+0.2,
                        big_y_r=40,
                        big_z_r=29);
 
@@ -89,7 +89,7 @@ module lineroller_anchor(){
 
   ptfe_guide();
   module ptfe_guide(){
-    line_z = tower_h-Bearing_r-Bearing_small_r;
+    line_z = tower_h-b623_vgroove_big_r-b623_vgroove_small_r;
     length = 9;
     width = (Ptfe_r+2)*2;
     difference(){

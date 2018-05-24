@@ -3,7 +3,7 @@ use <util.scad>
 
 //spool_center();
 module spool_center(){
-  bearing_wall_th = 5;
+  bearing_wall_th = Spool_center_bearing_wall_th;
   center_h = Spool_height+Torx_depth-4;
   ek_w = 8;
   eang = 12; // just for placement of inner round corners
