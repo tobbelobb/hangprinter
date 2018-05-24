@@ -1,5 +1,4 @@
 include <parameters.scad>
-include <gear_parameters.scad>
 use <motor_bracket.scad>
 use <motor_bracket_2d.scad>
 use <motor_gear.scad>
