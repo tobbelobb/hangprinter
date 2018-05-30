@@ -133,7 +133,7 @@ module one_rounded_cube4(v, r){
 module three_rounded_cube2(v, r){
   $fs = 1;
   union(){
-    translate([0,0,0])          cube([v[0]-  r, v[1]-r    , v[2]]);
+    translate([0,0,0])           cube([v[0]-  r, v[1]-r  , v[2]]);
     translate([r,0,0])           cube([v[0]-2*r, v[1]    , v[2]]);
     translate([0,r,0])           cube([v[0]    , v[1]-2*r, v[2]]);
     translate([v[0]-r,r,0])      cylinder(h=v[2], r=r);
@@ -237,11 +237,6 @@ module Nema17_screw_holes(d, h, corners=4, teardrop=false){
       teardrop(r=d/2,h=h);
     else
       cylinder(r=d/2,h=h);
-}
-
-module centered_u_groove_bearing(){
-  translate([1.5,-32,0])
-    import("U-groove_bearing.stl");
 }
 
 // Looks best with $fn = n*8
