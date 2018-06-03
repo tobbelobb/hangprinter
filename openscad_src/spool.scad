@@ -15,15 +15,23 @@ module spool_outer(){
     }
     translate([0,0,-1])
       cylinder(r=Spool_r-Spool_outer_wall_th, h=Spool_height+Torx_depth+2,$fn=150);
-    for(v=[0:120:359])
-      rotate([0,0,v])
-        translate([0, Spool_r/2, 1+Spool_height/2])
-          rotate([-90,00,0])
-            for(i=[-2.2,2.2])
-              translate([i,0,0])
-                cylinder(r=1.2, h=Spool_r);
-  }
-}
+      for(n=[1:1:num_sep_holes])
+        for(v=[0:60:359]){
+          rotate([0,0,v])
+            translate([0, Spool_r/2, (Spool_height/(num_sep_holes+0.5))*n])
+              rotate([-90,00,0])
+              //  for(i=[-2.2,2.2])
+               //   translate([i,0,0])
+                    //cylinder(r=1.5, h=Spool_r, $fn=100);
+                    cube([4,1.1,Spool_r], $fn=100);
+        // grooves for separation discs
+          rotate([0,0,v+1])
+            translate([0, Spool_r, 1])
+              rotate([0,00,0]) 
+                    cylinder(r=1.5, h=Spool_r-1, $fn=100);
+                           }
+               }
+    }
 
 spool(30); // Rotate just to match previous version
 module spool(rot){
