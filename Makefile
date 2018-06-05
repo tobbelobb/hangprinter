@@ -90,7 +90,6 @@ make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),216,279)
 
 $(STL_NEMA23_DIR)/%.stl: $(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/gear_parameters.scad \
 	$(SRC_DIR)/gear_util.scad \
 	$(SRC_DIR)/gears.scad \
 	$(SRC_DIR)/motor_gear.scad \
@@ -105,10 +104,8 @@ layout_nema23.dxf: $(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
-	$(SRC_DIR)/lineroller_parameters.scad \
 	$(SRC_DIR)/lineroller_D.scad \
 	$(SRC_DIR)/lineroller_ABC_winch.scad \
-	$(SRC_DIR)/gear_parameters.scad \
 	$(SRC_DIR)/layout.scad
 	$(NEMA23_CMD) \
     -D twod=true \
@@ -136,10 +133,8 @@ layout.dxf: $(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
-	$(SRC_DIR)/lineroller_parameters.scad \
 	$(SRC_DIR)/lineroller_D.scad \
 	$(SRC_DIR)/lineroller_ABC_winch.scad \
-	$(SRC_DIR)/gear_parameters.scad \
 	$(SRC_DIR)/layout.scad
 	$(OPENSCAD_BIN) \
 		-D twod=true \
@@ -154,19 +149,26 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
-	$(SRC_DIR)/lineroller_parameters.scad \
 	$(SRC_DIR)/lineroller_D.scad \
 	$(SRC_DIR)/lineroller_ABC_winch.scad \
-	$(SRC_DIR)/gear_parameters.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/layout_slicer.scad
 	$(call make_layout_pdf_a4,"../layout.dxf",$@)
+
+$(STL_DIR)/spool_D.stl: \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/spool.scad \
+	$(SRC_DIR)/util.scad \
+	$(SRC_DIR)/gears.scad \
+	$(SRC_DIR)/gear_util.scad
+	$(OPENSCAD_BIN) \
+		-D Num_sep_holes=2 \
+		-o $@ $(SRC_DIR)/spool.scad
 
 $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/corner_clamp.scad \
 	$(SRC_DIR)/extruder_holder.scad \
-	$(SRC_DIR)/gear_parameters.scad \
 	$(SRC_DIR)/Mechaduino_standoff.scad \
 	$(SRC_DIR)/gears.scad \
 	$(SRC_DIR)/gear_util.scad \
@@ -174,12 +176,12 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/lineroller_anchor.scad \
 	$(SRC_DIR)/lineroller_anchor_template.scad \
 	$(SRC_DIR)/lineroller_D.scad \
-	$(SRC_DIR)/lineroller_parameters.scad \
 	$(SRC_DIR)/motor_bracket.scad \
 	$(SRC_DIR)/motor_gear.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/spool_gear.scad \
 	$(SRC_DIR)/spool.scad \
+	$(SRC_DIR)/spool_separation_disc.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/spacer.scad \
 	$(SRC_DIR)/cable_clamp.scad \
@@ -199,6 +201,8 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_ABC.stl \
 	$(STL_DIR)/motor_gear.stl \
 	$(STL_DIR)/spool_gear.stl \
 	$(STL_DIR)/spool.stl \
+	$(STL_DIR)/spool_D.stl \
+	$(STL_DIR)/spool_separation_disc.stl \
 	$(STL_DIR)/spool_core.stl \
 	$(STL_DIR)/spacer.stl \
 	$(STL_DIR)/cable_clamp.stl \
