@@ -14,13 +14,13 @@ x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screw
 y_extra = -2.0; // For the two "wings" with tracks for screws
 
 bearing_0_x = 2*b623_vgroove_big_r+Bearing_wall+5.3;
-bearing_1_x = b623_vgroove_small_r-0.1;
+bearing_1_x = b623_vgroove_small_r-0.9;
 
 tower_h = higher_bearing_z + b623_vgroove_big_r;
 
 //lineroller_tower(with_base=true);
 module lineroller_tower(bearing_width = b623_width+0.2,
-                        shoulder      = 0.4,
+                        shoulder      = 0.3,
                         with_base     = false,
                         big_y_r1      = 190,
                         big_y_r2      = 36,
@@ -104,7 +104,7 @@ module lineroller_tower(bearing_width = b623_width+0.2,
         }
       }
     // Edge to prevent line from falling of...
-    a = 1.75;
+    a = 1.65;
     b= 0.8;
     rot_r = b623_vgroove_big_r+b;
     translate([move_tower,0,0])
