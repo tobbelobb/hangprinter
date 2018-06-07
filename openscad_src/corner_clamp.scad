@@ -8,24 +8,26 @@ lower_bearing_z = 10;
 higher_bearing_z = lower_bearing_z + Idler_block_bearing_center_to_center;
 tower_h = higher_bearing_z + b623_vgroove_big_r + 4.6;
 w = b623_vgroove_big_r+Bearing_wall+1.4;
-bearing_1_x = b623_vgroove_small_r+w/6;
+bearing_1_x = b623_vgroove_small_r+w/6-0.8;
 
 wall_th = Wall_th;
 x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screws
 l = Depth_of_lineroller_base + 2*b623_vgroove_big_r + 2*Bearing_wall;
 
+foot_shape_r = 1.0;
 
 //corner_clamp_tower();
 module corner_clamp_tower(base_th       = wall_th,
                           bearing_width = b623_width+0.2,
-                          shoulder      = 0.4,
+                          shoulder      = 0.3,
                           with_base     = false,
                           big_y_r1      = 190,
                           big_y_r2      = 43,
                           big_z_r       = 89){
 
   move_tower_x = 2.0;
-  module wall(){
+  module wall(w_local        = w,
+              big_y_r2_local = true){
     // Foot parameters
     c = 10;
     e = 5.52;
@@ -33,7 +35,6 @@ module corner_clamp_tower(base_th       = wall_th,
     round_part = 0.65;
     // Main block
     r2 = b623_bore_r+1.3;
-    foot_shape_r = 1.0;
     f = Depth_of_lineroller_base-w-2*foot_shape_r; // extra x-length for swung wall
 
     b_th = Lineroller_wall_th+e;
@@ -48,15 +49,19 @@ module corner_clamp_tower(base_th       = wall_th,
               translate([tower_h-b623_vgroove_big_r,w/2,0])
                 difference(){
                   translate([-tower_h+b623_vgroove_big_r, -x_len+4.5, -b_th])
-                    cube([tower_h-foot_shape_r, l, b_th]);
+                    if(big_y_r2_local)
+                      cube([tower_h-foot_shape_r, l, b_th]);
+                    else
+                      cube([tower_h-foot_shape_r, l-8.03, b_th]);
                   translate([0,-big_y_r1-w/2,-15])
                     cylinder(r=big_y_r1, h=30, $fn=250);
-                  translate([0,+big_y_r2+w,-15])
-                    cylinder(r=big_y_r2, h=30, $fn=250);
+                  if(big_y_r2_local)
+                    translate([0,big_y_r2+w_local,-15])
+                      cylinder(r=big_y_r2, h=30, $fn=250);
                   translate([top_off_r, -w/2-0.1, -15])
                     rotate([0,0,90])
                       inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
-                  translate([top_off_r, w+0.1, -15])
+                  translate([top_off_r, w_local+0.1, -15])
                     rotate([0,0,180])
                       inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
                   translate([0,0,-big_z_r-Wall_th])
@@ -85,17 +90,17 @@ module corner_clamp_tower(base_th       = wall_th,
         }
       }
   // Edge to prevent line from falling of...
-  a = 1.75;
-  b= 0.8;
+  a = 1.5;
+  b = 0.8;
   rot_r = b623_vgroove_big_r+b;
   translate([move_tower_x,0,0])
-    for(b_pos=[[[bearing_1_x, -bearing_width/2-0.8, higher_bearing_z], 180],
+    for(b_pos=[[[bearing_1_x, -bearing_width/2-0.8, higher_bearing_z], 270],
         [[bearing_1_x, -bearing_width/2-0.8, lower_bearing_z], 0]])
       difference(){
         translate(b_pos[0])
           rotate([-90,b_pos[1],0])
           difference(){
-            rotate_extrude(angle=180,convexity=10, $fn=60)
+            rotate_extrude(angle=90,convexity=10, $fn=60)
               translate([rot_r,0])
               polygon(points = [[0,0], [0,-0.5], [b+a, -0.5], [b+a,0], [b, a], [0, a]]);
             translate([0,0,-1])
@@ -106,8 +111,9 @@ module corner_clamp_tower(base_th       = wall_th,
           rotate([-90,-90,0]){
             translate([0,0,Lineroller_wall_th]){
               translate([tower_h-b623_vgroove_big_r,w/2,0]){
-                translate([0,+big_y_r2+w,-15])
-                  cylinder(r=big_y_r2, h=30, $fn=250);
+                if(big_y_r2_local)
+                  translate([0,+big_y_r2+w,-15])
+                    cylinder(r=big_y_r2, h=30, $fn=250);
                 translate([0,-big_y_r1-w/2,-15])
                   cylinder(r=big_y_r1, h=30, $fn=250);
                 translate([top_off_r, -w/2-0.1, -15])
@@ -127,7 +133,7 @@ module corner_clamp_tower(base_th       = wall_th,
       rotate([0,0,-90])
         difference(){
           union(){
-            wall();
+            wall(w+6, big_y_r2_local=false);
             mirror([0,1,0])
               wall();
             translate([bearing_1_x+1, -(b623_width+2)/2,tower_h-3])
@@ -139,6 +145,7 @@ module corner_clamp_tower(base_th       = wall_th,
   }
 }
 
+//import("../openscad_stl/corner_clamp.stl");
 corner_clamp();
 module corner_clamp(){
   a = 13;
@@ -267,5 +274,5 @@ module corner_clamp(){
 
   xl = 26;
   translate([-xl/2, 19])
-  rounded_cube2([xl,3,wall_th+5],1);
+  rounded_cube2([xl,6,wall_th+4],1,$fn=4*5);
 }
