@@ -8,7 +8,6 @@ use <spool_core.scad>
 use <lineroller_D.scad>
 use <lineroller_ABC_winch.scad>
 use <corner_clamp.scad>
-use <beam_slider_ABC.scad>
 use <beam_slider_D.scad>
 use <util.scad>
 
@@ -246,22 +245,13 @@ module mover(){
     rotate([180,0,k+180]){
       translate([-beam_length/2,-Sidelength/sqrt(12)-sqrt(3), 0]){
         cube([beam_length, Beam_width, Beam_width]);
-        translate([0.3*beam_length, Beam_width/2+Wall_th,Beam_width/2-Wall_th])
-          rotate([0,90,0])
-            rotate([0,0,180])
-              color(color1, color1_alpha)
-                if(stls){
-                  import("../openscad_stl/beam_slider_ABC.stl");
-                } else {
-                  beam_slider_ABC();
-                }
         translate([0.69*beam_length, Beam_width/2+7,Beam_width/2-5])
-              color(color1, color1_alpha)
-                if(stls){
-                  import("../openscad_stl/beam_slider_D.stl");
-                } else {
-                  beam_slider_D();
-                }
+          color(color1, color1_alpha)
+            if(stls){
+              import("../openscad_stl/beam_slider_D.stl");
+            } else {
+              beam_slider_D();
+            }
       }
       translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
         color(color1, color1_alpha)

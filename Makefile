@@ -155,8 +155,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/layout_slicer.scad
 	$(call make_layout_pdf_a4,"../layout.dxf",$@)
 
-$(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
-	$(SRC_DIR)/beam_slider_D.scad \
+$(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/corner_clamp.scad \
 	$(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/Mechaduino_standoff.scad \
@@ -177,8 +176,7 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_ABC.scad \
 	$(SRC_DIR)/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-all: | $(STL_DIR) $(STL_DIR)/beam_slider_ABC.stl \
-	$(STL_DIR)/beam_slider_D.stl \
+all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/corner_clamp.stl \
 	$(STL_DIR)/Mechaduino_standoff.stl \
 	$(STL_DIR)/extruder_holder.stl \
