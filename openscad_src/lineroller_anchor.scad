@@ -7,16 +7,11 @@ l = Depth_of_lineroller_base + 2*b623_vgroove_big_r + 2*Bearing_wall;
 track_l = l;
 head_r = 3.5;
 screw_r = 1.5;
-lower_bearing_z = 13;
-higher_bearing_z = lower_bearing_z + Idler_block_bearing_center_to_center;
 
 x_len = Depth_of_lineroller_base-4; // For the two "wings" with tracks for screws
 y_extra = -2.0; // For the two "wings" with tracks for screws
 
-bearing_0_x = 2*b623_vgroove_big_r+Bearing_wall+5.3;
-bearing_1_x = b623_vgroove_small_r-0.9;
-
-tower_h = higher_bearing_z + b623_vgroove_big_r;
+tower_h = Higher_bearing_z + b623_vgroove_big_r;
 
 //lineroller_tower(with_base=true);
 module lineroller_tower(bearing_width = b623_width+0.2,
@@ -25,7 +20,6 @@ module lineroller_tower(bearing_width = b623_width+0.2,
                         big_y_r1      = 190,
                         big_y_r2      = 36,
                         big_z_r       = 83){
-  move_tower = -12.2;
   module wall(){
     // Foot parameters
     c = 10;
@@ -41,7 +35,7 @@ module lineroller_tower(bearing_width = b623_width+0.2,
     b_th = Lineroller_wall_th+e;
     top_off_r = b623_vgroove_small_r;
 
-  translate([move_tower, -(bearing_width + 2*Wall_th)/2, 0])
+  translate([Move_tower, -(bearing_width + 2*Wall_th)/2, 0])
       rotate([-90,-90,0]){
         difference(){
           union(){
@@ -68,38 +62,38 @@ module lineroller_tower(bearing_width = b623_width+0.2,
                     cube([base_th, w+f+2*foot_shape_r+20, 30]);
                 }
               // Check if bearing fits
-              //#translate([lower_bearing_z ,bearing_1_x, Lineroller_wall_th])
+              //#translate([Lower_bearing_z ,Bearing_1_x, Lineroller_wall_th])
               //  cylinder(r1  = b623_vgroove_big_r,
               //           r2  = b623_vgroove_small_r,
               //           h   = b623_width/2+0.3,
               //           $fn = 5*10);
-              translate([lower_bearing_z, bearing_1_x, 0]){
+              translate([Lower_bearing_z, Bearing_1_x, 0]){
                 cylinder(r=r2, h=Lineroller_wall_th+shoulder, $fs=1);
                 dpth=3;
                 translate([0,0,-dpth])
                   hexagon_for_nut(h=dpth);
               }
-              translate([higher_bearing_z, bearing_0_x, 0]){
+              translate([Higher_bearing_z, Bearing_0_x, 0]){
                 cylinder(r=r2, h=Lineroller_wall_th+shoulder, $fs=1);
                 dpth=1.5;
                 translate([0,0,-dpth])
                   hexagon_for_nut(h=dpth);
               }
               // Check if bering fits
-              //#translate([higher_bearing_z ,bearing_0_x, Lineroller_wall_th])
+              //#translate([Higher_bearing_z ,Bearing_0_x, Lineroller_wall_th])
               //  cylinder(r1  = b623_vgroove_big_r,
               //           r2  = b623_vgroove_small_r,
               //           h   = b623_width/2+0.3,
               //           $fn = 5*10);
-              translate([higher_bearing_z ,bearing_1_x, Lineroller_wall_th])
+              translate([Higher_bearing_z ,Bearing_1_x, Lineroller_wall_th])
                 cylinder(r1  = b623_vgroove_big_r,
                          r2  = b623_vgroove_small_r,
                          h   = b623_width/2+0.3,
                          $fn = 5*10);
           }
-          translate([lower_bearing_z,bearing_1_x,-7])
+          translate([Lower_bearing_z,Bearing_1_x,-7])
             cylinder(d=b623_bore_r*2+0.3, h=Lineroller_wall_th+12, $fs=1);
-          translate([higher_bearing_z,bearing_0_x,-1])
+          translate([Higher_bearing_z,Bearing_0_x,-1])
             cylinder(d=b623_bore_r*2+0.3, h=Lineroller_wall_th+0.5+2, $fs=1);
         }
       }
@@ -107,9 +101,9 @@ module lineroller_tower(bearing_width = b623_width+0.2,
     a = 1.65;
     b= 0.8;
     rot_r = b623_vgroove_big_r+b;
-    translate([move_tower,0,0])
-    for(b_pos=[[[bearing_0_x, -bearing_width/2-0.8, higher_bearing_z],[0,120]],
-               [[bearing_1_x, -bearing_width/2-0.8, lower_bearing_z], [0,60]]])
+    translate([Move_tower,0,0])
+    for(b_pos=[[[Bearing_0_x, -bearing_width/2-0.8, Higher_bearing_z],[0,120]],
+               [[Bearing_1_x, -bearing_width/2-0.8, Lower_bearing_z], [0,60]]])
     difference(){
       translate(b_pos[0])
         rotate([-90,0,0])
@@ -135,7 +129,7 @@ module lineroller_tower(bearing_width = b623_width+0.2,
       translate([0, -(bearing_width + 2*Wall_th)/2, 0])
         rotate([-90,-90,0])
         translate([0,0,Lineroller_wall_th])
-        translate([higher_bearing_z,w/2,0])
+        translate([Higher_bearing_z,w/2,0])
         translate([0,+big_y_r2+w,-15])
         cylinder(r=big_y_r2, h=30, $fn=250);
     }
@@ -146,7 +140,7 @@ module lineroller_tower(bearing_width = b623_width+0.2,
       mirror([0,1,0])
         wall();
     }
-    translate([move_tower+bearing_1_x-3.7,0,higher_bearing_z+1])
+    translate([Move_tower+Bearing_1_x-3.7,0,Higher_bearing_z+1])
       difference(){
         cylinder(r=3.7, h=8, $fn=40);
         cylinder(r=2.0, h=10, $fn=40);

@@ -66,6 +66,8 @@ b623_bore_r = 3/2;
 b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 Lineroller_wall_th = 2.3;
+
+
 // The height that lineroller_ABC_winch will have if we include the bearing
 Tower_h = Gap_between_sandwich_and_plate+Gear_height
          + Spool_height/2
@@ -80,3 +82,13 @@ Screw_h = 2;
 Screw_head_h = 2;
 Spool_center_bearing_wall_th = 5;
 Idler_block_bearing_center_to_center = 15;
+
+//// Lineroller anchor parameters /////
+
+Bearing_0_x = 2*b623_vgroove_big_r+Bearing_wall+5.3;
+Bearing_1_x = b623_vgroove_small_r-0.9;
+Move_tower = -12.2;
+Lower_bearing_z = 13;
+Higher_bearing_z = Lower_bearing_z + Idler_block_bearing_center_to_center;
+
+

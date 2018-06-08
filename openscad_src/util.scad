@@ -406,3 +406,36 @@ module chamfer45(v0, h){
   linear_extrude(height=h, slices=1, convexity=2, scale=[(v0[0]-2*h)/v0[0], (v0[1]-2*h)/v0[1]])
     square(v0, center=true);
 }
+
+module line_from_to(v0, v1, r = 1.0){
+  v2 = v1 - v0;
+  color("yellow")
+    if(len(v2) == 3){
+      v2l = sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
+      v2n = v2/v2l;
+      theta = acos(v2n[2]);
+      phi   = acos(v2n[1]/sqrt(v2n[1]*v2n[1] + v2n[0]*v2n[0]));
+      //echo(theta);
+      //echo(phi);
+      translate(v0)
+        if(v2n[0] < 0){
+          rotate([-theta,0,phi])
+            cylinder(r=r, h=v2l);
+        } else {
+          rotate([-theta,0,-phi])
+            cylinder(r=r, h=v2l);
+        }
+    } else {
+      v2l = sqrt(v2[0]*v2[0] + v2[1]*v2[1]);
+      v2n = v2/v2l;
+      phi   = acos(v2n[1]/sqrt(v2n[1]*v2n[1] + v2n[0]*v2n[0]));
+      translate(v0)
+        if(v2n[0] < 0){
+          rotate([-90,0,phi])
+            cylinder(r=r, h=v2l);
+        } else {
+          rotate([-90,0,-phi])
+            cylinder(r=r, h=v2l);
+        }
+    }
+}
