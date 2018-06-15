@@ -876,8 +876,8 @@
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
 #define INVERT_A_DIR false
-#define INVERT_B_DIR false
-#define INVERT_C_DIR true
+#define INVERT_B_DIR true
+#define INVERT_C_DIR false
 #define INVERT_D_DIR false
 
 #define INVERT_X_DIR INVERT_A_DIR
