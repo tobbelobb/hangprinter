@@ -15,5 +15,7 @@ module motor_bracket_2d(){
     rotate([0,0,Motor_bracket_att_ang])
       translate([-(Spool_pitch+Motor_pitch),0])
         circle(r=Spool_outer_radius+1.5, center=true, $fn = 50);
+    translate([4,13])
+    text("-+", 12);
   }
 }

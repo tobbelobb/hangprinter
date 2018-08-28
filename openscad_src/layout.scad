@@ -18,8 +18,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-//twod = true;
-twod = false;
+twod = true;
+//twod = false;
 
 mounted_in_ceiling = true;
 //mounted_in_ceiling = false;
@@ -236,6 +236,42 @@ module full_winch(){
 
   color(color0, color0_alpha)
     top_plate();
+
+  if(twod){
+    // PSU
+    translate([160,-282])
+	  difference(){
+        square([100,200]);
+        translate([0,181])
+          text("++--", 21);
+          translate([56,70])
+          rotate([0,0,90])
+            text("PSU", 21);
+      }
+    // RAMPS
+    translate([150,-21])
+	  difference(){
+        square([110,60]);
+        translate([17,0])
+        rotate([0,0,90])
+          text("-+", 21);
+          translate([25,21])
+            text("RAMPS",15);
+      }
+    // Breadboard for i2c logic converter
+    translate([84,-80])
+      difference(){
+        square([35, 45]);
+        translate([10,2])
+        rotate([0,0,90]){
+          text("i2c level", 6);
+          translate([0,-9])
+            text("converter", 6);
+          translate([0,-2*9])
+            text("breadboard", 6);
+        }
+    }
+  }
 }
 
 if(mover && !twod)
