@@ -155,6 +155,21 @@ module three_rounded_cube3(v, r){
   }
 }
 
+//round_ends_alt_2d(5, 20);
+module round_ends_alt_2d(d, l){
+  between = l - d;
+  translate([-d/2, -between/2, 0]) square([d, between]);
+  translate([   0,  between/2, 0]) circle(d = d);
+  translate([   0, -between/2, 0]) circle(d = d);
+}
+
+//round_ends_alt(5, 20, 2);
+module round_ends_alt(d, l, h){
+  linear_extrude(height = h, slices=1, convexity=2)
+    round_ends_alt_2d(d, l);
+}
+
+
 module rounded_square(v, r){
   union(){
     translate([r,0])           square([v[0]-2*r, v[1]]);
@@ -239,24 +254,33 @@ module Nema17_screw_holes(d, h, corners=4, teardrop=false){
       cylinder(r=d/2,h=h);
 }
 
+module round_end2d(v){
+  v = (v[0] == undef) ? [v, v] : v;
+  square([v[0]-v[1]/2, v[1]]);
+  translate([v[0]-v[1]/2, v[1]/2,0]) circle(d=v[1]);
+}
+
 // Looks best with $fn = n*8
 //round_end([45,41,8]);
 module round_end(v){
   v = (v[0] == undef) ? [v, v] : v;
-  cube([v[0]-v[1]/2, v[1], v[2]]);
-  translate([v[0]-v[1]/2, v[1]/2,0])
-    cylinder(d=v[1], h=v[2]);
+  linear_extrude(height = v[2], slices = 1, convexity = 2)
+    round_end2d([v[0], v[1]]);
+}
+
+//round_ends2d([56,41]);
+module round_ends2d(v){
+  v = (v[0] == undef) ? [v, v] : v;
+  translate([     v[1]/2,      0, 0]) square([v[0]-v[1], v[1]]);
+  translate([v[0]-v[1]/2, v[1]/2, 0]) circle(d=v[1]);
+  translate([     v[1]/2, v[1]/2, 0]) circle(d=v[1]);
 }
 
 //round_ends([56,41,8]);
 module round_ends(v){
   v = (v[0] == undef) ? [v, v] : v;
-  translate([v[1]/2,0,0])
-    cube([v[0]-v[1], v[1], v[2]]);
-  translate([v[0]-v[1]/2, v[1]/2,0])
-    cylinder(d=v[1], h=v[2]);
-  translate([v[1]/2, v[1]/2,0])
-    cylinder(d=v[1], h=v[2]);
+  linear_extrude(height = v[2], slices = 1, convexity = 2)
+    round_ends2d([v[0], v[1]]);
 }
 
 // Looks best with $fn = n*4

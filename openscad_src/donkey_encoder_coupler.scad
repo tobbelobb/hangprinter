@@ -1,59 +1,17 @@
 use <util.scad>
-
-Donkey_shaft_d = 6;
-Encoder_LDP3806_shaft_d = 6;
-Donkey_h = 65.12;
-
-//donkey();
-module donkey(){
-  module hole(d, l, h){
-    between = l - d;
-    for(k=[1,-1])
-      translate([0, k*between/2, 0])
-        cylinder(d = d, h=h);
-    translate([-d/2, -between/2, 0])
-      cube([d, between, h]);
-  }
-
-  difference(){
-    cylinder(d = 73,h = 12);
-    translate([0,0,3.5])
-    rotate_extrude()
-      translate([73/2-9.6,0])
-      square(12);
-    for(rot=[0:90:359])
-      rotate([0,0,rot]){
-        translate([5,5,-1])
-          rounded_cube2([73,73,12+2], 10, $fn=4*7);
-        translate([0,56/2 + 6/2,-1])
-          hole(4.5, 6, 3.5 + 2, $fn=14);
-      }
-    translate([0,0,-1])
-      cylinder(d = 46, h = 8.7 + 1);
-  }
-  translate([0, 0, 13.3]){
-    color("dimgray"){
-      cylinder(d = 50, h = 23);
-      cylinder(d = 18, h = 23 + 5.6);
-    }
-    cylinder(d = Donkey_shaft_d, h = 23 + 5.6 + 23.22);
-  }
-}
+use <donkey.scad>
+include <parameters.scad>
 
 //encoder_LDP3806();
 module encoder_LDP3806(){
   difference(){
     union(){
       color("slategrey")
-        cylinder(d = 38, h = 32);     // black body
+        cylinder(d = Encoder_LDP3806_d, h = 32);     // black body
       translate([0,0,1])
-        cylinder(d = 38 - 0.1, h = 34-1); // shiny body
+        cylinder(d = Encoder_LDP3806_d - 0.1, h = 34-1); // shiny body
     }
-    for(rot=[0:120:359])
-      rotate([0,0,rot])
-        for(k=[1,-1])
-          translate([14, k*7.5/2, 34 - 10])
-            cylinder(d=3, h=11); // screw holes
+    encoder_screw_holes();
   }
   translate([0,0,1]){
     difference(){

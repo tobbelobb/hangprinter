@@ -92,3 +92,18 @@ Lower_bearing_z = 13;
 Higher_bearing_z = Lower_bearing_z + Idler_block_bearing_center_to_center;
 
 
+//// Donkey and encoder parameters /////
+
+Donkey_shaft_d = 6;
+Donkey_h = 65.12;
+Donkey_body_d = 50;
+Donkey_feet_th = 3.5;
+
+Encoder_LDP3806_shaft_d = 6;
+Encoder_LDP3806_d = 38;
+
+
+//// Cable Clamp parameters /////
+
+Bit_width = 12;
+Cable_r=2.5;
