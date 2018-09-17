@@ -297,6 +297,17 @@ module quarterround_wall(v){
   }
 }
 
+module inner_round_corner2d(r, ang=90, back = 0.1){
+  cx = r*(1-cos(ang/2+45));
+  translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45))])
+  difference(){
+    translate([-back, -back, 0])
+    square([cx+back, cx+back]);
+    translate([r,r,-1])
+      circle(r=r);
+  }
+}
+
 //translate([0,-13*(1-cos(60/2+45)) + 13*(1-sin(60/2+45)),0])
 //inner_round_corner(13, 2, 60);
 module inner_round_corner(r, h, ang=90, back = 0.1){

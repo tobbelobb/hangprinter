@@ -19,7 +19,8 @@ module donkey_screw_hole_translate(){
   for(rot=[0:90:359])
     rotate([0,0,rot])
       translate([0,56/2 + 6/2,-1])
-        children();
+        rotate([0,0,-rot])
+          children();
 }
 
 module donkey_screw_holes(){
