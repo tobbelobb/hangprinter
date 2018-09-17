@@ -103,7 +103,7 @@ module encoder_face(){
     translate([-hole_to_hole_l/2, -Encoder_LDP3806_d/2, 0])
       translate([box_depth_encoder,0,0])
       rotate([0,-90,0])
-      right_rounded_cube2([the_height, Encoder_LDP3806_d, box_depth_encoder], 14);
+      right_rounded_cube2([the_height, Encoder_LDP3806_d, box_depth_encoder], 13);
     translate([-hole_to_hole_l/2 + box_depth_encoder,0,0])
       rotate([0,-90+atan(the_height/(box_depth_encoder - th)),0])
       translate([0,-(Encoder_LDP3806_d + 2)/2, 0])
