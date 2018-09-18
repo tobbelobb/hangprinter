@@ -256,7 +256,7 @@ module full_winch(){
         rotate([0,0,90])
           text("-+", 21);
           translate([25,21])
-            text("RAMPS",15);
+            text("Controller",13);
       }
     // Breadboard for i2c logic converter
     translate([84,-80])
