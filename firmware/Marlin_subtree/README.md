@@ -1,3 +1,8 @@
+# Hangprinter Note
+This is a version of Marlin that is tested and should run fairly stable on a Hangprinter.
+For the latest fixes, features, and developments, use the [bugfix-1.1.x branch of stock Marlin](https://github.com/marlinfirmware/Marlin/tree/bugfix-1.1.x), which now
+includes official support for Hangprinter.
+
 # Marlin 3D Printer Firmware
 
 [![Build Status](https://travis-ci.org/MarlinFirmware/Marlin.svg?branch=RCBugFix)](https://travis-ci.org/MarlinFirmware/Marlin)
