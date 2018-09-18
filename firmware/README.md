@@ -1,9 +1,9 @@
 ## State of Hangprinter v3 firmware as of Sep 18, 2018
 
 ### Marlin
-The version of Marlin in this directory is tested and to run fairly stable on a Hangprinter v3.
-For the latest fixes, features, and developments, use the [bugfix-1.1.x branch of stock Marlin](https://github.com/marlinfirmware/Marlin/tree/bugfix-1.1.x), which now
-includes official support for Hangprinter.
+Hangprinter support was merged into Marlin's develpopment branch on Sep 9, 2018.
+In this repo you'll find a copy of that development branch.
+At the time of writing this, Hangprinter support has not been included in any Marlin releases yet, so we use the dev branch for now.
 
 ### Smart Stepper
 Smart Stepper is a development of the Mechaduino board, capable of advanced closed loop stepper motor control.
@@ -11,11 +11,10 @@ The Smart Stepper boards provide Hangprinter with closed loop control (no skippe
 procedure.
 
 ### No Mechaduino?
-The Mechaduino board is very good, but the Smart Stepper board is even better.
 It is recommended to use the SmartStepper firmware even if you have Mechaduino hardware.
 The Mechaduino firmware contained bugs that degraded Hangprinter accuracy slightly (see [this snippet](https://gitlab.com/snippets/1752083) for details).
 
-To compile for a Mechaduino board, you might have to uncomment
+To compile Smart Stepper Firmware for a Mechaduino board, you uncomment
 ```
 #define MECHADUINO_HARDWARE
 ```

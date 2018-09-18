@@ -1,3 +1,9 @@
+# Hangprinter Note
+This directory contains a plain copy of stock Marlin's (bugfix-1.1.x branch the way it looked on Sep 18, 2018)[https://github.com/MarlinFirmware/Marlin/tree/5b8dc39506f7a739c827f16af38bc0e37f2e4187].
+The only modification made, is that Hangprinter's example configuration files have been set as the default ones.
+
+For submitting pull requests and finding more up to date Marlin code, refer to (the proper Marlin repo)[https://github.com/MarlinFirmware/Marlin].
+
 # Marlin 3D Printer Firmware
 
 [![Build Status](https://travis-ci.org/MarlinFirmware/Marlin.svg?branch=RCBugFix)](https://travis-ci.org/MarlinFirmware/Marlin)
