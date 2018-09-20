@@ -97,6 +97,17 @@ module right_rounded_cube2(v, r){
   }
 }
 
+ydir_rounded_cube2([20,30,2], 2);
+module ydir_rounded_cube2(v, r){
+  $fs = 1;
+  union(){
+                                 cube([v[0]   , v[1]-r, v[2]]);
+    translate([r,0,0])           cube([v[0]-2*r, v[1] , v[2]]);
+    translate([r,v[1]-r,0])      cylinder(h=v[2], r=r);
+    translate([v[0]-r,v[1]-r,0]) cylinder(h=v[2], r=r);
+  }
+}
+
 //left_rounded_cube2([20,30,2], 2);
 module left_rounded_cube2(v, r){
   $fs = 1;

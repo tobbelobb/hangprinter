@@ -65,6 +65,7 @@ b623_width  = 4;
 b623_bore_r = 3/2;
 b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
+b623_outer_dia = 10;
 Lineroller_wall_th = 2.3;
 
 
