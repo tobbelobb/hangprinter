@@ -62,28 +62,20 @@ module rounded_cube(v, r, center=false){
   }
 }
 
+module rounded_cube2_2d(v, r){
+  $fs = 1;
+  translate([r,0])           square([v[0]-2*r, v[1]    ]);
+  translate([0,r])           square([v[0]    , v[1]-2*r]);
+  translate([r,r])           circle(r=r);
+  translate([v[0]-r,r])      circle(r=r);
+  translate([v[0]-r,v[1]-r]) circle(r=r);
+  translate([r,v[1]-r])      circle(r=r);
+}
+
 //rounded_cube2([20,30,2], 2);
 module rounded_cube2(v, r){
-  $fs = 1;
-  if(v[2]){
-    union(){
-      translate([r,0,0])           cube([v[0]-2*r, v[1]    , v[2]]);
-      translate([0,r,0])           cube([v[0]    , v[1]-2*r, v[2]]);
-      translate([r,r,0])           cylinder(h=v[2], r=r);
-      translate([v[0]-r,r,0])      cylinder(h=v[2], r=r);
-      translate([v[0]-r,v[1]-r,0]) cylinder(h=v[2], r=r);
-      translate([r,v[1]-r,0])      cylinder(h=v[2], r=r);
-    }
-  } else {
-    union(){
-      translate([r,0])           square([v[0]-2*r, v[1]    ]);
-      translate([0,r])           square([v[0]    , v[1]-2*r]);
-      translate([r,r])           circle(r=r);
-      translate([v[0]-r,r])      circle(r=r);
-      translate([v[0]-r,v[1]-r]) circle(r=r);
-      translate([r,v[1]-r])      circle(r=r);
-    }
-  }
+  linear_extrude(height = v[2], slices = 1, convexity = 2)
+    rounded_cube2_2d([v[0], v[1]], r);
 }
 
 //right_rounded_cube2([20,30,2], 2);
@@ -97,7 +89,7 @@ module right_rounded_cube2(v, r){
   }
 }
 
-ydir_rounded_cube2([20,30,2], 2);
+//ydir_rounded_cube2([20,30,2], 2);
 module ydir_rounded_cube2(v, r){
   $fs = 1;
   union(){
@@ -392,11 +384,16 @@ module nutlock(){
   cylinder(d=3.5,h=16);
 }
 
+
+module nut(h){
+  cylinder(d=5.6/cos(30), h, $fn=6);
+}
+
 module hexagon_for_nut(h = 1.5){
   difference(){
     cylinder(d=5.6/cos(30)+2, h=h, $fn=6);
     translate([0,0,-1])
-    cylinder(d=5.6/cos(30), h=h+2, $fn=6);
+      nut(h+2);
   }
 }
 

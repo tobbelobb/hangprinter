@@ -5,7 +5,7 @@ use <util.scad>
 //import("../openscad_stl/lineroller_anchor.stl");
 
 lower_bearing_z = 10;
-higher_bearing_z = lower_bearing_z + Idler_block_bearing_center_to_center;
+higher_bearing_z = lower_bearing_z + Corner_clamp_bearings_center_to_center;
 tower_h = higher_bearing_z + b623_vgroove_big_r + 4.6;
 w = b623_vgroove_big_r+Bearing_wall+1.4;
 bearing_1_x = b623_vgroove_small_r+w/6-0.8;

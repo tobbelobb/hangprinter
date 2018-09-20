@@ -82,7 +82,8 @@ Lineroller_base_r = Depth_of_lineroller_base/2-1*(Ptfe_r+2);
 Screw_h = 2;
 Screw_head_h = 2;
 Spool_center_bearing_wall_th = 5;
-Idler_block_bearing_center_to_center = 15;
+Corner_clamp_bearings_center_to_center = 15;
+Anchor_bearings_center_to_center = Corner_clamp_bearings_center_to_center + b623_outer_dia;
 
 //// Lineroller anchor parameters /////
 
@@ -90,7 +91,7 @@ Bearing_0_x = 2*b623_vgroove_big_r+Bearing_wall+5.3;
 Bearing_1_x = b623_vgroove_small_r-0.9;
 Move_tower = -12.2;
 Lower_bearing_z = 13;
-Higher_bearing_z = Lower_bearing_z + Idler_block_bearing_center_to_center;
+Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
 
 
 //// Donkey and encoder parameters /////
