@@ -55,3 +55,29 @@ module donkey(){
     cylinder(d = Donkey_shaft_d, h = 23 + 5.6 + 23.22);
   }
 }
+
+//encoder_LDP3806();
+module encoder_LDP3806(){
+  difference(){
+    union(){
+      color("slategrey")
+        cylinder(d = Encoder_LDP3806_d, h = 32);     // black body
+      translate([0,0,1])
+        cylinder(d = Encoder_LDP3806_d - 0.1, h = 34-1); // shiny body
+    }
+    encoder_screw_holes();
+  }
+  translate([0,0,1]){
+    difference(){
+      cylinder(d = 20, h = 34 + 5 - 1);
+      translate([0, 0, 34 + 5 - 1.5])
+        cylinder(d = 15, h = 10 - 1);  // down to bearing
+    }
+    difference(){
+      cylinder(d = Encoder_LDP3806_shaft_d, h = 51.3 - 1, $fn=20); // shaft
+      translate([-2, 2.5, 51.3 - 10 - 1])
+        cube([4,2,10 + 1]);              // D-side of shaft
+    }
+  }
+}
+
