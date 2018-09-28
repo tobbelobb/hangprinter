@@ -313,15 +313,26 @@ module inner_round_corner2d(r, ang=90, back = 0.1){
 
 //translate([0,-13*(1-cos(60/2+45)) + 13*(1-sin(60/2+45)),0])
 //inner_round_corner(13, 2, 60);
-module inner_round_corner(r, h, ang=90, back = 0.1){
+module inner_round_corner(r, h, ang=90, back = 0.1, center=false){
   cx = r*(1-cos(ang/2+45));
-  translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45)),0])
-  difference(){
-    translate([-back, -back, 0])
-    cube([cx+back, cx+back, h]);
-    translate([r,r,-1])
-      cylinder(r=r, h=h+2);
-  }
+  if(center)
+    translate([-r + r*(1-sin(ang/2+45)),
+               -r + r*(1-sin(ang/2+45)), 0])
+    translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45)),0])
+    difference(){
+      translate([-back, -back, 0])
+      cube([cx+back, cx+back, h]);
+      translate([r,r,-1])
+        cylinder(r=r, h=h+2);
+    }
+  else
+    translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45)),0])
+    difference(){
+      translate([-back, -back, 0])
+      cube([cx+back, cx+back, h]);
+      translate([r,r,-1])
+        cylinder(r=r, h=h+2);
+    }
 }
 
 module Nema17(){
