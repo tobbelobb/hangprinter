@@ -31,10 +31,8 @@ module spool_outer(spools = 1){
   }
 }
 
-//spool(30); // Rotate just to match previous version
-module spool(rot){
-  rotate([0,0,rot]){
-    spool_outer();
-    spool_center();
-  }
+spool(); // Rotate just to match previous version
+module spool(){
+  spool_outer();
+  spool_center();
 }

@@ -1,5 +1,5 @@
 // Parameters shared between modules
-Base_th = 2.8;
+Base_th = 4;
 Beam_width = 15;
 Wiggle = 0.25;
 Fat_beam_width = Beam_width + Wiggle;
@@ -56,8 +56,7 @@ Spool_height = 8;
 Spool_pitch                      = (Spool_teeth*Circular_pitch/360);
 Spool_pitch_diametrial           = Spool_teeth/(2*Spool_pitch);
 Spool_outer_radius               = Spool_pitch + 1/Spool_pitch_diametrial;
-Sep_disc_radius = 80;
-Torx_depth = 5;
+Sep_disc_radius = 161.83/2; // Made to match 255 teeth gt2 pulley
 Motor_bracket_depth = Gear_height+1+7+Nema17_ring_height+1+Gap_between_sandwich_and_plate;
 Spool_core_flerp0 = 16+3;
 
@@ -79,7 +78,7 @@ Bearing_wall = 1;
 Depth_of_lineroller_tower = b623_width + 2*Wall_th; // 9
 Depth_of_lineroller_base = Depth_of_lineroller_tower + 9; // 18
 Ptfe_r = 2.1;
-Lineroller_base_r = Depth_of_lineroller_base/2-1*(Ptfe_r+2);
+Lineroller_base_r = 8;
 Screw_h = 2;
 Screw_head_h = 2;
 Spool_center_bearing_wall_th = 5;
@@ -107,6 +106,13 @@ Encoder_LDP3806_d = 38;
 
 
 //// Cable Clamp parameters /////
-
 Bit_width = 12;
 Cable_r=2.5;
+
+GT2_belt_width = 6;
+GT2_gear_height = GT2_belt_width + 2;
+GT2_spool_gear_teeth = 252;
+GT2_teeth = 255;
+GT2_tensioner_h = 36;
+Torx_depth = GT2_gear_height/2;
+
