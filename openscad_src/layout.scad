@@ -11,6 +11,7 @@ use <lineroller_ABC_winch.scad>
 use <corner_clamp.scad>
 use <beam_slider_D.scad>
 use <util.scad>
+use <donkey_bracket.scad>
 
 // Viewing STLs is faster when just looking at the model
 // Non-stls are faster for previews when changing design
@@ -78,118 +79,44 @@ module placed_lineroller_D(angs=[-63,60,3.5]){
 //translate([0,0,Gap_between_sandwich_and_plate])
 //sandwich();
 module sandwich(){
-  color(color2, color2_alpha)
-  if(stls){
-    import("../openscad_stl/spool_gear.stl");
-  } else {
-    spool_gear();
+  translate([0,0,Spool_height + 0.1]){
+    color(color2, color2_alpha)
+      if(stls){
+        import("../openscad_stl/spool_gear_GT2.stl");
+      } else {
+        spool_gear();
+      }
+    color(color1, color1_alpha)
+      translate([0,0,GT2_gear_height+Spool_height+1+0.1])
+      rotate([0,180,0]){
+        if(stls){
+          import("../openscad_stl/spool.stl");
+        } else {
+          spool();
+        }
+      }
   }
   color(color1, color1_alpha)
-  translate([0,0,Gear_height+Spool_height+1+0.1])
-    rotate([0,180,0]){
-      if(stls){
-        import("../openscad_stl/spool.stl");
-      } else {
-        spool();
-      }
+    if(stls){
+      import("../openscad_stl/spool.stl");
+    } else {
+      spool();
     }
 }
 
-//winch_unit(motor_a=0);
-module winch_unit(l=[100,100,100], motor_a=0, with_motor=true, lines=1, angs=[0,120,240], clockwise = 1, letter="A"){
+!abc_sandwich_and_donkey();
+module abc_sandwich_and_donkey(){
   if(!twod)
-    translate([0,0,Gap_between_sandwich_and_plate])
+    translate([0,0,Sep_disc_radius+Gap_between_sandwich_and_plate])
+      rotate([90,0,0])
       sandwich();
-  rotate([0,0,motor_a]){
-    translate([0,Motor_pitch+Spool_pitch+0.5,0]){
-      if(!twod)
-        rotate([0,0,18])
-          translate([0,0,Gap_between_sandwich_and_plate-0.5]) // 0.5 since motor gear is 1 mm higher than spool gear
-            color(color1, color1_alpha+0.1)
-              if(stls){
-                import("../openscad_stl/motor_gear.stl");
-              } else {
-                motor_gear();
-              }
-      if(twod)
-        rotate([0,0,90-Motor_bracket_att_ang])
-          translate([0,(Wall_th+0.5)/2])
-            motor_bracket_2d();
-      else {
-        translate([0,0,Motor_bracket_depth]){
-          if(with_motor){
-            translate([0,0,Nema17_cube_height]){
-              rotate([0,180,40]){
-                Nema17();
-              }
-            }
-          }
-          rotate([90,0,90-Motor_bracket_att_ang]){
-            color(color2, color2_alpha-0.2){
-              translate([0,0,-(Wall_th+0.5)/2])
-                if(stls){
-                  import("../openscad_stl/motor_bracket.stl");
-                } else {
-                  motor_bracket();
-                }
-            }
-          }
-        }
-      }
-    }
+  translate([120,-6,0])
+  rotate([0,0,90]){
+    color([0.15,0.15,0.15],0.8)
+      to_be_mounted();
+    color(color2, color2_alpha)
+      donkey_bracket();
   }
-  if(!twod)
-    translate([0,0,Gear_height+Spool_height/2+Gap_between_sandwich_and_plate])
-      for(i=[1:lines])
-        rotate([0,0,angs[i-1]])
-          translate([clockwise*Spool_r,0,0])
-          rotate([90,0,0])
-          color("yellow")
-          cylinder(r=0.9, h=l[i-1]);
-  else
-    difference(){
-      translate([0,0]){
-        for(i=[1:lines])
-          rotate([0,0,angs[i-1]]){
-            translate([clockwise*Spool_r-0.5,-l[i-1],0]){
-              square([1, l[i-1]]);
-            }
-          }
-            difference(){
-              circle(r=Spool_r+0.5);
-              circle(r=Spool_r-0.5);
-            }
-          }
-          spool_core(twod=twod, letter=letter);
-    }
-
-  color(color2)
-    if(stls && !twod)
-      import("../openscad_stl/spool_core.stl");
-    else
-      difference(){
-        spool_core(twod=twod, letter=letter);
-        translate([0,0]){
-          for(i=[1:lines])
-            rotate([0,0,angs[i-1]]){
-              translate([clockwise*Spool_r-0.5,-l[i-1],0]){
-                square([1, l[i-1]]);
-              }
-            }
-          difference(){
-            circle(r=Spool_r+0.5);
-            circle(r=Spool_r-0.5);
-          }
-          for(v=[0:120:359])
-            rotate([0,0,v])
-              translate([Spool_r*clockwise,0]){
-                rotate([0,0,45])
-                  square([1,10]);
-                rotate([0,0,-45])
-                  square([1,10]);
-          }
-        }
-      }
 }
 
 //abc_winch();
@@ -201,7 +128,7 @@ module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1, letter="A
     } else {
       lineroller_ABC_winch(the_wall=false, with_base=true, twod=twod);
     }
-  winch_unit(with_motor=with_motor,l=[dist+12],motor_a=motor_a-clockwise*_motor_ang, angs=[90,0,0], clockwise=clockwise, letter=letter);
+  abc_sandwich_and_donkey(with_motor=with_motor,l=[dist+12],motor_a=motor_a-clockwise*_motor_ang, angs=[90,0,0], clockwise=clockwise, letter=letter);
 }
 
 if(mounted_in_ceiling && !twod){
@@ -217,8 +144,7 @@ module full_winch(){
   //translate([-Ext_sidelength/2+edg,-Ext_sidelength/2+55,0])
   translate([-Ext_sidelength/2+Spool_outer_radius,
              -Ext_sidelength/2+Yshift_top_plate+Spool_outer_radius,0])
-    winch_unit(l=[185,339,534], motor_a=-110-_motor_ang, a=-6.6, lines=3, angs=[60,176.75,123.85],
-      letter="D");
+    abc_sandwich_and_donkey();
   // A
   translate([-136,-7,0])
     rotate([0,0,90])
