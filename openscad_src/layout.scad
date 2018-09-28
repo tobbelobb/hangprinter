@@ -21,12 +21,12 @@ stls = true;
 //twod = true;
 twod = false;
 
-mounted_in_ceiling = true;
-//mounted_in_ceiling = false;
+//mounted_in_ceiling = true;
+mounted_in_ceiling = false;
 
 // Render the mover
-mover = true;
-//mover = false;
+//mover = true;
+mover = false;
 
 bottom_triangle = false;
 //bottom_triangle = true;
@@ -389,10 +389,11 @@ module lr(){
                    +between_action_points_z],  r=0.75,$fn=6);
 }
 
-for(i=[0:120:359])
-  rotate([0,0,-90+i])
-    translate([ANCHOR_A_Y,0,0])
-ABC_anchor();
+if(mounted_in_ceiling)
+  for(i=[0:120:359])
+    rotate([0,0,-90+i])
+      translate([ANCHOR_A_Y,0,0])
+        ABC_anchor();
 module ABC_anchor(){
   for(k=[0,1])
     mirror([0,k,0])
