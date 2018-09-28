@@ -31,7 +31,7 @@ module to_be_mounted(){
 box_depth_donkey = hole_to_hole_l/4+11-4;
 box_depth_encoder = hole_to_hole_l/4;
 
-donkey_face();
+//donkey_face();
 module donkey_face(){
   tr_x = (hole_to_hole_l/2 - box_depth_donkey) - Donkey_feet_th;
   difference(){
@@ -96,7 +96,7 @@ module donkey_face(){
 }
 
 
-encoder_face();
+//encoder_face();
 module encoder_face(){
   the_height = shaft_mid_h-10;
   difference(){
@@ -135,7 +135,7 @@ module encoder_face(){
   }
 }
 
-plate();
+//plate();
 module plate(){
   a = hole_to_hole_l/2;
   b = box_depth_encoder;
@@ -197,4 +197,11 @@ module plate(){
                  0])
         bit(); // Wood screw holes donkey
     }
+}
+
+donkey_bracket();
+module donkey_bracket(){
+  donkey_face();
+  encoder_face();
+  plate();
 }
