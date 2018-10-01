@@ -16,14 +16,14 @@ module to_be_mounted(){
   translate([hole_to_hole_l/2, 0, shaft_mid_h])
     rotate([0,-90,0])
     rotate([0,0,0])
-    import("../openscad_stl/donkey.stl");
+    import("../stl/donkey.stl");
     //donkey();
 
   translate([-hole_to_hole_l/2, 0, shaft_mid_h])
     rotate([0,90,0])
     rotate([0,0,45])
     translate([0,0,-34])
-    import("../openscad_stl/donkey_encoder.stl");
+    import("../stl/donkey_encoder.stl");
     //donkey();
 }
 

@@ -25,7 +25,7 @@ To compile those do
 ```
 make nema23
 ```
-This compiles the files and puts them in the `openscad_stl_nema23/` directory.
+This compiles the files and puts them in the `stl_nema23/` directory.
 It also creates the `layout_nema23.dxf` file.
 To make a 2d-printable pdf of the layout, do
 ```

@@ -70,7 +70,7 @@ module placed_lineroller_D(angs=[-63,60,3.5]){
         rotate([0,0,angs[k]])
           translate([center_it,0,0])
             if(stls && !twod){
-              import("../openscad_stl/lineroller_D.stl");
+              import("../stl/lineroller_D.stl");
             } else {
               lineroller_D(twod=twod);
             }
@@ -82,7 +82,7 @@ module sandwich(){
   translate([0,0,Spool_height + 0.1]){
     color(color2, color2_alpha)
       if(stls){
-        import("../openscad_stl/spool_gear_GT2.stl");
+        import("../stl/spool_gear_GT2.stl");
       } else {
         spool_gear();
       }
@@ -90,7 +90,7 @@ module sandwich(){
       translate([0,0,GT2_gear_height+Spool_height+1+0.1])
       rotate([0,180,0]){
         if(stls){
-          import("../openscad_stl/spool.stl");
+          import("../stl/spool.stl");
         } else {
           spool();
         }
@@ -98,7 +98,7 @@ module sandwich(){
   }
   color(color1, color1_alpha)
     if(stls){
-      import("../openscad_stl/spool.stl");
+      import("../stl/spool.stl");
     } else {
       spool();
     }
@@ -124,7 +124,7 @@ module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1, letter="A
   translate([dist,clockwise*Spool_r,0])
     color(color2, color2_alpha)
     if(stls && !twod){
-      import("../openscad_stl/lineroller_ABC_winch.stl");
+      import("../stl/lineroller_ABC_winch.stl");
     } else {
       lineroller_ABC_winch(the_wall=false, with_base=true, twod=twod);
     }
@@ -179,7 +179,7 @@ module mover(){
         translate([0.69*beam_length, Beam_width/2+7,Beam_width/2-5])
           color(color1, color1_alpha)
             if(stls){
-              import("../openscad_stl/beam_slider_D.stl");
+              import("../stl/beam_slider_D.stl");
             } else {
               beam_slider_D();
             }
@@ -187,7 +187,7 @@ module mover(){
       translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
         color(color1, color1_alpha)
           if(stls){
-            import("../openscad_stl/corner_clamp.stl");
+            import("../stl/corner_clamp.stl");
           } else {
             corner_clamp();
           }
@@ -205,7 +205,7 @@ module mover(){
                            shorter_beam/2-(Nema17_cube_width+0.54*2+2*Wall_th)/2])
                   color(color1, color1_alpha)
                     if(stls){
-                      import("../openscad_stl/extruder_holder.stl");
+                      import("../stl/extruder_holder.stl");
                     } else {
                       extruder_holder();
                     }
@@ -243,7 +243,7 @@ module lr(){
   color(color1, color1_alpha)
     //difference(){
       if(stls){
-        import("../openscad_stl/lineroller_anchor.stl");
+        import("../stl/lineroller_anchor.stl");
       } else {
         lineroller_anchor();
       }

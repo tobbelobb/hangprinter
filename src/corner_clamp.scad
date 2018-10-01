@@ -2,7 +2,7 @@ include <parameters.scad>
 use <util.scad>
 
 //translate([50,0,0])
-//import("../openscad_stl/lineroller_anchor.stl");
+//import("../stl/lineroller_anchor.stl");
 
 lower_bearing_z = 10;
 higher_bearing_z = lower_bearing_z + Corner_clamp_bearings_center_to_center;
@@ -145,7 +145,7 @@ module corner_clamp_tower(base_th       = wall_th,
   }
 }
 
-//import("../openscad_stl/corner_clamp.stl");
+//import("../stl/corner_clamp.stl");
 corner_clamp();
 module corner_clamp(){
   a = 13;

@@ -1,9 +1,9 @@
 .SUFFIXES:
 .SUFFIXES: .scad .stl
 
-STL_DIR = ./openscad_stl
-STL_NEMA23_DIR = ./openscad_stl_nema23
-SRC_DIR = ./openscad_src
+STL_DIR = ./stl
+STL_NEMA23_DIR = ./stl_nema23
+SRC_DIR = ./src
 OS := $(shell uname)
 
 # macOS for some reason hides the openscad binary
@@ -170,6 +170,8 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/spool_gear.scad \
 	$(SRC_DIR)/spool.scad \
+	$(SRC_DIR)/sep_disc.scad \
+	$(SRC_DIR)/dleft_spool.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/spacer.scad \
 	$(SRC_DIR)/cable_clamp.scad \
@@ -188,6 +190,8 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/motor_gear.stl \
 	$(STL_DIR)/spool_gear.stl \
 	$(STL_DIR)/spool.stl \
+	$(SRC_DIR)/sep_disc.stl \
+	$(SRC_DIR)/dleft_spool.stl \
 	$(STL_DIR)/spool_core.stl \
 	$(STL_DIR)/spacer.stl \
 	$(STL_DIR)/cable_clamp.stl \
