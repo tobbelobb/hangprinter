@@ -12,6 +12,7 @@ use <corner_clamp.scad>
 use <beam_slider_D.scad>
 use <util.scad>
 use <donkey_bracket.scad>
+use <belt_roller.scad>
 
 // Viewing STLs is faster when just looking at the model
 // Non-stls are faster for previews when changing design
@@ -104,19 +105,33 @@ module sandwich(){
     }
 }
 
+module belt_roller_with_bearings(){
+  //if(stls)
+  //  import("../stl/belt_roller.stl");
+  //else
+    belt_roller();
+  for(rot=[90,-90])
+    translate([0,0,Belt_roller_bearing_center_z])
+      rotate([rot,0,0])
+      translate([0,0,0.1])
+      b623();
+}
+
 !abc_sandwich_and_donkey();
 module abc_sandwich_and_donkey(){
   if(!twod)
     translate([0,0,Sep_disc_radius+Gap_between_sandwich_and_plate])
       rotate([90,0,0])
       sandwich();
-  translate([120,-6,0])
+  translate([120,-3.5,0]) // -3.5 gotten from visual inspection. 120 random.
   rotate([0,0,90]){
     color([0.15,0.15,0.15],0.8)
       to_be_mounted();
     color(color2, color2_alpha)
       donkey_bracket();
   }
+  translate([71,-12.1,0])
+    belt_roller_with_bearings();
 }
 
 //abc_winch();
@@ -231,7 +246,7 @@ module bottom_triangle(){
         color("sandybrown")
           rotate([0,0,30])
           translate([-45/2,0,-45])
-            cube([45, 3000, 45]);
+          cube([45, 3000, 45]);
         translate([0,200,0])
           cube([500, 100, 12], center=true);
       }
@@ -250,10 +265,12 @@ module lr(){
     //  translate([-25,-50,-1])
     //    cube(50);
     //}
-    translate([Bearing_0_x+Move_tower+b623_vgroove_small_r/sqrt(2),0,Higher_bearing_z + b623_vgroove_small_r/sqrt(2)])
-      color("yellow")
-        rotate([0,-90+atan(ANCHOR_D_Z/ay),0])
-          cylinder(r = 0.75, h = sqrt(ay*ay + ANCHOR_D_Z*ANCHOR_D_Z));
+    color("yellow")
+      translate([Bearing_0_x+Move_tower+b623_vgroove_small_r/sqrt(2),
+                 0,
+                 Higher_bearing_z + b623_vgroove_small_r/sqrt(2)])
+      rotate([0,-90+atan(ANCHOR_D_Z/ay),0])
+      cylinder(r = 0.75, h = sqrt(ay*ay + ANCHOR_D_Z*ANCHOR_D_Z));
 
 
     between_bearings_x = Bearing_0_x - Bearing_1_x;

@@ -111,8 +111,11 @@ Cable_r=2.5;
 
 GT2_belt_width = 6;
 GT2_gear_height = GT2_belt_width + 2;
-GT2_spool_gear_teeth = 252;
-GT2_teeth = 255;
-GT2_tensioner_h = 36;
+GT2_motor_gear_height = 16;
+GT2_motor_gear_outer_dia = 16;
+GT2_spool_gear_teeth = 255;
+GT2_motor_gear_teeth = 20;
 Torx_depth = GT2_gear_height/2;
 
+Belt_roller_h = 40;
+Belt_roller_bearing_center_z = Belt_roller_h - Depth_of_lineroller_base/2;

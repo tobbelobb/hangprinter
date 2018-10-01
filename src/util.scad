@@ -493,3 +493,33 @@ module line_from_to(v0, v1, r = 1.0){
         }
     }
 }
+
+module b623_vgroove(){
+  $fn=4*8;
+  color("purple"){
+    cylinder(r=b623_vgroove_small_r, h=b623_width+2, center=true);
+    for(k=[0,0,1])
+      mirror([0,0,k]){
+        cylinder(r1=b623_vgroove_small_r, r2=b623_vgroove_big_r, h=b623_width/2);
+        translate([0,0,b623_width/2])
+          cylinder(r=b623_vgroove_big_r, h=1);
+      }
+  }
+}
+
+module b623(){
+  color("purple")
+  difference(){
+    cylinder(d = b623_outer_dia, h = b623_width, $fn=32);
+    translate([0,0,-1])
+      cylinder(r = b623_bore_r, h = b623_width + 2);
+  }
+}
+
+module Mounting_screw_countersink(){
+  cylinder(d1=Mounting_screw_d,
+           d2=Mounting_screw_d + 2*2.7, // 90 degree countersink
+           h=2.7, $fn=20);
+  translate([0,0,2.64])
+    cylinder(d=Mounting_screw_d + 2*2.7, h=3, $fn=20);
+}

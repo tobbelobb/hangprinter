@@ -27,17 +27,6 @@ clearance_d = b_and_holder_dia+2;
 
 holder_cube_x = 17;
 
-module vgroove_bearing(){
-  $fn=4*8;
-  cylinder(r=b623_vgroove_small_r, h=b623_width+2, center=true);
-  for(k=[0,0,1])
-    mirror([0,0,k]){
-      cylinder(r1=b623_vgroove_small_r, r2=b623_vgroove_big_r, h=b623_width/2);
-      translate([0,0,b623_width/2])
-        cylinder(r=b623_vgroove_big_r, h=1);
-    }
-}
-
 // Modelled to sit in positive quadrant
 //the_base();
 module the_base(){
@@ -199,7 +188,7 @@ module bearing_holder(){
         cylinder(r=3, h=60, $fn=4*4); // Just to not have ugly bottom
       translate([holder_cube_x - 3 - 1.5, 0, 4.5])
         rotate([90,0,0])
-        vgroove_bearing();
+        b623_vgroove();
     }
       difference(){
         translate([0, -b_and_holder_dia/2, 0])

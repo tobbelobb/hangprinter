@@ -53,26 +53,26 @@ module belt_roller(twod = false,
         translate([-Depth_of_lineroller_base/2, space_between_walls/2,0]){
           cube([Depth_of_lineroller_base,
                         wall_th,
-                        GT2_tensioner_h]);
+                        Belt_roller_h]);
         }
         for(k=[0,1])
           mirror([k,0,0])
             translate([-Depth_of_lineroller_base/2 +0.1,Depth_of_lineroller_base/2, base_th])
               rotate([0,-90,90])
                 inner_round_corner(r=5, h=wall_th, $fn=4*5);
-        translate([0,space_between_walls/2-0.4, GT2_tensioner_h - Depth_of_lineroller_base/2])
+        translate([0,space_between_walls/2-0.4, Belt_roller_h - Depth_of_lineroller_base/2])
           rotate([-90,0,0]){
             cylinder(r=3.4/2 + 1, h=wall_th, $fn=12);
           }
       }
       for(k=[0,1])
         mirror([k,0,0])
-          translate([0,0,GT2_tensioner_h - Depth_of_lineroller_base/2])
+          translate([0,0,Belt_roller_h - Depth_of_lineroller_base/2])
             rotate([-90,0,0])
               inner_round_corner(r=Depth_of_lineroller_base/2,
                                  h=Depth_of_lineroller_base,
                                  center=true, $fn=4*7);
-      translate([0,space_between_walls/2 - 1, GT2_tensioner_h - Depth_of_lineroller_base/2])
+      translate([0,space_between_walls/2 - 1, Belt_roller_bearing_center_z])
         rotate([-90,0,0]){
           cylinder(d=3.4, h=wall_th + 2, $fn=12);
           translate([0,0,1+wall_th - min(wall_th/2, 2)])
@@ -91,13 +91,8 @@ module belt_roller(twod = false,
       }
       for(v=[0:90:359])
         rotate([0,0,v])
-          translate([l/2-Depth_of_lineroller_base/2+2,0,2.3]){
-            cylinder(d1=Mounting_screw_d,
-                d2=Mounting_screw_d + 2*2.7, // 90 degree countersink
-                h=2.7, $fn=20);
-            translate([0,0,2.64])
-              cylinder(d=Mounting_screw_d + 2*2.7, h=3, $fn=20);
-          }
+          translate([l/2-Depth_of_lineroller_base/2+2,0,2.3])
+          Mounting_screw_countersink();
     }
   }
 }

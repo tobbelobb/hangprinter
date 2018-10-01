@@ -10,6 +10,12 @@ hole_to_hole_l = 90; //83.0;
 th = 2;
 elevate_donkey_screw_holes = th + 13.5;
 shaft_mid_h = donkey_feet_w/2 + elevate_donkey_screw_holes;
+box_depth_donkey = hole_to_hole_l/4+11-4;
+ang_donkey = 90-atan((donkey_feet_w/2 + 24)/(box_depth_donkey - Donkey_feet_th));
+
+the_height = shaft_mid_h-10; // encoder
+box_depth_encoder = hole_to_hole_l/4;
+ang_encoder = -90+atan(the_height/(box_depth_encoder - th));
 
 //to_be_mounted();
 module to_be_mounted(){
@@ -28,8 +34,6 @@ module to_be_mounted(){
 }
 
 
-box_depth_donkey = hole_to_hole_l/4+11-4;
-box_depth_encoder = hole_to_hole_l/4;
 
 //donkey_face();
 module donkey_face(){
@@ -77,7 +81,7 @@ module donkey_face(){
     translate([0, -(Donkey_body_d - 19)/2, Donkey_body_d/2])
       cube([100, Donkey_body_d - 19, Donkey_body_d*2]); // Further opens teardrop opening
     translate([(hole_to_hole_l/2 - box_depth_donkey) - Donkey_feet_th,0,0])
-      rotate([0,90-atan((donkey_feet_w/2 + 24)/(box_depth_donkey - Donkey_feet_th)), 0])
+      rotate([0,ang_donkey, 0])
       translate([-hole_to_hole_l, -(donkey_feet_w + 50)/2, 0])
       cube([hole_to_hole_l, donkey_feet_w + 50, 100]); // Makes the slant
     translate([hole_to_hole_l/2,0,donkey_feet_w/2 + elevate_donkey_screw_holes])
@@ -98,14 +102,14 @@ module donkey_face(){
 
 //encoder_face();
 module encoder_face(){
-  the_height = shaft_mid_h-10;
   difference(){
     translate([-hole_to_hole_l/2, -Encoder_LDP3806_d/2, 0])
       translate([box_depth_encoder,0,0])
       rotate([0,-90,0])
-      right_rounded_cube2([the_height, Encoder_LDP3806_d, box_depth_encoder], 13);
+      right_rounded_cube2([the_height, Encoder_LDP3806_d, box_depth_encoder],
+                           13, $fn=4*10);
     translate([-hole_to_hole_l/2 + box_depth_encoder,0,0])
-      rotate([0,-90+atan(the_height/(box_depth_encoder - th)),0])
+      rotate([0,ang_encoder,0])
       translate([0,-(Encoder_LDP3806_d + 2)/2, 0])
       cube([hole_to_hole_l, Encoder_LDP3806_d + 2, 34.56]); // the slant
 
@@ -123,6 +127,11 @@ module encoder_face(){
           translate([0,0,4.0])
             rotate([0,0,30])
             cylinder(d=5.6/cos(30) + 0.1, h=40, $fn=6); // Put nut in
+          translate([0,0,-4.5])
+            rotate([0,0,30])
+            rotate_extrude($fn=6)
+            translate([1.5,Donkey_feet_th+1])
+            inner_round_corner2d(1.5, $fn=20); // round corners of screw holes
         }
       }
     translate([0,0,shaft_mid_h])
@@ -181,9 +190,11 @@ module plate(){
     rotate([0,0,90])
     translate([-Bit_width/2, -Bit_width/2, 0])
     difference(){
-      left_rounded_cube2([Bit_width+4,Bit_width,Base_th], Lineroller_base_r);
+      left_rounded_cube2([Bit_width+4,Bit_width,Base_th], 5.5);
       translate([Bit_width/2, Bit_width/2, -1])
         cylinder(d=Mounting_screw_d, h=Base_th+2, $fs=1);
+      translate([Bit_width/2, Bit_width/2, 2.3])
+        Mounting_screw_countersink();
     }
   }
   for(k=[0,1])
@@ -196,6 +207,14 @@ module plate(){
                  -(donkey_feet_w + 20)/2 - Bit_width/2,
                  0])
         bit(); // Wood screw holes donkey
+      translate([-a+b + 8*tan(ang_encoder) , Encoder_LDP3806_d/2, 8])
+        rotate([90,ang_encoder/2,0])
+        translate([-0.70,-0.70,0])
+        inner_round_corner(h=f, r=6, ang=-ang_encoder, $fn=4*8); // fillet
+      translate([e-c + 8*tan(ang_donkey),d-f, 8])
+        rotate([90,-ang_donkey/2,180])
+        translate([-0.91,-0.91,0])
+        inner_round_corner(h=f, r=6, ang=90-ang_donkey, $fn=4*8); // fillet
     }
 }
 
