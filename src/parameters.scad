@@ -66,19 +66,16 @@ b623_bore_r = 3/2;
 b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 b623_outer_dia = 10;
-Lineroller_wall_th = 2.3;
+Lineroller_wall_th = 2.3; // old
 
+Line_roller_ABC_winch_h = 32;
 
-// The height that lineroller_ABC_winch will have if we include the bearing
-Tower_h = Gap_between_sandwich_and_plate+Gear_height
-         + Spool_height/2
-         + b623_vgroove_small_r
-         + b623_vgroove_big_r;
-Bearing_wall = 1;
-Depth_of_lineroller_tower = b623_width + 2*Wall_th; // 9
-Depth_of_lineroller_base = Depth_of_lineroller_tower + 9; // 18
+Depth_of_roller_base = 18;
+Roller_flerp = 6;
+Roller_l = 42;
+
 Ptfe_r = 2.1;
-Lineroller_base_r = 8;
+Roller_base_r = 8;
 Screw_h = 2;
 Screw_head_h = 2;
 Spool_center_bearing_wall_th = 5;
@@ -87,6 +84,7 @@ Anchor_bearings_center_to_center = Corner_clamp_bearings_center_to_center + b623
 
 //// Lineroller anchor parameters /////
 
+Bearing_wall = 1;
 Bearing_0_x = 2*b623_vgroove_big_r+Bearing_wall+5.3;
 Bearing_1_x = b623_vgroove_small_r-0.9;
 Move_tower = -12.2;
@@ -117,5 +115,4 @@ GT2_spool_gear_teeth = 255;
 GT2_motor_gear_teeth = 20;
 Torx_depth = GT2_gear_height/2;
 
-Belt_roller_h = 40;
-Belt_roller_bearing_center_z = Belt_roller_h - Depth_of_lineroller_base/2;
+Belt_roller_h = 47;

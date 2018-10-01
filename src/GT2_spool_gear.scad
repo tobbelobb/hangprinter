@@ -12,8 +12,8 @@ module GT2_flanged_spool_gear(teeth){
   GT2_2mm_pulley_extrusion(GT2_gear_height, teeth);
 }
 
-spool_gear();
-module spool_gear(){
+GT2_spool_gear();
+module GT2_spool_gear(){
   difference(){
     GT2_flanged_spool_gear(GT2_spool_gear_teeth);
     translate([0,0,GT2_gear_height+GT2_gear_height-Torx_depth])

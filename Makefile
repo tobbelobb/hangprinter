@@ -105,7 +105,7 @@ layout_nema23.dxf: $(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
 	$(SRC_DIR)/lineroller_D.scad \
-	$(SRC_DIR)/lineroller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_ABC_winch.scad \
 	$(SRC_DIR)/layout.scad
 	$(NEMA23_CMD) \
     -D twod=true \
@@ -134,7 +134,7 @@ layout.dxf: $(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
 	$(SRC_DIR)/lineroller_D.scad \
-	$(SRC_DIR)/lineroller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_ABC_winch.scad \
 	$(SRC_DIR)/layout.scad
 	$(OPENSCAD_BIN) \
 		-D twod=true \
@@ -150,7 +150,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
 	$(SRC_DIR)/lineroller_D.scad \
-	$(SRC_DIR)/lineroller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_ABC_winch.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/layout_slicer.scad
 	$(call make_layout_pdf_a4,"../layout.dxf",$@)
@@ -161,16 +161,18 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/Mechaduino_standoff.scad \
 	$(SRC_DIR)/gears.scad \
 	$(SRC_DIR)/gear_util.scad \
-	$(SRC_DIR)/lineroller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_ABC_winch.scad \
 	$(SRC_DIR)/lineroller_anchor.scad \
 	$(SRC_DIR)/lineroller_anchor_template.scad \
 	$(SRC_DIR)/lineroller_D.scad \
 	$(SRC_DIR)/motor_bracket.scad \
 	$(SRC_DIR)/motor_gear.scad \
 	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/spool_gear.scad \
+	$(SRC_DIR)/GT2_spool_gear.scad \
 	$(SRC_DIR)/spool.scad \
 	$(SRC_DIR)/sep_disc.scad \
+	$(SRC_DIR)/belt_roller.scad \
+	$(SRC_DIR)/donkey_bracket.scad \
 	$(SRC_DIR)/dleft_spool.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/spacer.scad \
@@ -182,15 +184,17 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/corner_clamp.stl \
 	$(STL_DIR)/Mechaduino_standoff.stl \
 	$(STL_DIR)/extruder_holder.stl \
-	$(STL_DIR)/lineroller_ABC_winch.stl \
+	$(STL_DIR)/line_roller_ABC_winch.stl \
 	$(STL_DIR)/lineroller_anchor.stl \
 	$(STL_DIR)/lineroller_anchor_template.stl \
 	$(STL_DIR)/lineroller_D.stl \
 	$(STL_DIR)/motor_bracket.stl \
 	$(STL_DIR)/motor_gear.stl \
-	$(STL_DIR)/spool_gear.stl \
+	$(STL_DIR)/GT2_spool_gear.stl \
 	$(STL_DIR)/spool.stl \
 	$(SRC_DIR)/sep_disc.stl \
+	$(SRC_DIR)/belt_roller.stl \
+	$(SRC_DIR)/donkey_bracket.stl \
 	$(SRC_DIR)/dleft_spool.stl \
 	$(STL_DIR)/spool_core.stl \
 	$(STL_DIR)/spacer.stl \

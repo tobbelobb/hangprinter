@@ -3,11 +3,9 @@ use <util.scad>
 use <lineroller_ABC_winch.scad>
 use <lineroller_anchor.scad>
 
-
-
 difference(){
   union(){
-    translate([0,-Depth_of_lineroller_base-5,0])
+    translate([0,-Depth_of_roller_base-5,0])
       mirror([0,1,0])
         lineroller_anchor();
     lineroller_anchor();

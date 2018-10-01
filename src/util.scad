@@ -523,3 +523,132 @@ module Mounting_screw_countersink(){
   translate([0,0,2.64])
     cylinder(d=Mounting_screw_d + 2*2.7, h=3, $fn=20);
 }
+
+//roller_base();
+module roller_base(center=true,
+                   twod=false,
+                   openings=[false, false, false, false]){
+  l = Roller_l;
+  d = Depth_of_roller_base;
+  for(k=[0, 1])
+    translate([+k*(l/2+d/2),
+               -k*(l/2-d/2),0])
+      translate([-l/2, -d/2, 0])
+      rotate([0,0,k*90])
+      difference(){
+        if(twod){
+          rounded_cube2([l, d], Roller_base_r,
+              $fn=13*4);
+        } else {
+          rounded_cube2([l, d, Base_th],
+              Roller_base_r, $fn=13*4);
+          translate([l/2 + d/2,
+              d,
+              0])
+            inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
+          translate([l/2 - d/2, 0, 0])
+            rotate([0,0,180])
+            inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
+        }
+        for(x=[d/2-2, l - (d/2-2)])
+          translate([x, d/2, -1])
+            if(twod)
+              circle(d=Mounting_screw_d, $fs=1);
+            else{
+              cylinder(d=Mounting_screw_d, h=Base_th+2, $fn=20);
+            }
+      }
+  for(i=[0:4])
+    if(twod && openings[i])
+      rotate([0,0,i*90])
+        translate([l/2-1,-1])
+        square([6,2]);
+}
+
+//roller_wall();
+module roller_wall(space_between_walls, wall_th, height, bearing_center_z){
+  d = Depth_of_roller_base;
+  difference(){
+    union(){
+      translate([-d/2, space_between_walls/2,0])
+        cube([d, wall_th, height]);
+      for(k=[0,1])
+        mirror([k,0,0])
+          translate([-d/2 +0.1, d/2, Base_th])
+          rotate([0,-90,90])
+          inner_round_corner(r=5, h=wall_th, $fn=4*5);
+      translate([0, space_between_walls/2-0.4, height - d/2])
+        rotate([-90,0,0])
+          cylinder(r=3.4/2 + 1, h=wall_th, $fn=12);
+    }
+    for(k=[0,1])
+      mirror([k,0,0])
+        translate([0,0,height - d/2])
+        rotate([-90,0,0])
+        inner_round_corner(r=d/2, h=d, center=true, $fn=4*7);
+    translate([0,space_between_walls/2 - 1, height - d/2])
+      rotate([-90,0,0]){
+        cylinder(d=3.4, h=wall_th + 2, $fn=12);
+        translate([0,0,1+wall_th - min(wall_th/2, 2)])
+          nut(h=8);
+      }
+  }
+}
+
+//wall_pair(10, 5, 20);
+module roller_wall_pair(space_between_walls, wall_th, height){
+  difference(){
+    union(){
+      roller_base(openings=[true,false,true,false]);
+      roller_wall(space_between_walls, wall_th, height);
+      mirror([0,1,0])
+        roller_wall(space_between_walls, wall_th, height);
+    }
+    for(v=[0:90:359])
+      rotate([0,0,v])
+        translate([Roller_l/2-Depth_of_roller_base/2+2,0,2.3])
+        Mounting_screw_countersink();
+  }
+}
+
+//preventor_edges(22, b623_width);
+module preventor_edges(tower_h, space_between_walls, edge_start=0, edge_stop=180){
+  // Edge to prevent line from falling of...
+  a = 1.75;
+  b= 0.8;
+  rot_r = b623_vgroove_big_r+b;
+
+  module preventor_edge(){
+    difference(){
+      translate([0, -space_between_walls/2 - 0.4,
+          tower_h - Depth_of_roller_base/2])
+        rotate([-90,0,0])
+        difference(){
+          rotate_extrude(angle=180, convexity=10, $fn=60)
+            translate([rot_r,0])
+            polygon(points = [[0,0],[0,-0.5],[b+a, -0.5],[b+a,0],[b, a],[0, a]]);
+          rotate([0,0,edge_stop])
+            translate([0,0,-1])
+            linear_extrude(height=b+a+1)
+            polygon(points=circle_sector(360-(edge_stop-edge_start),1,rot_r+b+a+1));
+          rotate([0,0,edge_start])
+            translate([rot_r-1,0,0])
+            rotate([45,0,0])
+            cube(b+a+1);
+          rotate([0,0,edge_stop])
+            translate([rot_r-1,0,0])
+            rotate([45,0,0])
+            cube(b+a+1);
+        }
+      translate([Depth_of_roller_base/2,-10,0])
+        cube([10,10,tower_h]);
+      translate([-Depth_of_roller_base/2-10,-10,0])
+        cube([10,10,tower_h]);
+    }
+  }
+
+  preventor_edge();
+  mirror([0,1,0])
+    preventor_edge();
+}
+

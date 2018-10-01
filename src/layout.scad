@@ -3,11 +3,11 @@ use <motor_bracket.scad>
 use <motor_bracket_2d.scad>
 use <motor_gear.scad>
 use <spool.scad>
-use <spool_gear.scad>
+use <GT2_spool_gear.scad>
 use <spool_core.scad>
 use <lineroller_D.scad>
 use <lineroller_anchor.scad>
-use <lineroller_ABC_winch.scad>
+use <line_roller_ABC_winch.scad>
 use <corner_clamp.scad>
 use <beam_slider_D.scad>
 use <util.scad>
@@ -80,15 +80,15 @@ module placed_lineroller_D(angs=[-63,60,3.5]){
 //translate([0,0,Gap_between_sandwich_and_plate])
 //sandwich();
 module sandwich(){
-  translate([0,0,Spool_height + 0.1]){
+  translate([0,0, 1 + Spool_height]){
     color(color2, color2_alpha)
       if(stls){
         import("../stl/spool_gear_GT2.stl");
       } else {
-        spool_gear();
+        GT2_spool_gear();
       }
     color(color1, color1_alpha)
-      translate([0,0,GT2_gear_height+Spool_height+1+0.1])
+      translate([0,0,Torx_depth + 1 + Spool_height + GT2_gear_height/2])
       rotate([0,180,0]){
         if(stls){
           import("../stl/spool.stl");
@@ -106,15 +106,30 @@ module sandwich(){
 }
 
 module belt_roller_with_bearings(){
-  //if(stls)
-  //  import("../stl/belt_roller.stl");
-  //else
+  belt_roller_bearing_center_z = Belt_roller_h - Depth_of_roller_base/2;
+  if(stls)
+    import("../stl/belt_roller.stl");
+  else
     belt_roller();
   for(rot=[90,-90])
-    translate([0,0,Belt_roller_bearing_center_z])
+    translate([0,0,belt_roller_bearing_center_z])
       rotate([rot,0,0])
       translate([0,0,0.1])
       b623();
+}
+
+//line_roller_ABC_winch_with_bearing();
+module line_roller_ABC_winch_with_bearing(){
+  bearing_center_z = Line_roller_ABC_winch_h - Depth_of_roller_base/2;
+  if(stls)
+    import("../stl/line_roller_ABC_winch.stl");
+  else
+    line_roller_ABC_winch();
+  for(y=[0,Spool_height + GT2_gear_height])
+    translate([0,-y,bearing_center_z])
+      rotate([90,0,0])
+      translate([0,0,0.1])
+      b623_vgroove();
 }
 
 !abc_sandwich_and_donkey();
@@ -123,15 +138,17 @@ module abc_sandwich_and_donkey(){
     translate([0,0,Sep_disc_radius+Gap_between_sandwich_and_plate])
       rotate([90,0,0])
       sandwich();
-  translate([120,-3.5,0]) // -3.5 gotten from visual inspection. 120 random.
+  translate([130,-3.5,0]) // -3.5 gotten from visual inspection. 130 random.
   rotate([0,0,90]){
     color([0.15,0.15,0.15],0.8)
       to_be_mounted();
     color(color2, color2_alpha)
       donkey_bracket();
   }
-  translate([71,-12.1,0])
+  translate([82,-12.1,0])
     belt_roller_with_bearings();
+  translate([-68,-1-Spool_height/2,0])
+    line_roller_ABC_winch_with_bearing();
 }
 
 //abc_winch();
