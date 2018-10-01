@@ -190,9 +190,9 @@ module plate(){
     rotate([0,0,90])
     translate([-Bit_width/2, -Bit_width/2, 0])
     difference(){
-      left_rounded_cube2([Bit_width+4,Bit_width,Base_th], 5.5);
+      left_rounded_cube2([Bit_width+4,Bit_width,Base_th], 5.5, $fn=28);
       translate([Bit_width/2, Bit_width/2, -1])
-        cylinder(d=Mounting_screw_d, h=Base_th+2, $fs=1);
+        cylinder(d=Mounting_screw_d, h=Base_th+2, $fn=20);
       translate([Bit_width/2, Bit_width/2, 2.3])
         Mounting_screw_countersink();
     }
@@ -201,12 +201,20 @@ module plate(){
     mirror([0,k,0]){
       translate([-hole_to_hole_l/2+Bit_width/2,
                  -Encoder_LDP3806_d/2-Bit_width/2,
-                 0])
+                 0]){
         bit(); // Wood screw holes encoder
+        translate([Bit_width/2,Bit_width/2,0])
+          rotate([0,0,-90])
+          inner_round_corner(r=4, h=Base_th, $fn=28);  // bit-fillet encoder
+      }
       translate([hole_to_hole_l/2 - Donkey_feet_th - Bit_width/2,
                  -(donkey_feet_w + 20)/2 - Bit_width/2,
-                 0])
+                 0]){
         bit(); // Wood screw holes donkey
+        translate([-Bit_width/2,Bit_width/2,0])
+          rotate([0,0,180])
+          inner_round_corner(r=4, h=Base_th, $fn=28); // bit-fillet donkey
+      }
       translate([-a+b + 8*tan(ang_encoder) , Encoder_LDP3806_d/2, 8])
         rotate([90,ang_encoder/2,0])
         translate([-0.70,-0.70,0])
