@@ -162,6 +162,7 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/gears.scad \
 	$(SRC_DIR)/gear_util.scad \
 	$(SRC_DIR)/line_roller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_single.scad \
 	$(SRC_DIR)/lineroller_anchor.scad \
 	$(SRC_DIR)/lineroller_anchor_template.scad \
 	$(SRC_DIR)/lineroller_D.scad \
@@ -185,6 +186,7 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/Mechaduino_standoff.stl \
 	$(STL_DIR)/extruder_holder.stl \
 	$(STL_DIR)/line_roller_ABC_winch.stl \
+	$(STL_DIR)/line_roller_single.stl \
 	$(STL_DIR)/lineroller_anchor.stl \
 	$(STL_DIR)/lineroller_anchor_template.stl \
 	$(STL_DIR)/lineroller_D.stl \

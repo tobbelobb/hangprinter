@@ -176,16 +176,6 @@ module plate(){
                           [ e-c, d-f],
                          ]);
       }
-  //polygon(points = [
-  //                  [-a+b, -Encoder_LDP3806_d/2],
-  //                  [-a,   -Encoder_LDP3806_d/2],
-  //                  [-a,    Encoder_LDP3806_d/2],
-  //                  [-a+b,  Encoder_LDP3806_d/2],
-  //                  [ e-c,  d],
-  //                  [ e  ,  d],
-  //                  [ e  , -d],
-  //                  [ e-c, -d]
-  //                 ]);
   module bit(){
     rotate([0,0,90])
     translate([-Bit_width/2, -Bit_width/2, 0])

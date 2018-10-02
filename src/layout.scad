@@ -3,11 +3,14 @@ use <motor_bracket.scad>
 use <motor_bracket_2d.scad>
 use <motor_gear.scad>
 use <spool.scad>
+use <dleft_spool.scad>
+use <sep_disc.scad>
 use <GT2_spool_gear.scad>
 use <spool_core.scad>
 use <lineroller_D.scad>
 use <lineroller_anchor.scad>
 use <line_roller_ABC_winch.scad>
+use <line_roller_D_winch.scad>
 use <corner_clamp.scad>
 use <beam_slider_D.scad>
 use <util.scad>
@@ -78,8 +81,40 @@ module placed_lineroller_D(angs=[-63,60,3.5]){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//sandwich();
-module sandwich(){
+//sandwich_D();
+module sandwich_D(){
+  translate([0,0, (1 + Spool_height)]){
+    color(color2, color2_alpha)
+      if(stls){
+        import("../stl/spool_gear_GT2.stl");
+      } else {
+        GT2_spool_gear();
+      }
+    color(color1, color1_alpha)
+      translate([0,0,Torx_depth + 2*(1 + Spool_height) + GT2_gear_height/2])
+      rotate([0,180,0]){
+        if(stls){
+          import("../stl/dleft_spool.stl");
+          translate([0,0,1+Spool_height])
+            import("../stl/sep_disc.stl");
+        } else {
+          dleft_spool();
+          translate([0,0,1+Spool_height])
+            sep_disc();
+        }
+      }
+  }
+  color(color1, color1_alpha)
+    if(stls){
+      import("../stl/spool.stl");
+    } else {
+      spool();
+    }
+}
+
+//translate([0,0,Gap_between_sandwich_and_plate])
+//sandwich_ABC();
+module sandwich_ABC(){
   translate([0,0, 1 + Spool_height]){
     color(color2, color2_alpha)
       if(stls){
@@ -118,6 +153,21 @@ module belt_roller_with_bearings(){
       b623();
 }
 
+
+//line_roller_D_winch_with_bearing();
+module line_roller_D_winch_with_bearing(){
+  bearing_center_z = Line_roller_ABC_winch_h - Depth_of_roller_base/2;
+  if(stls)
+    import("../stl/line_roller_ABC_winch.stl");
+  else
+    line_roller_ABC_winch();
+  for(y=[0,Spool_height + GT2_gear_height])
+    translate([0,-y,bearing_center_z])
+      rotate([90,0,0])
+      translate([0,0,0.1])
+      b623_vgroove();
+}
+
 //line_roller_ABC_winch_with_bearing();
 module line_roller_ABC_winch_with_bearing(){
   bearing_center_z = Line_roller_ABC_winch_h - Depth_of_roller_base/2;
@@ -132,35 +182,64 @@ module line_roller_ABC_winch_with_bearing(){
       b623_vgroove();
 }
 
-!abc_sandwich_and_donkey();
-module abc_sandwich_and_donkey(){
-  if(!twod)
-    translate([0,0,Sep_disc_radius+Gap_between_sandwich_and_plate])
-      rotate([90,0,0])
-      sandwich();
-  translate([130,-3.5,0]) // -3.5 gotten from visual inspection. 130 random.
-  rotate([0,0,90]){
-    color([0.15,0.15,0.15],0.8)
-      to_be_mounted();
-    color(color2, color2_alpha)
-      donkey_bracket();
-  }
-  translate([82,-12.1,0])
-    belt_roller_with_bearings();
-  translate([-68,-1-Spool_height/2,0])
-    line_roller_ABC_winch_with_bearing();
+//line_roller_single_with_bearing();
+module line_roller_single_with_bearing(){
+  bearing_center_z = Line_roller_ABC_winch_h - Depth_of_roller_base/2;
+  if(stls)
+    import("../stl/line_roller_single.stl");
+  else
+    line_roller_single();
+  translate([0,0,bearing_center_z])
+    rotate([90,0,0])
+    translate([0,0,0.1])
+    b623_vgroove();
 }
 
-//abc_winch();
-module abc_winch(with_motor=true,dist=160, motor_a = 280, clockwise=1, letter="A"){
-  translate([dist,clockwise*Spool_r,0])
-    color(color2, color2_alpha)
-    if(stls && !twod){
-      import("../stl/lineroller_ABC_winch.stl");
-    } else {
-      lineroller_ABC_winch(the_wall=false, with_base=true, twod=twod);
+//sandwich_and_donkey_D();
+module sandwich_and_donkey_D(){
+  if(!twod)
+    translate([0,
+               1 + Spool_height + GT2_gear_height/2,
+               Sep_disc_radius+Gap_between_sandwich_and_plate])
+      rotate([90,0,0])
+      sandwich_D();
+  // -3.5 gotten from visual inspection. 130 random.
+  translate([130,-3.5 + Sandwich_ABC_width/2,0])
+    rotate([0,0,90]){
+      color([0.15,0.15,0.15],0.8)
+        to_be_mounted();
+      color(color2, color2_alpha)
+        donkey_bracket();
     }
-  abc_sandwich_and_donkey(with_motor=with_motor,l=[dist+12],motor_a=motor_a-clockwise*_motor_ang, angs=[90,0,0], clockwise=clockwise, letter=letter);
+  translate([-100,GT2_gear_height/2+Spool_height/2,0])
+  rotate([0,0,180])
+  line_roller_D_winch();
+  translate([0,-Sandwich_D_width/2+1+Spool_height+GT2_gear_height/2,0])
+    spool_cores(false, Sandwich_D_width);
+}
+
+
+//sandwich_and_donkey_ABC();
+module sandwich_and_donkey_ABC(){
+  if(!twod)
+    translate([0,
+               Sandwich_ABC_width/2,
+               Sep_disc_radius+Gap_between_sandwich_and_plate])
+      rotate([90,0,0])
+      sandwich_ABC();
+  // -3.5 gotten from visual inspection. 130 random.
+  translate([130,-3.5 + Sandwich_ABC_width/2,0])
+    rotate([0,0,90]){
+      color([0.15,0.15,0.15],0.8)
+        to_be_mounted();
+      color(color2, color2_alpha)
+        donkey_bracket();
+    }
+  translate([83,-12.1 + Sandwich_ABC_width/2,0])
+    belt_roller_with_bearings();
+  translate([-90,-1-Spool_height/2 + Sandwich_ABC_width/2,0])
+    line_roller_ABC_winch_with_bearing();
+  spool_cores(false, Sandwich_ABC_width);
 }
 
 if(mounted_in_ceiling && !twod){
@@ -171,32 +250,34 @@ if(mounted_in_ceiling && !twod){
   full_winch();
 }
 module full_winch(){
-  // D
-  edg = 10;
-  //translate([-Ext_sidelength/2+edg,-Ext_sidelength/2+55,0])
-  translate([-Ext_sidelength/2+Spool_outer_radius,
-             -Ext_sidelength/2+Yshift_top_plate+Spool_outer_radius,0])
-    abc_sandwich_and_donkey();
-  // A
-  translate([-136,-7,0])
+  sep = 100;
+  y = 120;
+  translate([-sep,y,0])
     rotate([0,0,90])
-      abc_winch(letter="A");
+    sandwich_and_donkey_ABC();
 
-  // B
-  translate([-17,-140,0])
-    rotate([0,0,-30])
-      abc_winch(clockwise=-1, motor_a=-99, letter="B");
+  translate([sep,y,0])
+    rotate([0,0,90])
+    sandwich_and_donkey_ABC();
 
-  // C
-  translate([98,151,0])
-    rotate([0,0,180+30])
-      abc_winch(letter="C");
+  translate([0,y,0])
+    rotate([0,0,-90])
+    sandwich_and_donkey_ABC();
+
+  translate([0,-420,0])
+    rotate([0,0,-90])
+    sandwich_and_donkey_D();
 
   color(color1, color1_alpha)
     placed_lineroller_D();
 
+  cx = 600;
+  cy = 900;
+  mvy = -150;
   color(color0, color0_alpha)
-    top_plate();
+    translate([-cx/2,-cy/2+mvy,-12])
+    cube([cx, cy, 12]);
+    //top_plate();
 }
 
 if(mover && !twod)

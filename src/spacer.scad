@@ -1,25 +1,17 @@
 include <parameters.scad>
 
-sandwich_height = Spool_height+0.7+Gear_height;
+// See spool_core.scad or layout.scad for inspecting visually that this fits in
 
-module import_the_sandiwch(){
-  translate([0,0,0.1])
-  import("../stl/spool_gear.stl");
-  translate([0,0,sandwich_height])
-    rotate([0,180,0])
-      import("../stl/spool.stl");
-}
-
-spacer();
-module spacer(){
+spacer(10);
+module spacer(width){
   difference(){
-    translate([0,0,b608_width])
-      cylinder(d=15, h=sandwich_height-2*b608_width);
-    cylinder(d=8.5, h=sandwich_height);
+    cylinder(d=15, h=width);
+    translate([0,0,-1])
+      cylinder(d=8.5, h=width + 2);
     // Phase in/out
     p = 6.7;
     for(k=[0,1]){
-      translate([0,0,p-k*p+k*(sandwich_height-b608_width)])
+      translate([0,0,k*width])
         rotate_extrude(angle=360, convexity=5)
           translate([Motor_pitch-1.3,0])
             rotate([0,0,-45])

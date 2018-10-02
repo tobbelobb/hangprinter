@@ -19,6 +19,7 @@ Nema17_ring_height         = 2;
 Nema17_shaft_radius        = 5/2;
 b608_outer_dia = 22.2;
 b608_width = 7.05;
+b608_bore_r = 4;
 Gap_between_sandwich_and_plate = 1.5 + Base_th; // 1.5 mm for wiggle
 Motor_bracket_flerp_r = 6;
 Motor_bracket_flerp = 14;
@@ -66,7 +67,6 @@ b623_bore_r = 3/2;
 b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 b623_outer_dia = 10;
-Lineroller_wall_th = 2.3; // old
 
 Line_roller_ABC_winch_h = 32;
 
@@ -91,6 +91,10 @@ Move_tower = -12.2;
 Lower_bearing_z = 13;
 Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
 
+//// Cable Clamp parameters /////
+Bit_width = 12;
+Cable_r=2.5;
+
 
 //// Donkey and encoder parameters /////
 
@@ -102,11 +106,7 @@ Donkey_feet_th = 3.5;
 Encoder_LDP3806_shaft_d = 6;
 Encoder_LDP3806_d = 38;
 
-
-//// Cable Clamp parameters /////
-Bit_width = 12;
-Cable_r=2.5;
-
+// Belt drive parameters
 GT2_belt_width = 6;
 GT2_gear_height = GT2_belt_width + 2;
 GT2_motor_gear_height = 16;
@@ -114,5 +114,12 @@ GT2_motor_gear_outer_dia = 16;
 GT2_spool_gear_teeth = 255;
 GT2_motor_gear_teeth = 20;
 Torx_depth = GT2_gear_height/2;
-
 Belt_roller_h = 47;
+
+// Spacer parameters
+Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
+Sandwich_D_width = 3*(1+Spool_height) + GT2_gear_height;
+
+Spacer_ABC_width = Sandwich_ABC_width - 2*b608_width;
+Spacer_D_width = Sandwich_D_width -2*b608_width;
+

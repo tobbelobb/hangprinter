@@ -1,5 +1,62 @@
 include <parameters.scad>
 
+
+//spectri_2d(10);
+module spectri_2d(hyp){
+  polygon(points=[[0,0],[hyp/2,0],[0,sqrt(3)*hyp/2]]);
+}
+
+//spectri(10, 2);
+module spectri(hyp, h){
+  linear_extrude(height=h, convexity=2)
+    spectri_2d(hyp);
+}
+
+//rounded_spectri_2d(18, 1, $fn=36);
+module rounded_spectri_2d(hyp, r){
+  hull(){
+    translate([                r,                               r]) circle(r);
+    translate([hyp/2 - r*sqrt(3),                               r]) circle(r);
+    translate([                r, sqrt(3)*hyp/2 - (2 + sqrt(3))*r]) circle(r);
+
+  }
+}
+
+//translate([0,0,0.1])
+//%spectri(18, 3, $fn=36);
+//rounded_spectri(18, 2, 2, $fn=36);
+module rounded_spectri(hyp, h, r){
+  linear_extrude(height=h, convexity=2)
+    rounded_spectri_2d(hyp, r);
+}
+
+// Could have used circle($fn=3) and some scaling...
+//eqtri_2d(20);
+module eqtri_2d(s){
+  polygon(points=[[-s/2,0],[s/2,0],[0,sqrt(3)*s/2]]);
+}
+
+//eqtri(20, 5);
+module eqtri(s, h){
+  linear_extrude(height=h, convexity=2)
+    eqtri_2d(s);
+}
+
+//rounded_eqtri_2d(20,2);
+module rounded_eqtri_2d(s, r){
+  hull(){
+    translate([-s/2+r, r]) circle(r=r);
+    translate([ s/2-r, r]) circle(r=r);
+    translate([     0, sqrt(3)*s/2 - r]) circle(r=r);
+  }
+}
+
+//rounded_eqtri(20,2, 1);
+module rounded_eqtri(s, h, r){
+  linear_extrude(height=h, convexity=2)
+    rounded_eqtri_2d(s, r);
+}
+
 //!rounded_cube([40,61,42], 8, center=true);
 module rounded_cube(v, r, center=false){
   fn = 4*14;
@@ -97,6 +154,17 @@ module ydir_rounded_cube2(v, r){
     translate([r,0,0])           cube([v[0]-2*r, v[1] , v[2]]);
     translate([r,v[1]-r,0])      cylinder(h=v[2], r=r);
     translate([v[0]-r,v[1]-r,0]) cylinder(h=v[2], r=r);
+  }
+}
+
+//ymdir_rounded_cube2([20,30,2], 2);
+module ymdir_rounded_cube2(v, r){
+  $fs = 1;
+  union(){
+    translate([0,r,0])      cube([v[0]   , v[1]-r, v[2]]);
+    translate([r,0,0])      cube([v[0]-2*r, v[1] , v[2]]);
+    translate([r,r,0])      cylinder(h=v[2], r=r);
+    translate([v[0]-r,r,0]) cylinder(h=v[2], r=r);
   }
 }
 
@@ -501,7 +569,7 @@ module b623_vgroove(){
     for(k=[0,0,1])
       mirror([0,0,k]){
         cylinder(r1=b623_vgroove_small_r, r2=b623_vgroove_big_r, h=b623_width/2);
-        translate([0,0,b623_width/2])
+        translate([0,0,b623_width/2-0.1])
           cylinder(r=b623_vgroove_big_r, h=1);
       }
   }
@@ -516,7 +584,18 @@ module b623(){
   }
 }
 
+module b608(){
+  color("purple")
+  difference(){
+    cylinder(d = b608_outer_dia, h = b608_width, $fn=32);
+    translate([0,0,-1])
+      cylinder(r = b608_bore_r, h = b608_width + 2);
+  }
+}
+
 module Mounting_screw_countersink(){
+  translate([0,0,-20])
+    cylinder(d=Mounting_screw_d, h=20, $fn=20);
   cylinder(d1=Mounting_screw_d,
            d2=Mounting_screw_d + 2*2.7, // 90 degree countersink
            h=2.7, $fn=20);
@@ -565,8 +644,8 @@ module roller_base(center=true,
         square([6,2]);
 }
 
-//roller_wall();
-module roller_wall(space_between_walls, wall_th, height, bearing_center_z){
+//roller_wall(4, 5, 20, 17);
+module roller_wall(space_between_walls, wall_th, height){
   d = Depth_of_roller_base;
   difference(){
     union(){
@@ -574,7 +653,7 @@ module roller_wall(space_between_walls, wall_th, height, bearing_center_z){
         cube([d, wall_th, height]);
       for(k=[0,1])
         mirror([k,0,0])
-          translate([-d/2 +0.1, d/2, Base_th])
+          translate([-d/2 +0.1, space_between_walls/2+wall_th, Base_th])
           rotate([0,-90,90])
           inner_round_corner(r=5, h=wall_th, $fn=4*5);
       translate([0, space_between_walls/2-0.4, height - d/2])
@@ -612,11 +691,22 @@ module roller_wall_pair(space_between_walls, wall_th, height){
 }
 
 //preventor_edges(22, b623_width);
-module preventor_edges(tower_h, space_between_walls, edge_start=0, edge_stop=180){
+module
+preventor_edges(tower_h,
+                space_between_walls,
+                with_bearing=false,
+                edge_start=0,
+                edge_stop=180){
   // Edge to prevent line from falling of...
   a = 1.75;
   b= 0.8;
   rot_r = b623_vgroove_big_r+b;
+
+  if(with_bearing){
+    translate([0,0,tower_h-Depth_of_roller_base/2])
+    rotate([90,0,0])
+      b623_vgroove();
+  }
 
   module preventor_edge(){
     difference(){

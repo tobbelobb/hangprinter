@@ -2,7 +2,6 @@ include <parameters.scad>
 use <util.scad>
 use <gear_util.scad>
 use <gears.scad>
-use <lineroller_ABC_winch.scad>
 
 module GT2_flanged_spool_gear(teeth){
   // Magic number 161.83 is big GT pulley outer diameter. Printed in console.
