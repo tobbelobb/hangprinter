@@ -68,11 +68,12 @@ b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 b623_outer_dia = 10;
 
-Line_roller_ABC_winch_h = 32;
+Line_roller_ABC_winch_h = 32; // Not for horizontal guiding!
 
 Depth_of_roller_base = 18;
 Roller_flerp = 6;
 Roller_l = 42;
+Roller_fl = (Roller_l - Depth_of_roller_base)/2;
 
 Ptfe_r = 2.1;
 Roller_base_r = 8;

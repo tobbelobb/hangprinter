@@ -565,14 +565,34 @@ module line_from_to(v0, v1, r = 1.0){
 module b623_vgroove(){
   $fn=4*8;
   color("purple"){
-    cylinder(r=b623_vgroove_small_r, h=b623_width+2, center=true);
+    cylinder(r=b623_vgroove_small_r, h=b623_width, center=true);
     for(k=[0,0,1])
       mirror([0,0,k]){
         cylinder(r1=b623_vgroove_small_r, r2=b623_vgroove_big_r, h=b623_width/2);
-        translate([0,0,b623_width/2-0.1])
-          cylinder(r=b623_vgroove_big_r, h=1);
       }
   }
+}
+
+//elong_b623_vgroove();
+module elong_b623_vgroove(elong=10){
+  $fn=4*8;
+  color("purple"){
+    hull(){
+      cylinder(r=b623_vgroove_small_r, h=b623_width, center=true);
+      translate([0,elong,0])
+        cylinder(r=b623_vgroove_small_r, h=b623_width, center=true);
+    }
+    for(k=[0,0,1])
+      mirror([0,0,k]){
+        hull(){
+          cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
+          translate([0,elong,0]){
+            cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
+          }
+        }
+      }
+  }
+
 }
 
 module b623(){
@@ -594,7 +614,7 @@ module b608(){
 }
 
 module Mounting_screw_countersink(){
-  translate([0,0,-20])
+  translate([0,0,-19.9])
     cylinder(d=Mounting_screw_d, h=20, $fn=20);
   cylinder(d1=Mounting_screw_d,
            d2=Mounting_screw_d + 2*2.7, // 90 degree countersink
@@ -644,7 +664,7 @@ module roller_base(center=true,
         square([6,2]);
 }
 
-//roller_wall(4, 5, 20, 17);
+//roller_wall(4, 5, 20);
 module roller_wall(space_between_walls, wall_th, height){
   d = Depth_of_roller_base;
   difference(){
@@ -653,7 +673,7 @@ module roller_wall(space_between_walls, wall_th, height){
         cube([d, wall_th, height]);
       for(k=[0,1])
         mirror([k,0,0])
-          translate([-d/2 +0.1, space_between_walls/2+wall_th, Base_th])
+          translate([-d/2, space_between_walls/2+wall_th, Base_th])
           rotate([0,-90,90])
           inner_round_corner(r=5, h=wall_th, $fn=4*5);
       translate([0, space_between_walls/2-0.4, height - d/2])
@@ -735,10 +755,20 @@ preventor_edges(tower_h,
       translate([-Depth_of_roller_base/2-10,-10,0])
         cube([10,10,tower_h]);
     }
+
   }
 
   preventor_edge();
   mirror([0,1,0])
     preventor_edge();
 }
+
+//corner_rounder();
+module corner_rounder(r=3, r2=2, sq=[10,10]){
+  translate([-r, -r])
+    rotate_extrude(angle=90, $fn=4*6)
+    translate([r,0])
+    rounded_square(sq, r2, $fn=20);
+}
+
 

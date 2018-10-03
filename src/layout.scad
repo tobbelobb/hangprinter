@@ -65,19 +65,39 @@ module top_plate(){
 }
 
 //placed_lineroller_D();
-module placed_lineroller_D(angs=[-63,60,3.5]){
-  center_it = -2.5;
+module placed_lineroller_D(angs=[180-30-2,180,180+30+2]){
+  center_it = 0;
   three = [0,120,240];
+
+  module ldef(){
+    if(stls && !twod){
+      rotate([-90,0,0])
+        import("../stl/horizontal_line_deflector.stl");
+    } else {
+      horizontal_line_deflector(twod=twod);
+    }
+  }
+
   for(k=[0:2])
     rotate([0,0,-30+three[k]])
       translate([-Sidelength/sqrt(3),0,0])
         rotate([0,0,angs[k]])
           translate([center_it,0,0])
             if(stls && !twod){
-              import("../stl/lineroller_D.stl");
+              rotate([0,-90,0])
+              import("../stl/line_verticalizer_thin.stl");
             } else {
-              lineroller_D(twod=twod);
+              line_verticalizer_thin(twod=twod);
             }
+    translate([b623_vgroove_small_r+2*Spool_height+1+GT2_gear_height,
+               -Sidelength/sqrt(3)-21, 0])
+      rotate([0,0,180])
+      ldef();
+    translate([-b623_vgroove_small_r+Spool_height+GT2_gear_height,
+               -Sidelength/sqrt(3)-43, 0])
+      rotate([0,0,180])
+      ldef();
+
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
@@ -211,9 +231,9 @@ module sandwich_and_donkey_D(){
       color(color2, color2_alpha)
         donkey_bracket();
     }
-  translate([-100,GT2_gear_height/2+Spool_height/2,0])
-  rotate([0,0,180])
-  line_roller_D_winch();
+  //translate([-100,GT2_gear_height/2+Spool_height/2,0])
+  //rotate([0,0,180])
+  //line_roller_D_winch();
   translate([0,-Sandwich_D_width/2+1+Spool_height+GT2_gear_height/2,0])
     spool_cores(false, Sandwich_D_width);
 }
@@ -251,7 +271,7 @@ if(mounted_in_ceiling && !twod){
 }
 module full_winch(){
   sep = 100;
-  y = 120;
+  y = 168;
   translate([-sep,y,0])
     rotate([0,0,90])
     sandwich_and_donkey_ABC();
@@ -264,18 +284,20 @@ module full_winch(){
     rotate([0,0,-90])
     sandwich_and_donkey_ABC();
 
-  translate([0,-420,0])
-    rotate([0,0,-90])
+  //translate([GT2_gear_height/2+Spool_height/2,-390,0])
+  //  rotate([0,0,-90])
+  translate([GT2_gear_height/2+Spool_height/2,-169,0])
+    rotate([0,0,90])
     sandwich_and_donkey_D();
 
   color(color1, color1_alpha)
     placed_lineroller_D();
 
-  cx = 600;
-  cy = 900;
-  mvy = -150;
+  cx = 500;
+  cy = 653;
+  mvy = -312;
   color(color0, color0_alpha)
-    translate([-cx/2,-cy/2+mvy,-12])
+    translate([-cx/2,mvy,-12])
     cube([cx, cy, 12]);
     //top_plate();
 }
