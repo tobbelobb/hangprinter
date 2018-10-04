@@ -68,12 +68,18 @@ b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 b623_outer_dia = 10;
 
-Line_roller_ABC_winch_h = 32; // Not for horizontal guiding!
-
 Depth_of_roller_base = 18;
 Roller_flerp = 6;
 Roller_l = 42;
 Roller_fl = (Roller_l - Depth_of_roller_base)/2;
+Roller_wall_w = 5;
+
+Line_roller_ABC_winch_h =  Gap_between_sandwich_and_plate
+                           + Sep_disc_radius
+                           - Spool_r
+                           + Depth_of_roller_base/2
+                           + b623_vgroove_small_r;
+
 
 Ptfe_r = 2.1;
 Roller_base_r = 8;
@@ -124,3 +130,11 @@ Sandwich_D_width = 3*(1+Spool_height) + GT2_gear_height;
 Spacer_ABC_width = Sandwich_ABC_width - 2*b608_width;
 Spacer_D_width = Sandwich_D_width -2*b608_width;
 
+
+spd = Spool_height+GT2_gear_height;
+// Horizontal_deflector_cube_y_size must be exact this number
+// because we want to deflect AB-lines
+// 60 degrees on the ceiling unit, and we want to put two
+// deflectors in a row and get a distance between bearings
+// that maintain the distance d when deflecting 60 degrees
+Horizontal_deflector_cube_y_size = (2/sqrt(3))*spd;
