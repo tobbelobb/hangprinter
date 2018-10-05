@@ -105,7 +105,7 @@ layout_nema23.dxf: $(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
 	$(SRC_DIR)/lineroller_D.scad \
-	$(SRC_DIR)/line_roller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/layout.scad
 	$(NEMA23_CMD) \
     -D twod=true \
@@ -134,7 +134,7 @@ layout.dxf: $(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
 	$(SRC_DIR)/lineroller_D.scad \
-	$(SRC_DIR)/line_roller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/layout.scad
 	$(OPENSCAD_BIN) \
 		-D twod=true \
@@ -150,7 +150,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/motor_bracket_2d.scad \
 	$(SRC_DIR)/lineroller_D.scad \
-	$(SRC_DIR)/line_roller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/layout_slicer.scad
 	$(call make_layout_pdf_a4,"../layout.dxf",$@)
@@ -161,7 +161,7 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/Mechaduino_standoff.scad \
 	$(SRC_DIR)/gears.scad \
 	$(SRC_DIR)/gear_util.scad \
-	$(SRC_DIR)/line_roller_ABC_winch.scad \
+	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/line_roller_single.scad \
 	$(SRC_DIR)/lineroller_anchor.scad \
 	$(SRC_DIR)/lineroller_anchor_template.scad \
@@ -185,7 +185,7 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/corner_clamp.stl \
 	$(STL_DIR)/Mechaduino_standoff.stl \
 	$(STL_DIR)/extruder_holder.stl \
-	$(STL_DIR)/line_roller_ABC_winch.stl \
+	$(STL_DIR)/line_roller_double.stl \
 	$(STL_DIR)/line_roller_single.stl \
 	$(STL_DIR)/lineroller_anchor.stl \
 	$(STL_DIR)/lineroller_anchor_template.stl \

@@ -624,44 +624,82 @@ module Mounting_screw_countersink(){
 }
 
 //roller_base();
-module roller_base(center=true,
-                   twod=false,
+module roller_base(twod=false,
+                   yextra=0,
+                   mv_edg=0,
+                   wall_th=Line_roller_wall_th,
+                   space_between_walls,
                    openings=[false, false, false, false]){
   l = Roller_l;
   d = Depth_of_roller_base;
-  for(k=[0, 1])
-    translate([+k*(l/2+d/2),
-               -k*(l/2-d/2),0])
-      translate([-l/2, -d/2, 0])
-      rotate([0,0,k*90])
-      difference(){
-        if(twod){
-          rounded_cube2([l, d], Roller_base_r,
-              $fn=13*4);
-        } else {
-          rounded_cube2([l, d, Base_th],
-              Roller_base_r, $fn=13*4);
-          translate([l/2 + d/2,
-              d,
-              0])
-            inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
-          translate([l/2 - d/2, 0, 0])
-            rotate([0,0,180])
-            inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
-        }
-        for(x=[d/2-2, l - (d/2-2)])
-          translate([x, d/2, -1])
-            if(twod)
-              circle(d=Mounting_screw_d, $fs=1);
-            else{
-              cylinder(d=Mounting_screw_d, h=Base_th+2, $fn=20);
-            }
+  s = space_between_walls;
+
+  difference(){
+    union(){
+      translate([-d/2, -l/2, 0])
+        left_rounded_cube2([d, l+yextra, Base_th], r=8, $fn=13*4);
+      translate([-d/2-Roller_fl,-d/2,0])
+        left_rounded_cube2([d+Roller_fl, d+yextra, Base_th], r=8, $fn=13*4);
+      for(k=[0,1])
+        mirror([0,k,0])
+          translate([-d/2,-d/2-k*yextra, 0])
+          rotate([0,0,180])
+          inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
+      for(k=[0,1])
+        mirror([0,k,0])
+          translate([0,s/2 + wall_th+(1-k)*mv_edg, Base_th])
+          rotate([90,0,90])
+          translate([0,0,-(d+10)/2])
+          inner_round_corner(h=d+10, r=5, back=0.1, $fn=4*5);
+      if(mv_edg>wall_th+s){
+        translate([-d/2, s/2+wall_th+mv_edg, Base_th])
+          rotate([0,-90,90])
+          // new fillet for outermost wall
+          inner_round_corner(r=5, h=wall_th, $fn=4*5);
+        for(k=[0,1])
+          mirror([0,k,0])
+            translate([-d/2, s/2+wall_th+(1-k)*(mv_edg-wall_th-s), Base_th])
+            rotate([0,-90,90])
+            inner_round_corner(r=5,
+                h=wall_th+(1-k)*(mv_edg - wall_th - s),
+                $fn=4*5);
+      } else {
+        for(k=[0,1])
+          mirror([0,k,0])
+            translate([-d/2, s/2+wall_th, Base_th])
+            rotate([0,-90,90])
+            inner_round_corner(r=5, h=wall_th, $fn=4*5);
       }
-  for(i=[0:4])
-    if(twod && openings[i])
-      rotate([0,0,i*90])
-        translate([l/2-1,-1])
-        square([6,2]);
+    }
+    translate([d/2, -50/2])
+      cube([10,50,50]);
+    for(k=[0,1])
+      mirror([0,k,0]){
+        if(yextra>s)
+          translate([-14,-k*yextra,2.3])
+          Mounting_screw_countersink();
+        else
+          translate([-14,0,2.3])
+          Mounting_screw_countersink();
+        translate([0,-14-k*yextra,2.3])
+          Mounting_screw_countersink();
+        translate([-d/2-5,5,5+Base_th])
+          rotate([90,0,0])
+          cylinder(r=5, h=50, center=true,$fn=4*5);
+        translate([-d/2-2, -d/2-2-k*yextra,-1]){
+          cylinder(r=2, h=Base_th+5, $fn=4*6);
+          translate([-10,+2-Base_th-5,0])
+            cube([10, Base_th+5, Base_th+5]);
+          translate([2-Base_th-5,-10,0])
+            cube([Base_th+5, 10, Base_th+5]);
+      }
+    }
+    for(k=[0,1])
+      mirror([0,k,0])
+      translate([-l/2,-d/2-k*yextra,-1])
+      rotate([0,0,0])
+      inner_round_corner(r=8, h=Base_th+3,$fn=4*13);
+  }
 }
 
 //roller_wall(4, 5, 20);
@@ -671,20 +709,13 @@ module roller_wall(space_between_walls, wall_th, height){
     union(){
       translate([-d/2, space_between_walls/2,0])
         cube([d, wall_th, height]);
-      for(k=[0,1])
-        mirror([k,0,0])
-          translate([-d/2, space_between_walls/2+wall_th, Base_th])
-          rotate([0,-90,90])
-          inner_round_corner(r=5, h=wall_th, $fn=4*5);
       translate([0, space_between_walls/2-0.4, height - d/2])
         rotate([-90,0,0])
           cylinder(r=3.4/2 + 1, h=wall_th, $fn=12);
     }
-    for(k=[0,1])
-      mirror([k,0,0])
-        translate([0,0,height - d/2])
-        rotate([-90,0,0])
-        inner_round_corner(r=d/2, h=d, center=true, $fn=4*7);
+    translate([0,0,height - d/2])
+      rotate([-90,0,0])
+      inner_round_corner(r=d/2, h=d, center=true, $fn=4*7);
     translate([0,space_between_walls/2 - 1, height - d/2])
       rotate([-90,0,0]){
         cylinder(d=3.4, h=wall_th + 2, $fn=12);
@@ -694,29 +725,22 @@ module roller_wall(space_between_walls, wall_th, height){
   }
 }
 
-//wall_pair(10, 5, 20);
+//roller_wall_pair(10, 5, 20);
 module roller_wall_pair(space_between_walls, wall_th, height){
-  difference(){
-    union(){
-      roller_base(openings=[true,false,true,false]);
+      roller_base(wall_th = wall_th,
+                  space_between_walls=space_between_walls,
+                  openings=[true,false,true,false]);
       roller_wall(space_between_walls, wall_th, height);
       mirror([0,1,0])
         roller_wall(space_between_walls, wall_th, height);
-    }
-    for(v=[0:90:359])
-      rotate([0,0,v])
-        translate([Roller_l/2-Depth_of_roller_base/2+2,0,2.3])
-        Mounting_screw_countersink();
-  }
 }
 
 //preventor_edges(22, b623_width);
-module
-preventor_edges(tower_h,
-                space_between_walls,
-                with_bearing=false,
-                edge_start=0,
-                edge_stop=180){
+module preventor_edges(tower_h,
+                       space_between_walls,
+                       with_bearing=false,
+                       edge_start=0,
+                       edge_stop=180){
   // Edge to prevent line from falling of...
   a = 1.75;
   b= 0.8;

@@ -171,15 +171,17 @@ module sandwich_ABC(){
 
 module belt_roller_with_bearings(){
   belt_roller_bearing_center_z = Belt_roller_h - Depth_of_roller_base/2;
-  if(stls)
-    import("../stl/belt_roller.stl");
+  if(stls){
+    rotate([0,-90,0])
+      import("../stl/belt_roller.stl");
+    for(rot=[90,-90])
+      translate([0,0,belt_roller_bearing_center_z])
+        rotate([rot,0,0])
+        translate([0,0,0.1])
+        b623();
+  }
   else
-    belt_roller();
-  for(rot=[90,-90])
-    translate([0,0,belt_roller_bearing_center_z])
-      rotate([rot,0,0])
-      translate([0,0,0.1])
-      b623();
+    belt_roller(with_bearings=true);
 }
 
 

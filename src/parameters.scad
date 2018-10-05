@@ -72,7 +72,8 @@ Depth_of_roller_base = 18;
 Roller_flerp = 6;
 Roller_l = 42;
 Roller_fl = (Roller_l - Depth_of_roller_base)/2;
-Roller_wall_w = 5;
+
+Line_roller_wall_th = 5;
 
 Line_roller_ABC_winch_h =  Gap_between_sandwich_and_plate
                            + Sep_disc_radius
@@ -114,7 +115,7 @@ Encoder_LDP3806_shaft_d = 6;
 Encoder_LDP3806_d = 38;
 
 // Belt drive parameters
-GT2_belt_width = 6;
+GT2_belt_width = 6.5;
 GT2_gear_height = GT2_belt_width + 2;
 GT2_motor_gear_height = 16;
 GT2_motor_gear_outer_dia = 16;
