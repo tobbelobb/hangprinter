@@ -87,9 +87,8 @@ Anchor_bearings_center_to_center = Corner_clamp_bearings_center_to_center + b623
 
 //// Lineroller anchor parameters /////
 
-Bearing_wall = 1;
-Bearing_0_x = 2*b623_vgroove_big_r+Bearing_wall+5.3;
-Bearing_1_x = b623_vgroove_small_r-0.9;
+Back_bearing_x = b623_vgroove_big_r + 1.5;
+Front_bearing_x = -b623_vgroove_big_r - 5;
 Move_tower = -12.2;
 Lower_bearing_z = 13;
 Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;

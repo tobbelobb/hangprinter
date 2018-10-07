@@ -671,8 +671,8 @@ module roller_base(twod=false,
             inner_round_corner(r=5, h=wall_th, $fn=4*5);
       }
     }
-    translate([d/2, -50/2])
-      cube([10,50,50]);
+    translate([d/2, -l/2-1])
+      cube([10,l+yextra+2,50]);
     for(k=[0,1])
       mirror([0,k,0]){
         if(yextra>s)
@@ -758,7 +758,7 @@ module preventor_edges(tower_h,
           tower_h - Depth_of_roller_base/2])
         rotate([-90,0,0])
         difference(){
-          rotate_extrude(angle=180, convexity=10, $fn=60)
+          rotate_extrude(angle=360, convexity=10, $fn=60)
             translate([rot_r,0])
             polygon(points = [[0,0],[0,-0.5],[b+a, -0.5],[b+a,0],[b, a],[0, a]]);
           rotate([0,0,edge_stop])
