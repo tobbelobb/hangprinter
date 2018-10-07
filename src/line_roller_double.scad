@@ -9,8 +9,9 @@ module line_roller_double(twod=false,
                           with_bearing=false){
 
   s = b623_width + 0.8;
-  wall_th = (Depth_of_roller_base - s)/2;
+  wall_th =Line_roller_wall_th;
   d = Depth_of_roller_base;
+
   if(with_bearing){
     translate([0,0,tower_h-d/2])
       rotate([90,0,0])
