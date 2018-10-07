@@ -1,6 +1,5 @@
 include <parameters.scad>
 use <util.scad>
-use <line_roller_single.scad>
 
 rotate([0,90,0])
 line_roller_double();

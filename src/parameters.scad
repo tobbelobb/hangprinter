@@ -39,11 +39,6 @@ Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
 // The distance between the two action points on the mover
 Sidelength = Beam_length + 2*Cc_plastic_length;
 
-/////// Layout parameters ////////////
-Ext_sidelength = Sidelength+77;
-Additional_added_plate_side_length = 10;
-Yshift_top_plate = -25;
-
 /////// Gear parameters ////////////
 Circular_pitch = 262;
 Motor_teeth = 10;
