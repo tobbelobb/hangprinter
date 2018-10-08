@@ -1,6 +1,5 @@
 include <parameters.scad>
 use <util.scad>
-use <line_roller_single.scad>
 
 //!eyelet();
 module eyelet(){
@@ -43,7 +42,12 @@ rotate([0,90,0])
 translate([-b623_vgroove_small_r,0,0])
 line_verticalizer(with_bearing=false);
 module line_verticalizer(twod = false, with_bearing = false){
-  line_roller_single(edge_stop=130, with_bearing=with_bearing);
-  wall_w = Line_roller_wall_th;
-  eyelet_holder(2*wall_w+space_between_walls);
+  wall_th = Line_roller_wall_th;
+  if(!twod){
+    roller_wall_pair(space_between_walls, wall_th, tower_h);
+    preventor_edges(tower_h, space_between_walls, edge_stop=130);
+    eyelet_holder(2*wall_th+space_between_walls);
+  } else {
+    roller_base(twod=true, space_between_walls=space_between_walls);
+  }
 }

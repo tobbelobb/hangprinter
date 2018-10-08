@@ -146,15 +146,17 @@ module right_rounded_cube2(v, r){
   }
 }
 
+module ydir_rounded_cube2_2d(v, r){
+                               square([v[0]    , v[1]-r]);
+    translate([r,0])           square([v[0]-2*r, v[1]  ]);
+    translate([r,v[1]-r])      circle(r=r);
+    translate([v[0]-r,v[1]-r]) circle(r=r);
+}
+
 //ydir_rounded_cube2([20,30,2], 2);
 module ydir_rounded_cube2(v, r){
-  $fs = 1;
-  union(){
-                                 cube([v[0]   , v[1]-r, v[2]]);
-    translate([r,0,0])           cube([v[0]-2*r, v[1] , v[2]]);
-    translate([r,v[1]-r,0])      cylinder(h=v[2], r=r);
-    translate([v[0]-r,v[1]-r,0]) cylinder(h=v[2], r=r);
-  }
+  linear_extrude(height=v[2], convexity=2)
+    ydir_rounded_cube2_2d([v[0],v[1]], r);
 }
 
 //ymdir_rounded_cube2([20,30,2], 2);
@@ -168,15 +170,17 @@ module ymdir_rounded_cube2(v, r){
   }
 }
 
+module left_rounded_cube2_2d(v, r){
+  translate([r,0])      square([v[0]-r, v[1]    ]);
+  translate([0,r])      square([v[0]  , v[1]-2*r]);
+  translate([r,r])      circle(r=r);
+  translate([r,v[1]-r]) circle(r=r);
+}
+
 //left_rounded_cube2([20,30,2], 2);
 module left_rounded_cube2(v, r){
-  $fs = 1;
-  union(){
-    translate([r,0,0])           cube([v[0]-  r, v[1]    , v[2]]);
-    translate([0,r,0])           cube([v[0]    , v[1]-2*r, v[2]]);
-    translate([r,r,0])           cylinder(h=v[2], r=r);
-    translate([r,v[1]-r,0])      cylinder(h=v[2], r=r);
-  }
+  linear_extrude(height=v[2], convexity=2)
+    left_rounded_cube2_2d([v[0], v[1]], r);
 }
 
 //one_rounded_cube2([20,30,2], 2);
@@ -642,71 +646,98 @@ module roller_base(twod=false,
   d = Depth_of_roller_base;
   s = space_between_walls;
 
-  difference(){
-    union(){
-      translate([-d/2, -l/2, 0])
-        left_rounded_cube2([d, l+yextra, Base_th], r=8, $fn=13*4);
-      translate([-d/2-Roller_fl,-d/2,0])
-        left_rounded_cube2([d+Roller_fl, d+yextra, Base_th], r=8, $fn=13*4);
-      for(k=[0,1])
-        mirror([0,k,0])
-          translate([-d/2,-d/2-k*yextra, 0])
-          rotate([0,0,180])
-          inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
-      for(k=[0,1])
-        mirror([0,k,0])
-          translate([0,s/2 + wall_th+(1-k)*mv_edg, Base_th])
-          rotate([90,0,90])
-          translate([0,0,-(d+10)/2])
-          inner_round_corner(h=d+10, r=5, back=0.1, $fn=4*5);
-      if(mv_edg>wall_th+s){
-        translate([-d/2, s/2+wall_th+mv_edg, Base_th])
-          rotate([0,-90,90])
-          // new fillet for outermost wall
-          inner_round_corner(r=5, h=wall_th, $fn=4*5);
+  if(!twod){
+    difference(){
+      union(){
+        translate([-d/2, -l/2, 0])
+          left_rounded_cube2([d, l+yextra, Base_th], r=8, $fn=13*4);
+        translate([-d/2-Roller_fl,-d/2,0])
+          left_rounded_cube2([d+Roller_fl, d+yextra, Base_th], r=8, $fn=13*4);
         for(k=[0,1])
           mirror([0,k,0])
-            translate([-d/2, s/2+wall_th+(1-k)*(mv_edg-wall_th-s), Base_th])
-            rotate([0,-90,90])
-            inner_round_corner(r=5,
-                h=wall_th+(1-k)*(mv_edg - wall_th - s),
-                $fn=4*5);
-      } else {
+            translate([-d/2,-d/2-k*yextra, 0])
+            rotate([0,0,180])
+            inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
         for(k=[0,1])
           mirror([0,k,0])
-            translate([-d/2, s/2+wall_th, Base_th])
+            translate([0,s/2 + wall_th+(1-k)*mv_edg, Base_th])
+            rotate([90,0,90])
+            translate([0,0,-(d+10)/2])
+            inner_round_corner(h=d+10, r=5, back=0.1, $fn=4*5);
+        if(mv_edg>wall_th+s){
+          translate([-d/2, s/2+wall_th+mv_edg, Base_th])
             rotate([0,-90,90])
+            // new fillet for outermost wall
             inner_round_corner(r=5, h=wall_th, $fn=4*5);
+          for(k=[0,1])
+            mirror([0,k,0])
+              translate([-d/2, s/2+wall_th+(1-k)*(mv_edg-wall_th-s), Base_th])
+              rotate([0,-90,90])
+              inner_round_corner(r=5,
+                  h=wall_th+(1-k)*(mv_edg - wall_th - s),
+                  $fn=4*5);
+        } else {
+          for(k=[0,1])
+            mirror([0,k,0])
+              translate([-d/2, s/2+wall_th, Base_th])
+              rotate([0,-90,90])
+              inner_round_corner(r=5, h=wall_th, $fn=4*5);
+        }
       }
+      translate([d/2, -l/2-1])
+        cube([10,l+yextra+2,50]);
+      for(k=[0,1])
+        mirror([0,k,0]){
+          if(yextra>s)
+            translate([-14,-k*yextra,2.3])
+              Mounting_screw_countersink();
+          else
+            translate([-14,0,2.3])
+              Mounting_screw_countersink();
+          translate([0,-14-k*yextra,2.3])
+            Mounting_screw_countersink();
+          translate([-d/2-5,5,5+Base_th])
+            rotate([90,0,0])
+            cylinder(r=5, h=50, center=true,$fn=4*5);
+          translate([-d/2-2, -d/2-2-k*yextra,-1]){
+            cylinder(r=2, h=Base_th+5, $fn=4*6);
+            translate([-10,+2-Base_th-5,0])
+              cube([10, Base_th+5, Base_th+5]);
+            translate([2-Base_th-5,-10,0])
+              cube([Base_th+5, 10, Base_th+5]);
+          }
+        }
+      for(k=[0,1])
+        mirror([0,k,0])
+          translate([-l/2,-d/2-k*yextra,-1])
+          rotate([0,0,0])
+          inner_round_corner(r=8, h=Base_th+3,$fn=4*13);
     }
-    translate([d/2, -l/2-1])
-      cube([10,l+yextra+2,50]);
-    for(k=[0,1])
-      mirror([0,k,0]){
-        if(yextra>s)
-          translate([-14,-k*yextra,2.3])
-          Mounting_screw_countersink();
-        else
-          translate([-14,0,2.3])
-          Mounting_screw_countersink();
-        translate([0,-14-k*yextra,2.3])
-          Mounting_screw_countersink();
-        translate([-d/2-5,5,5+Base_th])
-          rotate([90,0,0])
-          cylinder(r=5, h=50, center=true,$fn=4*5);
-        translate([-d/2-2, -d/2-2-k*yextra,-1]){
-          cylinder(r=2, h=Base_th+5, $fn=4*6);
-          translate([-10,+2-Base_th-5,0])
-            cube([10, Base_th+5, Base_th+5]);
-          translate([2-Base_th-5,-10,0])
-            cube([Base_th+5, 10, Base_th+5]);
+  } else {
+    difference(){
+      union(){
+        translate([-d/2, -l/2])
+          left_rounded_cube2_2d([d, l+yextra], r=8, $fn=13*4);
+        translate([-d/2-Roller_fl,-d/2])
+          left_rounded_cube2_2d([d+Roller_fl, d+yextra], r=8, $fn=13*4);
+        for(k=[0,1])
+          mirror([0,k,0])
+            translate([-d/2,-d/2-k*yextra, 0])
+            rotate([0,0,180])
+            inner_round_corner_2d(r=2, $fn=6*4); // Fillet
       }
+      for(k=[0,1])
+        mirror([0,k]){
+          if(yextra>s)
+            translate([-14,-k*yextra])
+              circle(d=Mounting_screw_d, $fn=12*4);
+          else
+            translate([-14,0])
+              circle(d=Mounting_screw_d, $fn=12*4);
+          translate([0,-14-k*yextra])
+            circle(d=Mounting_screw_d, $fn=12*4);
+        }
     }
-    for(k=[0,1])
-      mirror([0,k,0])
-      translate([-l/2,-d/2-k*yextra,-1])
-      rotate([0,0,0])
-      inner_round_corner(r=8, h=Base_th+3,$fn=4*13);
   }
 }
 

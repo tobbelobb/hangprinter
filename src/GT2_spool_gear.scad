@@ -1,7 +1,6 @@
 include <parameters.scad>
 use <util.scad>
 use <gear_util.scad>
-use <gears.scad>
 
 module GT2_flanged_spool_gear(teeth, ad){
   // Magic number 161.83 is big GT pulley outer diameter. Printed in console.

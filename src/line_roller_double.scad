@@ -50,6 +50,12 @@ module line_roller_double(twod=false,
         rotate([-90,0,0])
           cylinder(d=3.4, h=custm_th + 2, $fn=12);
     }
+  } else {
+    roller_base(twod=true,
+        yextra=spd,
+        mv_edg=spd,
+        wall_th=wall_th,
+        space_between_walls=s);
   }
 }
 

@@ -1,7 +1,6 @@
 include <parameters.scad>
 use <util.scad>
 use <gear_util.scad>
-use <gears.scad>
 use <layout.scad>
 use <spacer_ABC.scad>
 
@@ -50,46 +49,58 @@ module spool_core_halve(twod = false, between){
     }
   }
 
-  difference(){
-    cubex = 2*bearing_z/sqrt(3)+sqrt(3)*w/2;
-    union(){
-      hull(){
-        translate([0,between/2 + liplen,bearing_z])
+  cubex = 2*bearing_z/sqrt(3)+sqrt(3)*w/2;
+  if(!twod){
+    difference(){
+      union(){
+        hull(){
+          translate([0,between/2 + liplen,bearing_z])
+            rotate([-90,0,0])
+            cylinder(d=15, h=wml, $fn=25);
+          translate([-cubex/2, between/2 + liplen, 0])
+            cube([cubex, wml, Base_th]);
+        }
+        translate([0,between/2,bearing_z])
           rotate([-90,0,0])
-          cylinder(d=15, h=wml, $fn=25);
-        translate([-cubex/2, between/2 + liplen, 0])
-          cube([cubex, wml, Base_th]);
+          b608_lips(w);
+        for(k=[0,1])
+          mirror([k,0,0]){
+            translate([cubex/2 + w/2 - 1,between/2 +wml/2 + liplen,0])
+              rotate([0,0,90])
+              bit();
+            translate([cubex/2 - 0.53, wml + between/2+liplen, Base_th - 0.915])
+              rotate([90,0,0])
+              rotate([0,0,15])
+              inner_round_corner(r=5, h=wml, ang=60, $fn=12*4);
+          }
       }
-      translate([0,between/2,bearing_z])
-        rotate([-90,0,0])
-        b608_lips(w);
+      translate([0,0,bearing_z])
+        rotate([90,0,0])
+        cylinder(d=8.3, h=100, center=true);
       for(k=[0,1])
         mirror([k,0,0]){
-          translate([cubex/2 + w/2 - 1,between/2 +wml/2 + liplen,0])
-            rotate([0,0,90])
-            bit();
-          translate([cubex/2 - 0.53, wml + between/2+liplen, Base_th - 0.915])
+          translate([2,w+1 + between/2 + liplen - 1,Base_th])
             rotate([90,0,0])
-            rotate([0,0,15])
-            inner_round_corner(r=5, h=wml, ang=60, $fn=12*4);
+            rounded_spectri(2*bearing_z/sqrt(3)-4, w+1, 3, $fn=12*3);
+          translate([cubex/2 + w/2 - 1,between/2 +wml/2 + liplen,2.3])
+            rotate([0,0,90])
+            Mounting_screw_countersink();
         }
     }
-    translate([0,0,bearing_z])
-      rotate([90,0,0])
-      cylinder(d=8.3, h=100, center=true);
-    for(k=[0,1])
-      mirror([k,0,0]){
-        translate([2,w+1 + between/2 + liplen - 1,Base_th])
-          rotate([90,0,0])
-          rounded_spectri(2*bearing_z/sqrt(3)-4, w+1, 3, $fn=12*3);
-        translate([cubex/2 + w/2 - 1,between/2 +wml/2 + liplen,2.3])
-          rotate([0,0,90])
-          Mounting_screw_countersink();
-      }
+  } else {
+    difference(){
+      translate([-cubex/2 - 13.9, between/2 + liplen])
+        rounded_cube2_2d([cubex+2*13.9, wml], 5.5, $fn=28);
+      for(k=[0,1])
+        mirror([k,0])
+          translate([-cubex/2 - w/2 + 1 , between/2 + liplen + wml/2])
+          circle(d=Mounting_screw_d, $fn=4*12);
+    }
   }
 }
 
-//spool_cores();
+//spool_cores(false, Sandwich_ABC_width);
+//#spool_cores(true, Sandwich_ABC_width);
 module spool_cores(twod=false, between){
   for(k=[0,1])
     mirror([0,k,0])

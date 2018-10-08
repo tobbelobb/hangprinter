@@ -1,7 +1,6 @@
 include <parameters.scad>
 use <util.scad>
 use <gear_util.scad>
-use <gears.scad>
 
 //spool_outer();
 module spool_outer(spools = 1){

@@ -133,3 +133,7 @@ spd = Spool_height+GT2_gear_height;
 // deflectors in a row and get a distance between bearings
 // that maintain the distance d when deflecting 60 degrees
 Horizontal_deflector_cube_y_size = (2/sqrt(3))*spd;
+
+
+// Top plate parameters needed for layout slicer
+Yshift_top_plate = -319;

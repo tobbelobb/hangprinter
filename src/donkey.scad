@@ -1,6 +1,5 @@
 include <parameters.scad>
 use <util.scad>
-use <motor_gear.scad>
 
 
 module encoder_screw_hole_translate(twist=0){

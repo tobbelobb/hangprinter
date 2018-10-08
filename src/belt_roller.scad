@@ -18,6 +18,12 @@ module belt_roller(twod = false,
     }
   }
 
-  if(!twod)
+  if(!twod){
     roller_wall_pair(space_between_walls, wall_th, Belt_roller_h);
+  } else {
+    roller_base(twod=true,
+        wall_th=wall_th,
+        space_between_walls=space_between_walls,
+        openings=[false, false, false, false]);
+  }
 }
