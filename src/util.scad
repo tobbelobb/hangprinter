@@ -379,28 +379,36 @@ module inner_round_corner2d(r, ang=90, back = 0.1){
   }
 }
 
+
+//linear_extrude(height=4, convexity=4)
+//inner_round_corner_2d(13, 60, 0.2, false);
+module inner_round_corner_2d(r, ang=90, back=0.1, center=false){
+  cx = r*(1-cos(ang/2+45));
+  if(center){
+    translate([-r , -r])
+      difference(){
+        translate([-back, -back])
+          square([cx+back, cx+back]);
+        translate([r,r])
+          circle(r=r);
+      }
+  } else {
+    translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45))])
+      difference(){
+        translate([-back, -back])
+          square([cx+back, cx+back]);
+        translate([r,r])
+          circle(r=r);
+      }
+  }
+}
+
 //translate([0,-13*(1-cos(60/2+45)) + 13*(1-sin(60/2+45)),0])
 //inner_round_corner(13, 2, 60);
+//inner_round_corner(13, 2, 60, 0.2, false);
 module inner_round_corner(r, h, ang=90, back = 0.1, center=false){
-  cx = r*(1-cos(ang/2+45));
-  if(center)
-    translate([-r + r*(1-sin(ang/2+45)),
-               -r + r*(1-sin(ang/2+45)), 0])
-    translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45)),0])
-    difference(){
-      translate([-back, -back, 0])
-      cube([cx+back, cx+back, h]);
-      translate([r,r,-1])
-        cylinder(r=r, h=h+2);
-    }
-  else
-    translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45)),0])
-    difference(){
-      translate([-back, -back, 0])
-      cube([cx+back, cx+back, h]);
-      translate([r,r,-1])
-        cylinder(r=r, h=h+2);
-    }
+  linear_extrude(height=h, convexity=4)
+    inner_round_corner_2d(r, ang, back, center);
 }
 
 module Nema17(){
@@ -788,11 +796,19 @@ module preventor_edges(tower_h,
 }
 
 //corner_rounder();
-module corner_rounder(r=3, r2=2, sq=[10,10]){
-  translate([-r, -r])
+module corner_rounder(r1=3, r2=2, sq=[10,10]){
+  translate([-r1, -r1])
     rotate_extrude(angle=90, $fn=4*6)
-    translate([r,0])
+    translate([r1,0])
     rounded_square(sq, r2, $fn=20);
+}
+
+//inner_corner_rounder(3, $fn=24);
+module inner_corner_rounder(r, ang1=90, ang2=90, back=1){
+  rotate([0,0,180])
+    rotate_extrude(angle=ang2)
+    translate([-r,0])
+    inner_round_corner_2d(r, ang=ang1, back=back);
 }
 
 //spacer(Spacer_ABC_width); //ABC

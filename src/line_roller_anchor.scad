@@ -41,7 +41,8 @@ module custom_walls(s, wall_th, h, d){
           translate([0, s/2,0])
             rotate([-90,0,0])
             translate([-d/2, -h,0])
-            one_rounded_cube2([d, h, wall_th], 5, $fn=12*4);
+            //cube([d, h, wall_th]);
+            one_rounded_cube2([d, h, wall_th], 3, $fn=12*3);
           translate([Back_bearing_x, s/2 - 0.4, Higher_bearing_z])
             rotate([-90,0,0])
             cylinder(d=3.4+2, h=wall_th + 2, $fn=12);
@@ -73,12 +74,13 @@ module custom_walls(s, wall_th, h, d){
 
    translate([Back_bearing_x, 0, 0])
      preventor_edges(Higher_bearing_z+Depth_of_roller_base/2,
-       s, false, 219-180, 219);
+       s, false, -90, 90);
    translate([Front_bearing_x, 0, 0])
      preventor_edges(Lower_bearing_z+Depth_of_roller_base/2,
        s, false, -67, -67+180);
 }
 
+rotate([0,90,0])
 line_roller_anchor();
 module line_roller_anchor(){
   s = b623_width + 0.8;
@@ -92,17 +94,51 @@ module line_roller_anchor(){
       translate([-dm, -dm/2, 0])
         cube([2*dm, dm, 6]);
       translate([0, -dm/2, 0])
-        left_rounded_cube2([dm, 2*dm, 6], 4, $fn=12*4);
+        left_rounded_cube2([dm, 2*dm, 6], 3, $fn=12*3);
       custom_walls(s, wall_th, tower_h, 2*dm);
+      translate([dm, dm/2, 6])
+        rotate([0,-90,0])
+        inner_round_corner(r=3, h=dm+3, $fn=12*2);
+      translate([0, dm/2, 0])
+        rotate([0,0,90])
+        inner_round_corner(r=3, h=6, $fn=12*2);
     }
+    translate([0, dm/2, -1])
+      rotate([0,0,90])
+      translate([3,3,0])
+      cylinder(r=3, h=10, $fn=12*2);
     for(k=[0,1])
-      mirror([0,k,0])
+      mirror([0,k,0]){
         translate([-dm,-s/2-wall_th,-1])
-        inner_round_corner(r=3, h=tower_h+2, $fn=12*3);
+          inner_round_corner(r=3, h=tower_h+2, $fn=12*3);
+        translate([-dm-1,-s/2-wall_th,tower_h])
+          rotate([0,90,0])
+          inner_round_corner(r=3, h=2*dm+2, $fn=12*3);
+      }
+
     translate([9,0,-0.1])
       screw_track(-2*dm);
     translate([9,dm,-0.1])
       screw_track(-2*dm);
+    translate([dm, -dm, -1])
+      cube([20,2*dm, tower_h+2]);
+    translate([0, -dm, tower_h])
+      cube([20,2*dm, 20]);
+    for(k=[0,1])
+      mirror([0,k,0])
+        translate([-dm+3,dm/2-3,tower_h])
+        rotate([0,180,0])
+        inner_corner_rounder(3, $fn=12*3);
+    translate([0,dm+dm/2,6])
+      rotate([90,0,0])
+      rotate([0,0,90])
+      corner_rounder(3, 3, [dm,dm]);
+    translate([-dm-1,dm*3/2,6])
+      rotate([-90,0,-90])
+      inner_round_corner(r=3, h=2*dm+2, $fn=12*3);
+    translate([3,dm+dm/2-3,6])
+      rotate([0,180,0])
+      inner_corner_rounder(3, $fn=12*3);
   }
 
 }
