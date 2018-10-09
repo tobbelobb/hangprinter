@@ -69,8 +69,8 @@ module small_walls(){
       translate([0,b623_width/2, 0])
       small_wall();
   preventor_edges(bea_z+Depth_of_roller_base/2, s, false, 180+90, 360);
-  translate([-2,-s/2-1,box_z-2])
-    cube([4, s+2, 2]);
+  translate([0,-s/2-1,box_z-2])
+    cube([3, s+2, 2]);
 }
 
 //translate([0,0,-17])
