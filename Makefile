@@ -93,14 +93,16 @@ make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),216,279)
 layout_letter.pdf: layout.dxf
 	$(call make_layout_pdf_letter,"../layout.dxf",$@)
 
-layout.dxf: $(SRC_DIR)/layout.scad \
-	$(SRC_DIR)/util.scad \
-	$(SRC_DIR)/spool_core.scad \
-	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/line_verticalizer.scad \
-	$(SRC_DIR)/belt_roller.scad \
+layout.dxf: $(SRC_DIR)/belt_roller.scad \
+	$(SRC_DIR)/donkey_bracket.scad \
+	$(SRC_DIR)/horizontal_line_deflector.scad \
+	$(SRC_DIR)/layout.scad \
+	$(SRC_DIR)/layout_slicer.scad \
 	$(SRC_DIR)/line_roller_double.scad \
-	$(SRC_DIR)/layout.scad
+	$(SRC_DIR)/line_verticalizer.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/spool_core.scad \
+	$(SRC_DIR)/util.scad
 	$(OPENSCAD_BIN) \
 		-D twod=true \
 		-D mover=false \
@@ -109,63 +111,65 @@ layout.dxf: $(SRC_DIR)/layout.scad \
 		-o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 layout_a4.pdf: layout.dxf \
-	$(SRC_DIR)/layout.scad \
-	$(SRC_DIR)/util.scad \
-	$(SRC_DIR)/spool_core.scad \
-	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/line_verticalizer.scad \
-	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/belt_roller.scad \
+	$(SRC_DIR)/donkey_bracket.scad \
+	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/layout.scad \
-	$(SRC_DIR)/layout_slicer.scad
+	$(SRC_DIR)/layout_slicer.scad \
+	$(SRC_DIR)/line_roller_double.scad \
+	$(SRC_DIR)/line_verticalizer.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/spool_core.scad \
+	$(SRC_DIR)/util.scad
 	$(call make_layout_pdf_a4,"../layout.dxf",$@)
 
 $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
+	$(SRC_DIR)/belt_roller.scad \
+	$(SRC_DIR)/cable_clamp.scad \
 	$(SRC_DIR)/corner_clamp.scad \
+	$(SRC_DIR)/dleft_spool.scad \
+	$(SRC_DIR)/donkey_bracket.scad \
+	$(SRC_DIR)/donkey.scad \
 	$(SRC_DIR)/extruder_holder.scad \
 	$(SRC_DIR)/gear_util.scad \
-	$(SRC_DIR)/line_roller_double.scad \
+	$(SRC_DIR)/GT2_spool_gear.scad \
+	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/line_roller_anchor.scad \
 	$(SRC_DIR)/lineroller_anchor_template.scad \
+	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/GT2_spool_gear.scad \
-	$(SRC_DIR)/spool.scad \
 	$(SRC_DIR)/sep_disc.scad \
-	$(SRC_DIR)/belt_roller.scad \
-	$(SRC_DIR)/donkey_bracket.scad \
-	$(SRC_DIR)/dleft_spool.scad \
+	$(SRC_DIR)/spacer_ABC.scad \
+	$(SRC_DIR)/spacer_D.scad \
 	$(SRC_DIR)/spool_core.scad \
-	$(SRC_DIR)/spacer.scad \
-	$(SRC_DIR)/cable_clamp.scad \
+	$(SRC_DIR)/spool.scad \
 	$(SRC_DIR)/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
+	$(STL_DIR)/belt_roller.stl \
+	$(STL_DIR)/cable_clamp.stl \
 	$(STL_DIR)/corner_clamp.stl \
+	$(STL_DIR)/dleft_spool.stl \
+	$(STL_DIR)/donkey_bracket.stl \
 	$(STL_DIR)/extruder_holder.stl \
-	$(STL_DIR)/line_roller_double.stl \
+	$(STL_DIR)/GT2_spool_gear.stl \
+	$(STL_DIR)/horizontal_line_deflector.stl \
 	$(STL_DIR)/line_roller_anchor.stl \
 	$(STL_DIR)/lineroller_anchor_template.stl \
+	$(STL_DIR)/line_roller_double.stl \
 	$(STL_DIR)/line_verticalizer.stl \
-	$(STL_DIR)/GT2_spool_gear.stl \
-	$(STL_DIR)/spool.stl \
-	$(SRC_DIR)/sep_disc.stl \
-	$(SRC_DIR)/belt_roller.stl \
-	$(SRC_DIR)/donkey_bracket.stl \
-	$(SRC_DIR)/dleft_spool.stl \
+	$(STL_DIR)/sep_disc.stl \
+	$(STL_DIR)/spacer_ABC.stl \
+	$(STL_DIR)/spacer_D.stl \
 	$(STL_DIR)/spool_core.stl \
-	$(STL_DIR)/spacer.stl \
-	$(STL_DIR)/cable_clamp.stl \
+	$(STL_DIR)/spool.stl \
 	layout.dxf \
 	layout_a4.pdf
 
 $(STL_DIR):
 	@echo "Creating STL_DIR $(STL_DIR)"
-	mkdir -p $@
-
-$(STL_NEMA23_DIR):
-	@echo "Creating STL_NEMA23_DIR $(STL_NEMA23_DIR)"
 	mkdir -p $@
 
 .PHONY: all
