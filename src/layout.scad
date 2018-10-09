@@ -20,8 +20,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-twod = true;
-//twod = false;
+//twod = true;
+twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -111,7 +111,7 @@ module sandwich_D(){
   translate([0,0, (1 + Spool_height)]){
     color(color2, color2_alpha)
       if(stls){
-        import("../stl/spool_gear_GT2.stl");
+        import("../stl/GT2_spool_gear.stl");
       } else {
         GT2_spool_gear();
       }
@@ -230,16 +230,6 @@ module sandwich_and_donkey_D(){
   // -3.5 gotten from visual inspection. 130 random.
   translate([130,-3.5 + Sandwich_ABC_width/2,0])
     render_donkey_and_bracket();
-    //rotate([0,0,90]){
-    //  color([0.15,0.15,0.15],0.8)
-    //    to_be_mounted();
-    //  color(color2, color2_alpha)
-    //    if(stls){
-    //      import("../stl/donkey_bracket.stl");
-    //    } else {
-    //      donkey_bracket();
-    //    }
-    //}
   if(stls && !twod){
     for(k=[0,1])
       mirror([0,k,0])
@@ -259,7 +249,7 @@ module sandwich_and_donkey_D(){
 
 module render_donkey_and_bracket(){
   rotate([0,0,90]){
-    if(!twod){
+    if(stls && !twod){
       color([0.15,0.15,0.15],0.8)
         to_be_mounted();
     }
