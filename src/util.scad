@@ -57,7 +57,7 @@ module rounded_eqtri(s, h, r){
     rounded_eqtri_2d(s, r);
 }
 
-//!rounded_cube([40,61,42], 8, center=true);
+//rounded_cube([40,61,42], 8, center=true);
 module rounded_cube(v, r, center=false){
   fn = 4*14;
   v = (v[0] == undef) ? [v, v, v] : v;
@@ -119,6 +119,7 @@ module rounded_cube(v, r, center=false){
   }
 }
 
+//rounded_cube2_2d([10,20], 3);
 module rounded_cube2_2d(v, r){
   $fs = 1;
   translate([r,0])           square([v[0]-2*r, v[1]    ]);
@@ -146,6 +147,7 @@ module right_rounded_cube2(v, r){
   }
 }
 
+//ydir_rounded_cube2_2d([20,30,2], 2);
 module ydir_rounded_cube2_2d(v, r){
                                square([v[0]    , v[1]-r]);
     translate([r,0])           square([v[0]-2*r, v[1]  ]);
@@ -159,6 +161,15 @@ module ydir_rounded_cube2(v, r){
     ydir_rounded_cube2_2d([v[0],v[1]], r);
 }
 
+
+//top_rounded_cube2([20,2,30], 7);
+module top_rounded_cube2(v, r){
+  translate([0,v[1],0])
+  rotate([90,0,0])
+  linear_extrude(height=v[1], convexity=2)
+    ydir_rounded_cube2_2d([v[0],v[2]], r);
+}
+
 //ymdir_rounded_cube2([20,30,2], 2);
 module ymdir_rounded_cube2(v, r){
   $fs = 1;
@@ -170,6 +181,7 @@ module ymdir_rounded_cube2(v, r){
   }
 }
 
+//left_rounded_cube2_2d([20,30,2], 2);
 module left_rounded_cube2_2d(v, r){
   translate([r,0])      square([v[0]-r, v[1]    ]);
   translate([0,r])      square([v[0]  , v[1]-2*r]);
@@ -371,18 +383,6 @@ module quarterround_wall(v){
       cube([v[0]+1, v[1]+2, 2*v[0]+2]);
   }
 }
-
-module inner_round_corner2d(r, ang=90, back = 0.1){
-  cx = r*(1-cos(ang/2+45));
-  translate([-r*(1-sin(ang/2+45)), -r*(1-sin(ang/2+45))])
-  difference(){
-    translate([-back, -back, 0])
-    square([cx+back, cx+back]);
-    translate([r,r,-1])
-      circle(r=r);
-  }
-}
-
 
 //linear_extrude(height=4, convexity=4)
 //inner_round_corner_2d(13, 60, 0.2, false);
