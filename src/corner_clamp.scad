@@ -27,7 +27,7 @@ module corner_clamp_tower(base_th       = wth,
                           with_base     = false,
                           big_y_r1      = 190,
                           big_y_r2      = 43,
-                          big_z_r       = 89){
+                          big_z_r       = 80){
 
   move_tower_x = 2.0;
   module wall(w_local        = w,
@@ -243,18 +243,12 @@ module corner_clamp(){
           cube([channel_r2+2,16,sqrt(channel_l*channel_l + Min_beam_width*Min_beam_width)]);
       }
       edg_h = 1.5;
-      edg_w = 1.5;
+      edg_w = 15.5;
       rh = 2.8;
       for(k=[0,1])
         mirror([k,0,0])
           rotate([0,0,60]){
             rounded_cube2([edg_w, Fat_beam_width+2*wth, wth+edg_h], 0.5, $fn=20);
-            difference(){
-              cube([edg_w, 2*wth, wth+edg_h+rh], 1, $fn=20);
-              translate([-1,5,wth+edg_h+rh])
-                rotate([0,90,0])
-                cylinder(r=rh, h=edg_w+2, $fn=16);
-            }
           }
     } // end union
     translate([0,channel_l,wth+3])
@@ -270,10 +264,10 @@ module corner_clamp(){
       translate([-d/2,2,0]){
         rounded_cube2([d, 20,wth], 5);
         corner_clamp_tower();
-        translate([d,4.50,0])
-          inner_round_corner(10.5, wth, 90, 2, $fn=80);
+        translate([d,5.5,0])
+          inner_round_corner(8, wth+1.5, 90, 2, $fn=80);
       }
   translate([0,Cc_action_point_from_mid+9.32,0])
     rotate([0,0,45])
-    inner_round_corner(5, wth, 60, 2, $fn=40);
+    inner_round_corner(5, wth+1.5, 60, 2, $fn=40);
 }
