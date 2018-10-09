@@ -845,6 +845,7 @@ module inner_corner_rounder(r, ang1=90, ang2=90, back=1){
 //spacer(Spacer_ABC_width); //ABC
 //spacer(Spacer_D_width); //D
 module spacer(width){
+  $fn=36;
   difference(){
     cylinder(d=15, h=width);
     translate([0,0,-1])
