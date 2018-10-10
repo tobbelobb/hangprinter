@@ -7,12 +7,12 @@ The Hangprinter repo does not yet have a stable branch.
 This branch will become our (first!) stable branch when stock Marlin v2 is ready to be included as the default Hangprinter firmware.
 
 This document and this repo are solely about technical aspects of Hangprinter version 3.
-For more general information about the Hangprinter Project, refer to [hangprinter.org](https://hangprinter.org)
+For more general information about the Hangprinter Project, refer to [hangprinter.org](https://hangprinter.org).
 
 Bill of Materials
 ----------------
 You can help fund future development of this project by using the affiliate links below when sourcing vitamins.
-A Google Spreadsheet version for a Mechaduino-driven setup, up to date as of Apr 4 2018, is found here: [Google docs](https://docs.google.com/spreadsheets/d/1lOPZoF1P2OSdJcijZRVrwAEVFh3LLAnf6-s6k-hlbZU/edit?usp=sharing)
+A Google Spreadsheet version for a Smart Stepper-driven setup, up to date as of Oct 10 2018, is found here: [Google docs](https://docs.google.com/spreadsheets/d/1lOPZoF1P2OSdJcijZRVrwAEVFh3LLAnf6-s6k-hlbZU/edit?usp=sharing)
 
 Assembly Instructions
 ---------------------
@@ -53,7 +53,7 @@ The maintainers (me) are super grateful if you can structure your improvement in
 See for example [this page](https://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request#14681796) for help with creating a pull request.
 
 If your improvement can't be structured into a pull request, the second best option is to make an issue here on GitHub, or to contact us via the
-[forum thread](http://forums.reprap.org/read.php?1,792937,796309).
+[RepRap forum](https://reprap.org/forum/list.php?423).
 
 Supporting This Project With Money
 ----------------------------------
@@ -67,7 +67,7 @@ Bitcoin donations are accepted on: 1BwobkC5Tb7psWkzCugtcH21ufj6Lc9mgY
 
 Credits
 -------
-See [contributors](https://github.com/tobbelobb/hangprinter/graphs/contributors) for committer stats.
+See [contributors](https://gitlab.com/tobben/hangprinter/graphs/Openscad_version_3) for committer stats.
 Note that almost all ideas implemented by the commits have come up in conversations among fellow Reprappers.
 None mentioned, none forgotten, but you know who you are.
 Thanks!
