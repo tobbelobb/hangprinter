@@ -1,36 +1,21 @@
 Hangprinter ![Hangprinter logo](https://vitana.se/opr3d/tbear/bilder/logo_blue_50.png)
 ===========
 
-This is the working branch of the Hangprinter repository.
-Breaking changes may occur from time to time.
-The Hangprinter repo does not yet have a stable branch.
-This branch will become our (first!) stable branch when stock Marlin v2 is ready to be included as the default Hangprinter firmware.
+This is the version 4 dev branch of the Hangprinter repository.
+Breaking changes occur all the time.
+The Hangprinter repo does not yet have a stable branch, but the Openscad\_version\_3 branch is at least a bit less volatile than this one.
 
-This document and this repo are solely about technical aspects of Hangprinter version 3.
-For more general information about the Hangprinter Project, refer to [hangprinter.org](https://hangprinter.org)
+For more general information about the Hangprinter Project, refer to [hangprinter.org](https://hangprinter.org).
 
 Bill of Materials
 ----------------
-You can help fund future development of this project by using the affiliate links below when sourcing vitamins.
-A Google Spreadsheet version for a Mechaduino-driven setup, up to date as of Apr 4 2018, is found here: [Google docs](https://docs.google.com/spreadsheets/d/1lOPZoF1P2OSdJcijZRVrwAEVFh3LLAnf6-s6k-hlbZU/edit?usp=sharing)
+The BOM for the version 3 is found here: [Google docs](https://docs.google.com/spreadsheets/d/1lOPZoF1P2OSdJcijZRVrwAEVFh3LLAnf6-s6k-hlbZU/edit?usp=sharing).
+The version 4 will use oDrives and BLDC motors instead of the steppers and Mechaduino/Smart Steppers.
+It will also use DuetWifi instead of the Mega+RAMPS electronics.
 
 Assembly Instructions
 ---------------------
-The documentation hosted in this repo is published at [hangprinter.org/doc/v3](https://hangprinter.org/doc/v3).
-
-Using Nema23?
-----------------
-Then you need different sized motor brackets, extruder holders and motor gears.
-To compile those do
-```
-make nema23
-```
-This compiles the files and puts them in the `stl_nema23/` directory.
-It also creates the `layout_nema23.dxf` file.
-To make a 2d-printable pdf of the layout, do
-```
-make layout_nema23_a4.pdf
-```
+Does not exist yet. Take a look at `layout_a4.pdf` though.
 
 Using letter sized paper?
 -------------------------
@@ -38,13 +23,8 @@ You can wedge that into the make-calls, like
 ```
 make layout_letter.pdf
 ```
-The following works if you're using nema23:
-```
-make layout_nema23_letter.pdf
-```
 
-The pdf creation command has been tested on a Ubuntu 14.04 system
-with Cairosvg v1.0.4, sed v4.2.2, and Ghostscript v9.10.
+The pdf creation command requires Cairosvg, sed, and Ghostscript. Already installed on many standard GNU/Linux systems.
 
 Contributing Improvements
 -------------------------
@@ -53,7 +33,7 @@ The maintainers (me) are super grateful if you can structure your improvement in
 See for example [this page](https://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request#14681796) for help with creating a pull request.
 
 If your improvement can't be structured into a pull request, the second best option is to make an issue here on GitHub, or to contact us via the
-[forum thread](http://forums.reprap.org/read.php?1,792937,796309).
+[forum thread](https://reprap.org/forum/list.php?423).
 
 Supporting This Project With Money
 ----------------------------------
@@ -73,9 +53,8 @@ None mentioned, none forgotten, but you know who you are.
 Thanks!
 
 This repo also contains external code from many places. Some of them:
-* [Greg Frost gears](http://www.thingiverse.com/thing:3575)
+* [droftarts' belt gear code](https://www.thingiverse.com/thing:16627)
 * [Marlin firmware](https://github.com/MarlinFirmware/Marlin)
-* [scad-utils](https://github.com/openscad/scad-utils)
 
 Currently donating $25 or more:
 * [Add:north](https://addnorth.com/)
