@@ -47,7 +47,7 @@ Bitcoin donations are accepted on: 1BwobkC5Tb7psWkzCugtcH21ufj6Lc9mgY
 
 Credits
 -------
-See [contributors](https://github.com/tobbelobb/hangprinter/graphs/contributors) for committer stats.
+See [contributors](https://gitlab.com/tobben/hangprinter/graphs/version_4_dev) for committer stats.
 Note that almost all ideas implemented by the commits have come up in conversations among fellow Reprappers.
 None mentioned, none forgotten, but you know who you are.
 Thanks!
