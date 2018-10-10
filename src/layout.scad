@@ -76,8 +76,8 @@ module ldef(rot_around_center=0){
 }
 
 
-//placed_lineroller_D();
-module placed_lineroller_D(angs=[180-30-2,180,180+30+2]){
+//placed_line_verticalizer();
+module placed_line_verticalizer(angs=[180-30-2,180,180+30+2]){
   center_it = 0;
   three = [0,120,240];
 
@@ -150,7 +150,7 @@ module sandwich_ABC(){
   translate([0,0, 1 + Spool_height]){
     color(color2, color2_alpha)
       if(stls){
-        import("../stl/spool_gear_GT2.stl");
+        import("../stl/GT2_spool_gear.stl");
       } else {
         GT2_spool_gear();
       }
@@ -343,7 +343,7 @@ module full_winch(){
     rotate([0,0,90])
     sandwich_and_donkey_D();
 
-  placed_lineroller_D();
+  placed_line_verticalizer();
 
   cx = 500;
   cy = 660;
@@ -421,13 +421,14 @@ module bottom_triangle(){
       }
 }
 
-//lr();
+!lr();
 module lr(){
   ay = ANCHOR_A_Y - 10;
-  color(color1, color1_alpha)
+  color(color1,0.6)
     //difference(){
       if(stls){
-        rotate([0,-90,0])
+        translate([4,0,0])
+        rotate([90,0,-90])
         import("../stl/line_roller_anchor.stl");
       } else {
         line_roller_anchor();
@@ -436,14 +437,14 @@ module lr(){
     //    cube(50);
     //}
     color("yellow")
-      translate([Bearing_0_x+Move_tower+b623_vgroove_small_r/sqrt(2),
+      translate([Back_bearing_x+Move_tower+b623_vgroove_small_r/sqrt(2),
                  0,
                  Higher_bearing_z + b623_vgroove_small_r/sqrt(2)])
       rotate([0,-90+atan(ANCHOR_D_Z/ay),0])
       cylinder(r = 0.75, h = sqrt(ay*ay + ANCHOR_D_Z*ANCHOR_D_Z));
 
 
-    between_bearings_x = Bearing_0_x - Bearing_1_x;
+    between_bearings_x = Back_bearing_x - Front_bearing_x;
     echo(between_bearings_x);
     between_bearings_z = Higher_bearing_z - Lower_bearing_z;
     echo(between_bearings_z);
@@ -453,9 +454,12 @@ module lr(){
     ang_action = atan(between_action_points_z/between_action_points_x);
     echo(ang_action);
 
-    for(tr = [[[Bearing_0_x+Move_tower, 0, Higher_bearing_z], [-ang_b0_b1+2, 90, 0], true],
-              [[Bearing_1_x+Move_tower, 0, Lower_bearing_z], [-103, 60, 0], true],
-              [[Bearing_1_x+Move_tower, 0, Higher_bearing_z], [180-18, 276, 0], false]])
+    for(tr = [[[Back_bearing_x+Move_tower, 0, Higher_bearing_z],
+               [-ang_b0_b1+2, 90, 0], true],
+              [[Front_bearing_x+Move_tower, 0, Lower_bearing_z],
+               [-103, 60, 0], true],
+              [[Front_bearing_x+Move_tower, 0, Higher_bearing_z],
+               [180-18+90, 276-90, 0], false]])
       translate(tr[0])
       rotate([90,0,0]){
         if(tr[2])
@@ -468,35 +472,36 @@ module lr(){
           circle(r=0.75);
       }
     color("yellow")
-      translate([Bearing_1_x+Move_tower-4, 0, Higher_bearing_z+2])
-      rotate([0,0,180])
-      rotate_extrude(angle=297)
-        translate([3.1,0])
+      translate([Front_bearing_x+Move_tower-2, 0, Higher_bearing_z-b623_vgroove_small_r+0.8])
+      rotate([0,-90,0])
+      rotate([0,0,235])
+      rotate_extrude(angle=194, $fn=20)
+        translate([2.1,0])
           circle(r=0.75);
-    translate([Bearing_1_x+Move_tower-4-3.1, 0, Higher_bearing_z+2])
-    color("yellow")
-    rotate([-90,0,0])
-    cylinder(r=0.75, h=Sidelength/2);
-    translate([Bearing_1_x+Move_tower-4-1.1, 0, Higher_bearing_z+2])
-    color("yellow")
-    rotate([-90,0,0])
-    cylinder(r=0.75, h=3);
+    translate([Front_bearing_x+Move_tower-1.5, 0, Higher_bearing_z-b623_vgroove_small_r+1.9])
+      color("yellow")
+      rotate([-90,0,0])
+      cylinder(r=0.75, h=Sidelength/2);
+    translate([Front_bearing_x+Move_tower-2, -2.3, Higher_bearing_z-b623_vgroove_small_r-0.1])
+      color("yellow")
+      rotate([-90,0,0])
+      cylinder(r=0.75, h=3);
     // Within lineroller_anchor
-    line_from_to([Bearing_1_x+Move_tower + sin(ang_b0_b1)*b623_vgroove_small_r, 0,
+    line_from_to([Front_bearing_x+Move_tower + sin(ang_b0_b1)*b623_vgroove_small_r, 0,
                     Lower_bearing_z - cos(ang_b0_b1)*b623_vgroove_small_r],
-                 [Bearing_0_x+Move_tower + sin(ang_b0_b1)*b623_vgroove_small_r, 0,
+                 [Back_bearing_x+Move_tower + sin(ang_b0_b1)*b623_vgroove_small_r, 0,
                     Higher_bearing_z - cos(ang_b0_b1)*b623_vgroove_small_r], r=0.75, $fn=6);
     // From lower bearing to effector
-    line_from_to([Bearing_1_x+Move_tower-sin(ang_action)*b623_vgroove_small_r, 0,
+    line_from_to([Front_bearing_x+Move_tower-sin(ang_action)*b623_vgroove_small_r, 0,
                     Lower_bearing_z-cos(ang_action)*b623_vgroove_small_r],
-                 [Bearing_1_x+Move_tower-sin(ang_action)*b623_vgroove_small_r
+                 [Front_bearing_x+Move_tower-sin(ang_action)*b623_vgroove_small_r
                    -between_action_points_x, 0,
                    Lower_bearing_z-cos(ang_action)*b623_vgroove_small_r
                    +between_action_points_z], r=0.75, $fn=6);
     // From effector to higher bearing
-    line_from_to([Bearing_1_x+Move_tower+sin(ang_action)*b623_vgroove_small_r, 0,
+    line_from_to([Front_bearing_x+Move_tower+sin(ang_action)*b623_vgroove_small_r, 0,
                     Higher_bearing_z + cos(ang_action)*b623_vgroove_small_r],
-                 [Bearing_1_x+Move_tower+sin(ang_action)*b623_vgroove_small_r
+                 [Front_bearing_x+Move_tower+sin(ang_action)*b623_vgroove_small_r
                    -between_action_points_x, 0,
                     Higher_bearing_z + cos(ang_action)*b623_vgroove_small_r
                    +between_action_points_z],  r=0.75,$fn=6);
@@ -514,13 +519,13 @@ module ABC_anchor(){
         lr();
   translate([-27/2, -Ext_sidelength/2, -8])
     cube([50,Ext_sidelength, 8]);
-  translate([Bearing_1_x+Move_tower-4-3.1,0,Higher_bearing_z+2])
+  translate([Front_bearing_x+Move_tower-4-3.1,0,Higher_bearing_z+2])
     color("red")
     sphere(r=4);
 }
 
-if(!twod)
-ceiling_unit_internal_lines_v4();
+//if(!twod)
+//ceiling_unit_internal_lines_v4();
 module ceiling_unit_internal_lines_v4(){
   hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
   bd0y = dspool_y-93;
