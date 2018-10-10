@@ -7,7 +7,7 @@ module encoder_screw_hole_translate(twist=0){
     for(rot=[0:120:359])
       rotate([0,0,rot])
         for(k=[1,-1])
-          translate([14-(k-1)*1.5/2, k*7.5/2, 34 - 10])
+          translate([14-(k-1)*1.4/2, k*7.5/2, 34 - 10]) // Shift one hole 1.4 out
             children();
 }
 
