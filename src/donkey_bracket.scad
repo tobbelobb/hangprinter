@@ -141,12 +141,19 @@ module donkey_face(twod=false){
           }
     }
   } else {
+    difference(){
+      translate([tr_x+box_depth_donkey-2*Bit_width, -(donkey_feet_w+20)/2])
+        square([2*Bit_width,
+            donkey_feet_w + 20]);
+      translate([8,0])
+        circle(d=Donkey_body_d);
+    }
     for(k=[0,1])
       mirror([0,k])
-        translate([tr_x, -(donkey_feet_w+20)/2])
-        square([box_depth_donkey, f]);
-    translate([tr_x+19.75, -(donkey_feet_w+20)/2])
-      square([9.75, 64]);
+        translate([tr_x+box_depth_donkey-Bit_width/2,
+            -(donkey_feet_w+20)/2-7])
+          bit(twod);
+
   }
 }
 
@@ -208,94 +215,17 @@ module encoder_face(twod=false){
     }
   } else {
     translate([-hole_to_hole_l/2, -emd/2])
-      square([Bit_width+1, emd]);
+      square([box_depth_encoder, emd]);
+    translate([-hole_to_hole_l/2, 0])
+      for(k=[0,1])
+        mirror([0,k,0])
+          translate([Bit_width/2,-emd/2-7])
+            bit(twod,two=false);
   }
 }
 
-//plate();
-module plate(twod=false){
-  a = hole_to_hole_l/2;
-  b = box_depth_encoder;
-  c = box_depth_donkey;
-  d = (donkey_feet_w + 20)/2;
-  e = a - Donkey_feet_th;
-
-  module base_cross_2d(){
-    for(k=[0,1])
-      mirror([0,k,0]){
-        polygon(points = [
-                          [-a+b, -Encoder_LDP3806_d/2],
-                          [-a+b-10, -Encoder_LDP3806_d/2],
-                          [-a+b-10, -Encoder_LDP3806_d/2 + f],
-                          [-a+b, -Encoder_LDP3806_d/2 + f],
-                          [ e-c, -d + f],
-                          [ e-c+10, -d + f],
-                          [ e-c+10, -d],
-                          [ e-c, -d],
-                         ]);
-        polygon(points = [
-                          [-a+b, -Encoder_LDP3806_d/2],
-                          [-a+b-10, -Encoder_LDP3806_d/2],
-                          [-a+b-10, -Encoder_LDP3806_d/2 + f],
-                          [-a+b, -Encoder_LDP3806_d/2 + f],
-                          [ e-c, d],
-                          [ e-c+10, d],
-                          [ e-c+10, d-f],
-                          [ e-c, d-f],
-                         ]);
-      }
-  }
-
-  if(!twod){
-    linear_extrude(height=8, convexity=10)
-      base_cross_2d();
-  } else {
-    base_cross_2d();
-  }
-
-  for(k=[0,1])
-    mirror([0,k,0]){
-      translate([-hole_to_hole_l/2+Bit_width/2,
-                 -Encoder_LDP3806_d/2-Bit_width/2,
-                 0]){
-        bit(twod); // Wood screw holes encoder
-        if(!twod){
-          translate([Bit_width/2,Bit_width/2,0])
-            rotate([0,0,-90])
-            inner_round_corner(r=4, h=Base_th, $fn=28);  // bit-fillet encoder
-        } else {
-          translate([Bit_width/2,Bit_width/2])
-            rotate([0,0,-90])
-            inner_round_corner_2d(r=4, $fn=28);  // bit-fillet encoder
-        }
-      }
-      translate([hole_to_hole_l/2 - Donkey_feet_th - Bit_width/2,
-                 -(donkey_feet_w + 20)/2 - Bit_width/2,
-                 0]){
-        bit(twod); // Wood screw holes donkey
-        if(!twod){
-          translate([-Bit_width/2,Bit_width/2,0])
-            rotate([0,0,180])
-            inner_round_corner(r=4, h=Base_th, $fn=28); // bit-fillet donkey
-        } else {
-          translate([-Bit_width/2,Bit_width/2])
-            rotate([0,0,180])
-            inner_round_corner_2d(r=4, $fn=28); // bit-fillet donkey
-        }
-      }
-      if(!twod){
-        translate([-a+b + 8*tan(ang_encoder) , Encoder_LDP3806_d/2, 8])
-          rotate([90,ang_encoder/2,0])
-          translate([-0.70,-0.70,0])
-          inner_round_corner(h=f, r=6, ang=-ang_encoder, $fn=4*8); // fillet
-        translate([e-c + 8*tan(ang_donkey),d-f, 8])
-          rotate([90,-ang_donkey/2,180])
-          translate([-0.91,-0.91,0])
-          inner_round_corner(h=f, r=6, ang=90-ang_donkey, $fn=4*8); // fillet
-      }
-    }
-}
-
+//to_be_mounted();
+//donkey_bracket(twod=true);
 donkey_bracket(twod=false);
 module donkey_bracket(twod=false){
   if(twod){
