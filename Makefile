@@ -24,40 +24,30 @@ make_layout_pdf_ = \
                $(OPENSCAD_BIN) -D page=4 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p4.svg $(SRC_DIR)/layout_slicer.scad; \
                $(OPENSCAD_BIN) -D page=5 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p5.svg $(SRC_DIR)/layout_slicer.scad; \
                $(OPENSCAD_BIN) -D page=6 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p6.svg $(SRC_DIR)/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=7 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p7.svg $(SRC_DIR)/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=8 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p8.svg $(SRC_DIR)/layout_slicer.scad; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p1.svg > p1_sed.svg; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p2.svg > p2_sed.svg; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p3.svg > p3_sed.svg; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p4.svg > p4_sed.svg; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p5.svg > p5_sed.svg; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p6.svg > p6_sed.svg; \
-               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p7.svg > p7_sed.svg; \
-               sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p8.svg > p8_sed.svg; \
                sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p1_sed.svg > p1_sed2.svg; \
                sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p2_sed.svg > p2_sed2.svg; \
                sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p3_sed.svg > p3_sed2.svg; \
                sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p4_sed.svg > p4_sed2.svg; \
                sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p5_sed.svg > p5_sed2.svg; \
                sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p6_sed.svg > p6_sed2.svg; \
-               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p7_sed.svg > p7_sed2.svg; \
-               sed -e "s/fill=\"lightgray\"/fill=\"white\"/" p8_sed.svg > p8_sed2.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p1_sed2.svg > p1_sed3.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p2_sed2.svg > p2_sed3.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p3_sed2.svg > p3_sed3.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p4_sed2.svg > p4_sed3.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p5_sed2.svg > p5_sed3.svg; \
                sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p6_sed2.svg > p6_sed3.svg; \
-               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p7_sed2.svg > p7_sed3.svg; \
-               sed -e "s/stroke-width=\"0\.5\"/stroke-width=\"0\.8\"/" p8_sed2.svg > p8_sed3.svg; \
                cairosvg p1_sed3.svg -o p1.pdf; \
                cairosvg p2_sed3.svg -o p2.pdf; \
                cairosvg p3_sed3.svg -o p3.pdf; \
                cairosvg p4_sed3.svg -o p4.pdf; \
                cairosvg p5_sed3.svg -o p5.pdf; \
                cairosvg p6_sed3.svg -o p6.pdf; \
-               cairosvg p7_sed3.svg -o p7.pdf; \
-               cairosvg p8_sed3.svg -o p8.pdf; \
                gs -o $(2) -sDEVICE=pdfwrite \
                -dAntiAliasColorImage=false \
                -dAntiAliasGrayImage=false \
@@ -74,15 +64,13 @@ make_layout_pdf_ = \
                -dPreserveHalftoneInfo=true \
                -dPreserveOPIComments=true \
                -dPreserveOverprintSettings=true \
-               p1.pdf p2.pdf p3.pdf p4.pdf p5.pdf p6.pdf p7.pdf p8.pdf; \
+               p1.pdf p2.pdf p3.pdf p4.pdf p5.pdf p6.pdf; \
                rm p1.svg p1_sed.svg p1_sed2.svg p1_sed3.svg p1.pdf \
                   p2.svg p2_sed.svg p2_sed2.svg p2_sed3.svg p2.pdf \
                   p3.svg p3_sed.svg p3_sed2.svg p3_sed3.svg p3.pdf \
                   p4.svg p4_sed.svg p4_sed2.svg p4_sed3.svg p4.pdf \
                   p5.svg p5_sed.svg p5_sed2.svg p5_sed3.svg p5.pdf \
-                  p6.svg p6_sed.svg p6_sed2.svg p6_sed3.svg p6.pdf \
-                  p7.svg p7_sed.svg p7_sed2.svg p7_sed3.svg p7.pdf \
-                  p8.svg p8_sed.svg p8_sed2.svg p8_sed3.svg p8.pdf
+                  p6.svg p6_sed.svg p6_sed2.svg p6_sed3.svg p6.pdf
 
 # Magic numbers are size of A4 paper in mm
 make_layout_pdf_a4 = $(call make_layout_pdf_,$(1),$(2),210,297)
