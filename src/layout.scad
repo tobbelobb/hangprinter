@@ -20,8 +20,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-//twod = true;
-twod = false;
+twod = true;
+//twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -278,7 +278,10 @@ module render_donkey_and_bracket(){
     if(stls && !twod){
       color([0.15,0.15,0.15],0.8)
         to_be_mounted();
+    } else if(twod) {
+      donkey_bracket(twod);
     }
+
     // TODO: placed out donkey bracket stl
     //color(color2, color2_alpha)
     //  if(stls && !twod){
