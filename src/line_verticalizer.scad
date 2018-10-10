@@ -20,7 +20,7 @@ space_between_walls = b623_width + 0.8;
 tower_h = Line_roller_ABC_winch_h;
 
 //eyelet_holder(Depth_of_roller_base);
-module eyelet_holder(w){
+module eyelet_holder(w, d=3.35){
   bx = Depth_of_roller_base/2;
   translate([bx/2,
       0,
@@ -29,7 +29,7 @@ module eyelet_holder(w){
       translate([-bx/2, -w/2, -5])
         cube([bx, w, 9]);
       translate([-bx/2+b623_vgroove_small_r,0,-3])
-        cylinder(d=3.35, h=10);
+        cylinder(d=d, h=10);
       translate([-bx/2,0,-5])
         scale(1.13)
         rotate([90,0,0])
@@ -58,12 +58,12 @@ module line_verticalizer(twod = false, with_bearing = false){
         eyelet_holder(2*wall_th+space_between_walls);
         //translate([-b623_vgroove_small_r*2,0,0])
         rotate([0,0,180])
-          eyelet_holder(2*wall_th+space_between_walls);
+          eyelet_holder(2*wall_th+space_between_walls, 2);
       }
       bigr=30;
       // Alternative entry points for line
       translate([b623_vgroove_small_r,0,0])
-        for(k=[-1,0,1])
+        for(k=[-1,1])
           rotate([0,0,k*30])
             translate([-b623_vgroove_small_r*2,bigr,tower_h])
             translate([0,-bigr,0])
@@ -72,7 +72,7 @@ module line_verticalizer(twod = false, with_bearing = false){
             rotate([0,90,0])
             rotate_extrude()
             translate([bigr,0,0])
-            circle(d=3.35);
+            circle(d=2);
     }
   } else {
     roller_base(twod=true, space_between_walls=space_between_walls);
