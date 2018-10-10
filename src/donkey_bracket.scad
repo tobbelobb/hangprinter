@@ -7,7 +7,7 @@ d = 11;
 tail = 5; // behind donkey available th = d/2 + tail
 donkey_feet_w = 43.5;
 encoder_feet_w = 29;
-hole_to_hole_l = 90; //83.0;
+hole_to_hole_l = 83; //90.0;
 th = 2;
 elevate_donkey_screw_holes = th + 7.5;
 shaft_mid_h = donkey_feet_w/2 + elevate_donkey_screw_holes;
@@ -18,6 +18,8 @@ the_height = shaft_mid_h-10; // encoder
 box_depth_encoder = Bit_width;
 ang_encoder = -90+atan((the_height-Base_th+2)/(box_depth_encoder - th));
 
+// for donkey face
+tr_x = (hole_to_hole_l/2 - box_depth_donkey) - Donkey_feet_th;
 
 module bit(twod, two=true){
   rotate([0,0,90])
@@ -64,6 +66,8 @@ module to_be_mounted(){
     rotate([0,0,45])
     import("../stl/donkey.stl");
     //donkey();
+  translate([box_depth_donkey+tr_x,0,0])
+    donkey_face();
 
   translate([-hole_to_hole_l/2, 0, shaft_mid_h])
     rotate([0,90,0])
@@ -71,13 +75,14 @@ module to_be_mounted(){
     translate([0,0,-34])
     import("../stl/donkey_encoder.stl");
     //donkey();
+  translate([-hole_to_hole_l/2,0,0])
+    encoder_face();
 }
 
 
 
 //donkey_face();
 module donkey_face(twod=false){
-  tr_x = (hole_to_hole_l/2 - box_depth_donkey) - Donkey_feet_th;
   if(!twod){
     translate([-box_depth_donkey-tr_x,0,0]){
       difference(){
@@ -290,8 +295,6 @@ module plate(twod=false){
       }
     }
 }
-
-//to_be_mounted();
 
 donkey_bracket(twod=false);
 module donkey_bracket(twod=false){
