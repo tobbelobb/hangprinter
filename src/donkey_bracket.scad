@@ -106,9 +106,6 @@ module donkey_face(twod=false){
               }
           }
         }
-        translate([8,0, -1])
-          cylinder(d=Donkey_body_d,h= shaft_mid_h);
-        //cube([box_depth_donkey, donkey_feet_w + 20 - 10, shaft_mid_h]);
         translate([0,-50,shaft_mid_h+donkey_feet_w/2+4])
           cube(100);
         translate([hole_to_hole_l/2, 0, shaft_mid_h])
@@ -134,6 +131,11 @@ module donkey_face(twod=false){
             }
           }
       }
+      translate([box_depth_donkey+tr_x-8.4, -(donkey_feet_w-6)/2, 0])
+        cube([8.4,
+            donkey_feet_w-6,
+            8]);
+
       for(k=[0,1])
         mirror([0,k,0])
           translate([tr_x+box_depth_donkey-bw/2,
@@ -146,13 +148,9 @@ module donkey_face(twod=false){
           }
     }
   } else {
-    difference(){
-      translate([tr_x+box_depth_donkey-2*bw, -(donkey_feet_w+20)/2])
-        square([2*bw,
-            donkey_feet_w + 20]);
-      translate([8,0])
-        circle(d=Donkey_body_d);
-    }
+    translate([tr_x+box_depth_donkey-2*bw, -(donkey_feet_w+20)/2])
+      square([2*bw,
+          donkey_feet_w + 20]);
     for(k=[0,1])
       mirror([0,k])
         translate([tr_x+box_depth_donkey-bw/2,
