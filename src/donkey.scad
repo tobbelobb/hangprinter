@@ -1,5 +1,6 @@
 include <parameters.scad>
 use <util.scad>
+use <GT2_motor_gear.scad>
 
 
 module encoder_screw_hole_translate(twist=0){
@@ -55,8 +56,9 @@ module donkey(){
     }
     cylinder(d = Donkey_shaft_d, h = 23 + 5.6 + 23.22);
   }
-  translate([0,0,Donkey_h - GT2_motor_gear_height - 6.5])
-    motor_gear();
+  translate([0,0,Donkey_h - 6.5])
+    rotate([0,180,0])
+    GT2_motor_gear();
 }
 
 //encoder_LDP3806();

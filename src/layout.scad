@@ -20,8 +20,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-twod = true;
-//twod = false;
+//twod = true;
+twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -220,7 +220,6 @@ module belt_roller_with_bearings(){
   }
 }
 
-
 //line_roller_double_with_bearings();
 module line_roller_double_with_bearings(){
   bearing_center_z = Line_roller_ABC_winch_h - Depth_of_roller_base/2;
@@ -251,8 +250,8 @@ module sandwich_and_donkey_D(){
       rotate([90,0,180])
       sandwich_D();
   }
-  // -3.5 gotten from visual inspection. 130 random.
-  translate([130,-3.5 + Sandwich_ABC_width/2,0])
+  // -9.7 gotten from visual inspection. 116 random.
+  translate([116,-9.7 + Sandwich_ABC_width/2,0])
     render_donkey_and_bracket();
   translate([0,Spool_height+1,0])
   if(stls && !twod){
@@ -266,12 +265,12 @@ module sandwich_and_donkey_D(){
       spool_cores(twod=twod, between=Sandwich_D_width);
   }
 
-  translate([83,0,0])
+  translate([93,0,0])
     belt_roller_with_bearings();
 
 }
 
-
+//render_donkey_and_bracket();
 module render_donkey_and_bracket(){
   translate([0,2.5,0])
   rotate([0,0,90]){
@@ -302,12 +301,12 @@ module sandwich_and_donkey_ABC(rotate_donkey=0){
         Sep_disc_radius+Gap_between_sandwich_and_plate])
       rotate([90,0,0])
       sandwich_ABC();
-  // -3.5 gotten from visual inspection. 130 random.
-  translate([130,0,0])
+  // -9.7 gotten from visual inspection. 130 random.
+  translate([116,0,0])
     rotate([0,0,rotate_donkey])
-    translate([0,-3.5 + Sandwich_ABC_width/2,0])
+    translate([0,-9.7 + Sandwich_ABC_width/2,0])
     render_donkey_and_bracket();
-  translate([83,0,0])
+  translate([93,0,0])
     belt_roller_with_bearings();
   if(stls && !twod){
     for(k=[0,1])

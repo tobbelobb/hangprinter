@@ -9,13 +9,15 @@ donkey_feet_w = 43.5;
 encoder_feet_w = 29;
 hole_to_hole_l = 83; //90.0;
 th = 2;
-elevate_donkey_screw_holes = th + 7.5;
+bw = Bit_width-1;
+
+elevate_donkey_screw_holes = th + 6.5;
 shaft_mid_h = donkey_feet_w/2 + elevate_donkey_screw_holes;
-box_depth_donkey = 2*Bit_width+5;
+box_depth_donkey = 2*bw+5;
 ang_donkey = 90-atan((donkey_feet_w/2 + 43)/(box_depth_donkey - Donkey_feet_th));
 
 the_height = shaft_mid_h-10; // encoder
-box_depth_encoder = Bit_width;
+box_depth_encoder = bw;
 ang_encoder = -90+atan((the_height-Base_th+2)/(box_depth_encoder - th));
 
 // for donkey face
@@ -23,36 +25,36 @@ tr_x = (hole_to_hole_l/2 - box_depth_donkey) - Donkey_feet_th;
 
 module bit(twod, two=true){
   rotate([0,0,90])
-    translate([-Bit_width/2, -Bit_width/2, 0])
+    translate([-bw/2, -bw/2, 0])
     if(!twod){
       difference(){
         if(two){
-          left_rounded_cube2([Bit_width+4,2*Bit_width,Base_th], 5.5, $fn=28);
+          left_rounded_cube2([bw+4,2*bw,Base_th], 5.5, $fn=28);
         } else {
-          left_rounded_cube2([Bit_width+4,Bit_width,Base_th], 5.5, $fn=28);
+          left_rounded_cube2([bw+4,bw,Base_th], 5.5, $fn=28);
         }
-        translate([Bit_width/2, Bit_width/2, -1])
+        translate([bw/2, bw/2, -1])
           cylinder(d=Mounting_screw_d, h=Base_th+2, $fn=20);
-        translate([Bit_width/2, Bit_width/2, 2.3])
+        translate([bw/2, bw/2, 2.3])
           Mounting_screw_countersink();
         if(two){
-          translate([Bit_width/2, 3*Bit_width/2, 2.3])
+          translate([bw/2, 3*bw/2, 2.3])
             Mounting_screw_countersink();
         }
       }
     } else { // 2d
       difference(){
         if(two){
-          left_rounded_cube2_2d([Bit_width+4,2*Bit_width], 5.5, $fn=28);
+          left_rounded_cube2_2d([bw+4,2*bw], 5.5, $fn=28);
         } else {
-          left_rounded_cube2_2d([Bit_width+4,Bit_width], 5.5, $fn=28);
+          left_rounded_cube2_2d([bw+4,bw], 5.5, $fn=28);
         }
-        translate([Bit_width/2, Bit_width/2])
+        translate([bw/2, bw/2])
           circle(d=Mounting_screw_d, $fn=20);
-        translate([Bit_width/2, Bit_width/2, 2.3])
+        translate([bw/2, bw/2, 2.3])
           circle(d=Mounting_screw_d);
         if(two){
-          translate([Bit_width/2, 3*Bit_width/2])
+          translate([bw/2, 3*bw/2])
             circle(d=Mounting_screw_d);
         }
       }
@@ -79,8 +81,6 @@ module to_be_mounted(){
     encoder_face();
 }
 
-
-
 //donkey_face();
 module donkey_face(twod=false){
   if(!twod){
@@ -95,9 +95,14 @@ module donkey_face(twod=false){
               rotate([0,90,0])
               difference(){
                 cylinder(r=(donkey_feet_w + 20)/2 + 4, h = box_depth_donkey, $fn=60);
-                cube([donkey_feet_w + 20 + 10 + 1,
+                translate([-14,0,0])
+                cube([donkey_feet_w,
                     (donkey_feet_w + 20)/2 + 3,
                     2*box_depth_donkey + 2], center=true);
+                translate([14,0,0])
+                  cube([donkey_feet_w,
+                      (donkey_feet_w + 20)/2 + 7,
+                      2*box_depth_donkey + 2], center=true);
               }
           }
         }
@@ -131,26 +136,26 @@ module donkey_face(twod=false){
       }
       for(k=[0,1])
         mirror([0,k,0])
-          translate([tr_x+box_depth_donkey-Bit_width/2,
+          translate([tr_x+box_depth_donkey-bw/2,
               -(donkey_feet_w+20)/2-7,0]){
             bit(twod);
             translate([0,7,Base_th])
               rotate([0,-90,180])
-              translate([0,0,-Bit_width-Bit_width/2])
-              inner_round_corner(r=3, h=2*Bit_width, $fn=36);
+              translate([0,0,-bw-bw/2])
+              inner_round_corner(r=3, h=2*bw, $fn=36);
           }
     }
   } else {
     difference(){
-      translate([tr_x+box_depth_donkey-2*Bit_width, -(donkey_feet_w+20)/2])
-        square([2*Bit_width,
+      translate([tr_x+box_depth_donkey-2*bw, -(donkey_feet_w+20)/2])
+        square([2*bw,
             donkey_feet_w + 20]);
       translate([8,0])
         circle(d=Donkey_body_d);
     }
     for(k=[0,1])
       mirror([0,k])
-        translate([tr_x+box_depth_donkey-Bit_width/2,
+        translate([tr_x+box_depth_donkey-bw/2,
             -(donkey_feet_w+20)/2-7])
           bit(twod);
 
@@ -169,11 +174,11 @@ module encoder_face(twod=false){
             cube([box_depth_encoder, emd, the_height]);
           for(k=[0,1])
             mirror([0,k,0]){
-              translate([-hole_to_hole_l/2+Bit_width/2,-emd/2-7,0])
+              translate([-hole_to_hole_l/2+bw/2,-emd/2-7,0])
                 bit(twod,two=false);
-              translate([Bit_width-hole_to_hole_l/2,emd/2,Base_th])
+              translate([bw-hole_to_hole_l/2,emd/2,Base_th])
                 rotate([0,-90,0])
-                inner_round_corner(r=3, h=Bit_width, $fn=36);
+                inner_round_corner(r=3, h=bw, $fn=36);
             }
         }
         for(k=[0,1])
@@ -219,7 +224,7 @@ module encoder_face(twod=false){
     translate([-hole_to_hole_l/2, 0])
       for(k=[0,1])
         mirror([0,k,0])
-          translate([Bit_width/2,-emd/2-7])
+          translate([bw/2,-emd/2-7])
             bit(twod,two=false);
   }
 }
@@ -234,7 +239,7 @@ module donkey_bracket(twod=false){
   } else {
     rotate([0,-90,0])
       encoder_face(twod);
-    translate([10,0,0])
+    translate([-36,0,0])
       rotate([0,90,0])
       donkey_face(twod);
   }
