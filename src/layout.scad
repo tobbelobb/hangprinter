@@ -40,7 +40,7 @@ lift_mover_z = between_action_points_z + Higher_bearing_z+8;
 
 dspool_y = -50;
 abcspool_y = -50;
-abc_sep = 100;
+abc_sep = 104;
 move_BC_deflectors = -100;
 
 extra_space_in_middle = 10;
@@ -250,8 +250,8 @@ module sandwich_and_donkey_D(){
       rotate([90,0,180])
       sandwich_D();
   }
-  // -9.7 gotten from visual inspection. 116 random.
-  translate([116,-9.7 + Sandwich_ABC_width/2,0])
+  // -7.2 gotten from visual inspection. 116 random.
+  translate([116,-7.2 + Sandwich_ABC_width/2,0])
     render_donkey_and_bracket();
   translate([0,Spool_height+1,0])
   if(stls && !twod){
@@ -301,10 +301,10 @@ module sandwich_and_donkey_ABC(rotate_donkey=0){
         Sep_disc_radius+Gap_between_sandwich_and_plate])
       rotate([90,0,0])
       sandwich_ABC();
-  // -9.7 gotten from visual inspection. 130 random.
+  // -7.2 gotten from visual inspection. 130 random.
   translate([116,0,0])
     rotate([0,0,rotate_donkey])
-    translate([0,-9.7 + Sandwich_ABC_width/2,0])
+    translate([0,-7.2 + Sandwich_ABC_width/2,0])
     render_donkey_and_bracket();
   translate([93,0,0])
     belt_roller_with_bearings();
@@ -358,7 +358,7 @@ module full_winch(){
   sep = abc_sep;
   y = abcspool_y;
 
-  translate([sep/2+extra_space_in_middle,y,0])
+  translate([lx3+spd/2,y,0])
     rotate([0,0,-90])
     sandwich_and_donkey_A();
 

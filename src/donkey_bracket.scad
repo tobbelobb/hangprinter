@@ -7,7 +7,7 @@ d = 11;
 tail = 5; // behind donkey available th = d/2 + tail
 donkey_feet_w = 43.5;
 encoder_feet_w = 29;
-hole_to_hole_l = 83; //90.0;
+hole_to_hole_l = 90; //83.0;
 th = 2;
 bw = Bit_width-1;
 
