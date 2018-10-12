@@ -4,7 +4,7 @@ use <util.scad>
 difference(){
   union(){
     rotate([90,0,0])
-      left_rounded_cube2([Bit_width+2,Bit_width,Base_th], Lineroller_base_r);
+      left_rounded_cube2([Bit_width+2,Bit_width,Base_th], 3, $fn=2*12);
     translate([Bit_width+Cable_r+Base_th,-Base_th/2,0])
       cylinder(r=Cable_r+Base_th, h=Bit_width, $fs=1);
   }
