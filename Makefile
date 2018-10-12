@@ -123,7 +123,7 @@ $(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/GT2_spool_gear.scad \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/line_roller_anchor.scad \
-	$(SRC_DIR)/lineroller_anchor_template.scad \
+	$(SRC_DIR)/line_roller_anchor_template.scad \
 	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/parameters.scad \
@@ -145,7 +145,7 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/GT2_spool_gear.stl \
 	$(STL_DIR)/horizontal_line_deflector.stl \
 	$(STL_DIR)/line_roller_anchor.stl \
-	$(STL_DIR)/lineroller_anchor_template.stl \
+	$(STL_DIR)/line_roller_anchor_template.stl \
 	$(STL_DIR)/line_roller_double.stl \
 	$(STL_DIR)/line_verticalizer.stl \
 	$(STL_DIR)/sep_disc.stl \
