@@ -56,6 +56,9 @@ M569 P8 I"0x0d"
 
 M906 D1000									; Motor D current 1000 mA
 
+M201 X10000 Y10000 Z10000 E1000			; Accelerations (mm/s^2)
+M203 X36000 Y36000 Z36000 E3600			; Maximum speeds (mm/min)
+
 M574 X2 Y2 Z2 S1				; set endstop configuration (all endstops at high end, active high)
 ;*** The homed height is deliberately set too high in the following - you will adjust it during calibration
 ;M665 R105.6 L215.0 B85 H250			; set delta radius, diagonal rod length, printable radius and homed height
@@ -63,8 +66,6 @@ M666 X0 Y0 Z0					; put your endstop adjustments here, or let auto calibration f
 M350 X16 Y16 Z16 E16:16 I1			; Set 16x microstepping with interpolation
 ;M92 X80 Y80 Z80					; Set axis steps/mm
 M906 X1000 Y1000 Z1000 E800 I60			; Set motor currents (mA) and increase idle current to 60%
-M201 X1000 Y1000 Z1000 E1000			; Accelerations (mm/s^2)
-M203 X20000 Y20000 Z20000 E3600			; Maximum speeds (mm/min)
 M566 X1200 Y1200 Z1200 E1200			; Maximum instant speed changes mm/minute
 
 ; Thermistors
