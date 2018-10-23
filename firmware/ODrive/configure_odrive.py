@@ -32,11 +32,13 @@ odrv0.axis0.config.startup_motor_calibration = True
 # PID tuning
 odrv0.axis0.controller.config.pos_gain = 70
 odrv0.axis0.controller.config.vel_integrator_gain = 0.002
-odrv0.axis0.controller.config.vel_gain = 0.0045
+odrv0.axis0.controller.config.vel_gain = 0.004
 
 # Interface
 odrv0.config.enable_uart = True
 odrv0.axis0.config.enable_step_dir = True
+#odrv0.axis0.config.step_gpio_pin = 3 # Once configuratble step/dir is merged in upstream ODrive Firmware, we'll use these comands
+#odrv0.axis0.config.dir_gpio_pin = 4
 odrv0.axis0.config.counts_per_step = 0.75 # 2400/(200*16) = 0.75
 
 odrv0.save_configuration()
