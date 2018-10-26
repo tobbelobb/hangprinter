@@ -49,10 +49,13 @@ M669 O1:1:1:1                                   ; Number of lines per spool
 M669 L20:20:20:20                               ; Motor gear teeth of ABCD axes
 M669 H255:255:255:255                           ; Spool gear teeth of ABCD axes
 
-M569 P5 I"0x0a" ; i2c addresses set up, but will probably not be used on HP4
-M569 P6 I"0x0b"
-M569 P7 I"0x0c"
-M569 P8 I"0x0d"
+;M569 P5 I"0x0a" ; i2c addresses set up, but will probably not be used on HP4
+;M569 P6 I"0x0b"
+;M569 P7 I"0x0c"
+;M569 P8 I"0x0d"
+
+; Connect ODrive 0 to Serial device 1 at 115200 baud
+M569 Q0:1:115200
 
 M906 D1000									; Motor D current 1000 mA
 
