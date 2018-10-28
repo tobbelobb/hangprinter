@@ -15,7 +15,7 @@ M552 P192.168.1.14				; (0 = DHCP)
 M554 P192.168.1.255				; Gateway
 M553 P255.255.255.0				; Netmask
 
-M555 P2						; Set output to look like Marlin
+M555 P2					; Set output to look like Marlin
 G21						; Work in millimetres
 G90						; Send absolute coordinates...
 M83						; ...but relative extruder moves
@@ -37,7 +37,7 @@ M569 P5 S1					; Drive 5 (A) goes forwards
 M569 P6 S1					; Drive 6 (B) goes forwards
 M569 P7 S1					; Drive 7 (C) goes forwards
 M569 P8 S1					; Drive 8 (D) goes forwards
-M669 J200:200:200:200		; Full steps per ABCD motor revolution
+M669 J25:25:25:25			; Full steps per ABCD motor revolution
 
 M669 A0.0:1000.0:-100.0 B 1000.0:1000.0:-100.0 C-1000.0:1000.0:-100.0 D2000.0	; Anchor positions in mm
 M669 P2000.0                                    ; Printable radius
@@ -57,16 +57,16 @@ M669 H255:255:255:255                           ; Spool gear teeth of ABCD axes
 ; Connect ODrive 0 to Serial device 1 at 115200 baud
 M569 Q0:1:115200
 
-M906 D1000									; Motor D current 1000 mA
 
 M201 X10000 Y10000 Z10000 E1000			; Accelerations (mm/s^2)
 M203 X36000 Y36000 Z36000 E3600			; Maximum speeds (mm/min)
+
+;M906 D1000								; Motor D current 1000 mA TODO: set max currents for ODrive via DuetWifi?
 
 M574 X2 Y2 Z2 S1				; set endstop configuration (all endstops at high end, active high)
 ;*** The homed height is deliberately set too high in the following - you will adjust it during calibration
 ;M665 R105.6 L215.0 B85 H250			; set delta radius, diagonal rod length, printable radius and homed height
 M666 X0 Y0 Z0					; put your endstop adjustments here, or let auto calibration find them
-M350 X16 Y16 Z16 E16:16 I1			; Set 16x microstepping with interpolation
 ;M92 X80 Y80 Z80					; Set axis steps/mm
 M906 X1000 Y1000 Z1000 E800 I60			; Set motor currents (mA) and increase idle current to 60%
 M566 X1200 Y1200 Z1200 E1200			; Maximum instant speed changes mm/minute
