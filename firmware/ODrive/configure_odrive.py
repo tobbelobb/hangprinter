@@ -8,7 +8,6 @@ odrv0 = odrive.find_any()
 # If your setup is fifferent in any way, you might have to change these values
 #odrv0.config.brake_resistance = 0.4699999988079071 # Default
 
-#odrv0.axis0.motor.config.calibration_current = 10  # Default
 #odrv0.axis0.motor.config.pole_pairs = 7            # Default
 #odrv0.axis0.controller.current_setpoint = 0        # Default. Torque mode with zero torque
 
@@ -24,10 +23,12 @@ odrv0 = odrive.find_any()
 odrv0.axis0.controller.config.vel_limit = 130000
 odrv0.axis0.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
 odrv0.axis0.motor.config.current_lim = 30 # Strong enough...
+odrv0.axis0.motor.config.calibration_current = 15
 
 odrv0.axis1.controller.config.vel_limit = 130000
 odrv0.axis1.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
 odrv0.axis1.motor.config.current_lim = 30 # Strong enough...
+odrv0.axis1.motor.config.calibration_current = 15
 
 # Enforce startup sequence this time
 odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
@@ -68,8 +69,8 @@ odrv0.axis0.config.dir_gpio_pin = 5
 odrv0.axis0.config.counts_per_step = 6.0 # 2400/(25*16) = 6
 odrv0.axis0.config.enable_step_dir = True
 
-odrv0.axis1.config.step_gpio_pin = 7
-odrv0.axis1.config.dir_gpio_pin = 8
+#odrv0.axis1.config.step_gpio_pin = 7 # Default
+#odrv0.axis1.config.dir_gpio_pin = 8  # Default
 odrv0.axis1.config.counts_per_step = 6.0 # 2400/(25*16) = 6
 odrv0.axis1.config.enable_step_dir = True
 
