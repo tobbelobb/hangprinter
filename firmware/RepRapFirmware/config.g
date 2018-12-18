@@ -56,7 +56,16 @@ M669 H255:255:255:255                           ; Spool gear teeth of ABCD axes
 
 ; Connect ODrive 0 to Serial device 1 at 115200 baud
 M569 Q0:1:115200
-
+; Connect ODrive 1 to Serial device 99 at 115200 baud
+M569 Q1:99:115200
+; Device 99 is the two middle pins on DuetWifi's SPIO header
+; (sometimes called Temp Daughterboard header)
+; The special number 99 is used because this serial device
+; is special. It's really meant to be used for
+; SPI communication with temp daughterboards and such.
+; MOSI = TX (Connects to ODrive's RX)
+; MISO = RX (Connects to ODrive's TX)
+; Look for SPI0_MISO and SPI0_MOSI on DuetWifi wiring diagram
 
 M201 X10000 Y10000 Z10000 E1000			; Accelerations (mm/s^2)
 M203 X36000 Y36000 Z36000 E3600			; Maximum speeds (mm/min)
