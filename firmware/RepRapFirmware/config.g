@@ -34,12 +34,12 @@ M569 P2 S1					; Drive 2 goes forwards
 M569 P3 S1					; Drive 3 goes forwards
 M569 P4 S1					; Drive 4 goes forwards
 M569 P5 S1					; Drive 5 (A) goes forwards
-M569 P6 S1					; Drive 6 (B) goes forwards
+M569 P6 S0					; Drive 6 (B) goes backwards
 M569 P7 S1					; Drive 7 (C) goes forwards
-M569 P8 S1					; Drive 8 (D) goes forwards
+M569 P8 S0					; Drive 8 (D) goes backwards
 M669 J25:25:25:25			; Full steps per ABCD motor revolution
 
-M669 A0.0:1000.0:-100.0 B 1000.0:1000.0:-100.0 C-1000.0:1000.0:-100.0 D2000.0	; Anchor positions in mm
+M669 A0.0:-1000.0:-100.0 B 1000.0:1000.0:-100.0 C-1000.0:1000.0:-100.0 D2000.0	; Placeholder anchor positions in mm
 M669 P2000.0                                    ; Printable radius
 M669 Q0.7                                       ; Spool buildup factor
 M669 W7500.0:7500.0:7500.0:4000.0               ; Mounted ABCD line lengths are
