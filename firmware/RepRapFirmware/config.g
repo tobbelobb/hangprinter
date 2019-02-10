@@ -2,7 +2,7 @@
 
 ; Communication and general
 M111 S0                            		; Debug off
-M550 PHP4Test					; Machine name and Netbios name (can be anything you like)
+M550 PHP4Test							; Machine name and Netbios name (can be anything you like)
 M551 Preprap                   			; Machine password (used for FTP)
 ;*** If you have more than one Duet on your network, they must all have different MAC addresses, so change the last digits
 M540 P0xBE:0xEF:0xDE:0xAD:0xFE:0xED		; MAC Address
@@ -24,9 +24,9 @@ M83						; ...but relative extruder moves
 M106 P1 T45 H1
 
 ; Axis and motor configuration
-M669 K6				; This is a Hangprinter enables ABCD-parameters in gcodes that refer to motors
-M584 A5 B6 C7 D8 P4	 	; map ABCD-axes to ext driver pins (four visible)
-M584 E0:1:2:3:4 		; Regard all TMC2660s as extruder motor drivers
+M669 K6						; This is a Hangprinter enables ABCD-parameters in gcodes that refer to motors
+M584 A5 B6 C7 D8 P4	 		; map ABCD-axes to ext driver pins (four visible)
+M584 E0:1:2:3:4 			; Regard all TMC2660s as extruder motor drivers
 
 M569 P0 S1					; Drive 0 goes forwards
 M569 P1 S1					; Drive 1 goes forwards
@@ -39,15 +39,20 @@ M569 P7 S1					; Drive 7 (C) goes forwards
 M569 P8 S0					; Drive 8 (D) goes backwards
 M669 J25:25:25:25			; Full steps per ABCD motor revolution
 
-M669 A0.0:-1000.0:-100.0 B 1000.0:1000.0:-100.0 C-1000.0:1000.0:-100.0 D2000.0	; Placeholder anchor positions in mm
+
 M669 P2000.0                                    ; Printable radius
-M669 Q0.7                                       ; Spool buildup factor
-M669 W7500.0:7500.0:7500.0:4000.0               ; Mounted ABCD line lengths are
-M669 R65.0:65.0:65.0:65.0                       ; Spool ABCD radii
 M669 U2:2:2:2                                   ; Mechanical advantages on ABCD
 M669 O1:1:1:1                                   ; Number of lines per spool
 M669 L20:20:20:20                               ; Motor gear teeth of ABCD axes
 M669 H255:255:255:255                           ; Spool gear teeth of ABCD axes
+
+; Anchor positions, spool buildup factor, and spool radii, calculated with auto-calibration-simulation-for-hangprinter
+M669 A0.0:-1616.00:-116.31 B1333.19:1288.06:-156.91 C-1480.47:759.30:-165.77 D2309.54 Q0.068069 R65.683:65.395:65.433:65.372
+M208 Z2309.54 ; set maximum Z at D anchor
+
+; Use
+; M564 S0
+; If you don't want G0/G1 moves to be be limited to a software defined volume
 
 ;M569 P5 I"0x0a" ; i2c addresses set up, but will probably not be used on HP4
 ;M569 P6 I"0x0b"
@@ -70,14 +75,11 @@ M569 Q1:99:115200
 M201 X10000 Y10000 Z10000 E1000			; Accelerations (mm/s^2)
 M203 X36000 Y36000 Z36000 E3600			; Maximum speeds (mm/min)
 
-;M906 D1000								; Motor D current 1000 mA TODO: set max currents for ODrive via DuetWifi?
-
 M574 X2 Y2 Z2 S1				; set endstop configuration (all endstops at high end, active high)
 ;*** The homed height is deliberately set too high in the following - you will adjust it during calibration
 ;M665 R105.6 L215.0 B85 H250			; set delta radius, diagonal rod length, printable radius and homed height
-M666 X0 Y0 Z0					; put your endstop adjustments here, or let auto calibration find them
-;M92 X80 Y80 Z80					; Set axis steps/mm
-M906 X1000 Y1000 Z1000 E800 I60			; Set motor currents (mA) and increase idle current to 60%
+M666 X0 Y0 Z0							; put your endstop adjustments here, or let auto calibration find them
+M906 X1200 Y1200 Z1200 E1400 I60		; Set motor currents (mA) and increase idle current to 60%
 M566 X1200 Y1200 Z1200 E1200			; Maximum instant speed changes mm/minute
 
 ; Thermistors
@@ -92,25 +94,15 @@ M307 H0 A250 C140 D5.5 B1
 M307 H1 A250 C140 D5.5 B0
 M307 H2 A250 C140 D5.5 B0
 
-; Fans
-M106 P1 S-1					; disable thermostatic mode for fan 1
-
 ; Tool definitions
 M563 P0 D0 H1					; Define tool 0
 G10 P0 S0 R0					; Set tool 0 operating and standby temperatures
+
 ;*** If you have a single-nozzle build, comment the next 2 lines
 M563 P1 D1 H2					; Define tool 1
 G10 P1 S0 R0					; Set tool 1 operating and standby temperatures
-M92 E663:663					; Set extruder steps per mm
-
-; Z probe and compensation definition
-;*** If you have a switch instead of an IR probe, change P1 to P4 in the following M558 command
-M558 P1 X0 Y0 Z0				; Z probe is an IR probe and is not used for homing any axes
-G31 X0 Y0 Z4.80 P500				; Set the zprobe height and threshold (put your own values here)
-
-;*** If you are using axis compensation, put the figures in the following command
-M556 S78 X0 Y0 Z0				; Axis compensation here
+M92 E415						; Set extruder steps per mm
 
 M208 S1 Z-0.2					; set minimum Z
 
-T0						; select first hot end
+T0								; select first hot end
