@@ -13,6 +13,10 @@ use <beam_slider_D.scad>
 use <util.scad>
 use <donkey_bracket.scad>
 use <belt_roller.scad>
+use <landing_bracket.scad>
+
+
+beam_length = 400;
 
 // Viewing STLs is faster when just looking at the model
 // Non-stls are faster for previews when changing design
@@ -23,20 +27,21 @@ stls = true;
 //twod = true;
 twod = false;
 
-//mounted_in_ceiling = true;
-mounted_in_ceiling = false;
+mounted_in_ceiling = true;
+//mounted_in_ceiling = false;
 
 // Render the mover
-//mover = true;
-mover = false;
+mover = true;
+//mover = false;
 
 bottom_triangle = false;
 //bottom_triangle = true;
 
 ANCHOR_D_Z = 2300;
 ANCHOR_A_Y = 2000;
-between_action_points_z = 400;
+between_action_points_z = ANCHOR_D_Z-Higher_bearing_z -3 - 175;
 lift_mover_z = between_action_points_z + Higher_bearing_z+8;
+//lift_mover_z = ANCHOR_D_Z-300;
 
 dspool_y = -50;
 abcspool_y = -50;
@@ -91,6 +96,19 @@ module ldef(rot_around_center=0, center=false){
   }
 }
 
+module placed_landing_bracket(){
+  translate([7, 128, 0])
+    rotate([0,0,90])
+    landing_bracket_a();
+  translate([0,-71,0])
+  rotate([0,0,180])
+  translate([105, 0, 0])
+    rotate([0,0,90])
+    landing_bracket();
+  translate([105, -71, 0])
+    rotate([0,0,90])
+    landing_bracket();
+}
 
 //placed_line_verticalizer();
 module placed_line_verticalizer(angs=[180+30,180,180-30]){
@@ -375,6 +393,7 @@ module full_winch(){
     sandwich_and_donkey_D();
 
   placed_line_verticalizer();
+  #placed_landing_bracket();
 
   cx = 452;
   cy = 450;
@@ -386,10 +405,9 @@ if(mover && !twod)
   translate([0,0,lift_mover_z])
   mover();
 module mover(){
-  beam_length = 400;
   for(k=[0,120,240])
     rotate([180,0,k+180]){
-      translate([-beam_length/2,-Sidelength/sqrt(12)-sqrt(3), 0]){
+      translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
         cube([beam_length, Beam_width, Beam_width]);
         translate([0.69*beam_length, Beam_width/2+7,Beam_width/2-5])
           color(color1, color1_alpha)
@@ -472,7 +490,7 @@ module lr(){
                  0,
                  Higher_bearing_z + b623_vgroove_small_r/sqrt(2)])
       rotate([0,-90+atan(ANCHOR_D_Z/ay),0])
-      cylinder(r = 0.75, h = sqrt(ay*ay + ANCHOR_D_Z*ANCHOR_D_Z));
+      cylinder(r = 0.75, h = 0.5*sqrt(ay*ay + ANCHOR_D_Z*ANCHOR_D_Z));
 
 
     between_bearings_x = Back_bearing_x - Front_bearing_x;
@@ -548,9 +566,10 @@ module ABC_anchor(){
     mirror([0,k,0])
       translate([0,-Sidelength/2,0])
         lr();
-  translate([-27/2, -Ext_sidelength/2, -8])
+  Ext_sidelength = 500;
+  translate([-35, -Ext_sidelength/2, -8])
     cube([50,Ext_sidelength, 8]);
-  translate([Front_bearing_x+Move_tower-4-3.1,0,Higher_bearing_z+2])
+  translate([Front_bearing_x+Move_tower-1,0,Higher_bearing_z-2])
     color("red")
     sphere(r=4);
 }
@@ -600,7 +619,13 @@ module ceiling_unit_internal_lines_v4(){
 }
 
 //ceiling_unit_internal_lines_v4();
-ceiling_unit_internal_lines_v4p1();
+if(mounted_in_ceiling && !twod){
+  translate([0,0,43+ANCHOR_D_Z])
+    rotate([180,0,0])
+	  ceiling_unit_internal_lines_v4p1();
+} else {
+	ceiling_unit_internal_lines_v4p1();
+}
 module ceiling_unit_internal_lines_v4p1(){
   hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
 
