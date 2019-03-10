@@ -97,17 +97,16 @@ module ldef(rot_around_center=0, center=false){
 }
 
 module placed_landing_bracket(){
-  translate([7, 128, 0])
-    rotate([0,0,90])
-    landing_bracket_a();
+  translate([12, 128-b623_vgroove_small_r/2, 0])
+    rotate([0,0,180+90])
+      landing_bracket_a();
   translate([0,-71,0])
-  rotate([0,0,180])
-  translate([105, 0, 0])
-    rotate([0,0,90])
-    landing_bracket();
-  translate([105, -71, 0])
-    rotate([0,0,90])
-    landing_bracket();
+    rotate([0,0,180])
+      translate([104, 0, 0])
+        landing_bracket_b();
+  translate([104, -71, 0])
+    rotate([0,0,180])
+      landing_bracket_c();
 }
 
 //placed_line_verticalizer();
@@ -393,7 +392,7 @@ module full_winch(){
     sandwich_and_donkey_D();
 
   placed_line_verticalizer();
-  #placed_landing_bracket();
+  placed_landing_bracket();
 
   cx = 452;
   cy = 450;
