@@ -26,6 +26,8 @@ module spool_outer(spools = 1){
                   cylinder(r=1.2, h=Spool_r);
     }
     translate([0,0,-1])
+      cylinder(d=b608_outer_dia+2.5, h=3,$fn=150);
+    translate([0,0,1])
       cylinder(r=Spool_r-Spool_outer_wall_th, h=spools*(Spool_height + 1)+Torx_depth+1,$fn=150);
   }
 }
