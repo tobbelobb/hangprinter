@@ -11,7 +11,6 @@ odrv0 = odrive.find_any()
 #odrv0.axis0.motor.config.pole_pairs = 7            # Default
 #odrv0.axis0.controller.current_setpoint = 0        # Default. Torque mode with zero torque
 
-#odrv0.axis1.motor.config.calibration_current = 10  # Default
 #odrv0.axis1.motor.config.pole_pairs = 7            # Default
 #odrv0.axis1.controller.current_setpoint = 0        # Default. Torque mode with zero torque
 
@@ -23,12 +22,12 @@ odrv0 = odrive.find_any()
 odrv0.axis0.controller.config.vel_limit = 130000
 odrv0.axis0.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
 odrv0.axis0.motor.config.current_lim = 30 # Strong enough...
-odrv0.axis0.motor.config.calibration_current = 15
+odrv0.axis0.motor.config.calibration_current = 20
 
 odrv0.axis1.controller.config.vel_limit = 130000
 odrv0.axis1.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
 odrv0.axis1.motor.config.current_lim = 30 # Strong enough...
-odrv0.axis1.motor.config.calibration_current = 15
+odrv0.axis1.motor.config.calibration_current = 20
 
 # Enforce startup sequence this time
 odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
@@ -55,11 +54,11 @@ odrv0.axis1.config.startup_motor_calibration = True
 # PID tuning
 odrv0.axis0.controller.config.pos_gain = 70
 odrv0.axis0.controller.config.vel_integrator_gain = 0.002
-odrv0.axis0.controller.config.vel_gain = 0.004
+odrv0.axis0.controller.config.vel_gain = 0.0035
 
 odrv0.axis1.controller.config.pos_gain = 70
 odrv0.axis1.controller.config.vel_integrator_gain = 0.002
-odrv0.axis1.controller.config.vel_gain = 0.004
+odrv0.axis1.controller.config.vel_gain = 0.0035
 
 # Interface
 odrv0.config.enable_uart = True

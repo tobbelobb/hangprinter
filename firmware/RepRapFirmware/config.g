@@ -20,9 +20,6 @@ G21 ; Work in millimetres
 G90 ; Send absolute coordinates...
 M83 ; ...but relative extruder moves
 
-; Enable Fan 1 thermostatic mode for heater 1 (E0 HEAT) at 45 degrees
-M106 P1 T45 H1
-
 ;;;; HANGPRINTER SPECIALS (M669, M666) BEGIN HERE ;;;;
 M669 K6 ; This is a Hangprinter enables ABCD-parameters in gcodes that refer to motors
 M584 A5 B6 C7 D8 P4 ; map ABCD-axes to ext driver pins (four visible)
@@ -38,10 +35,12 @@ M569 P7 S1 ; Drive 7 (C) goes forwards
 M569 P8 S0 ; Drive 8 (D) goes backwards
 
 M669 P2000.0 ; Hangprinter printable radius (unused for now)
+M669 S200 ; Hangprinter segments per second
 
 ; Output of auto calibration script for Hangprinter
-M669 A0.0:-1616.00:-116.31 B1333.19:1288.06:-156.91 C-1480.47:759.30:-165.77 D2309.54
-M666 Q0.068069 R65.683:65.395:65.433:65.372
+M669 A0.0:-1604.54:-114.08 B1312.51:1270.88:-162.19 C-1440.27:741.63:-161.23 D2345.00
+M666 Q0.035619 R65.239:65.135:65.296:64.673
+
 ; End of output auto calibration script for Hangprinter
 
 ; The following is assumed
@@ -95,7 +94,10 @@ M570 S180 ; Hot end may be a little slow to heat up so allow it 180 seconds
 
 ; Adjustments for J-heads used as dummy heaters on test rig
 M307 H0 A250 C140 D5.5 B1
-M307 H1 A250 C140 D5.5 B0
+
+# Super Volcano 80W 24V
+M307 H1 A1271.9 C432.5 D8.2 B0
+
 M307 H2 A250 C140 D5.5 B0
 
 ; Tool definitions
@@ -103,10 +105,15 @@ M563 P0 D0 H1 ; Define tool 0
 G10 P0 S0 R0 ; Set tool 0 operating and standby temperatures
 
 ;*** If you have a single-nozzle build, comment the next 2 lines
-;M563 P1 D1 H2 ; Define tool 1
-;G10 P1 S0 R0 ; Set tool 1 operating and standby temperatures
+M563 P1 D1 H2 ; Define tool 1
+G10 P1 S0 R0 ; Set tool 1 operating and standby temperatures
+
 M92 E415 ; Set extruder steps per mm
 
 M208 S1 Z-10.0 ; set minimum Z
 
 T0 ; select first hot end
+
+; Enable Fan 1 thermostatic mode for heater 1 (E0 HEAT) at 45 degrees
+M106 P2 X150 T45 H1
+
