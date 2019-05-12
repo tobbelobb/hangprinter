@@ -111,29 +111,110 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/util.scad
 	$(call make_layout_pdf_a4,"../layout.dxf",$@)
 
-$(STL_DIR)/%.stl: $(SRC_DIR)/beam_slider_D.scad \
-	$(SRC_DIR)/belt_roller.scad \
-	$(SRC_DIR)/cable_clamp.scad \
-	$(SRC_DIR)/corner_clamp.scad \
-	$(SRC_DIR)/dleft_spool.scad \
-	$(SRC_DIR)/donkey_bracket.scad \
-	$(SRC_DIR)/donkey.scad \
-	$(SRC_DIR)/extruder_holder.scad \
-	$(SRC_DIR)/gear_util.scad \
-	$(SRC_DIR)/GT2_spool_gear.scad \
-	$(SRC_DIR)/horizontal_line_deflector.scad \
-	$(SRC_DIR)/line_roller_anchor.scad \
-	$(SRC_DIR)/line_roller_anchor_template.scad \
-	$(SRC_DIR)/line_roller_double.scad \
-	$(SRC_DIR)/line_verticalizer.scad \
+$(STL_DIR)/beam_slider_D.stl: $(SRC_DIR)/beam_slider_D.scad \
 	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/sep_disc.scad \
-	$(SRC_DIR)/spacer_ABC.scad \
-	$(SRC_DIR)/spacer_D.scad \
-	$(SRC_DIR)/spool_core.scad \
-	$(SRC_DIR)/spool.scad \
 	$(SRC_DIR)/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/belt_roller.stl: $(SRC_DIR)/belt_roller.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/cable_clamp.stl: $(SRC_DIR)/cable_clamp.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/corner_clamp.stl: $(SRC_DIR)/corner_clamp.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/dleft_spool.stl: $(SRC_DIR)/dleft_spool.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/gear_util.scad \
+	$(SRC_DIR)/spool.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/donkey_bracket.stl: $(SRC_DIR)/donkey_bracket.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad \
+	$(SRC_DIR)/donkey.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/extruder_holder.stl: $(SRC_DIR)/extruder_holder.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/GT2_spool_gear.stl: $(SRC_DIR)/GT2_spool_gear.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/gear_util.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/horizontal_line_deflector.stl: $(SRC_DIR)/horizontal_line_deflector.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/line_roller_anchor.stl: $(SRC_DIR)/line_roller_anchor.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/line_roller_anchor_template.stl: $(SRC_DIR)/line_roller_anchor_template.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad \
+	$(SRC_DIR)/line_roller_anchor.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/line_roller_double.stl: $(SRC_DIR)/line_roller_double.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/line_verticalizer.stl: $(SRC_DIR)/line_verticalizer.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/sep_disc.stl: $(SRC_DIR)/sep_disc.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/gear_util.scad \
+	$(SRC_DIR)/spool.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/spacer_ABC.stl: $(SRC_DIR)/spacer_ABC.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/spacer_D.stl: $(SRC_DIR)/spacer_D.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/spool_core.stl: $(SRC_DIR)/spool_core.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/spool.stl: $(SRC_DIR)/spool.scad \
+	$(SRC_DIR)/parameters.scad \
+	$(SRC_DIR)/util.scad \
+	$(SRC_DIR)/gear_util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+# If we do
+# $ make something.stl
+# then we should get the same output as if we had done
+# $ make stl/something.stl
+# Because one gets tired of writing stl/
+.PHONY: %.stl
+%.stl: $(addprefix $(STL_DIR)/, %.stl)
+	@echo Executed rule for $<
 
 all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/belt_roller.stl \
