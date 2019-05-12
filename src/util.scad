@@ -827,9 +827,9 @@ module preventor_edges(tower_h,
 }
 
 //corner_rounder();
-module corner_rounder(r1=3, r2=2, sq=[10,10]){
+module corner_rounder(r1=3, r2=2, sq=[10,10], angle=90){
   translate([-r1, -r1])
-    rotate_extrude(angle=90, $fn=4*6)
+    rotate_extrude(angle=angle, $fn=4*6)
     translate([r1,0])
     rounded_square(sq, r2, $fn=20);
 }
