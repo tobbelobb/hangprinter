@@ -774,12 +774,14 @@ module roller_wall_pair(space_between_walls, wall_th, height){
         roller_wall(space_between_walls, wall_th, height);
 }
 
-//preventor_edges(22, b623_width);
+//preventor_edges(22, b623_width, back1=1.9, back2=0.9);
 module preventor_edges(tower_h,
                        space_between_walls,
                        with_bearing=false,
                        edge_start=0,
-                       edge_stop=180){
+                       edge_stop=180,
+                       back1 = 0.5,
+                       back2 = 0){
   // Edge to prevent line from falling of...
   a = 1.75;
   b= 0.8;
@@ -799,10 +801,10 @@ module preventor_edges(tower_h,
         difference(){
           rotate_extrude(angle=360, convexity=10, $fn=60)
             translate([rot_r,0])
-            polygon(points = [[0,0],[0,-0.5],[b+a, -0.5],[b+a,0],[b, a],[0, a]]);
+            polygon(points = [[0,-back2],[0,-back1],[b+a, -back1],[b+a,-back2],[b, a],[0, a]]);
           rotate([0,0,edge_stop])
-            translate([0,0,-1])
-            linear_extrude(height=b+a+1)
+            translate([0,0,-0.5-back1])
+            linear_extrude(height=b+a+0.5+back1)
             polygon(points=circle_sector(360-(edge_stop-edge_start),1,rot_r+b+a+1));
           rotate([0,0,edge_start])
             translate([rot_r-1,0,0])
