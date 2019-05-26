@@ -207,6 +207,9 @@ $(STL_DIR)/spool.stl: $(SRC_DIR)/spool.scad \
 	$(SRC_DIR)/gear_util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/line_length_tuner_hook.stl: $(SRC_DIR)/line_length_tuner_hook.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 # If we do
 # $ make something.stl
 # then we should get the same output as if we had done

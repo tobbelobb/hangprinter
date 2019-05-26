@@ -1,6 +1,21 @@
 include <parameters.scad>
 use <util.scad>
 
+// Comment out if you need to render the hook
+//use <line_length_tuner_hook.scad>
+// Place line length tuner out like this
+//color("red")
+//translate([-b623_vgroove_small_r*cos(45), 10, 18])
+//  rotate([0,90,90])
+//    line_length_tuner_hook();
+//color("lime")
+//  translate([-b623_vgroove_small_r*cos(45), 10, 18])
+//    rotate([0,90,90])
+//      translate([0,0,-24]){
+//        nut(3);
+//        cylinder(d=3, h=30);
+//      }
+
 //!eyelet();
 module eyelet(){
   hi = 3.45;
@@ -73,6 +88,18 @@ module line_verticalizer(twod = false, with_bearing = false){
             rotate_extrude()
             translate([bigr,0,0])
             circle(d=2);
+
+      d = Depth_of_roller_base;
+      for (k = [0,1]){
+        mirror([0,k,0]){
+          translate([-b623_vgroove_small_r*cos(45),space_between_walls/2 - 1, 18])
+          rotate([-90,0,0]){
+            cylinder(d=3.4, h=wall_th + 2, $fn=12);
+            translate([0,0,1+wall_th - min(wall_th/2, 2)])
+              nut(h=8);
+          }
+        }
+      }
     }
   } else {
     roller_base(twod=true, space_between_walls=space_between_walls);
