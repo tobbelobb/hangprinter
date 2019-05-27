@@ -4,35 +4,34 @@ X = 0;
 Y = 1;
 Z = 2;
 
-// This the calibrated A anchor position
-// If doesn't account for the fact that the
-// action points are 2 in the A-direction,
-// and they are offset from the nozzle
+// This is the A anchor position that is
+// calibrated and configured in firmware.
+// We can not use it directly because
+// it does not account for the fact that there
+// are two action points (lines) in the A-direction.
+// Therefore, it lacks information about
+// where lines enter the effector.
 A_calib = [0, -1604, -114];
 
 // This is the cartesian position of the two
-// action points, relative to the nozzle
+// action points on the effector, relative to the nozzle.
 A_offset = [[-220, -135, 110],
             [ 220, -135, 110]];
 
-// This is the carthesian position of the anchor
-// action points, relative to the origin
+// This is the cartesian position of the action points
+// on the anchor, relative to the origin
 A = [A_calib + A_offset[left],
      A_calib + A_offset[right]];
 
 B_calib = [1312, 1271, -162];
-
 B_offset = [[ 220, -135, 110],
             [   0,  260, 110]];
-
 B = [B_calib + B_offset[left],
      B_calib + B_offset[right]];
 
 C_calib = [-1440, 741, -161];
-
 C_offset = [[   0,  260, 110],
             [-220, -135, 110]];
-
 C = [C_calib + C_offset[left],
      C_calib + C_offset[right]];
 
