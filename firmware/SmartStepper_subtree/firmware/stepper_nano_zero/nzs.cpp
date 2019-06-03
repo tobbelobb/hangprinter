@@ -717,21 +717,23 @@ void NZS::begin(void)
 		if (STEPCTRL_NO_CAL == stepCtrlError)
 		{
 			SerialUSB.println("You need to Calibrate");
+
 #ifndef DISABLE_LCD
 			Lcd.lcdShow("   NOT ", "Calibrated", " ");
 			delay(1000);
 			Lcd.setMenu(MenuCal);
 			Lcd.forceMenuActive();
+#endif
 
 			//TODO add code here for LCD and command line loop
 			while(false == stepperCtrl.calibrationValid())
 			{
 				commandsProcess(); //handle commands
-
+#ifndef DISABLE_LCD
 				Lcd.process();
-
+#endif
 			}
-
+#ifndef DISABLE_LCD
 			Lcd.setMenu(NULL);
 #endif
 		}
