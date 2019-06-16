@@ -2,6 +2,8 @@ include <parameters.scad>
 use <util.scad>
 use <lineroller_ABC_winch.scad>
 
+Lineroller_base_r = 3;
+
 // The base parameters
 base_th = 6;
 main_x = 32;
