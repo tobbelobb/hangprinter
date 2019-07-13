@@ -18,7 +18,7 @@
       <img src="./media/small_001.jpg" alt="" width="500" height="333" />
     </a>
     <figcaption>
-      Hardware for a non-Mechaduino build, excluding USB cable and screws.
+      Hardware for a non-Mechaduino/non-SmartStepper build, excluding USB cable and screws.
       Note that the rectangular sheet material is for building ABC anchors.
       They should be a stack of three.
       The white printed parts will be in contact with motors.
@@ -266,8 +266,8 @@
     </a>
     <figcaption>
       Now put together your electronics.
-      It's recommended to use Mechaduinos on the A, B, C, and D-motors, even though stepsticks are shown in the picture.
-      See <a href="#Mechaduino_assembly" target="_blank">Mechaduino assembly instructions</a>.
+      It's recommended to use SmartSteppers on the A, B, C, and D-motors, even though stepsticks are shown in the picture.
+      See <a href="#SmartStepper_assembly" target="_blank">SmartStepper assembly instructions</a>.
     </figcaption>
   </figure>
   <figure>
@@ -572,6 +572,40 @@
     </figcaption>
   </figure>
 </post>
+<post heading="SmartStepper Assembly" id="SmartStepper_assembly">
+  <p>
+      Please use the firmware found in the
+      <a href="https://gitlab.com/tobben/hangprinter/tree/Openscad_version_3/firmware/SmartStepper_subtree">
+          Hangprinter repo
+      </a>.
+      For how to upload it, please refer to
+      <a href="http://misfittech.net/nema-17-smart-stepper/">
+          Misfittech's own documentation
+      </a>.
+  </p>
+  <p>
+      We don't have a complete wiring diagram with SmartSteppers, so please look at the following wiring diagram,
+      but note that the external 12V -> 5V level shifter is not needed, as this component is built into the SmartSteppers.
+  </p>
+  <figure>
+    <a href="./media/Hangprinter_electronics_diagram_Mechaduino_RAMPS1.4_V2.3.jpg" target="_blank">
+      <img src="./media/small_Hangprinter_electronics_diagram_Mechaduino_RAMPS1.4_V2.3.jpg" alt="" width="500" height="354" />
+    </a>
+    <figcaption>
+    </figcaption>
+  </figure>
+  <p>
+      ... and wire in the SmartSteppers like this:
+  </p>
+  <figure>
+    <a href="./media/SmartStepperWires.jpeg" target="_blank">
+      <img src="./media/small_SmartStepperWires.jpeg" alt="" width="500" height="667" />
+    </a>
+    <figcaption>
+        SmartStepper wiring.
+    </figcaption>
+  </figure>
+</post>
 <post heading="Mechaduino Assembly" id="Mechaduino_assembly">
   <figure>
     <a href="./media/Mechaduino_assembly/000.JPG" target="_blank">
@@ -775,6 +809,8 @@
     </a>
     <figcaption>
       Wiring diagram kindly contributed by RepRap forum user Dahah.
+      The reference v3 design now uses SmartSteppers instead of Mechaduinos.
+      See <a href="#SmartStepper_assembly" target="_blank">the SmartSteppers section</a> for how to wire those in.
     </figcaption>
   </figure>
   <p>
