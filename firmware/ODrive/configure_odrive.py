@@ -5,7 +5,7 @@ import odrive
 odrv0 = odrive.find_any()
 
 # Default values used on the dev setup.
-# If your setup is fifferent in any way, you might have to change these values
+# If your setup is different in any way, you might have to change these values
 #odrv0.config.brake_resistance = 0.4699999988079071 # Default
 
 #odrv0.axis0.motor.config.pole_pairs = 7            # Default
@@ -22,11 +22,13 @@ odrv0 = odrive.find_any()
 odrv0.axis0.controller.config.vel_limit = 130000
 odrv0.axis0.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
 odrv0.axis0.motor.config.current_lim = 30 # Strong enough...
+odrv0.axis0.motor.config.current_lim_margin = 10 # Only on devel and usart2 branches Oct 29, 2019
 odrv0.axis0.motor.config.calibration_current = 20
 
 odrv0.axis1.controller.config.vel_limit = 130000
 odrv0.axis1.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
 odrv0.axis1.motor.config.current_lim = 30 # Strong enough...
+odrv0.axis1.motor.config.current_lim_margin = 10 # Only on devel and usart2 branches Oct 29, 2019
 odrv0.axis1.motor.config.calibration_current = 20
 
 # Enforce startup sequence this time
@@ -63,8 +65,8 @@ odrv0.axis1.controller.config.vel_gain = 0.0035
 # Interface
 odrv0.config.enable_uart = True
 
-odrv0.axis0.config.step_gpio_pin = 6
-odrv0.axis0.config.dir_gpio_pin = 5
+odrv0.axis0.config.step_gpio_pin = 1
+odrv0.axis0.config.dir_gpio_pin = 2
 odrv0.axis0.config.counts_per_step = 6.0 # 2400/(25*16) = 6
 odrv0.axis0.config.enable_step_dir = True
 
