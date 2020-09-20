@@ -1,4 +1,4 @@
-Hangprinter ![Hangprinter logo](https://vitana.se/opr3d/tbear/bilder/logo_blue_50.png)
+Hangprinter ![Hangprinter logo](./logo_blue_50.png)
 ===========
 
 This is the working branch of the Hangprinter repository.
@@ -49,21 +49,22 @@ with Cairosvg v1.0.4, sed v4.2.2, and Ghostscript v9.10.
 Contributing Improvements
 -------------------------
 Your design improvements will help the rest of the community if you build your machine according to the files and instructions found in this repo.
-The maintainers (me) are super grateful if you can structure your improvement into a pull request, and submit it to this repo.
-See for example [this page](https://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request#14681796) for help with creating a pull request.
+The maintainers (me) are super grateful if you can structure your improvement into a merge request, and submit it to this repo on Gitlab.
 
-If your improvement can't be structured into a pull request, the second best option is to make an issue here on GitHub, or to contact us via the
-[RepRap forum](https://reprap.org/forum/list.php?423).
+The second best option is to make an issue here on Gitlab.
 
-Supporting This Project With Money
-----------------------------------
-Monthly donations can be set up via the [Bountysource Salt Campaign](https://salt.bountysource.com/teams/hangprinter).
+Lead Dev
+---------------------------------
+[tobben](https://torbjornludvigsen.com).
 
-Merchandise can be bought here: [Mechadise Sweden](http://spreadshirt.se/shops/hangprinter-merchandise).
-And here: [Mechadise US](http://spreadshirt.com/shops/hangprinter-merchandise).
+Campaign
+---------------------------------
+[Bountysource](https://salt.bountysource.com/teams/hangprinter)
 
-Bitcoin donations are accepted on: 1BwobkC5Tb7psWkzCugtcH21ufj6Lc9mgY
-... or in QR format:<br />![BTC Donations QR code](https://hangprinter.org/images/BTC_donations.png)
+Merchandise
+---------------------------------
+[Spreadshirt link for Sweden](https://shop.spreadshirt.se/hangprinter-merchandise/).
+[Spreadshirt link for US](https://shop.spreadshirt.com/hangprinter-merchandise/).
 
 Credits
 -------
