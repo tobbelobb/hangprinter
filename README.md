@@ -1,4 +1,4 @@
-Hangprinter ![Hangprinter logo](./logo_blue_50.png)
+Hangprinter ![Hangprinter logo](./hangprinter_logo_blue_50.png)
 ===========
 
 This is the working branch of the Hangprinter repository.
