@@ -78,14 +78,8 @@ This repo also contains external code from many places. Some of them:
 * [scad-utils](https://github.com/openscad/scad-utils)
 
 Currently donating $25 or more:
-* [Aleph Objects](https://www.alephobjects.com/)
-* [Alexander Osika](https://www.bountysource.com/people/49454-alexander-osika)
-* [Bondtech](http://www.bondtech.se/)
 * [Brooks Talley](https://www.bountysource.com/people/62525-brooks-talley)
 * [David Lang](https://www.bountysource.com/people/50149-david-lang)
 * [Delloman](https://www.bountysource.com/people/56602-delloman)
-* [E3D](https://e3d-online.com)
-* [Jeff Moe](https://www.bountysource.com/people/48391-jeff-moe)
-* [John Downey](https://www.bountysource.com/people/60458-john-downey)
 
 Lists sorted alphabetically.
