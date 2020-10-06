@@ -40,7 +40,7 @@ bottom_triangle = false;
 ANCHOR_D_Z = 2300;
 ANCHOR_A_Y = 2000;
 between_action_points_z = ANCHOR_D_Z-Higher_bearing_z -3 - 175;
-lift_mover_z = between_action_points_z + Higher_bearing_z+8;
+lift_mover_z = 200;
 //lift_mover_z = ANCHOR_D_Z-300;
 
 dspool_y = -50;
@@ -402,19 +402,35 @@ module full_winch(){
 
 if(mover && !twod)
   translate([0,0,lift_mover_z])
-  mover();
+  !mover();
 module mover(){
+
+  translate([0,0,7])
+  color("white")
+  difference() {
+     cylinder(d=beam_length,h=1,$fn=200);
+     translate([0,0,-1])
+       cylinder(d=beam_length-Beam_width*2,h=5,$fn=200);
+  }
   for(k=[0,120,240])
     rotate([180,0,k+180]){
       translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
         cube([beam_length, Beam_width, Beam_width]);
-        translate([0.69*beam_length, Beam_width/2+7,Beam_width/2-5])
-          color(color1, color1_alpha)
-            if(stls){
-              import("../stl/beam_slider_D.stl");
-            } else {
-              beam_slider_D();
+        marker_shift = beam_length/9;
+        for(l=[0,1])
+          translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,-13]){
+            translate([0,0,-5])
+              color("red")
+              sphere(d=20,$fn=70);
+            color(color1, color1_alpha){
+              translate([-5,-10,10])
+                cube([10,20,20]);
+              cylinder(d=3, h=10);
             }
+            translate([0,0,5])
+              color("white")
+              cylinder(d=40, h=1);
+          }
       }
       translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
         color(color1, color1_alpha)
