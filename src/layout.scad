@@ -58,10 +58,12 @@ ly2 = Sidelength/sqrt(12) - 40;
 
 color0 = "sandybrown";
 color0_alpha = 0.55;
-color1 = [0.14,0.16,0.90];
+color1 = [0.81,0.73,0.05];
 color1_alpha = 0.9;
 color2 = [0.99,0.99,0.99];
 color2_alpha = 0.8;
+
+color_carbon = [0.2,0.2,0.2];
 
 // Sometimes, Nema17_cube_width will have another value,
 // so that a different motor can fit
@@ -405,31 +407,38 @@ if(mover && !twod)
   !mover();
 module mover(){
 
-  translate([0,0,7])
-  color("white")
-  difference() {
-     cylinder(d=beam_length,h=1,$fn=200);
-     translate([0,0,-1])
-       cylinder(d=beam_length-Beam_width*2,h=5,$fn=200);
-  }
+  //translate([0,0,7])
+  //color("white")
+  //difference() {
+  //   cylinder(d=beam_length,h=1,$fn=200);
+  //   translate([0,0,-1])
+  //     cylinder(d=beam_length-Beam_width*2,h=5,$fn=200);
+  //}
   for(k=[0,120,240])
     rotate([180,0,k+180]){
       translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
-        cube([beam_length, Beam_width, Beam_width]);
-        marker_shift = beam_length/9;
+        color(color_carbon)
+          cube([beam_length, Beam_width, Beam_width]);
+        marker_shift = beam_length/3;
+        marker_d = 32;
         for(l=[0,1])
           translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,-13]){
-            translate([0,0,-5])
-              color("red")
-              sphere(d=20,$fn=70);
-            color(color1, color1_alpha){
+            translate([0,0,-marker_d/2+7]) {
+              if (k==0)
+                color("red")
+                  sphere(d=marker_d,$fn=70);
+              if (k==120)
+                color("blue")
+                  sphere(d=marker_d,$fn=70);
+              if (k==240)
+                color("green")
+                  sphere(d=marker_d,$fn=70);
+            }
+            color(color_carbon, color1_alpha){
               translate([-5,-10,10])
                 cube([10,20,20]);
               cylinder(d=3, h=10);
             }
-            translate([0,0,5])
-              color("white")
-              cylinder(d=40, h=1);
           }
       }
       translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
@@ -446,7 +455,8 @@ module mover(){
     offcenter_frac = 25;
           //translate([0,-Sidelength/sqrt(12)-sqrt(3) - Wall_th+0.1, +0.35])
             translate([-shorter_beam/2,Sidelength/offcenter_frac,0]){
-              cube([shorter_beam,Beam_width, Beam_width]);
+              color(color_carbon)
+                cube([shorter_beam, Beam_width, Beam_width]);
               rotate([90,0,90])
                 translate([-2*Wall_th,
                            0,
