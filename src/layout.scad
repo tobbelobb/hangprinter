@@ -402,42 +402,108 @@ module full_winch(){
   top_plate(cx, cy, mvy);
 }
 
-if(mover && !twod)
-  translate([0,0,lift_mover_z])
+//$vpt=[0,0,0];
+//$vpr=[45,0,0];
+//$vpd=755;
+
+
+
+
+//if(mover && !twod)
+//  translate([0,0,lift_mover_z])
   !mover();
 module mover(){
+  marker_d = 32;
+  marker_y_dist = Beam_width/2 - (Sidelength+10.5)/sqrt(12) - sqrt(3);
+  marker_x_dist = marker_y_dist/sqrt(3);
 
-  //translate([0,0,7])
-  //color("white")
-  //difference() {
-  //   cylinder(d=beam_length,h=1,$fn=200);
-  //   translate([0,0,-1])
-  //     cylinder(d=beam_length-Beam_width*2,h=5,$fn=200);
-  //}
+  marker_fn = 70;
+
+  module find_marker_positions() {
+    //pos_red_0 = [marker_x_dist, marker_y_dist, marker_d/2+6];
+    //pos_red_1 = rotate_array([0,0,60], [0,0,1])*pos_red_0;
+    //pos_blue_0 = rotate_array([0,0,120], [0,0,1])*pos_red_0;
+    //pos_blue_1 = rotate_array([0,0,180], [0,0,1])*pos_red_0;
+    //pos_green_0 = rotate_array([0,0,240], [0,0,1])*pos_red_0;
+    //pos_green_1 = rotate_array([0,0,300], [0,0,1])*pos_red_0;
+
+
+
+
+
+
+
+
+
+    pos_red_0 =   [143.556, -0.0268958, -733+726.014];
+    pos_red_1 =   [71.7109, -124.281, -733+725.478];
+    pos_red_2 =   [-143.61, -0.0268958, -733+726.014];
+    pos_blue_0 =  [-71.7646, -124.281, -733+725.478];
+    pos_blue_1 =  [71.7116, 124.228, -733+725.481];
+    pos_green_0 = [-71.7653, 124.228, -733+725.481];
+    pos_green_1 = [-0.027933, -0.0278239, -755+754.382];
+
+    //echo(pos_red_0);
+    //echo(pos_red_1);
+    //echo(pos_blue_0);
+    //echo(pos_blue_1);
+    //echo(pos_green_0);
+    //echo(pos_green_1);
+    translate(pos_red_0)
+      rotate([0,0,30])
+        sphere(d=32, $fn=marker_fn);
+    translate(pos_red_1)
+      rotate([0,0,30])
+        sphere(d=32, $fn=marker_fn);
+    translate(pos_red_2)
+      rotate([0,0,30])
+        sphere(d=32, $fn=marker_fn);
+    translate(pos_blue_0)
+      sphere(d=32, $fn=marker_fn);
+    translate(pos_blue_1)
+      sphere(d=32, $fn=marker_fn);
+    translate(pos_green_0)
+      sphere(d=32, $fn=marker_fn);
+    translate(pos_green_1)
+      sphere(d=32, $fn=marker_fn);
+
+    //circle_r = sqrt(pow(marker_x_dist,2) + pow(marker_y_dist,2));
+    //color([1,1,1])
+    //  cylinder(r=circle_r, h=4, $fn=200);
+    //echo("circle_r", circle_r);
+  }
+  find_marker_positions();
+
+
+  color(red)
+  sphere(d=marker_d, $fn=marker_fn);
+
+  green=[0,1,0];
+  blue=[0,0,1];
+  red=[1,0,0];
   for(k=[0,120,240])
     rotate([180,0,k+180]){
       translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
         color(color_carbon)
           cube([beam_length, Beam_width, Beam_width]);
-        marker_shift = beam_length/3;
-        marker_d = 32;
-        for(l=[0,1])
-          translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,-13]){
+        marker_shifts = [beam_length/2 - marker_x_dist, beam_length/2 + marker_x_dist];
+        for(l=marker_shifts)
+          translate([l, Beam_width/2,-13]){
             translate([0,0,-marker_d/2+7]) {
               if (k==0)
-                color("red")
-                  sphere(d=marker_d,$fn=70);
+                color(red)
+                  sphere(d=marker_d,$fn=marker_fn);
               if (k==120)
-                color("blue")
-                  sphere(d=marker_d,$fn=70);
+                color(blue)
+                  sphere(d=marker_d,$fn=marker_fn);
               if (k==240)
-                color("green")
-                  sphere(d=marker_d,$fn=70);
+                color(green)
+                  sphere(d=marker_d,$fn=marker_fn);
             }
             color(color_carbon, color1_alpha){
               translate([-5,-10,10])
                 cube([10,20,20]);
-              cylinder(d=3, h=10);
+              cylinder(d=3, h=10, $fn=20);
             }
           }
       }
@@ -519,14 +585,14 @@ module lr(){
 
 
     between_bearings_x = Back_bearing_x - Front_bearing_x;
-    echo(between_bearings_x);
+    //echo(between_bearings_x);
     between_bearings_z = Higher_bearing_z - Lower_bearing_z;
-    echo(between_bearings_z);
+    //echo(between_bearings_z);
     ang_b0_b1 = atan(between_bearings_z/between_bearings_x);
-    echo(ang_b0_b1);
+    //echo(ang_b0_b1);
     between_action_points_x = ANCHOR_A_Y-Sidelength/sqrt(9);
     ang_action = atan(between_action_points_z/between_action_points_x);
-    echo(ang_action);
+    //echo(ang_action);
 
     for(tr = [[[Back_bearing_x+Move_tower, 0, Higher_bearing_z],
                [-ang_b0_b1+2, 90, 0], true],
