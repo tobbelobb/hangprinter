@@ -14,6 +14,7 @@ use <util.scad>
 use <donkey_bracket.scad>
 use <belt_roller.scad>
 use <landing_bracket.scad>
+use <geodesic_sphere.scad>
 
 
 beam_length = 400;
@@ -411,72 +412,52 @@ module full_winch(){
 
 //if(mover && !twod)
 //  translate([0,0,lift_mover_z])
-  !mover();
+  !translate([0,0,-22]) mover();
 module mover(){
   marker_d = 32;
   marker_y_dist = Beam_width/2 - (Sidelength+10.5)/sqrt(12) - sqrt(3);
   marker_x_dist = marker_y_dist/sqrt(3);
 
-  marker_fn = 70;
-
   module find_marker_positions() {
-    //pos_red_0 = [marker_x_dist, marker_y_dist, marker_d/2+6];
-    //pos_red_1 = rotate_array([0,0,60], [0,0,1])*pos_red_0;
-    //pos_blue_0 = rotate_array([0,0,120], [0,0,1])*pos_red_0;
-    //pos_blue_1 = rotate_array([0,0,180], [0,0,1])*pos_red_0;
-    //pos_green_0 = rotate_array([0,0,240], [0,0,1])*pos_red_0;
-    //pos_green_1 = rotate_array([0,0,300], [0,0,1])*pos_red_0;
-
-
-
-
-
-
-
-
-
-    pos_red_0 =   [143.556, -0.0268958, -733+726.014];
-    pos_red_1 =   [71.7109, -124.281, -733+725.478];
-    pos_red_2 =   [-143.61, -0.0268958, -733+726.014];
-    pos_blue_0 =  [-71.7646, -124.281, -733+725.478];
-    pos_blue_1 =  [71.7116, 124.228, -733+725.481];
-    pos_green_0 = [-71.7653, 124.228, -733+725.481];
-    pos_green_1 = [-0.027933, -0.0278239, -755+754.382];
-
-    //echo(pos_red_0);
-    //echo(pos_red_1);
-    //echo(pos_blue_0);
-    //echo(pos_blue_1);
-    //echo(pos_green_0);
-    //echo(pos_green_1);
+    pos_red_0 = [marker_x_dist, marker_y_dist, marker_d/2+6];
+    pos_red_1 = rotate_array([0,0,60], [0,0,1])*pos_red_0;
+    pos_blue_0 = rotate_array([0,0,120], [0,0,1])*pos_red_0;
+    pos_blue_1 = rotate_array([0,0,180], [0,0,1])*pos_red_0;
+    pos_green_0 = rotate_array([0,0,240], [0,0,1])*pos_red_0;
+    pos_green_1 = rotate_array([0,0,300], [0,0,1])*pos_red_0;
+    echo(pos_red_0);
+    echo(pos_red_1);
+    echo(pos_blue_0);
+    echo(pos_blue_1);
+    echo(pos_green_0);
+    echo(pos_green_1);
     translate(pos_red_0)
       rotate([0,0,30])
-        sphere(d=32, $fn=marker_fn);
+        sphere(d=32, $fn=70);
     translate(pos_red_1)
       rotate([0,0,30])
-        sphere(d=32, $fn=marker_fn);
-    translate(pos_red_2)
-      rotate([0,0,30])
-        sphere(d=32, $fn=marker_fn);
+        sphere(d=32, $fn=70);
     translate(pos_blue_0)
-      sphere(d=32, $fn=marker_fn);
+      sphere(d=32, $fn=70);
     translate(pos_blue_1)
-      sphere(d=32, $fn=marker_fn);
+      sphere(d=32, $fn=70);
     translate(pos_green_0)
-      sphere(d=32, $fn=marker_fn);
+      sphere(d=32, $fn=70);
     translate(pos_green_1)
-      sphere(d=32, $fn=marker_fn);
+      sphere(d=32, $fn=70);
 
-    //circle_r = sqrt(pow(marker_x_dist,2) + pow(marker_y_dist,2));
+    circle_r = sqrt(pow(marker_x_dist,2) + pow(marker_y_dist,2));
     //color([1,1,1])
     //  cylinder(r=circle_r, h=4, $fn=200);
-    //echo("circle_r", circle_r);
+    echo("circle_r", circle_r);
   }
-  find_marker_positions();
+  //find_marker_positions();
 
+  marker_fn = 50;
 
+  translate([0,0,22])
   color(red)
-  sphere(d=marker_d, $fn=marker_fn);
+  geodesic_sphere(d=marker_d, $fn=marker_fn);
 
   green=[0,1,0];
   blue=[0,0,1];
@@ -492,13 +473,13 @@ module mover(){
             translate([0,0,-marker_d/2+7]) {
               if (k==0)
                 color(red)
-                  sphere(d=marker_d,$fn=marker_fn);
+                  geodesic_sphere(d=marker_d,$fn=marker_fn);
               if (k==120)
                 color(blue)
-                  sphere(d=marker_d,$fn=marker_fn);
+                  geodesic_sphere(d=marker_d,$fn=marker_fn);
               if (k==240)
                 color(green)
-                  sphere(d=marker_d,$fn=marker_fn);
+                  geodesic_sphere(d=marker_d,$fn=marker_fn);
             }
             color(color_carbon, color1_alpha){
               translate([-5,-10,10])
