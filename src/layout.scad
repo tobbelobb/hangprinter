@@ -421,10 +421,10 @@ module mover(){
   module find_marker_positions() {
     pos_red_0 = [marker_x_dist, marker_y_dist, marker_d/2+6];
     pos_red_1 = rotate_array([0,0,60], [0,0,1])*pos_red_0;
-    pos_blue_0 = rotate_array([0,0,120], [0,0,1])*pos_red_0;
-    pos_blue_1 = rotate_array([0,0,180], [0,0,1])*pos_red_0;
-    pos_green_0 = rotate_array([0,0,240], [0,0,1])*pos_red_0;
-    pos_green_1 = rotate_array([0,0,300], [0,0,1])*pos_red_0;
+    pos_green_0 = rotate_array([0,0,120], [0,0,1])*pos_red_0;
+    pos_green_1 = rotate_array([0,0,180], [0,0,1])*pos_red_0;
+    pos_blue_0 = rotate_array([0,0,240], [0,0,1])*pos_red_0;
+    pos_blue_1 = rotate_array([0,0,300], [0,0,1])*pos_red_0;
     echo(pos_red_0);
     echo(pos_red_1);
     echo(pos_blue_0);
@@ -437,27 +437,27 @@ module mover(){
     translate(pos_red_1)
       rotate([0,0,30])
         sphere(d=32, $fn=70);
-    translate(pos_blue_0)
-      sphere(d=32, $fn=70);
-    translate(pos_blue_1)
-      sphere(d=32, $fn=70);
     translate(pos_green_0)
       sphere(d=32, $fn=70);
     translate(pos_green_1)
+      sphere(d=32, $fn=70);
+    translate(pos_blue_0)
+      sphere(d=32, $fn=70);
+    translate(pos_blue_1)
       sphere(d=32, $fn=70);
 
     circle_r = sqrt(pow(marker_x_dist,2) + pow(marker_y_dist,2));
     //color([1,1,1])
     //  cylinder(r=circle_r, h=4, $fn=200);
-    echo("circle_r", circle_r);
+    //echo("circle_r", circle_r);
   }
   //find_marker_positions();
 
-  marker_fn = 50;
+  marker_fn = 21;
 
-  translate([0,0,22])
-  color(red)
-  geodesic_sphere(d=marker_d, $fn=marker_fn);
+  //translate([0,0,22])
+  //color(red)
+  //geodesic_sphere(d=marker_d, $fn=marker_fn);
 
   green=[0,1,0];
   blue=[0,0,1];
@@ -475,10 +475,10 @@ module mover(){
                 color(red)
                   geodesic_sphere(d=marker_d,$fn=marker_fn);
               if (k==120)
-                color(blue)
+                color(green)
                   geodesic_sphere(d=marker_d,$fn=marker_fn);
               if (k==240)
-                color(green)
+                color(blue)
                   geodesic_sphere(d=marker_d,$fn=marker_fn);
             }
             color(color_carbon, color1_alpha){
