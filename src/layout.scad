@@ -404,27 +404,29 @@ module full_winch(){
 }
 
 //$vpt=[0,0,0];
-//$vpr=[45,0,0];
-//$vpd=755;
+//$vpr=[30,0,0];
+//$vpd=1500;
 
 
 
 
 //if(mover && !twod)
 //  translate([0,0,lift_mover_z])
-  !translate([0,0,-22]) mover();
+  !translate([0,0,0])
+  rotate([0,0,0])
+  translate([0,0,-22+150.43]) mover();
 module mover(){
   marker_d = 32;
   marker_y_dist = Beam_width/2 - (Sidelength+10.5)/sqrt(12) - sqrt(3);
   marker_x_dist = marker_y_dist/sqrt(3);
-
   module find_marker_positions() {
-    pos_red_0 = [marker_x_dist, marker_y_dist, marker_d/2+6];
-    pos_red_1 = rotate_array([0,0,60], [0,0,1])*pos_red_0;
-    pos_green_0 = rotate_array([0,0,120], [0,0,1])*pos_red_0;
-    pos_green_1 = rotate_array([0,0,180], [0,0,1])*pos_red_0;
-    pos_blue_0 = rotate_array([0,0,240], [0,0,1])*pos_red_0;
-    pos_blue_1 = rotate_array([0,0,300], [0,0,1])*pos_red_0;
+    z = 22;
+    pos_red_0 =   [ -72.4478 , -125.483, z];
+    pos_red_1 =   [  72.4478, -125.483, z];
+    pos_green_0 = [ 146.895,  -3.4642, z];
+    pos_green_1 = [  64.446,  139.34, z];
+    pos_blue_0 =  [ -68.4476,  132.411, z];
+    pos_blue_1 =  [-160.895,  -27.7129, z];
     echo(pos_red_0);
     echo(pos_red_1);
     echo(pos_blue_0);
@@ -432,21 +434,27 @@ module mover(){
     echo(pos_green_0);
     echo(pos_green_1);
     translate(pos_red_0)
-      rotate([0,0,30])
+      //rotate([0,0,30])
+      color([0.9,0.0,0.0])
         sphere(d=32, $fn=70);
     translate(pos_red_1)
-      rotate([0,0,30])
+      //rotate([0,0,30])
+      color([0.6,0.0,0.0])
         sphere(d=32, $fn=70);
     translate(pos_green_0)
+      color([0.0,0.9,0.0])
       sphere(d=32, $fn=70);
     translate(pos_green_1)
+      color([0.0,0.6,0.0])
       sphere(d=32, $fn=70);
     translate(pos_blue_0)
+      color([0.0,0.0,0.9])
       sphere(d=32, $fn=70);
     translate(pos_blue_1)
+      color([0.0,0.0,0.6])
       sphere(d=32, $fn=70);
 
-    circle_r = sqrt(pow(marker_x_dist,2) + pow(marker_y_dist,2));
+    //circle_r = sqrt(pow(marker_x_dist,2) + pow(marker_y_dist,2));
     //color([1,1,1])
     //  cylinder(r=circle_r, h=4, $fn=200);
     //echo("circle_r", circle_r);
@@ -462,24 +470,48 @@ module mover(){
   green=[0,1,0];
   blue=[0,0,1];
   red=[1,0,0];
-  for(k=[0,120,240])
+  white=[1,1,1];
+  black=[0,0,0];
+  for(k=[0, 120, 240])
     rotate([180,0,k+180]){
       translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
         color(color_carbon)
           cube([beam_length, Beam_width, Beam_width]);
-        marker_shifts = [beam_length/2 - marker_x_dist, beam_length/2 + marker_x_dist];
+        marker_shifts = [beam_length/2 - marker_x_dist + k/30, beam_length/2 + marker_x_dist - k/7.5];
+        //echo("x1", (marker_x_dist - k/30)*cos(k) + 125.483*sin(k));
+        //echo("y1", (marker_x_dist - k/30)*sin(k) - 125.483*cos(k));
+        //echo("x2", (-marker_x_dist + k/7.5)*cos(k) + 125.483*sin(k));
+        //echo("y2", (-marker_x_dist + k/7.5)*sin(k) - 125.483*cos(k));
         for(l=marker_shifts)
           translate([l, Beam_width/2,-13]){
             translate([0,0,-marker_d/2+7]) {
-              if (k==0)
-                color(red)
+              if (k==0) {
+                color(white) {
                   geodesic_sphere(d=marker_d,$fn=marker_fn);
-              if (k==120)
-                color(green)
+                }
+                color(black) {
+                  translate([0,0,33/2])
+                    cylinder(d=64, h=1);
+                }
+              }
+              if (k==120) {
+                color(white) {
                   geodesic_sphere(d=marker_d,$fn=marker_fn);
-              if (k==240)
-                color(blue)
+                }
+                color(black) {
+                  translate([0,0,33/2])
+                    cylinder(d=64, h=1);
+                }
+              }
+              if (k==240) {
+                color(white) {
                   geodesic_sphere(d=marker_d,$fn=marker_fn);
+                }
+                color(black) {
+                  translate([0,0,33/2])
+                    cylinder(d=64, h=1);
+                }
+              }
             }
             color(color_carbon, color1_alpha){
               translate([-5,-10,10])
@@ -500,21 +532,44 @@ module mover(){
     sidelength_frac = 1.5;
     shorter_beam = Sidelength/sidelength_frac;
     offcenter_frac = 25;
-          //translate([0,-Sidelength/sqrt(12)-sqrt(3) - Wall_th+0.1, +0.35])
-            translate([-shorter_beam/2,Sidelength/offcenter_frac,0]){
-              color(color_carbon)
-                cube([shorter_beam, Beam_width, Beam_width]);
-              rotate([90,0,90])
-                translate([-2*Wall_th,
-                           0,
-                           shorter_beam/2-(Nema17_cube_width+0.54*2+2*Wall_th)/2])
-                  color(color1, color1_alpha)
-                    if(stls){
-                      import("../stl/extruder_holder.stl");
-                    } else {
-                      extruder_holder();
-                    }
-            }
+    //translate([0,-Sidelength/sqrt(12)-sqrt(3) - Wall_th+0.1, +0.35])
+    translate([-shorter_beam/2,Sidelength/offcenter_frac+4,0]){
+      color(color_carbon)
+        cube([shorter_beam, Beam_width, Beam_width]);
+      rotate([90,0,90])
+        translate([-2*Wall_th,
+            0,
+            shorter_beam/2-(Nema17_cube_width+0.54*2+2*Wall_th)/2])
+        color(color1, color1_alpha)
+        if(stls){
+          import("../stl/extruder_holder.stl");
+        } else {
+          extruder_holder();
+        }
+    }
+    translate([0,0,22-28-Nema17_cube_width-Beam_width-11])
+      color("grey")
+      cylinder(d=25, h=28);
+    translate([0,0,22-28-Nema17_cube_width-Beam_width-11-4])
+      color("grey")
+      cylinder(d=4, h=28);
+    translate([-9,-15/2,22-28-Nema17_cube_width-Beam_width-11-4-45])
+      color([0.8,0.1,0.1])
+      rounded_cube2([22.5, 15, 46],2,$fn=4*5);
+    translate([0,0,22-28-Nema17_cube_width-Beam_width-11-4-45-3])
+      color([0.7,0.7,0.1])
+      cylinder(d=8, h=8,$fn=6);
+    translate([0,0,22-28-Nema17_cube_width-Beam_width-11-4-45-5])
+      color([0.7,0.7,0.1])
+      cylinder(d2=6, d1=0, h=3);
+    translate([-Nema17_cube_width/2,-33+16.5,-Nema17_cube_width-4])
+      color([0.15,0.15,0.15])
+      rounded_cube([Nema17_cube_width, 33, 53], 1.5);
+    //echo("Nozzle is at", 22-28-Nema17_cube_width-Beam_width-11-4-45-5); // -128.43
+    // The first localization of nozzle
+    //translate([0,0,22-28-Nema17_cube_width-Beam_width-11-4-45-5])
+    //  translate([-0.2291020096681343, 0.1397392475068955, 0.2471582598082023])
+    //  sphere(r=1);
 }
 
 if(mover && !twod)
