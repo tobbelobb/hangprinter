@@ -367,13 +367,13 @@ module sandwich_and_donkey_C(){
     sandwich_and_donkey_B();
 }
 
-if(mounted_in_ceiling && !twod){
-  translate([0,0,43+ANCHOR_D_Z])
-    rotate([180,0,0])
-      full_winch();
-} else {
-  full_winch();
-}
+//if(mounted_in_ceiling && !twod){
+//  translate([0,0,43+ANCHOR_D_Z])
+//    rotate([180,0,0])
+//      full_winch();
+//} else {
+//  full_winch();
+//}
 module full_winch(){
   sep = abc_sep;
   y = abcspool_y;
@@ -407,20 +407,38 @@ module full_winch(){
 //$vpr=[30,0,0];
 //$vpd=1500;
 
+module camera_rel_pos(x, y, z, colr, radius) {
+rotate([30,0,0])
+translate([0,0,1500])
+  color(colr){
+    rotate([180,0,0])
+      translate([x, y, z])
+        sphere(r=radius);
+  }
+}
+
+camera_rel_pos(-72.6305, 40.5897, 1322.48, [0.9,0.1,0.1], 3);
+camera_rel_pos(72.6407, 40.5903, 1322.48, [0.1,0.9,0.1], 3);
+
+translate([0.0288159, -0.00304277, 0.352593])
+  color([0.3,0.8,0.8])
+    sphere(r=1);
 
 
+rotate([30,0,0])
+translate([0,0,1500])
+  color([0.9,0,0])
+    sphere(r=40);
 
-//if(mover && !twod)
-//  translate([0,0,lift_mover_z])
-  !translate([0,0,0])
+translate([0,0,0])
   rotate([0,0,0])
   translate([0,0,-22+150.43]) mover();
 module mover(){
-  marker_d = 32;
+  marker_d = 70;
   marker_y_dist = Beam_width/2 - (Sidelength+10.5)/sqrt(12) - sqrt(3);
   marker_x_dist = marker_y_dist/sqrt(3);
   module find_marker_positions() {
-    z = 22;
+    z = 7.8;
     pos_red_0 =   [ -72.4478 , -125.483, z];
     pos_red_1 =   [  72.4478, -125.483, z];
     pos_green_0 = [ 146.895,  -3.4642, z];
@@ -429,35 +447,29 @@ module mover(){
     pos_blue_1 =  [-160.895,  -27.7129, z];
     echo(pos_red_0);
     echo(pos_red_1);
-    echo(pos_blue_0);
-    echo(pos_blue_1);
     echo(pos_green_0);
     echo(pos_green_1);
+    echo(pos_blue_0);
+    echo(pos_blue_1);
     translate(pos_red_0)
-      //rotate([0,0,30])
-      color([0.9,0.0,0.0])
-        sphere(d=32, $fn=70);
+      color([0.9,0.0,0.0]){
+        cylinder(d=marker_d, h=0.2);
+      }
     translate(pos_red_1)
-      //rotate([0,0,30])
       color([0.6,0.0,0.0])
-        sphere(d=32, $fn=70);
+        cylinder(d=marker_d, h=0.2);
     translate(pos_green_0)
       color([0.0,0.9,0.0])
-      sphere(d=32, $fn=70);
+        cylinder(d=marker_d, h=0.2);
     translate(pos_green_1)
       color([0.0,0.6,0.0])
-      sphere(d=32, $fn=70);
+        cylinder(d=marker_d, h=0.2);
     translate(pos_blue_0)
       color([0.0,0.0,0.9])
-      sphere(d=32, $fn=70);
+        cylinder(d=marker_d, h=0.2);
     translate(pos_blue_1)
       color([0.0,0.0,0.6])
-      sphere(d=32, $fn=70);
-
-    //circle_r = sqrt(pow(marker_x_dist,2) + pow(marker_y_dist,2));
-    //color([1,1,1])
-    //  cylinder(r=circle_r, h=4, $fn=200);
-    //echo("circle_r", circle_r);
+        cylinder(d=marker_d, h=0.2);
   }
   //find_marker_positions();
 
@@ -478,45 +490,33 @@ module mover(){
         color(color_carbon)
           cube([beam_length, Beam_width, Beam_width]);
         marker_shifts = [beam_length/2 - marker_x_dist + k/30, beam_length/2 + marker_x_dist - k/7.5];
-        //echo("x1", (marker_x_dist - k/30)*cos(k) + 125.483*sin(k));
-        //echo("y1", (marker_x_dist - k/30)*sin(k) - 125.483*cos(k));
-        //echo("x2", (-marker_x_dist + k/7.5)*cos(k) + 125.483*sin(k));
-        //echo("y2", (-marker_x_dist + k/7.5)*sin(k) - 125.483*cos(k));
-        for(l=marker_shifts)
+        %for(l=marker_shifts)
           translate([l, Beam_width/2,-13]){
             translate([0,0,-marker_d/2+7]) {
               if (k==0) {
-                color(white) {
-                  geodesic_sphere(d=marker_d,$fn=marker_fn);
-                }
-                color(black) {
-                  translate([0,0,33/2])
-                    cylinder(d=64, h=1);
+                color([0.9,0.9,0.9]) {
+                  translate([0,0,33])
+                    cylinder(d=marker_d, h=0.2, $fn=400);
                 }
               }
               if (k==120) {
-                color(white) {
-                  geodesic_sphere(d=marker_d,$fn=marker_fn);
-                }
-                color(black) {
-                  translate([0,0,33/2])
-                    cylinder(d=64, h=1);
+                color([0.9,0.9,0.9]) {
+                  translate([0,0,33])
+                    cylinder(d=marker_d, h=0.2, $fn=400);
                 }
               }
               if (k==240) {
-                color(white) {
-                  geodesic_sphere(d=marker_d,$fn=marker_fn);
-                }
-                color(black) {
-                  translate([0,0,33/2])
-                    cylinder(d=64, h=1);
+                color([0.9,0.9,0.9]) {
+                  translate([0,0,33])
+                    cylinder(d=marker_d, h=0.2, $fn=400);
                 }
               }
             }
             color(color_carbon, color1_alpha){
               translate([-5,-10,10])
                 cube([10,20,20]);
-              cylinder(d=3, h=10, $fn=20);
+              translate([0,0,4.9])
+                cylinder(d=3, h=5, $fn=20);
             }
           }
       }
@@ -572,8 +572,8 @@ module mover(){
     //  sphere(r=1);
 }
 
-if(mover && !twod)
-  d_lines();
+//if(mover && !twod)
+//  d_lines();
 module d_lines(){
   color("yellow")
   for(k=[0,120,240])
@@ -582,8 +582,8 @@ module d_lines(){
         cylinder(r=1.9, h=ANCHOR_D_Z-lift_mover_z);
 }
 
-if(bottom_triangle)
-  bottom_triangle();
+//if(bottom_triangle)
+//  bottom_triangle();
 module bottom_triangle(){
   for(i=[0,120,240])
     rotate([0,0,i])
@@ -683,11 +683,11 @@ module lr(){
                    +between_action_points_z],  r=0.75,$fn=6);
 }
 
-if(mounted_in_ceiling)
-  for(i=[0:120:359])
-    rotate([0,0,-90+i])
-      translate([ANCHOR_A_Y,0,0])
-        ABC_anchor();
+//if(mounted_in_ceiling)
+//  for(i=[0:120:359])
+//    rotate([0,0,-90+i])
+//      translate([ANCHOR_A_Y,0,0])
+//        ABC_anchor();
 module ABC_anchor(){
   for(k=[0,1])
     mirror([0,k,0])
@@ -746,13 +746,13 @@ module ceiling_unit_internal_lines_v4(){
 }
 
 //ceiling_unit_internal_lines_v4();
-if(mounted_in_ceiling && !twod){
-  translate([0,0,43+ANCHOR_D_Z])
-    rotate([180,0,0])
-	  ceiling_unit_internal_lines_v4p1();
-} else {
-	ceiling_unit_internal_lines_v4p1();
-}
+//if(mounted_in_ceiling && !twod){
+//  translate([0,0,43+ANCHOR_D_Z])
+//    rotate([180,0,0])
+//	  ceiling_unit_internal_lines_v4p1();
+//} else {
+//	ceiling_unit_internal_lines_v4p1();
+//}
 module ceiling_unit_internal_lines_v4p1(){
   hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
 
