@@ -57,8 +57,9 @@ Lead Dev
 ---------------------------------
 [tobben](https://torbjornludvigsen.com).
 
-Campaign
+Campaigns
 ---------------------------------
+[Github Sponsors](https://github.com/sponsors/tobbelobb)
 [Bountysource](https://salt.bountysource.com/teams/hangprinter)
 
 Merchandise
@@ -79,7 +80,6 @@ This repo also contains external code from many places. Some of them:
 * [scad-utils](https://github.com/openscad/scad-utils)
 
 Currently donating $25 or more:
-* [Brooks Talley](https://www.bountysource.com/people/62525-brooks-talley)
 * [David Lang](https://www.bountysource.com/people/50149-david-lang)
 * [Delloman](https://www.bountysource.com/people/56602-delloman)
 
