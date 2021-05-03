@@ -406,7 +406,6 @@ if(mover && !twod)
   translate([0,0,lift_mover_z])
   !mover();
 module mover(){
-
   //translate([0,0,7])
   //color("white")
   //difference() {
@@ -422,23 +421,40 @@ module mover(){
         marker_shift = beam_length/3;
         marker_d = 32;
         for(l=[0,1])
-          translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,-13]){
-            translate([0,0,-marker_d/2+7]) {
-              if (k==0)
-                color("red")
-                  sphere(d=marker_d,$fn=70);
-              if (k==120)
-                color("blue")
-                  sphere(d=marker_d,$fn=70);
-              if (k==240)
-                color("green")
-                  sphere(d=marker_d,$fn=70);
-            }
-            color(color_carbon, color1_alpha){
-              translate([-5,-10,10])
-                cube([10,20,20]);
-              cylinder(d=3, h=10);
-            }
+          translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,2]){
+            color([0.9,0.9,0.9])
+              translate([0,0,-marker_d/2+7]) {
+                if (k==0)
+                  translate([26*l,0,0]){
+                    cylinder(d=90);
+                    color(color_carbon, color1_alpha){
+                      translate([-5,-10,4])
+                        cube([10,20,20]);
+                      translate([0,0,1])
+                        cylinder(d=3, h=8, center=true);
+                    }
+                  }
+                if (k==120)
+                  translate([-21+78*l,0,0]){
+                    cylinder(d=90);
+                    color(color_carbon, color1_alpha){
+                      translate([-5,-10,4])
+                        cube([10,20,20]);
+                      translate([0,0,1])
+                        cylinder(d=3, h=8, center=true);
+                    }
+                  }
+                if (k==240)
+                  translate([76*l-50,0,0]){
+                    cylinder(d=90);
+                    color(color_carbon, color1_alpha){
+                      translate([-5,-10,4])
+                        cube([10,20,20]);
+                      translate([0,0,1])
+                        cylinder(d=3, h=8, center=true);
+                    }
+                  }
+              }
           }
       }
       translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
@@ -647,9 +663,9 @@ module ceiling_unit_internal_lines_v4(){
 if(mounted_in_ceiling && !twod){
   translate([0,0,43+ANCHOR_D_Z])
     rotate([180,0,0])
-	  ceiling_unit_internal_lines_v4p1();
+    ceiling_unit_internal_lines_v4p1();
 } else {
-	ceiling_unit_internal_lines_v4p1();
+  ceiling_unit_internal_lines_v4p1();
 }
 module ceiling_unit_internal_lines_v4p1(){
   hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
