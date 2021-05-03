@@ -24,15 +24,15 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-//twod = true;
-twod = false;
+twod = true;
+//twod = false;
 
-mounted_in_ceiling = true;
-//mounted_in_ceiling = false;
+//mounted_in_ceiling = true;
+mounted_in_ceiling = false;
 
 // Render the mover
-mover = true;
-//mover = false;
+//mover = true;
+mover = false;
 
 bottom_triangle = false;
 //bottom_triangle = true;
@@ -101,14 +101,14 @@ module ldef(rot_around_center=0, center=false){
 module placed_landing_bracket(){
   translate([12, 128-b623_vgroove_small_r/2, 0])
     rotate([0,0,180+90])
-      landing_bracket_a();
+      landing_bracket_a(twod=twod);
   translate([0,-71,0])
     rotate([0,0,180])
       translate([104, 0, 0])
-        landing_bracket_b();
+        landing_bracket_b(twod=twod);
   translate([104, -71, 0])
     rotate([0,0,180])
-      landing_bracket_c();
+      landing_bracket_c(twod=twod);
 }
 
 //placed_line_verticalizer();

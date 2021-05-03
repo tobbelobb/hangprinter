@@ -88,6 +88,7 @@ layout.dxf: $(SRC_DIR)/belt_roller.scad \
 	$(SRC_DIR)/layout_slicer.scad \
 	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
+	$(SRC_DIR)/landing_bracket.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/util.scad

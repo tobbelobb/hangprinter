@@ -54,92 +54,117 @@ module print_these(){
 
 }
 
-module landing_bracket_b(twist=-30){
+module landing_bracket_b(twist=-30, twod=false){
   twist = twist - 360*(floor(twist/360)) - 180;
-  difference(){
-    union(){
-      linear_extrude(height = Line_roller_ABC_winch_h + 175 + Wall_th)
-        translate([-th/2, -th/2, 0])
-        square([th, th]);
-      difference(){
-        if(floor((twist+45+180)/90)%2 == 1)
-          rotate([0,0,90])
-            gaping_mouth(twist=90+twist);
-        else
-            gaping_mouth(twist=twist);
-      }
-      difference(){
-        translate([-th/2, -th/2, 0])
-          ydir_rounded_cube2([th + (th2 - th)/2, th2, 5], r=5.5, $fn=13*4);
-        translate([th2/2-5.5, th2 - th/2 - 5.5,3])
-          Mounting_screw_countersink();
-        translate([-th/2 + 5.5, th2 - th/2 - 5.5,3])
-          Mounting_screw_countersink();
-        translate([th2/2-5.5, 2 ,3])
-          Mounting_screw_countersink();
-      }
+  if (!twod) {
+    difference(){
+      union(){
+        linear_extrude(height = Line_roller_ABC_winch_h + 175 + Wall_th)
+          translate([-th/2, -th/2, 0])
+          square([th, th]);
+        difference(){
+          if(floor((twist+45+180)/90)%2 == 1)
+            rotate([0,0,90])
+              gaping_mouth(twist=90+twist);
+          else
+              gaping_mouth(twist=twist);
+        }
+        difference(){
+          translate([-th/2, -th/2, 0])
+            ydir_rounded_cube2([th + (th2 - th)/2, th2, 5], r=5.5, $fn=13*4);
+          translate([th2/2-5.5, th2 - th/2 - 5.5,3])
+            Mounting_screw_countersink();
+          translate([-th/2 + 5.5, th2 - th/2 - 5.5,3])
+            Mounting_screw_countersink();
+          translate([th2/2-5.5, 2 ,3])
+            Mounting_screw_countersink();
+        }
 
-      translate([0,-th/2,5])
-        standing_triangle([th2/2, 5, 200],bottom=1);
-      for(x=[0, 1])
-        mirror([x, 0])
-      translate([th/2, 0, 5])
-        rotate([0,0,90])
-        standing_triangle([th2/2, 5, 200],bottom=1);
+        translate([0,-th/2,5])
+          standing_triangle([th2/2, 5, 200],bottom=1);
+        for(x=[0, 1])
+          mirror([x, 0])
+        translate([th/2, 0, 5])
+          rotate([0,0,90])
+          standing_triangle([th2/2, 5, 200],bottom=1);
+      }
+    }
+  } else {
+    difference(){
+      translate([-th/2, -th/2, 0])
+        ydir_rounded_cube2_2d([th + (th2 - th)/2, th2, 5], r=5.5, $fn=13*4);
+      translate([th2/2-5.5, th2 - th/2 - 5.5])
+        Mounting_screw_countersink(twod);
+      translate([-th/2 + 5.5, th2 - th/2 - 5.5])
+        Mounting_screw_countersink(twod);
+      translate([th2/2-5.5, 2])
+        Mounting_screw_countersink(twod);
     }
   }
-  //color("sandybrown")
-  //  beam(twist);
 }
 
-module landing_bracket_c(twist=-30){
+module landing_bracket_c(twist=-30, twod=false){
   mirror([1,0,0])
-    landing_bracket_b(twist);
+    landing_bracket_b(twist, twod);
 }
 
-//landing_bracket_a(tunnel=false, twist=-30, rightside=0);
-module landing_bracket_a(tunnel=true, twist=0, rightside=1){
+//landing_bracket_a(twod=true);
+module landing_bracket_a(tunnel=true, twist=0, rightside=1, twod=false){
   twist = twist - 360*(floor(twist/360)) - 180;
-  difference(){
-    union(){
-      linear_extrude(height = Line_roller_ABC_winch_h + 175 + Wall_th)
-        translate([-th/2, -th/2, 0])
-        square([th, th]);
-      difference(){
-        if(floor((twist+45+180)/90)%2 == 1)
-          rotate([0,0,90])
-            gaping_mouth(twist=90+twist);
-        else
-            gaping_mouth(twist=twist);
-      }
-      difference(){
-        translate([-th2/2, -th/2,0])
-          ydir_rounded_cube2([th2, th + (th2-th)/2, 5], r=5.5, $fn=13*4);
-        for(k=[0,rightside])
-          mirror([k,0]){
-            translate([th2/2-5.5,th/2 +  (th2-th)/2 - 5.5,3])
-              Mounting_screw_countersink();
-            translate([th2/2-5.5, 2 ,3])
-              Mounting_screw_countersink();
+  if (!twod) {
+    difference(){
+      union(){
+        linear_extrude(height = Line_roller_ABC_winch_h + 175 + Wall_th)
+          translate([-th/2, -th/2, 0])
+          square([th, th]);
+        difference(){
+          if(floor((twist+45+180)/90)%2 == 1)
+            rotate([0,0,90])
+              gaping_mouth(twist=90+twist);
+          else
+              gaping_mouth(twist=twist);
+        }
+        difference(){
+          translate([-th2/2, -th/2,0])
+            ydir_rounded_cube2([th2, th + (th2-th)/2, 5], r=5.5, $fn=13*4);
+          for(k=[0,rightside])
+            mirror([k,0]){
+              translate([th2/2-5.5,th/2 +  (th2-th)/2 - 5.5,3])
+                Mounting_screw_countersink();
+              translate([th2/2-5.5, 2 ,3])
+                Mounting_screw_countersink();
+            }
+        }
+
+        for(x=[0, rightside])
+          mirror([x, 0])
+            translate([0,-th/2,5])
+              standing_triangle([th2/2, 5, 200],bottom=1);
+        for(x=[0, 1])
+          mirror([x, 0]){
+            translate([th/2, 0, 5])
+              rotate([0,0,90])
+              standing_triangle([th2/2, 5, 200],bottom=1);
           }
       }
-
-      for(x=[0, rightside])
-        mirror([x, 0])
-          translate([0,-th/2,5])
-            standing_triangle([th2/2, 5, 200],bottom=1);
-      for(x=[0, 1])
-        mirror([x, 0]){
-          translate([th/2, 0, 5])
-            rotate([0,0,90])
-            standing_triangle([th2/2, 5, 200],bottom=1);
+      if(tunnel)
+        cube([10,50,53], center=true);
+    }
+  } else {
+    difference(){
+      translate([-th2/2, -th/2,0])
+        ydir_rounded_cube2_2d([th2, th + (th2-th)/2, 5], r=5.5, $fn=13*4);
+      for(k=[0,rightside])
+        mirror([k,0]){
+          translate([th2/2-5.5,th/2 +  (th2-th)/2 - 5.5])
+            Mounting_screw_countersink(twod);
+          translate([th2/2-5.5, 2])
+            Mounting_screw_countersink(twod);
         }
     }
-    if(tunnel)
-      cube([10,50,53], center=true);
+    //color("sandybrown")
+    //  beam(twist);
   }
-  //color("sandybrown")
-  //  beam(twist);
 }
 
 

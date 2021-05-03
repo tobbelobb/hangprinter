@@ -100,7 +100,7 @@ module horizontal_line_deflector(twod=false){
       for(k=[0,1])
         mirror([k,0])
           translate([cx/2+pl,ybit_hole])
-          circle(d=Mounting_screw_d, $fn=12*4);
+            Mounting_screw_countersink(twod=true);
     }
   }
 }

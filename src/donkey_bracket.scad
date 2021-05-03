@@ -50,12 +50,12 @@ module bit(twod, two=true){
           left_rounded_cube2_2d([bw+4,bw], 5.5, $fn=28);
         }
         translate([bw/2, bw/2])
-          circle(d=Mounting_screw_d, $fn=20);
+          Mounting_screw_countersink(twod=true);
         translate([bw/2, bw/2, 2.3])
-          circle(d=Mounting_screw_d);
+          Mounting_screw_countersink(twod=true);
         if(two){
           translate([bw/2, 3*bw/2])
-            circle(d=Mounting_screw_d);
+            Mounting_screw_countersink(twod=true);
         }
       }
     }

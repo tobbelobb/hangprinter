@@ -91,7 +91,7 @@ module spool_core_halve(twod = false, between){
       for(k=[0,1])
         mirror([k,0])
           translate([-cubex/2 - w/2 + 1 , between/2 + liplen + wml/2])
-          circle(d=Mounting_screw_d, $fn=4*12);
+            Mounting_screw_countersink(twod=true);
     }
   }
 }
