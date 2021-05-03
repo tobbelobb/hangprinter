@@ -11,9 +11,11 @@ use <horizontal_line_deflector.scad>
 use <corner_clamp.scad>
 use <beam_slider_D.scad>
 use <util.scad>
+use <gear_util.scad>
 use <donkey_bracket.scad>
 use <belt_roller.scad>
 use <landing_bracket.scad>
+use <whitelabel_motor.scad>
 
 
 beam_length = 400;
@@ -24,8 +26,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-twod = true;
-//twod = false;
+//twod = true;
+twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -75,6 +77,9 @@ module top_plate(cx, cy, mvy){
     color(color0, color0_alpha)
       translate([-cx/2,mvy,-12])
       cube([cx, cy, 12]); // Top plate
+  //} else {
+  //  translate([-cx/2,mvy])
+  //    %square([cx, cy]);
   }
 }
 
@@ -187,6 +192,14 @@ module sandwich_D(){
     }
 }
 
+module placed_sandwich_D(){
+    translate([0,
+        -1-Spool_height - GT2_gear_height/2,
+        Sep_disc_radius+Gap_between_sandwich_and_plate])
+      rotate([90,0,180])
+      sandwich_D();
+}
+
 //translate([0,0,Gap_between_sandwich_and_plate])
 //sandwich_ABC();
 module sandwich_ABC(){
@@ -260,29 +273,53 @@ module line_roller_double_with_bearings(){
   }
 }
 
+module spool_core_D() {
+  for(k=[0,1])
+    mirror([0,k,0])
+      rotate([90,0,0])
+      translate([0,0,-k*(Spool_height+1)])
+      import("../stl/spool_core.stl");
+}
+
+module placed_spool_core_D(){
+  translate([0,Spool_height+1,0]) {
+    if(stls && !twod){
+      spool_core_D();
+    } else {
+      translate([0,-Sandwich_D_width/2+1+Spool_height+GT2_gear_height/2,0])
+        spool_cores(twod=twod, between=Sandwich_D_width);
+    }
+  }
+}
+
+
+//sandwich_and_whitelabel_motor_D();
+module sandwich_and_whitelabel_motor_D(){
+  if(!twod){
+    placed_sandwich_D();
+  }
+  // -7.2 gotten from visual inspection. 116 random.
+  translate([118,-58.2 + Sandwich_ABC_width/2,0])
+    rotate([0,0,90])
+      render_whitelabel_motor_and_bracket();
+
+  placed_spool_core_D();
+
+  translate([93,0,0])
+    belt_roller_with_bearings();
+
+}
+
 //sandwich_and_donkey_D();
 module sandwich_and_donkey_D(){
   if(!twod){
-    translate([0,
-        -1-Spool_height - GT2_gear_height/2,
-        Sep_disc_radius+Gap_between_sandwich_and_plate])
-      rotate([90,0,180])
-      sandwich_D();
+    placed_sandwich_D();
   }
   // -7.2 gotten from visual inspection. 116 random.
   translate([116,-7.2 + Sandwich_ABC_width/2,0])
     render_donkey_and_bracket();
-  translate([0,Spool_height+1,0])
-  if(stls && !twod){
-    for(k=[0,1])
-      mirror([0,k,0])
-        rotate([90,0,0])
-        translate([0,0,-k*(Spool_height+1)])
-        import("../stl/spool_core.stl");
-  } else {
-    translate([0,-Sandwich_D_width/2+1+Spool_height+GT2_gear_height/2,0])
-      spool_cores(twod=twod, between=Sandwich_D_width);
-  }
+
+  placed_spool_core_D();
 
   translate([93,0,0])
     belt_roller_with_bearings();
@@ -299,18 +336,35 @@ module render_donkey_and_bracket(){
     } else if(twod) {
       donkey_bracket(twod);
     }
-
-    // TODO: placed out donkey bracket stl
-    //color(color2, color2_alpha)
-    //  if(stls && !twod){
-    //    //import("../stl_old/donkey_bracket.stl");
-    //  } else if(twod) {
-    //    donkey_bracket(twod=true);
-    //  } else {
-    //    donkey_bracket();
-    //  }
   }
 }
+
+//render_whitelabel_motor_and_bracket();
+module render_whitelabel_motor_and_bracket(){
+  translate([0,0,35]){
+    translate([-2.5+33,0,0])
+      rotate([0,90,0])
+        if(stls && !twod){
+          rotate([0,180,0])
+            import("../stl/whitelabel_motor_bracket.stl");
+        } else {
+          motor_bracket();
+        }
+    color([0.5,0.4,0.9])
+      translate([33,0,0]){
+        import("../stl/whitelabel_motor.stl");
+          rotate([0,90,0])
+            GT2_motor_gear(5.02);
+      }
+    if (stls && !twod) {
+      rotate([0,90,0])
+        import("../stl/whitelabel_encoder_bracket.stl");
+    } else {
+      encoder_bracket();
+    }
+  }
+}
+
 
 //sandwich_and_donkey_ABC();
 module sandwich_and_donkey_ABC(rotate_donkey=0){
@@ -391,7 +445,7 @@ module full_winch(){
 
   translate([-sep/2-extra_space_in_middle,dspool_y,0])
     rotate([0,0,-90])
-    sandwich_and_donkey_D();
+    sandwich_and_whitelabel_motor_D();
 
   placed_line_verticalizer();
   placed_landing_bracket();

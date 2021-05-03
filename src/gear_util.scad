@@ -103,7 +103,7 @@ module GT2_2mm_pulley_extrusion(h, teeth, additional_tooth_width = 0, additional
   }
 }
 
-module GT2_flanged_motor_gear(teeth){
+module GT2_flanged_motor_gear(teeth, shaft_dia){
   difference(){
     union(){
       cylinder(d = GT2_motor_gear_outer_dia, h = 7.4);
@@ -114,14 +114,14 @@ module GT2_flanged_motor_gear(teeth){
       GT2_2mm_pulley_extrusion(GT2_motor_gear_height, teeth);
     }
     translate([0,0,-1])
-      cylinder(d = Donkey_shaft_d + 0.2, h = GT2_motor_gear_height + 2, $fn=20);
+      cylinder(d = shaft_dia + 0.2, h = GT2_motor_gear_height + 2, $fn=20);
     translate([0,0,-1])
-      cylinder(r1 = (Donkey_shaft_d + 0.2)/2 + 2,
-               r2 = (Donkey_shaft_d + 0.2)/2 - 1,
+      cylinder(r1 = (shaft_dia + 0.2)/2 + 2,
+               r2 = (shaft_dia + 0.2)/2 - 1,
                h = 3, $fn=20);
     translate([0,0,GT2_motor_gear_height-2])
-      cylinder(r1 = (Donkey_shaft_d + 0.2)/2 - 1,
-               r2 = (Donkey_shaft_d + 0.2)/2 + 2,
+      cylinder(r1 = (shaft_dia + 0.2)/2 - 1,
+               r2 = (shaft_dia + 0.2)/2 + 2,
                h = 3, $fn=20);
     for(zrot=[0,90])
       translate([0,0,7.4/2])
@@ -132,6 +132,6 @@ module GT2_flanged_motor_gear(teeth){
 
 // For rendering purposes
 //GT2_motor_gear();
-module GT2_motor_gear(){
-  GT2_flanged_motor_gear(GT2_motor_gear_teeth);
+module GT2_motor_gear(shaft_dia=Donkey_shaft_d){
+  GT2_flanged_motor_gear(GT2_motor_gear_teeth, shaft_dia);
 }
