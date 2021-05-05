@@ -19,17 +19,20 @@ odrv0 = odrive.find_any()
 # (4500/60)*2400 = 180000
 #odrv0.axis0.controller.config.vel_limit = 180000
 # At 140000 the plastic parts starts to resonate
-odrv0.axis0.controller.config.vel_limit = 130000
-odrv0.axis0.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
-odrv0.axis0.motor.config.current_lim = 30 # Strong enough...
-odrv0.axis0.motor.config.current_lim_margin = 10 # Only on devel and usart2 branches Oct 29, 2019
+odrv0.axis0.controller.config.vel_limit = 40
+odrv0.axis0.encoder.config.cpr = 8192     # AMT102-V
+odrv0.axis0.motor.config.current_lim = 20 # Strong enough...
+odrv0.axis0.motor.config.current_lim_margin=18
 odrv0.axis0.motor.config.calibration_current = 20
+odrv0.axis0.motor.config.torque_constant = 8.27/310 # = 0.0266774193548387
+# kv was measured to be ca 310. We don't know exactly
 
-odrv0.axis1.controller.config.vel_limit = 130000
-odrv0.axis1.encoder.config.cpr = 2400     # Generic 600 ppr optical encoder
-odrv0.axis1.motor.config.current_lim = 30 # Strong enough...
-odrv0.axis1.motor.config.current_lim_margin = 10 # Only on devel and usart2 branches Oct 29, 2019
+odrv0.axis1.controller.config.vel_limit = 40
+odrv0.axis1.encoder.config.cpr = 8192     # AMT102-V
+odrv0.axis1.motor.config.current_lim = 20 # Strong enough...
+odrv0.axis1.motor.config.current_lim_margin=18
 odrv0.axis1.motor.config.calibration_current = 20
+odrv0.axis1.motor.config.torque_constant = 8.27/310 # = 0.0266774193548387
 
 # Enforce startup sequence this time
 odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
@@ -54,13 +57,13 @@ odrv0.axis1.config.startup_closed_loop_control = True
 odrv0.axis1.config.startup_motor_calibration = True
 
 # PID tuning
-odrv0.axis0.controller.config.pos_gain = 70
-odrv0.axis0.controller.config.vel_integrator_gain = 0.002
-odrv0.axis0.controller.config.vel_gain = 0.0035
+odrv0.axis0.controller.config.pos_gain = 47
+odrv0.axis0.controller.config.vel_integrator_gain = 0.2
+odrv0.axis0.controller.config.vel_gain = 0.09
 
-odrv0.axis1.controller.config.pos_gain = 70
-odrv0.axis1.controller.config.vel_integrator_gain = 0.002
-odrv0.axis1.controller.config.vel_gain = 0.0035
+odrv0.axis1.controller.config.pos_gain = 47
+odrv0.axis1.controller.config.vel_integrator_gain = 0.2
+odrv0.axis1.controller.config.vel_gain = 0.09
 
 # Interface
 odrv0.config.enable_uart = True
