@@ -543,7 +543,7 @@ module chamfer45(v0, h){
 
 module line_from_to(v0, v1, r = 1.0){
   v2 = v1 - v0;
-  color("yellow")
+  color("red")
     if(len(v2) == 3){
       v2l = sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
       v2n = v2/v2l;
