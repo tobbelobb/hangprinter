@@ -227,10 +227,12 @@ module motor_bracket(leftHanded=false){
 translate([0,0,35]){
   translate([-2.5+33,0,0])
   rotate([0,90,0])
-  !motor_bracket();
+  motor_bracket();
   translate([33,0,0])
   %import("../stl/whitelabel_motor.stl");
-  //rotate([0,-90,0])
+  //!rotate([0,90,0])
+  translate([4.5,0,0])
+  rotate([0,0,2*90])
   encoder_bracket();
 }
 module encoder_bracket() {
@@ -238,17 +240,17 @@ module encoder_bracket() {
     rotate([0,90,0]) {
       difference(){
         union(){
-          translate([33, -35/2, -9])
+          translate([33, -90/2, -12.5])
             rotate([90,0,90])
-              rounded_cube2([35, 15, 2], 3, $fn=5*4);
-          translate([14.25,-20/2,-9])
-                left_rounded_cube2([20, 20, 9], 3, $fn=5*4);
+              rounded_cube2([90, 17, 2], 3, $fn=5*4);
+          translate([16,-20/2,0.5])
+                left_rounded_cube2([18, 20, 4], 3, $fn=5*4);
           intersection(){
             translate([33,0,0])
-              rotate([90,-90,0])
-                translate([0,0,-25/2])
+              rotate([90,-180,0])
+                translate([0,-0.5,-25/2])
                   inner_round_corner(r=2, h=25, $fn=10*4, center=false);
-            translate([0,0,-10])
+            translate([0,0,-50*sqrt(2)+10.5])
               rotate([45,0,0])
                 cube(50);
           }
@@ -257,25 +259,18 @@ module encoder_bracket() {
               mirror([0,k,0])
                 translate([33,20/2,0])
                     rotate([0,0,90])
-                    translate([0,0,-9])
+                    translate([0,0,-6.5])
                       inner_round_corner(r=2, h=9+2, $fn=10*4, center=false);
-            translate([0,0,-10])
+            translate([0,0,-50*sqrt(2)+10.5])
               rotate([45,0,0])
                 cube(50);
           }
         }
         for(k=[0,1]) {
           mirror([0,k,0]){
-            translate([32.2,35/2-3.5,3.5-9]){
+            translate([32.2,90/2-4.5,4.5-17/2]){
               rotate([0,90,0]){
-                cylinder(d2=3,d1=6, h=2.2,$fn=10);
-                cylinder(d=3, h=3,$fn=10);
-              }
-            }
-            translate([32.2,35/2-3.5,15-3.5-9]){
-              rotate([0,90,0]){
-                cylinder(d2=3,d1=6, h=2.2,$fn=10);
-                cylinder(d=3, h=3,$fn=10);
+                cylinder(d=6, h=3,$fn=20);
               }
             }
           }
@@ -290,10 +285,22 @@ module encoder_bracket() {
           translate([-(33.5-27.6), -28.5/2, 0])
             cube([2*(33.5-27.6), 1, 2.4]);
         }
-        translate([0,-45.5/2,-4])
-          cylinder(d=3, h=16, $fn=10);
-        translate([0,-45.5/2,9-3])
-          cylinder(d=6.2, h=16, $fn=6);
+        translate([0,-45.5/2,-5])
+          hull(){
+            translate([0,3,0])
+              cylinder(d=3.1, h=16, $fn=10);
+            translate([0,-1,0])
+              cylinder(d=3.1, h=16, $fn=10);
+          }
+        translate([0,-45.5/2,-0.4-2])
+          hull(){
+            translate([0,3,0])
+              rotate([0,0,30])
+                cylinder(d=6.2, h=5, $fn=6);
+            translate([0,-1,0])
+              rotate([0,0,30])
+                cylinder(d=6.2, h=5, $fn=6);
+          }
     }
   }
 }
