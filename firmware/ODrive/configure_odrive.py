@@ -66,16 +66,23 @@ odrv0.axis1.controller.config.vel_integrator_gain = 0.2
 odrv0.axis1.controller.config.vel_gain = 0.09
 
 # Interface
-odrv0.config.enable_uart = True
+odrv0.config.enable_uart = False
+
+#odrv0.can.set_baud_rate(250000) # Default
+# odrv0.axis0.config.can_node_id = 0 # Default
+# odrv0.axis1.config.can_node_id = 1 # Default
+# For the other board
+ odrv0.axis0.config.can_node_id = 2
+ odrv0.axis1.config.can_node_id = 3
 
 odrv0.axis0.config.step_gpio_pin = 1
 odrv0.axis0.config.dir_gpio_pin = 2
-odrv0.axis0.config.counts_per_step = 6.0 # 2400/(25*16) = 6
+odrv0.axis0.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025
 odrv0.axis0.config.enable_step_dir = True
 
 #odrv0.axis1.config.step_gpio_pin = 7 # Default
 #odrv0.axis1.config.dir_gpio_pin = 8  # Default
-odrv0.axis1.config.counts_per_step = 6.0 # 2400/(25*16) = 6
+odrv0.axis1.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025
 odrv0.axis1.config.enable_step_dir = True
 
 odrv0.save_configuration()
