@@ -1,0 +1,27 @@
+==== M114.1: Get Current Encoder Positions ====
+{{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{no}}<sup>1</sup> | klipper={{no}} | bfb={{no}} | machinekit={{no}} | makerbot={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} | grbl={{no}} }}
+
+This causes the RepRap machine to report its current motor encoder positions to the host.
+The encoder positions are relative to a reference position.
+The reference position is set by sending M114.1 S at any time before sending M114.1 (without any parameters).
+If M114.1 is sent to the machine before any M114.1 S command was sent,
+the reference position could be any fixed value.
+
+The returned encoder position is in arc degrees (1/360'ths of turns).
+
+;Parameters
+:<code>Z</code> Subsequent M114.1 calls returns numbers that are relative to the previous M114.1 S call
+
+;Examples
+ M114.1
+<tt>[-155.28, -4089.60, 6842.04, 0.00, ],</tt>
+M114.1 S
+ M114.1
+<tt>[0.00, 0.00, 0.00, 0.00, ],</tt>
+ ; Rotate the first encoder by a full turn
+ M114.1
+<tt>[360.00, 0.00, 0.00, 0.00, ],</tt>
+
+;Notes
+M114.1 is used in the Hangprinter's auto anchor location calibration sequence.
+<sup>1</sup> M114.1 will be implemented as a macro on top of RepRapFirmware 3.4+, and use M569.3 (read driver encoder) internally.

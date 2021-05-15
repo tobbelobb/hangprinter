@@ -1,0 +1,22 @@
+==== M569.2: Set Motor Driver Torque Mode ====
+{{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{yes}}<sup>1</sup> | bfb={{no}} | grbl={{no}} | makerbot={{no}} | machinekit={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} }}
+
+Tell one or more motor drivers to apply a specified torque regardless of position.
+
+;Parameters
+:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number
+:<code>Tn</code> Where n is the mode/torque to apply.
+
+If no parameter is supplied then no action is taken.
+The driver is put back into position mode by requesting a torque of exactly 0.
+Torque is interpreted as having units of Nm.
+Several different driver/torque pairs may be set by specifying them in sequence.
+
+;Examples
+ M569.2 P2 T-1.0      ; Sets driver 2 into torque mode with -1.0 Nm of torque.
+ M569.2 P0 T1.5 P2 T0 ; Sets driver 0 into torque mode with 1.5 Nm of torque, and sets driver 2 into position mode.
+
+;Notes
+Hangprinter's "torque mode" will be implemented as a ReprapFirmware macro that depends on M569.2.
+
+<sup>1</sup> Planned for RepRapFirmware 3.4.

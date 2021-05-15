@@ -1,0 +1,24 @@
+==== M919: Set Torque Mode ====
+{{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{no}}<sup>1</sup> | bfb={{no}} | grbl={{no}} | makerbot={{no}} | machinekit={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} | klipper={{no}} }}
+
+Tell one or more motor drivers to apply a specified torque regardless of position,
+or to jump out of torque mode.
+
+;Parameters
+:<code>An, Bn, Cn, Dn</code> where n is the mode/torque to apply, and ABCD are the motor set names.
+
+Torque value in units of Nm.
+
+For line driven machines, the torque is always applied in the direction that tightents the lines, regardless of the sign of n.
+
+If n is exactly 0, then that driver is put out of torque mode, and into position mode.
+
+;Examples
+ M569.2 A-1.0 B1.0 C0 D100.0      ; Sets motors A and B into torque mode with 1.0 Nm of torque. Puts C into positions mode, and puts motor D into torque mode with 100 Nm of torque.
+
+;Notes
+Apply low torques first and step up gradually!
+
+M919 is used in the Hangprinter's auto anchor location calibration sequence, and in daily Hangprinter use (for example directly after powering up the machine, to tighten the lines, or directly after use, when parking the machine in the ceiling).
+
+<sup>1</sup> M919 will be implemented as a macro on top of RepRapFirmware 3.4+, and use M569.2 (set driver torque mode) internally.

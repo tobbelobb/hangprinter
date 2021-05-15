@@ -1,0 +1,20 @@
+==== M569.3: Read Motor Driver Encoder ====
+{{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{yes}}<sup>1</sup> | klipper={{no}} | bfb={{no}} | machinekit={{no}} | makerbot={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} | grbl={{no}} }}
+
+This causes the RepRap machine to report its current motor encoder positions to the host.
+
+;Parameters
+:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Several drivers may be specified, separated by colon, or by specifying a sequence of P parameters.
+
+If no parameters are supplied, then empty brackets are returned.
+
+;Examples
+ M569.3
+<tt>[],</tt>
+ M569.3 P0:1:2:3
+<tt>[-155.28, -4089.60, 6842.04, 0.00, ],</tt>
+ M569.3 P3:1 P2 P3
+<tt>[0.00, -4089.60, 6842.04, -155.28, ],</tt>
+
+;Notes
+<sup>1</sup> Planned for RepRapFirmware 3.4.
