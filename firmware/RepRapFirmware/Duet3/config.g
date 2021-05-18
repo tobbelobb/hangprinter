@@ -1,7 +1,8 @@
 ; Communication and general
-G21     ; Work in millimetres
-G90     ; Send absolute coordinates...
-M83     ; ...but relative extruder moves
+M552 P0.0.0.0 S1 ; Enable network
+G21              ; Work in millimetres
+G90              ; Send absolute coordinates...
+M83              ; ...but relative extruder moves
 
 ; Kinematics
 G4 S1                           ; Wait 1 second because expansion boards might not be ready to receive CAN signal yet.
