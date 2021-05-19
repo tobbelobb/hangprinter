@@ -1,6 +1,7 @@
 include <parameters.scad>
 use <donkey_bracket.scad>
 use <util.scad>
+use <belt_roller.scad>
 
 //stationary_part();
 module stationary_part(){
@@ -128,7 +129,7 @@ module motor_bracket(leftHanded=false){
     //  rotate([0,90,0])
     //    donkey_face();
   translate([-cubesize/2,-cubesize/2,0])
-    cube([cubesize, cubesize,9]);
+    cube([cubesize, cubesize,8]);
   difference(){
     translate([0,0,-1])
       cylinder(d=60.8-3,h=50, $fn=100);
@@ -211,17 +212,17 @@ module motor_bracket(leftHanded=false){
     rotate([0,0,ang+45]) {
       translate([29.6/2,0,-1])
         cylinder(d=3.24, h=10, $fn=8);
-      translate([29.6/2,0,2.5+4])
-        cylinder(d=5.8, h=10,$fn=20);
+      translate([29.6/2,0,2.5+3])
+        cylinder(d=M3_screw_head_d, h=10,$fn=20);
       }
   }
   difference(){
     translate([33, -90/2, -6])
       rotate([90,0,90])
-        ydir_rounded_cube2([90, 15, 2], 3, $fn=5*4);
+        ydir_rounded_cube2([90, 14, 2], 3, $fn=5*4);
     for(k=[0,1]) {
       mirror([0,k,0]){
-        translate([32.2,90/2-3.5,15-3.5-6]){
+        translate([32.2,90/2-3.5,15-3.5-7]){
           rotate([0,90,0]){
             cylinder(d2=3,d1=6, h=2.2,$fn=10);
             cylinder(d=3, h=3,$fn=10);
@@ -250,7 +251,7 @@ module motor_bracket(leftHanded=false){
       intersection() {
         translate([33,cubesize/2,-3])
           rotate([0,0,90])
-            inner_round_corner(r=2, h=12, ang=90, $fn=10*4);
+            inner_round_corner(r=2, h=11, ang=90, $fn=10*4);
         translate([0,24.4,9])
           rotate([45,0,0])
             translate([0,0,-50])
@@ -259,16 +260,36 @@ module motor_bracket(leftHanded=false){
 }
 
 
-translate([0,0,35]){
-  translate([-2.5+33,0,0])
-  rotate([0,90,0])
-  motor_bracket();
-  //translate([33,0,0])
-  //%import("../stl/whitelabel_motor.stl");
-  //!rotate([0,90,0])
-  translate([4.5,0,0])
-  rotate([0,0,2*90])
-  encoder_bracket();
+union(){
+  difference(){
+    translate([0,0,35]){
+      union(){
+        translate([-2.5+33,0,0])
+          rotate([0,90,0])
+            motor_bracket();
+        //%translate([33,0,0])
+        //  import("../stl/whitelabel_motor.stl");
+        translate([4.5,0,0])
+          rotate([0,0,2*90])
+            encoder_bracket();
+      }
+    }
+    translate([48.6,30,-0.01])
+      rotate([0,0,-90])
+        belt_roller(outline=true);
+    translate([48.6,30,-0.01])
+      rotate([0,0,-90])
+        belt_roller(outline=false);
+    translate([30,21,5.6])
+      rotate([-45,0,0])
+        cube([10,10,20]);
+  }
+  //translate([48.6,30,-0.01])
+  //  rotate([0,-90,-90]){
+  //    color([221/255,146/255,94/225])
+  //      import("../stl/belt_roller_part1.stl");
+  //    import("../stl/belt_roller_part2.stl");
+  //  }
 }
 module encoder_bracket() {
   difference() {

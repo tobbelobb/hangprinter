@@ -1,5 +1,5 @@
 // Parameters shared between modules
-Base_th = 4;
+Base_th = 2;
 Beam_width = 15;
 Wiggle = 0.25;
 Fat_beam_width = Beam_width + Wiggle;
@@ -81,6 +81,7 @@ Ptfe_r = 2.1;
 Roller_base_r = 8;
 Screw_h = 2;
 Screw_head_h = 2;
+M3_screw_head_d = 5.8;
 Spool_center_bearing_wall_th = 5;
 Corner_clamp_bearings_center_to_center = 15;
 Anchor_bearings_center_to_center = Corner_clamp_bearings_center_to_center + b623_outer_dia;
@@ -116,7 +117,7 @@ GT2_motor_gear_outer_dia = 16;
 GT2_spool_gear_teeth = 255;
 GT2_motor_gear_teeth = 20;
 Torx_depth = GT2_gear_height/2;
-Belt_roller_h = 47;
+Belt_roller_h = 52;
 
 // Spacer parameters
 Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
