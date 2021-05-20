@@ -3,6 +3,8 @@ use <donkey_bracket.scad>
 use <util.scad>
 use <belt_roller.scad>
 
+base_ywidth = 84;
+
 //stationary_part();
 module stationary_part(){
   difference(){
@@ -86,25 +88,34 @@ module encoder(){
 }
 
 
-module erasor_cubes(cubesize) {
+module erasor_cubes(cubesize_x, yextra) {
   // Erasor cubes
-  translate([-50+7, -cubesize-1,-1])
-    cube([50,50,50]);
-  translate([-41,17,-1])
-    cube([30,39,50]);
   translate([-51,-20,-1])
     cube([30,40,50]);
-  translate([7,-cubesize/2,-1])
-    inner_round_corner(r=2, h=12, $fn=24);
-  translate([7,-cubesize/2+6,-1])
+  for(k=[0,1]) mirror([0,k,0]) {
+    translate([-50+6, -cubesize_x-1,-1])
+      cube([50,50,50]);
+    translate([6,-cubesize_x/2+6,-1])
       rotate([0,0,-90])
-      inner_round_corner(r=2, h=11, $fn=24);
-  translate([-11,cubesize/2,-1])
-      rotate([0,0,-90])
-      inner_round_corner(r=2, h=11, $fn=24);
-  translate([-10.8,cubesize/2-6.4,-1])
-      rotate([0,0,10])
-      inner_round_corner(r=1, h=11, ang=110, back=1, $fn=24);
+        inner_round_corner(r=2, h=11, $fn=24);
+    translate([4,-cubesize_x/2-k*yextra,0])
+      rotate([0,90,0])
+        rotate([0,0,90])
+          inner_round_corner(r=2, h=27, $fn=24);
+    translate([31,-cubesize_x/2-k*yextra+2,2])
+      rotate([0,90,0])
+        rotate([0,0,-90])
+          rotate_extrude(angle=90, $fn=24) translate([4,0]) circle(r=2, $fn=24);
+  }
+  translate([5,-cubesize_x/2,8])
+    rotate([0,90,0])
+      rotate([0,0,0])
+        inner_round_corner(r=2, h=26, $fn=24);
+  translate([31,-cubesize_x/2+2,6])
+    rotate([0,90,0])
+      rotate([0,0,180])
+        rotate_extrude(angle=90, $fn=24) translate([4,0]) circle(r=2, $fn=24);
+
 }
 
 //rotate([180,0,0])
@@ -122,173 +133,191 @@ module erasor_cubes(cubesize) {
 //rotate([0,90,0])
 //motor_bracket();
 module motor_bracket(leftHanded=false){
-  cubesize = 60.8+6;
+  cubesize_x = 60.8+6;
+  yextra=8.6;
+  cubesize_y = cubesize_x+yextra;
 
   difference(){
-  //%translate([-32,0,0])
-    //  rotate([0,90,0])
-    //    donkey_face();
-  translate([-cubesize/2,-cubesize/2,0])
-    cube([cubesize, cubesize,8]);
-  difference(){
-    translate([0,0,-1])
-      cylinder(d=60.8-3,h=50, $fn=100);
+    union(){
+      translate([-cubesize_x/2,-cubesize_x/2,0])
+        cube([cubesize_x, cubesize_y,8]);
+      translate([15,24,8])
+        rotate([0,90,0])
+          rotate([0,0,2*90])
+            inner_round_corner(r=3, h=20, $fn=4*5);
+    }
     difference(){
-      union(){
-        for(k=[0,1]) {
-          mirror([0,k,0]) {
-            translate([-15,-4-29.6/(2*sqrt(2)),0])
-              rounded_cube2([cubesize, 8, 20],2,$fn=6*4);
-            translate([23.6,-29.6/(sqrt(8))-4.6,-1])
-                rotate([0,0,166])
-                inner_round_corner(r=2, h=10, ang=131, back=2, $fn=10*4);
-            translate([28.49,-29.6/(sqrt(8))+3.95,-1])
-                rotate([0,0,90])
-                inner_round_corner(r=2, h=10, ang=74, back=2, $fn=10*4);
-            rotate([0,0,57])
-              rotate_extrude(angle=68, $fn=100)
-                translate([GT2_motor_gear_outer_dia/2+1,0])
-                  square([8,9]);
+      translate([0,0,-1])
+        cylinder(d=60.8-3,h=50, $fn=100);
+      difference(){
+        union(){
+          for(k=[0,1]) {
+            mirror([0,k,0]) {
+              translate([-13,-4-29.6/(2*sqrt(2)),0])
+                cube([cubesize_x-2, 8, 20]);
+              translate([23.6,-29.6/(sqrt(8))-4.6,-1])
+                  rotate([0,0,166])
+                  inner_round_corner(r=2, h=10, ang=131, back=2, $fn=10*4);
+              translate([28.49,-29.6/(sqrt(8))+3.95,-1])
+                  rotate([0,0,90])
+                  inner_round_corner(r=2, h=10, ang=74, back=2, $fn=10*4);
+              rotate([0,0,57])
+                rotate_extrude(angle=68, $fn=100)
+                  translate([GT2_motor_gear_outer_dia/2+1,0])
+                    square([8,9]);
+            }
           }
         }
-        for(k=[0,1])
-          for(l=[0,1])
-            mirror([k,0,0])
-              mirror([0,l,0])
-                rotate([0,0,58])
-                  translate([GT2_motor_gear_outer_dia/2+1+8,0,0])
-                    rotate([0,0,-51/2])
-                      translate([-0.235,-0.235,0])
-                        inner_round_corner(r=2, h=10, ang=28, $fn=20*4);
+        cylinder(d=GT2_motor_gear_outer_dia+2, h=52, $fn=100);
       }
-      cylinder(d=GT2_motor_gear_outer_dia+2, h=52, $fn=100);
-      for(k=[0,1])
-        for(l=[0,1])
-          mirror([k,0,0])
-            mirror([0,l,0])
-              rotate([0,0,46])
-                translate([GT2_motor_gear_outer_dia/2+1,0,0])
-                  rotate([0,0,-44/2])
-                    translate([-0.34,-0.34,0])
-                      inner_round_corner(r=2, h=10, ang=45, $fn=10*4);
+
+      for(ang=[0:90:359])
+        rotate([0,0,ang+45]) {
+          translate([29.6/2,0,2.5])
+            cylinder(d=M3_screw_head_d+6, h=11,$fn=20);
+          }
     }
-  }
-  if (leftHanded) {
-    rotate([0,0,180])
+    if (leftHanded) {
+      rotate([0,0,180])
+        mirror([1,0,0])
+          translate([0,0,-7+2.5])
+            stationary_part();
+    } else {
       mirror([1,0,0])
         translate([0,0,-7+2.5])
           stationary_part();
-  } else {
-    mirror([1,0,0])
-      translate([0,0,-7+2.5])
-        stationary_part();
-  }
-  translate([0,0,-7+2.5])
-    cylinder(d=55, h=7);
+    }
+    translate([0,0,-7+2.5])
+      cylinder(d=55, h=7);
 
 
-  if (leftHanded) {
-    mirror([0,1,0])
-    erasor_cubes(cubesize);
-  } else {
-    erasor_cubes(cubesize);
-  }
+    if (leftHanded) {
+      mirror([0,1,0])
+      erasor_cubes(cubesize_x, yextra);
+    } else {
+      erasor_cubes(cubesize_x, yextra);
+    }
 
-  // Remove overhang for ease of printing upright
-  if (leftHanded) {
-    translate([7.075,-29.720,-0.5])
-      rotate([0,0,45])
-          cube(3);
-  } else {
-    translate([8.555,29.285,-0.5])
-      rotate([0,0,45])
-        translate([-3, -3, 0])
-          cube(3);
-  }
+    // Remove overhang for ease of printing upright
+    if (leftHanded) {
+      translate([7.075,-29.720,-0.5])
+        rotate([0,0,45])
+            cube(3);
+    } else {
+      translate([8.555,29.285,-0.5])
+        rotate([0,0,45])
+          translate([-3, -3, 0])
+            cube(3);
+    }
 
 
-  // Screw holes
-  for(ang=[0:90:359])
-    rotate([0,0,ang+45]) {
-      translate([29.6/2,0,-1])
-        cylinder(d=3.24, h=10, $fn=8);
-      translate([29.6/2,0,2.5+3])
-        cylinder(d=M3_screw_head_d, h=10,$fn=20);
+    // Screw holes
+    for(ang=[0:90:359])
+      rotate([0,0,ang+45]) {
+        translate([29.6/2,0,-1])
+          cylinder(d=3.24, h=10, $fn=8);
+        translate([29.6/2,0,2.5+3])
+          cylinder(d=M3_screw_head_d, h=10,$fn=20);
       }
   }
   difference(){
-    translate([33, -90/2, -6])
-      rotate([90,0,90])
-        ydir_rounded_cube2([90, 14, 2], 3, $fn=5*4);
-    for(k=[0,1]) {
-      mirror([0,k,0]){
-        translate([32.2,90/2-3.5,15-3.5-7]){
-          rotate([0,90,0]){
-            cylinder(d2=3,d1=6, h=2.2,$fn=10);
-            cylinder(d=3, h=3,$fn=10);
-          }
-    }
+    union(){
+      difference(){
+        translate([33,0,0])
+          rotate([0,180,0])
+            rotate([90,0,0])
+              translate([0,0,-(cubesize_y+13)/2])
+                inner_round_corner(r=2, h=cubesize_y+10, $fn=10*4);
+        mirror([0,1,0])
+          translate([0,24.4,9])
+            rotate([45,0,0])
+              translate([0,0,-50])
+                cube(50);
+        translate([0,42,9])
+          translate([0,0,-50])
+            cube(50);
       }
-    }
-  }
-  difference(){
-    translate([33,0,0])
-      rotate([0,180,0])
-        rotate([90,0,0])
-          translate([0,0,-75/2])
-            inner_round_corner(r=2, h=75, $fn=10*4);
 
-    for(k=[0,1])
-      mirror([0,k,0])
-        translate([0,24.40,9])
-          rotate([45,0,0])
-            translate([0,0,-50])
-              cube(50);
-  }
-
-  for(k=[0,1])
-    mirror([0,k,0])
-      intersection() {
-        translate([33,cubesize/2,-3])
-          rotate([0,0,90])
-            inner_round_corner(r=2, h=11, ang=90, $fn=10*4);
+      mirror([0,1,0])
+        intersection() {
+        translate([ 33, cubesize_x / 2, -3 ])
+          rotate([ 0, 0, 90 ])
+           inner_round_corner(r=2, h=11, ang=90, $fn=10*4);
         translate([0,24.4,9])
           rotate([45,0,0])
             translate([0,0,-50])
               cube(50);
+        }
+    }
+    for(k=[0,1]) mirror([0,k,0])
+      translate([31,-cubesize_x/2-k*yextra+2,2])
+        rotate([0,90,0])
+          rotate([0,0,-90])
+            rotate_extrude(angle=90, $fn=24) translate([4,0]) circle(r=2, $fn=24);
+
+    translate([31,-cubesize_x/2+2,6])
+      rotate([0,90,0])
+        rotate([0,0,180])
+          rotate_extrude(angle=90, $fn=24) translate([4,0]) circle(r=2, $fn=24);
   }
 }
 
 
+belt_roller_xpos = 49.50;
+belt_roller_ypos = 33;
 union(){
   difference(){
-    translate([0,0,35]){
-      union(){
+    union(){
+      hull(){
+        translate([-12,0,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([-12,0,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5,38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5-15+3,38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5,-38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5-15+3,-38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+      }
+      translate([36-1.5, 36, 0])
+        cube([6, 6, Base_th]);
+      translate([0,0,35]){
         translate([-2.5+33,0,0])
           rotate([0,90,0])
             motor_bracket();
-        //%translate([33,0,0])
-        //  import("../stl/whitelabel_motor.stl");
-        translate([4.5,0,0])
+        %translate([33,0,0])
+          import("../stl/whitelabel_motor.stl");
+        //translate([33,0,-35+4.75])
+        //  rotate([0,0,180])
+        //    to_be_mounted();
+        translate([4.5-0.7,0,0])
           rotate([0,0,2*90])
             encoder_bracket();
       }
     }
-    translate([48.6,30,-0.01])
-      rotate([0,0,-90])
-        belt_roller(outline=true);
-    translate([48.6,30,-0.01])
-      rotate([0,0,-90])
-        belt_roller(outline=false);
-    translate([30,21,5.6])
-      rotate([-45,0,0])
-        cube([10,10,20]);
+    translate([-12,0,0.5])
+      Mounting_screw_countersink();
+    translate([36-1.5-15+3,38,0.5])
+      Mounting_screw_countersink();
+    translate([36-1.5,-38,0.5])
+      Mounting_screw_countersink();
+    translate([36-1.5-15+3,-38,0.5])
+      Mounting_screw_countersink();
   }
-  //translate([48.6,30,-0.01])
+  translate([belt_roller_xpos, belt_roller_ypos, -0.01])
+    rotate([0,0,-90])
+      belt_roller(outline=false);
+
+  //%translate([belt_roller_xpos, belt_roller_ypos, -0.01])
   //  rotate([0,-90,-90]){
   //    color([221/255,146/255,94/225])
   //      import("../stl/belt_roller_part1.stl");
   //    import("../stl/belt_roller_part2.stl");
+  //    //rotate([0,90,0])
+  //    //  belt_roller_insert(with_bearings = true);
   //  }
 }
 module encoder_bracket() {
@@ -296,16 +325,23 @@ module encoder_bracket() {
     rotate([0,90,0]) {
       difference(){
         union(){
-          translate([33, -90/2, -20.5])
-            rotate([90,0,90])
-              ydir_rounded_cube2([90, 25, 2], 3, $fn=5*4);
           translate([16,-20/2,-2.5])
             difference(){
-              left_rounded_cube2([18, 20, 7], 3, $fn=5*4);
+              left_rounded_cube2([18, 20, 7+4], 3, $fn=5*4);
               translate([-1,-1,4])
                 rotate([0,11,0])
                   translate([0,0,-50])
                     cube(50);
+              translate([-1,-1,4.8])
+                rotate([0,-11,0])
+                  translate([0,0,2])
+                    cube(50);
+              translate([-0.1,3,7])
+              hull(){
+                cube([0.1, 20-2*3, 4]);
+                translate([13, (20-2*3)/2, 0])
+                  cylinder(d=4.5, h=4, $fn=5*4);
+              }
 
             }
           intersection(){
@@ -317,26 +353,29 @@ module encoder_bracket() {
               rotate([45,0,0])
                 cube(50);
           }
+          intersection(){
+            translate([33,0,0])
+              rotate([-90,180,0])
+                translate([0,7.5,-25/2])
+                  inner_round_corner(r=2, h=25, $fn=10*4, ang=90-11, center=false);
+            translate([0,0,-2.5])
+              rotate([45,0,0])
+                cube(50);
+          }
+
           difference(){
             for(k=[0,1])
               mirror([0,k,0])
                 translate([33,20/2,0])
                     rotate([0,0,90])
                     translate([0,0,-6.5])
-                      inner_round_corner(r=2, h=9+2, $fn=10*4, center=false);
+                      inner_round_corner(r=2, h=9+7, $fn=10*4, center=false);
             translate([0,0,-50*sqrt(2)+8.4])
               rotate([45,0,0])
                 cube(50);
-          }
-        }
-        for(k=[0,1]) {
-          mirror([0,k,0]){
-            translate([32.2,90/2-3.5,3.5-5/2]){
-              rotate([0,90,0]){
-                cylinder(d2=3,d1=6, h=2.2,$fn=10);
-                cylinder(d=3, h=3,$fn=10);
-              }
-            }
+            translate([0,0,-2.5])
+              rotate([45,0,0])
+                cube(50);
           }
         }
       }

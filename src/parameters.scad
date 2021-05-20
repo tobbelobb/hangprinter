@@ -25,7 +25,7 @@ Motor_bracket_flerp_r = 6;
 Motor_bracket_flerp = 14;
 Motor_bracket_cw = Nema17_cube_width + 6;
 Motor_bracket_att_ang = 50;
-Mounting_screw_d = 4.5;
+Mounting_screw_d = 3.5;
 Mounting_screw_head_d = 14;
 Spool_outer_wall_th = 4;
 
@@ -117,7 +117,7 @@ GT2_motor_gear_outer_dia = 16;
 GT2_spool_gear_teeth = 255;
 GT2_motor_gear_teeth = 20;
 Torx_depth = GT2_gear_height/2;
-Belt_roller_h = 52;
+Belt_roller_h = 56;
 
 // Spacer parameters
 Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;

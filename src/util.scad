@@ -203,6 +203,20 @@ module one_rounded_cube2(v, r){
   translate([r,r,0]) cylinder(h=v[2], r=r);
 }
 
+module one_rounded_cube2_2(v, r){
+  $fs = 1;
+  translate([0,0,0]) cube([v[0]-  r, v[1]  , v[2]]);
+  translate([0,0,0]) cube([v[0]   , v[1]-r, v[2]]);
+  translate([v[0]-r,v[1]-r,0]) cylinder(h=v[2], r=r);
+}
+
+module one_rounded_cube2_3(v, r){
+  $fs = 1;
+  translate([r,0,0]) cube([v[0]-  r, v[1]  , v[2]]);
+  translate([0,0,0]) cube([v[0]   , v[1]-r, v[2]]);
+  translate([r,v[1]-r,0]) cylinder(h=v[2], r=r);
+}
+
 module one_rounded_cube3(v, r){
   translate([0,0,0])           cube([v[0]-  r, v[1]  , v[2]]);
   translate([0,0,0])           cube([v[0]   , v[1]-r, v[2]]);
@@ -660,6 +674,7 @@ module roller_base(twod=false,
   l = Roller_l+base_extra_w;
   d = Depth_of_roller_base;
   s = space_between_walls;
+  mounting_screw_z = Base_th-1.7;
 
   if(!twod){
     difference(){
@@ -704,12 +719,12 @@ module roller_base(twod=false,
       for(k=[0,1])
         mirror([0,k,0]){
           if(yextra>s)
-            translate([-14,-k*yextra,2.3])
+            translate([-14, -k*yextra, mounting_screw_z])
               Mounting_screw_countersink();
           else
-            translate([-14,0,2.3])
+            translate([-14, 0, mounting_screw_z])
               Mounting_screw_countersink();
-          translate([0,-14-k*yextra-base_extra_w/2 - (1-k)*wing,2.3])
+          translate([0,-14-k*yextra-base_extra_w/2 - (1-k)*wing, mounting_screw_z])
             Mounting_screw_countersink();
           translate([-d/2-5,5,5+Base_th])
             rotate([90,0,0])

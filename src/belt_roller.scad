@@ -66,6 +66,7 @@ module belt_roller_insert(with_bearings){
 belt_roller();
 module belt_roller(twod = false, outline=false){
   wing=7;
+  flerp=15;
   if(!twod){
     if(outline) {
       linear_extrude(height=wall_th){
@@ -82,66 +83,137 @@ module belt_roller(twod = false, outline=false){
     } else {
       difference(){
         union(){
-          roller_wall_pair(space_between_walls-0.8, wall_th+0.4, Belt_roller_h, rot_nut=30, base_extra_w=5, wing=wing, bearing_screw=false);
-          translate([Depth_of_roller_base/2-7,-space_between_walls/2,0])
-            cube([7, space_between_walls+2, Belt_roller_h-43]);
-        }
+          // base
+          translate([-Depth_of_roller_base/2, 0,0])
+            ydir_rounded_cube2([Depth_of_roller_base, space_between_walls/2+wall_th+flerp, Base_th], r=3, $fn=4*5);
+          translate([-(Depth_of_roller_base/2+flerp), -(space_between_walls+2*wall_th)/2,0])
+            left_rounded_cube2([Depth_of_roller_base+flerp, space_between_walls+2*wall_th, Base_th], r=3, $fn=4*5);
+          difference(){
+            union(){
+              for(k=[0,1]) mirror([0,k,0])
+                roller_wall(space_between_walls-0.8, wall_th+0.4, Belt_roller_h, rot_nut=30, bearing_screw=false);
+              translate([-Depth_of_roller_base/2,-space_between_walls/2,0])
+                cube([Depth_of_roller_base, space_between_walls+2, Belt_roller_h-43]);
+              translate([-(Depth_of_roller_base)/2, space_between_walls/2+wall_th, Base_th])
+                rotate([0,90,0])
+                  rotate([0,0,90])
+                    inner_round_corner(h=Depth_of_roller_base, r=2, back=2, $fn=5*4);
+              translate([-Depth_of_roller_base/2, (space_between_walls+2*wall_th)/2, Base_th])
+                rotate([90,0,0])
+                  rotate([0,0,90])
+                    inner_round_corner(h=space_between_walls+2*wall_th+2, r=2, $fn=5*4);
 
-        translate([top_adj_screw_x, top_adj_screw_y,Belt_roller_h-12])
+              for(k=[0,1]) mirror([0,k,0])
+                translate([-Depth_of_roller_base/2, space_between_walls/2+wall_th,0])
+                  rotate([0,0,90])
+                    inner_round_corner(h=Base_th+2*(1-k), r=2, back=2, $fn=5*4);
+
+              for(k=[0,1]) mirror([0,k,0]) {
+                hull(){
+                  translate([0,space_between_walls/2 + 0.5, Belt_roller_h - Depth_of_roller_base/2])
+                    rotate([-90,0,0]){
+                      translate([0,0,1+wall_th - min(wall_th/2, 2)])
+                        rotate([0,0,30])
+                          cylinder(d=7/cos(30), 1.5, $fn=6);
+                    }
+                  translate([0,space_between_walls/2 + 0.5, Belt_roller_h - Depth_of_roller_base/2-8])
+                    rotate([-90,0,0]){
+                      translate([0,0,1+wall_th - min(wall_th/2, 2)])
+                        rotate([0,0,30])
+                          cylinder(d=7/cos(30), 1.5, $fn=6);
+                  }
+                }
+              }
+            }
+            translate([-Depth_of_roller_base/2-2, -(space_between_walls+2*wall_th)/2, Base_th])
+              rotate([0,90,0])
+                rotate([0,0,181])
+                  rotate_extrude(angle=94, $fn=4*6)
+                    translate([2,0])
+                      circle(r=2, $fn=4*5);
+            translate([-Depth_of_roller_base/2-2, -(space_between_walls+2*wall_th)/2-2, 0])
+              cylinder(r=2, h=Base_th+2, $fn=4*5);
+
+            for(k=[0,1]) mirror([0,k,0]) mirror([1,0,0])
+              translate([Depth_of_roller_base/2, -(space_between_walls/2+wall_th),Base_th+2+(1-k)*25])
+                rotate([0,0,90])
+                  inner_round_corner(r=2, h=Belt_roller_h+2,$fn=4*4);
+            mirror([0,1,0])
+              translate([Depth_of_roller_base/2, -(space_between_walls/2+wall_th),Base_th+2])
+                rotate([0,0,90])
+                  inner_round_corner(r=2, h=Belt_roller_h+2,$fn=4*4);
+
+
+            translate([0,0,-9])
+              containing_cube();
+            hull(){
+              translate([top_adj_screw_x, top_adj_screw_y+0.3, Belt_roller_h-33])
+                rotate([0,0,30])
+                nut(4);
+              translate([top_adj_screw_x, -top_adj_screw_y-0.3, Belt_roller_h-33])
+                rotate([0,0,30])
+                nut(4);
+            }
+            for(k=[0,1]) {
+              mirror([0,k,0]) {
+                translate([-7, -containing_cube_ywidth/2, Belt_roller_h-27])
+                  rotate([0,0,40])
+                    cube([4, 6, Belt_roller_h]);
+              }
+            }
+
+            for(k=[0,1]) mirror([0,k,0]) {
+              hull(){
+                translate([0,space_between_walls/2 + 0.5, Belt_roller_h - Depth_of_roller_base/2])
+                  rotate([-90,0,0]){
+                    translate([0,0,1+wall_th - min(wall_th/2, 2)])
+                      rotate([0,0,30])
+                        nut(h=8);
+                  }
+                translate([0,space_between_walls/2 + 0.5, Belt_roller_h - Depth_of_roller_base/2-8])
+                  rotate([-90,0,0]){
+                    translate([0,0,1+wall_th - min(wall_th/2, 2)])
+                      rotate([0,0,30])
+                        nut(h=8);
+                }
+              }
+              hull() {
+                translate([0,space_between_walls/2 - 1, Belt_roller_h - Depth_of_roller_base/2])
+                  rotate([-90,0,0])
+                    cylinder(d=3.4, h=wall_th + 2, $fn=12);
+                translate([0,space_between_walls/2 - 1, Belt_roller_h - Depth_of_roller_base/2-8])
+                  rotate([-90,0,0])
+                    cylinder(d=3.4, h=wall_th + 2, $fn=12);
+              }
+            }
+          }
+        }
+        translate([top_adj_screw_x, top_adj_screw_y,Belt_roller_h-27])
           cylinder(d=M3_screw_head_d, h=Belt_roller_h, $fn=13);
-        translate([top_adj_screw_x, -top_adj_screw_y,Belt_roller_h-12])
+        translate([top_adj_screw_x, -top_adj_screw_y,Belt_roller_h-27])
           cylinder(d=M3_screw_head_d, h=Belt_roller_h, $fn=13);
         translate([top_adj_screw_x, top_adj_screw_y,-5])
           cylinder(d=3.2, h=Belt_roller_h, $fn=13);
         translate([top_adj_screw_x, -top_adj_screw_y,-5])
           cylinder(d=3.2, h=Belt_roller_h, $fn=13);
 
-        translate([0,0,-9])
-          containing_cube();
-        hull(){
-          translate([top_adj_screw_x, top_adj_screw_y, Belt_roller_h-33])
-            rotate([0,0,30])
-            nut(4);
-          translate([top_adj_screw_x, -top_adj_screw_y, Belt_roller_h-33])
-            rotate([0,0,30])
-            nut(4);
-        }
-        for(k=[0,1]) {
-          mirror([0,k,0]) {
-            translate([-7, -containing_cube_ywidth/2, 25])
-              rotate([0,0,40])
-                cube([4, 6, Belt_roller_h]);
-          }
-        }
-
-        for(k=[0,1]) mirror([0,k,0]) {
-          hull(){
-            translate([0,space_between_walls/2 + 0.5, Belt_roller_h - Depth_of_roller_base/2])
-              rotate([-90,0,0]){
-                translate([0,0,1+wall_th - min(wall_th/2, 2)])
-                  rotate([0,0,30])
-                    nut(h=8);
-              }
-            translate([0,space_between_walls/2 + 0.5, Belt_roller_h - Depth_of_roller_base/2-8])
-              rotate([-90,0,0]){
-                translate([0,0,1+wall_th - min(wall_th/2, 2)])
-                  rotate([0,0,30])
-                    nut(h=8);
-            }
-          }
-          hull() {
-            translate([0,space_between_walls/2 - 1, Belt_roller_h - Depth_of_roller_base/2])
-              rotate([-90,0,0])
-                cylinder(d=3.4, h=wall_th + 2, $fn=12);
-            translate([0,space_between_walls/2 - 1, Belt_roller_h - Depth_of_roller_base/2-8])
-              rotate([-90,0,0])
-                cylinder(d=3.4, h=wall_th + 2, $fn=12);
-          }
-        }
+        translate([0,space_between_walls/2+wall_th+flerp/2,0.5])
+          Mounting_screw_countersink();
+        translate([-Depth_of_roller_base/2-flerp/2,0,0.5])
+          Mounting_screw_countersink();
+        translate([-Depth_of_roller_base/2+2, space_between_walls/2+wall_th-2, Base_th+2])
+          rotate([0,0,89])
+            rotate_extrude(angle=92, $fn=4*4)
+              translate([4,0])
+                circle(r=2, $fn=4*5);
+        mirror([1,0,0])
+          translate([-Depth_of_roller_base/2+2, space_between_walls/2+wall_th-2, Base_th+2])
+            rotate([0,0,89])
+              rotate_extrude(angle=92, $fn=4*4)
+                translate([4,0])
+                  circle(r=2, $fn=4*5);
       }
     }
-    //translate([0,20,0])
-    //belt_roller_insert();
   } else {
     roller_base(twod=true,
         wall_th=wall_th,
