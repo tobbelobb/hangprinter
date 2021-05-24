@@ -263,7 +263,7 @@ module motor_bracket(leftHanded=false){
 }
 
 
-motor_bracket_xpos = -47.50;
+motor_bracket_xpos = -46.5;
 belt_roller_ypos = 33;
 union(){
   translate([motor_bracket_xpos,0,0])
