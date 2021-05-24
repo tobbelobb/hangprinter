@@ -118,15 +118,14 @@ module erasor_cubes(cubesize_x, yextra) {
 
 }
 
-//rotate([180,0,0])
-//rotate([0,-90,0])
-//%stationary_part();
-//rotate([0,-90,0])
-//  whitelabel_motor();
-//translate([-33,0,0])
-//rotate([90,0,-90])
-//  encoder();
-//rotate([180,0,0])
+//!whitelabel_motor_render();
+module whitelabel_motor_render(){
+  rotate([0,-90,0])
+    whitelabel_motor();
+  translate([-33.7,0,0])
+    rotate([90,0,-90])
+      encoder();
+}
 
 
 //translate([-2.5,0,0])
@@ -291,9 +290,7 @@ union(){
             motor_bracket();
         %translate([33,0,0])
           import("../stl/whitelabel_motor.stl");
-        //translate([33,0,-35+4.75])
-        //  rotate([0,0,180])
-        //    to_be_mounted();
+          //whitelabel_motor_render();
         translate([4.5-0.7,0,0])
           rotate([0,0,2*90])
             encoder_bracket();
