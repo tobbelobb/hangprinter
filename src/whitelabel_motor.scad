@@ -263,9 +263,10 @@ module motor_bracket(leftHanded=false){
 }
 
 
-belt_roller_xpos = 49.50;
+motor_bracket_xpos = -47.50;
 belt_roller_ypos = 33;
 union(){
+  translate([motor_bracket_xpos,0,0])
   difference(){
     union(){
       hull(){
@@ -307,18 +308,9 @@ union(){
     translate([36-1.5-15+3,-38,0.5])
       Mounting_screw_countersink();
   }
-  translate([belt_roller_xpos, belt_roller_ypos, -0.01])
+  translate([0, belt_roller_ypos, -0.01])
     rotate([0,0,-90])
       belt_roller(outline=false);
-
-  //%translate([belt_roller_xpos, belt_roller_ypos, -0.01])
-  //  rotate([0,-90,-90]){
-  //    color([221/255,146/255,94/225])
-  //      import("../stl/belt_roller_part1.stl");
-  //    import("../stl/belt_roller_part2.stl");
-  //    //rotate([0,90,0])
-  //    //  belt_roller_insert(with_bearings = true);
-  //  }
 }
 module encoder_bracket() {
   difference() {
