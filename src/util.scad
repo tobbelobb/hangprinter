@@ -638,6 +638,13 @@ module b623(){
   }
 }
 
+module b623_flanged(){
+  color([0.5,0.5,0.5]){
+    b623();
+    cylinder(d=11, h=1, $fn=32);
+  }
+}
+
 module b608(){
   color("purple")
   difference(){

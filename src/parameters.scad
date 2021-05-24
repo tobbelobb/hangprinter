@@ -118,6 +118,7 @@ GT2_spool_gear_teeth = 255;
 GT2_motor_gear_teeth = 20;
 Torx_depth = GT2_gear_height/2;
 Belt_roller_h = 56;
+Belt_thickness = 1.4;
 
 // Spacer parameters
 Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
