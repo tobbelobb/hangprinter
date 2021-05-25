@@ -63,7 +63,7 @@ color1 = [0.81,0.73,0.05];
 color1_alpha = 0.9;
 color2 = [0.99,0.99,0.99];
 color2_alpha = 0.8;
-spool_cover_alpha = 0.3;
+spool_cover_alpha = 0.8;
 
 color_carbon = [0.2,0.2,0.2];
 color_line = [0.9,0.35,0.35];
@@ -155,7 +155,7 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//sandwich_D();
+//!sandwich_D();
 module sandwich_D(){
   translate([0,0, (1 + Spool_height)]){
     color(color2, color2_alpha)
@@ -174,7 +174,7 @@ module sandwich_D(){
               sep_disc();
           }
         color(color1, spool_cover_alpha)
-          translate([0,0,-2])
+          translate([0,0,-1.5-1])
             rotate([0,0,-150])
               if (stls) import("../stl/dleft_spool_cover.stl");
               else dleft_spool_cover();
@@ -184,7 +184,7 @@ module sandwich_D(){
     if(stls) import("../stl/spool.stl");
     else spool();
   color(color1, spool_cover_alpha)
-    translate([0,0,-2])
+    translate([0,0,-1.5-1])
       rotate([0,0,-90])
         if (stls) import("../stl/spool_cover.stl");
         else spool_cover();
@@ -216,7 +216,7 @@ module sandwich_ABC(){
           if(stls) import("../stl/spool.stl");
           else spool();
         color(color1, spool_cover_alpha)
-          translate([0,0,-2])
+          translate([0,0,-1.5-1])
             rotate([0,0,-90])
               if (stls) import("../stl/spool_cover.stl");
               else spool_cover();
@@ -226,7 +226,7 @@ module sandwich_ABC(){
     if(stls) import("../stl/spool.stl");
     else spool();
   color(color1, spool_cover_alpha)
-    translate([0,0,-2])
+    translate([0,0,-1.5-1])
       rotate([0,0,-150])
         if (stls) import("../stl/spool_cover.stl");
         else spool_cover();
@@ -268,22 +268,23 @@ module line_roller_double_with_bearings(){
 }
 
 //!spool_core_D();
-module spool_core_D() {
+module spool_core_D(cover_adj=0) {
   for(k=[0,1])
     mirror([0,k,0])
       rotate([90,0,0])
-      translate([0,0,-k*(Spool_height+1+2*(0.8-0.5))])
+      translate([0,0,-k*(Spool_height+1+2*cover_adj)])
       import("../stl/spool_core.stl");
 }
 
 //!placed_spool_core_D();
 module placed_spool_core_D(){
-  translate([0,Spool_height+1+(0.8-0.5),0]) {
+  cover_adj = 0.55;
+  translate([0,Spool_height+1+cover_adj,0]) {
     if(stls && !twod){
-      spool_core_D();
+      spool_core_D(cover_adj);
     } else {
       translate([0,-Sandwich_D_width/2+1+Spool_height+GT2_gear_height/2,0])
-        spool_cores(twod=twod, between=Sandwich_D_width + 2*(0.8-0.5));
+        spool_cores(twod=twod, between=Sandwich_D_width + 2*cover_adj);
     }
   }
 }
@@ -358,6 +359,7 @@ module render_whitelabel_motor_and_bracket(leftHanded=false, A=false, B=false, C
 belt_roller_bearing_xpos = Sep_disc_radius + b623_outer_dia/2+Belt_thickness;
 //!sandwich_and_motor_ABC();
 module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false, D=false){
+  cover_adj=0.55;
   if(!twod)
     translate([0,
         Sandwich_ABC_width/2,
@@ -372,11 +374,11 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false, D=fal
   if(stls && !twod){
     for(k=[0,1])
       mirror([0,k,0])
-        translate([0,0.8-0.5,0])
+        translate([0,cover_adj,0])
           rotate([90,0,0])
             import("../stl/spool_core.stl");
   } else if(twod) {
-    spool_cores(twod=true, between=Sandwich_ABC_width + 2*(0.8-0.5));
+    spool_cores(twod=true, between=Sandwich_ABC_width + 2*cover_adj);
   } else { // not stls, not twod
     spool_cores(false, Sandwich_ABC_width);
   }
