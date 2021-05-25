@@ -46,10 +46,10 @@ lift_mover_z = 200;
 
 dspool_y = -50;
 abcspool_y = -50;
-abc_sep = 104;
+abc_sep = 105;
 move_BC_deflectors = -100;
 
-extra_space_in_middle = 0;
+extra_space_in_middle = -2;
 
 lx0 = -abc_sep/2-extra_space_in_middle-spd/2;
 lx1 = -abc_sep/2-extra_space_in_middle+spd/2;
@@ -63,8 +63,10 @@ color1 = [0.81,0.73,0.05];
 color1_alpha = 0.9;
 color2 = [0.99,0.99,0.99];
 color2_alpha = 0.8;
+spool_cover_alpha = 0.3;
 
 color_carbon = [0.2,0.2,0.2];
+color_line = [0.9,0.35,0.35];
 
 // Sometimes, Nema17_cube_width will have another value,
 // so that a different motor can fit
@@ -142,9 +144,9 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
                0])
       line_deflector(78, center=true);
     translate([lx2+b623_vgroove_small_r,ly2-b623_vgroove_small_r,0])
-      line_deflector(81, center=true);
+      line_deflector(83, center=true);
     translate([-b623_vgroove_small_r,ly2-b623_vgroove_small_r,0])
-      line_deflector(-81, center=true);
+      line_deflector(-83, center=true);
     //translate([-b623_vgroove_small_r+Spool_height+GT2_gear_height,
     //           -Sidelength/sqrt(3)-49, 0])
     //  rotate([0,0,180])
@@ -157,40 +159,42 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
 module sandwich_D(){
   translate([0,0, (1 + Spool_height)]){
     color(color2, color2_alpha)
-      if(stls){
-        import("../stl/GT2_spool_gear.stl");
-      } else {
-        GT2_spool_gear();
-      }
-    color(color1, color1_alpha)
-      translate([0,0,Torx_depth + 2*(1 + Spool_height) + GT2_gear_height/2])
+      if(stls) import("../stl/GT2_spool_gear.stl");
+      else GT2_spool_gear();
+    translate([0,0,Torx_depth + 2*(1 + Spool_height) + GT2_gear_height/2])
       rotate([0,180,0]){
-        if(stls){
-          import("../stl/dleft_spool.stl");
-          translate([0,0,1+Spool_height])
-            import("../stl/sep_disc.stl");
-        } else {
-          dleft_spool();
-          translate([0,0,1+Spool_height])
-            sep_disc();
-        }
+        color(color1, color1_alpha)
+          if(stls){
+            import("../stl/dleft_spool.stl");
+            translate([0,0,1+Spool_height])
+              import("../stl/sep_disc.stl");
+          } else {
+            dleft_spool();
+            translate([0,0,1+Spool_height])
+              sep_disc();
+          }
+        color(color1, spool_cover_alpha)
+          translate([0,0,-2])
+            rotate([0,0,-150])
+              if (stls) import("../stl/dleft_spool_cover.stl");
+              else dleft_spool_cover();
       }
   }
   color(color1, color1_alpha)
-    if(stls){
-      import("../stl/spool.stl");
-    } else {
-      spool();
-    }
+    if(stls) import("../stl/spool.stl");
+    else spool();
+  color(color1, spool_cover_alpha)
+    translate([0,0,-2])
+      rotate([0,0,-90])
+        if (stls) import("../stl/spool_cover.stl");
+        else spool_cover();
   translate([0,0,b608_width])
     color(color2, color2_alpha)
-    if(stls){
-      import("../stl/spacer_D.stl");
-    } else {
-      spacer(Spacer_D_width);
-    }
+    if(stls) import("../stl/spacer_D.stl");
+    else spacer(Spacer_D_width);
 }
 
+//!placed_sandwich_D();
 module placed_sandwich_D(){
     translate([0,
         -1-Spool_height - GT2_gear_height/2,
@@ -200,40 +204,39 @@ module placed_sandwich_D(){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//sandwich_ABC();
+//!sandwich_ABC();
 module sandwich_ABC(){
   translate([0,0, 1 + Spool_height]){
     color(color2, color2_alpha)
-      if(stls){
-        import("../stl/GT2_spool_gear.stl");
-      } else {
-        GT2_spool_gear();
-      }
-    color(color1, color1_alpha)
-      translate([0,0,Torx_depth + 1 + Spool_height + GT2_gear_height/2])
+      if(stls) import("../stl/GT2_spool_gear.stl");
+      else GT2_spool_gear();
+    translate([0,0,Torx_depth + 1 + Spool_height + GT2_gear_height/2])
       rotate([0,180,0]){
-        if(stls){
-          import("../stl/spool.stl");
-        } else {
-          spool();
-        }
+        color(color1, color1_alpha)
+          if(stls) import("../stl/spool.stl");
+          else spool();
+        color(color1, spool_cover_alpha)
+          translate([0,0,-2])
+            rotate([0,0,-90])
+              if (stls) import("../stl/spool_cover.stl");
+              else spool_cover();
       }
   }
   color(color1, color1_alpha)
-    if(stls){
-      import("../stl/spool.stl");
-    } else {
-      spool();
-    }
+    if(stls) import("../stl/spool.stl");
+    else spool();
+  color(color1, spool_cover_alpha)
+    translate([0,0,-2])
+      rotate([0,0,-150])
+        if (stls) import("../stl/spool_cover.stl");
+        else spool_cover();
   translate([0,0,b608_width])
     color(color2, color2_alpha)
-    if(stls){
-      import("../stl/spacer_ABC.stl");
-    } else {
-      spacer(Spacer_ABC_width);
-    }
+      if(stls) import("../stl/spacer_ABC.stl");
+      else spacer(Spacer_ABC_width);
 }
 
+//!belt_roller_bearings();
 module belt_roller_bearings(){
   belt_roller_bearing_center_z = Belt_roller_h - Depth_of_roller_base/2;
   for(rot=[90,-90])
@@ -243,7 +246,7 @@ module belt_roller_bearings(){
       b623_flanged();
 }
 
-//line_roller_double_with_bearings();
+//!line_roller_double_with_bearings();
 module line_roller_double_with_bearings(){
   bearing_center_z = Line_roller_ABC_winch_h - Depth_of_roller_base/2;
   if(stls && !twod){
@@ -264,21 +267,23 @@ module line_roller_double_with_bearings(){
   }
 }
 
+//!spool_core_D();
 module spool_core_D() {
   for(k=[0,1])
     mirror([0,k,0])
       rotate([90,0,0])
-      translate([0,0,-k*(Spool_height+1)])
+      translate([0,0,-k*(Spool_height+1+2*(0.8-0.5))])
       import("../stl/spool_core.stl");
 }
 
+//!placed_spool_core_D();
 module placed_spool_core_D(){
-  translate([0,Spool_height+1,0]) {
+  translate([0,Spool_height+1+(0.8-0.5),0]) {
     if(stls && !twod){
       spool_core_D();
     } else {
       translate([0,-Sandwich_D_width/2+1+Spool_height+GT2_gear_height/2,0])
-        spool_cores(twod=twod, between=Sandwich_D_width);
+        spool_cores(twod=twod, between=Sandwich_D_width + 2*(0.8-0.5));
     }
   }
 }
@@ -300,17 +305,17 @@ module sandwich_and_whitelabel_motor_D(){
 
 //!render_whitelabel_motor_and_bracket();
 module render_whitelabel_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=false){
-  if(stls && !twod && (A || B || C || D)){
+  if (stls && !twod) {
     if(A)
       import("../stl/motor_bracket_A.stl");
     else if (B)
       import("../stl/motor_bracket_B.stl");
     else if (C)
       import("../stl/motor_bracket_C.stl");
-    else if (D)
+    else // use D as default...
       import("../stl/motor_bracket_D.stl");
   } else {
-    motor_bracket(leftHanded);
+    motor_bracket_extreme(leftHanded);
   }
 
   module motor(ang=0) {
@@ -358,7 +363,7 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false, D=fal
         Sandwich_ABC_width/2,
         Sep_disc_radius+Gap_between_sandwich_and_plate])
       rotate([90,0,0])
-      sandwich_ABC();
+        sandwich_ABC();
   translate([belt_roller_bearing_xpos,0,0])
     rotate([0,0,90])
       render_whitelabel_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=D);
@@ -367,10 +372,11 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false, D=fal
   if(stls && !twod){
     for(k=[0,1])
       mirror([0,k,0])
-        rotate([90,0,0])
-        import("../stl/spool_core.stl");
+        translate([0,0.8-0.5,0])
+          rotate([90,0,0])
+            import("../stl/spool_core.stl");
   } else if(twod) {
-    spool_cores(twod=true, between=Sandwich_ABC_width);
+    spool_cores(twod=true, between=Sandwich_ABC_width + 2*(0.8-0.5));
   } else { // not stls, not twod
     spool_cores(false, Sandwich_ABC_width);
   }
@@ -534,7 +540,7 @@ module mover(){
 if(mover && !twod)
   d_lines();
 module d_lines(){
-  color("yellow")
+  color("pink")
   for(k=[0,120,240])
     rotate([0,0,k])
       translate([0,Sidelength/sqrt(3),lift_mover_z])
@@ -657,60 +663,17 @@ module ABC_anchor(){
     cube([50,Ext_sidelength, 8]);
   translate([Front_bearing_x+Move_tower-1,0,Higher_bearing_z-2])
     color("red")
-    sphere(r=4);
+      sphere(r=4);
 }
 
-//if(!twod)
-//ceiling_unit_internal_lines_v4();
-module ceiling_unit_internal_lines_v4(){
-  hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
-  bd0y = dspool_y-93;
-  bd1x = Spool_height + GT2_gear_height;
-  bd2x = 1+ 2*Spool_height + GT2_gear_height;
-  bd1y = dspool_y-136;
-  bd2y = dspool_y-118;
-  dyl = 100;
-  module one_b_line(e=0, e2=30){
-    bbc = e2+5;
-    a = -abc_sep-spd/2;
-    b = abcspool_y+move_BC_deflectors+e;
-    c = cos(60)*b623_vgroove_small_r;
-    d = sin(60)*b623_vgroove_small_r;
-    line_from_to([a, abcspool_y, hz],
-        [a, b+17, hz]);
-    line_from_to([a-c, b+d, hz],
-        [a-c-cos(30)*e2, b+d-sin(30)*e2, hz]);
-    line_from_to([a-c-cos(30)*(bbc+b623_vgroove_small_r), b+d-sin(30)*(bbc+b623_vgroove_small_r), hz],
-        [a-c-cos(30)*(bbc+b623_vgroove_small_r+100),
-        b+d-sin(30)*(bbc+b623_vgroove_small_r+100),
-        hz+100]);
-  }
-  // all four bc-lines
-  for(k=[0,1])
-    mirror([k,0,0]){
-      one_b_line();
-      translate([spd,0,0])
-        one_b_line(e=-spd/sqrt(3), e2=30+spd/2);
-    }
-
-  for(k=[0,1])
-    mirror([k,0,0]){
-      line_from_to([spd/2, abcspool_y, hz],
-          [spd/2, abcspool_y+90, hz]);
-      line_from_to([spd/2, abcspool_y+93, hz],
-          [spd/2, abcspool_y+190, 100+hz]);
-    }
-
-
-}
-
-//ceiling_unit_internal_lines_v4();
-if(mounted_in_ceiling && !twod){
-  translate([0,0,43+ANCHOR_D_Z])
-    rotate([180,0,0])
+color(color_line){
+  if(mounted_in_ceiling && !twod){
+    translate([0,0,43+ANCHOR_D_Z])
+      rotate([180,0,0])
+      ceiling_unit_internal_lines_v4p1();
+  } else {
     ceiling_unit_internal_lines_v4p1();
-} else {
-  ceiling_unit_internal_lines_v4p1();
+  }
 }
 module ceiling_unit_internal_lines_v4p1(){
   hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;

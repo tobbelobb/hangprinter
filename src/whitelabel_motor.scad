@@ -255,65 +255,8 @@ module motor_bracket(leftHanded=false){
 }
 
 
-motor_bracket_xpos = -46.5;
-motor_bracket_ypos = -33;
 
-// Four different brackets are needed
-// All combinations of the two options
-// |      leftHanded |     mirrored |
-// |      leftHanded | not mirrored |
-// |  not leftHanded |     mirrored |
-// |  not leftHanded | not mirrored |
-
-leftHanded = false;
-//mirror([1,0,0])
-union(){
-  translate([motor_bracket_xpos, motor_bracket_ypos, 0])
-  difference(){
-    union(){
-      hull(){
-        translate([-12,0,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([-12,0,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5,38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5-15+3,38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5,-38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5-15+3,-38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-      }
-      translate([36-1.5, 36, 0])
-        cube([6, 6, Base_th]);
-      translate([0,0,35]){
-        translate([-2.5+33,0,0])
-          rotate([0,90,0])
-            motor_bracket(leftHanded);
-        %translate([33,0,0])
-          if(leftHanded)
-            rotate([180,0,0])
-              import("../stl/whitelabel_motor.stl");
-          else
-            import("../stl/whitelabel_motor.stl");
-        translate([4.5-0.7,0,0])
-          rotate([0,0,2*90])
-            encoder_bracket();
-      }
-    }
-    translate([-12,0,0.5])
-      Mounting_screw_countersink();
-    translate([36-1.5-15+3,38,0.5])
-      Mounting_screw_countersink();
-    translate([36-1.5,-38,0.5])
-      Mounting_screw_countersink();
-    translate([36-1.5-15+3,-38,0.5])
-      Mounting_screw_countersink();
-  }
-  rotate([0,0,-90])
-    belt_roller(outline=false);
-}
+// encoder_bracket();
 module encoder_bracket() {
   difference() {
     rotate([0,90,0]) {
@@ -394,4 +337,64 @@ module encoder_bracket() {
           }
     }
   }
+}
+
+
+motor_bracket_xpos = -46.5;
+motor_bracket_ypos = -33;
+
+// Four different brackets are needed
+// All combinations of the two options
+// |      leftHanded |     mirrored |
+// |      leftHanded | not mirrored |
+// |  not leftHanded |     mirrored |
+// |  not leftHanded | not mirrored |
+
+//mirror([1,0,0])
+module motor_bracket_extreme(leftHanded=false) {
+  translate([motor_bracket_xpos, motor_bracket_ypos, 0])
+  difference(){
+    union(){
+      hull(){
+        translate([-12,0,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([-12,0,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5,38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5-15+3,38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5,-38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+        translate([36-1.5-15+3,-38,0])
+          cylinder(r=4, h=Base_th, $fn=4*6);
+      }
+      translate([36-1.5, 36, 0])
+        cube([6, 6, Base_th]);
+      translate([0,0,35]){
+        translate([-2.5+33,0,0])
+          rotate([0,90,0])
+            motor_bracket(leftHanded);
+        %translate([33,0,0])
+          if(leftHanded)
+            rotate([180,0,0])
+              import("../stl/whitelabel_motor.stl");
+          else
+            import("../stl/whitelabel_motor.stl");
+        translate([4.5-0.7,0,0])
+          rotate([0,0,2*90])
+            encoder_bracket();
+      }
+    }
+    translate([-12,0,0.5])
+      Mounting_screw_countersink();
+    translate([36-1.5-15+3,38,0.5])
+      Mounting_screw_countersink();
+    translate([36-1.5,-38,0.5])
+      Mounting_screw_countersink();
+    translate([36-1.5-15+3,-38,0.5])
+      Mounting_screw_countersink();
+  }
+  rotate([0,0,-90])
+    belt_roller(outline=false);
 }

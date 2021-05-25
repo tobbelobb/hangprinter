@@ -91,15 +91,6 @@ module rounded_cube(v, r, center=false){
 
   //!core();
   module core(){
-    //translate([r, r, 0]){
-    //  cube([v[0] - d, v[1] - d, v[2]]);
-    //}
-    //translate([r, 0, r]){
-    //  cube([v[0] - d, v[1], v[2] - d]);
-    //}
-    //translate([0, r, r]){
-    //  cube([v[0], v[1] - d, v[2] - d]);
-    //}
     translate([r-0.005, r-0.005, 0]){
       cube([v[0] - d+0.01, v[1] - d+0.01, v[2]]);
     }
@@ -653,6 +644,19 @@ module b608(){
       cylinder(r = b608_bore_r, h = b608_width + 2);
   }
 }
+
+module b608_lips(h){
+  difference(){
+    cylinder(d=15, h=h, $fn=25);
+    // Phase in/out
+    p = 6.7;
+    rotate_extrude(angle=360, convexity=5)
+      translate([Motor_pitch-1.3,0])
+      rotate([0,0,-45])
+      square([4,5]);
+  }
+}
+
 
 module Mounting_screw_countersink(twod=false){
   if (twod) {

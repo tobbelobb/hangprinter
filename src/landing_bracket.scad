@@ -94,12 +94,12 @@ module landing_bracket_a(tunnel=true, twist=0, rightside=1, twod=false){
         for(x=[0, rightside])
           mirror([x, 0])
             translate([0,-th/2,5])
-              standing_triangle([th2/2, 5, 200],bottom=1);
+              standing_triangle([th2/2, 5, Line_roller_ABC_winch_h+175-Wall_th],bottom=1);
         for(x=[0, 1])
           mirror([x, 0]){
             translate([th/2, 0, 5])
               rotate([0,0,90])
-              standing_triangle([th2/2, 5, 200],bottom=1);
+              standing_triangle([th2/2, 5, Line_roller_ABC_winch_h+175-Wall_th],bottom=1);
           }
       }
       if(tunnel)

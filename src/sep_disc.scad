@@ -13,8 +13,8 @@ module sep_disc(){
         rotate([0,0,v])
           for(a=[1,-1])
             rotate([0,0,15+a*3])
-            translate([-1.5/2,0,0])
-              cube([1.5,Spool_r+5,3]);
+            translate([-0.5/2,0,0])
+              cube([0.5,Spool_r+4,3]);
     }
   }
 }

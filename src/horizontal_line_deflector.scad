@@ -59,8 +59,8 @@ module horizontal_line_deflector(twod=false){
       sly = 40;
       for(k=[0,1])
         mirror([k,0,0])
-          translate([b623_vgroove_small_r,-sly,bz-0.5])
-          cube([100,sly, 1]);
+          translate([b623_vgroove_small_r,-sly,bz-1.5/2])
+          cube([100,sly, 1.5]);
 
       //translate([(cx-4)/2, ])
       //cube([cx-4, b623_vgroove_big_r*2 + 2, b623_width+2]);
@@ -80,6 +80,8 @@ module horizontal_line_deflector(twod=false){
       mirror([k,0,0]){
         difference(){
           union(){
+            translate([6,3,0])
+              cube([2, 2, Base_th*2]);
             translate([cx/2,-cy+5,Base_th])
               rotate([0,-90,-90])
               inner_round_corner(r=2, h=cy, $fn=4*5, back=Base_th-0.1);
@@ -89,7 +91,7 @@ module horizontal_line_deflector(twod=false){
           }
           translate([cx/2,5,Base_th])
             corner_rounder();
-          translate([cx/2+pl,ybit_hole,2.3])
+          translate([cx/2+pl,ybit_hole,0.5])
             Mounting_screw_countersink();
         }
       }

@@ -24,18 +24,6 @@ module spool_core_halve(twod = false, between){
   liplen = 1.2;
   wml = w - liplen; // w minus liplen
 
-  module b608_lips(h){
-    difference(){
-      cylinder(d=15, h=h, $fn=25);
-      // Phase in/out
-      p = 6.7;
-      rotate_extrude(angle=360, convexity=5)
-        translate([Motor_pitch-1.3,0])
-        rotate([0,0,-45])
-        square([4,5]);
-    }
-  }
-
   module bit(){
     rotate([0,0,90])
     translate([-wml/2, -wml/2, 0])
