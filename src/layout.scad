@@ -12,7 +12,6 @@ use <corner_clamp.scad>
 use <beam_slider_D.scad>
 use <util.scad>
 use <gear_util.scad>
-use <donkey_bracket.scad>
 use <belt_roller.scad>
 use <landing_bracket.scad>
 use <whitelabel_motor.scad>
@@ -297,19 +296,6 @@ module sandwich_and_whitelabel_motor_D(){
   }
 
   placed_spool_core_D();
-}
-
-//render_donkey_and_bracket();
-module render_donkey_and_bracket(){
-  translate([0,2.5,0])
-  rotate([0,0,90]){
-    if(stls && !twod){
-      color([0.15,0.15,0.15],0.8)
-        to_be_mounted();
-    } else if(twod) {
-      donkey_bracket(twod);
-    }
-  }
 }
 
 //!render_whitelabel_motor_and_bracket();
