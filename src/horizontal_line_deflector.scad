@@ -1,5 +1,5 @@
 include <parameters.scad>
-use <util.scad>
+use <tilted_line_deflector.scad>
 
 
 // Investigate layers
@@ -12,98 +12,6 @@ use <util.scad>
 rotate([90,0,0])
 horizontal_line_deflector();
 module horizontal_line_deflector(twod=false){
-  cx = b623_vgroove_big_r*2 + 7;
-  cy = Horizontal_deflector_cube_y_size;
-  bz = Gap_between_sandwich_and_plate + Sep_disc_radius - Spool_r;
-  bit_y = cy;
-
-  pl = 5.5;
-  ybit = -cy+5+bit_y/2;
-  ybit_hole = ybit + 4;
-  module bit(){
-    rotate([0,0,90])
-      translate([-Bit_width/2, -bit_y/2, 0])
-      difference(){
-        one_rounded_cube2([Bit_width+4,bit_y,Base_th], 5.5, $fn=28);
-      }
-  }
-
-  if(!twod){
-    extra_b_height = 1.3; // half of this above, half below
-    extra_b_width = 1.5; // half of this to the left of bearing
-    full_h = bz+8;
-    take_away_angle = 90;
-
-    // something to aim for
-    //translate([0,-b623_vgroove_small_r,bz])
-    //  b623_vgroove();
-    difference(){
-      translate([-cx/2, -cy+5, 0])
-        //cube([cx, cy, bz+5]);
-        ydir_rounded_cube2([cx, cy, full_h], 3, $fn=4*6);
-      translate([0,-b623_vgroove_small_r-1,bz]){
-        //#cylinder(r=b623_vgroove_big_r+1,h=b623_width+extra_b_height,center=true);
-        scale([(b623_vgroove_big_r+extra_b_width/2)/b623_vgroove_big_r,
-            (b623_vgroove_big_r+extra_b_width/2)/b623_vgroove_big_r,
-            (b623_width + extra_b_height)/b623_width]){
-          elong_b623_vgroove(20);
-          //cylinder(r=b623_vgroove_big_r, h=b623_width, center=true);
-        }
-      }
-      translate([0,-b623_vgroove_small_r,-1]){
-        cylinder(d=3.3, h=100, center=true, $fn=12); // The M3 screw
-        nut(h=bz+1-b623_width/2-extra_b_height/2 - 5);
-        translate([0,0,full_h - 1.5])
-          nut(h=10);
-      }
-      sly = 40;
-      for(k=[0,1])
-        mirror([k,0,0])
-          translate([b623_vgroove_small_r,-sly,bz-1.5/2])
-          cube([100,sly, 1.5]);
-
-      //translate([(cx-4)/2, ])
-      //cube([cx-4, b623_vgroove_big_r*2 + 2, b623_width+2]);
-    }
-
-    shoulder_height = extra_b_height/2;
-    for(hl=[-(b623_width+extra_b_height)/2-2+shoulder_height,
-        (b623_width+extra_b_height)/2 - shoulder_height])
-      translate([0,-b623_vgroove_small_r, hl+bz])
-        difference(){
-          cylinder(d=5, h=2, $fn=12);
-          translate([0,0,-1])
-            cylinder(d=3.3, h=4, $fn=12); // The ring to rest b623_vgroove bore on
-        }
-
-    for(k=[0,1])
-      mirror([k,0,0]){
-        difference(){
-          union(){
-            translate([6,3,0])
-              cube([2, 2, Base_th*2]);
-            translate([cx/2,-cy+5,Base_th])
-              rotate([0,-90,-90])
-              inner_round_corner(r=2, h=cy, $fn=4*5, back=Base_th-0.1);
-            translate([cx/2+pl,ybit,0])
-              rotate([0,0,90])
-              bit();
-          }
-          translate([cx/2,5,Base_th])
-            corner_rounder();
-          translate([cx/2+pl,ybit_hole,0.5])
-            Mounting_screw_countersink();
-        }
-      }
-  } else { //twod
-    difference(){
-      translate([-cx/2-Bit_width+0.5, -cy+5])
-        ydir_rounded_cube2_2d([cx+2*Bit_width-1, cy], 5.5, $fn=28);
-      for(k=[0,1])
-        mirror([k,0])
-          translate([cx/2+pl,ybit_hole])
-            Mounting_screw_countersink(twod=true);
-    }
-  }
+  tilted_line_deflector(rot=0);
 }
 
