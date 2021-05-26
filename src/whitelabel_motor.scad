@@ -4,6 +4,13 @@ use <belt_roller.scad>
 
 base_ywidth = 84;
 
+module screw_placeout(){
+  for(ang=[0:90:359])
+    rotate([0,0,ang+45])
+      translate([29.8/2,0,0])
+        children();
+}
+
 //stationary_part();
 module stationary_part(){
   difference(){
@@ -11,15 +18,14 @@ module stationary_part(){
       linear_extrude(height=7, convexity=6)
         scale(0.1550)
           for(i=[-1,0,1]){
-        extra_wiggle_room = 0.2;
-        wiggle_degs = i*extra_wiggle_room/(60.8/2)*(180/PI);
-            rotate([0,0,-32-180+wiggle_degs])
-              translate([-102,-151.5])
-                import("./whitelabel_motor.svg");
-      }
-  for(ang=[0:90:359])
-    rotate([0,0,ang+45])
-      translate([29.6/2,0,-1])
+            extra_wiggle_room = 0.2;
+            wiggle_degs = i*extra_wiggle_room/(60.8/2)*(180/PI);
+                rotate([0,0,-32-180+wiggle_degs])
+                  translate([-102,-151.5])
+                    import("./whitelabel_motor.svg");
+          }
+    screw_placeout()
+      translate([0,0,-1])
         cylinder(d=3, h=10);
   }
 }
@@ -168,11 +174,9 @@ module motor_bracket(leftHanded=false){
         cylinder(d=GT2_motor_gear_outer_dia+2, h=52, $fn=100);
       }
 
-      for(ang=[0:90:359])
-        rotate([0,0,ang+45]) {
-          translate([29.6/2,0,2.5])
-            cylinder(d=M3_screw_head_d+6, h=11,$fn=20);
-          }
+      screw_placeout()
+        translate([0,0,2.5])
+          cylinder(d=M3_screw_head_d+6, h=11,$fn=20);
     }
     if (leftHanded) {
       rotate([0,0,180])
@@ -204,13 +208,12 @@ module motor_bracket(leftHanded=false){
 
 
     // Screw holes
-    for(ang=[0:90:359])
-      rotate([0,0,ang+45]) {
-        translate([29.6/2,0,-1])
-          cylinder(d=3.24, h=10, $fn=8);
-        translate([29.6/2,0,2.5+3])
-          cylinder(d=M3_screw_head_d, h=10,$fn=20);
-      }
+    screw_placeout() {
+      translate([0,0,-1])
+        cylinder(d=3.44, h=10, $fn=8);
+      translate([0,0,2.5+3])
+        cylinder(d=M3_screw_head_d, h=10,$fn=20);
+    }
   }
   difference(){
     union(){
@@ -351,6 +354,7 @@ motor_bracket_ypos = -33;
 // |  not leftHanded | not mirrored |
 
 //mirror([1,0,0])
+motor_bracket_extreme();
 module motor_bracket_extreme(leftHanded=false) {
   translate([motor_bracket_xpos, motor_bracket_ypos, 0])
   difference(){
