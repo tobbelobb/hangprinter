@@ -8,6 +8,7 @@ use <line_roller_anchor.scad>
 use <line_roller_double.scad>
 use <line_verticalizer.scad>
 use <horizontal_line_deflector.scad>
+use <tilted_line_deflector.scad>
 use <corner_clamp.scad>
 use <beam_slider_D.scad>
 use <util.scad>
@@ -15,6 +16,12 @@ use <gear_util.scad>
 use <belt_roller.scad>
 use <landing_bracket.scad>
 use <whitelabel_motor.scad>
+use <spool_cover.scad>
+use <dleft_spool_cover.scad>
+use <motor_bracket_A.scad>
+use <motor_bracket_B.scad>
+use <motor_bracket_C.scad>
+use <motor_bracket_D.scad>
 
 
 beam_length = 400;
@@ -46,10 +53,10 @@ lift_mover_z = 200;
 
 dspool_y = -50;
 abcspool_y = -50;
-abc_sep = 105;
+abc_sep = 105+18;
 move_BC_deflectors = -100;
 
-extra_space_in_middle = -2;
+extra_space_in_middle = -10;
 
 lx0 = -abc_sep/2-extra_space_in_middle-spd/2;
 lx1 = -abc_sep/2-extra_space_in_middle+spd/2;
@@ -66,7 +73,8 @@ color2_alpha = 0.8;
 spool_cover_alpha = 0.8;
 
 color_carbon = [0.2,0.2,0.2];
-color_line = [0.9,0.35,0.35];
+//color_line = [0.9,0.35,0.35];
+color_line="green";
 
 // Sometimes, Nema17_cube_width will have another value,
 // so that a different motor can fit
@@ -83,6 +91,26 @@ module top_plate(cx, cy, mvy){
   //    %square([cx, cy]);
   }
 }
+
+//tilted_line_deflector_for_layout(9,false);
+module tilted_line_deflector_for_layout(rot_around_center=0, center=false){
+  module tilted_line_deflector_always_center(){
+      rotate([0,0,rot_around_center]) // Rotate around bearing center
+      translate([0,b623_vgroove_small_r,0])
+      if(stls && !twod){
+        import("../stl/tilted_line_deflector.stl");
+      } else {
+        tilted_line_deflector();
+      }
+  }
+  if(center){
+    tilted_line_deflector_always_center();
+  } else {
+    translate([0,-b623_vgroove_small_r,0])
+      tilted_line_deflector_always_center();
+  }
+}
+
 
 //line_deflector(9,false);
 module line_deflector(rot_around_center=0, center=false){
@@ -279,6 +307,7 @@ module spool_core_D(cover_adj=0) {
 //!placed_spool_core_D();
 module placed_spool_core_D(){
   cover_adj = 0.55;
+
   translate([0,Spool_height+1+cover_adj,0]) {
     if(stls && !twod){
       spool_core_D(cover_adj);
@@ -316,7 +345,14 @@ module render_whitelabel_motor_and_bracket(leftHanded=false, A=false, B=false, C
     else // use D as default...
       import("../stl/motor_bracket_D.stl");
   } else {
-    motor_bracket_extreme(leftHanded);
+    if(A)
+      motor_bracket_A();
+    else if (B)
+      motor_bracket_B();
+    else if (C)
+      motor_bracket_C();
+    else // use D as default...
+      motor_bracket_D();
   }
 
   module motor(ang=0) {
@@ -340,14 +376,14 @@ module render_whitelabel_motor_and_bracket(leftHanded=false, A=false, B=false, C
       mirror([1,0,0])
         motor();
     else if(B)
+      motor(180);
+    else if(C)
       mirror([1,0,0])
         motor(180);
-    else if(C)
-      motor(180);
     else if(D)
       motor();
 
-  if (A || B)
+  if (A || C)
     mirror([1,0,0])
       gear();
   else
@@ -391,17 +427,14 @@ module sandwich_and_whitelabel_motor_A(){
     line_roller_double_with_bearings();
 }
 
+//!line_guides_BC();
 module line_guides_BC(){
-  translate([move_BC_deflectors+12,-1-Spool_height/2 + Sandwich_ABC_width/2,0])
-    rotate([0,0,-60])
-    translate([-40,-b623_vgroove_small_r,0])
-    line_roller_double_with_bearings();
   translate([move_BC_deflectors,-spd/2,0])
     rotate([0,0,180])
-    line_deflector(-30);
+    tilted_line_deflector_for_layout(-30);
   translate([move_BC_deflectors+spd/sqrt(3),spd/2,0])
     rotate([0,0,180])
-    line_deflector(-30);
+    tilted_line_deflector_for_layout(-30);
 }
 
 //!sandwich_and_whitelabel_motor_B();
@@ -686,14 +719,10 @@ module ceiling_unit_internal_lines_v4p1(){
     b = abcspool_y+move_BC_deflectors+e;
     c = cos(60)*b623_vgroove_small_r;
     d = sin(60)*b623_vgroove_small_r;
-    g = a-c-cos(30)*(bbc+b623_vgroove_small_r);
-    i = b+d-sin(30)*(bbc+b623_vgroove_small_r);
     line_from_to([a, abcspool_y, hz],
                  [a, b+17, hz]);
     line_from_to([a-c, b+d, hz],
-                 [a-c-cos(30)*e2, b+d-sin(30)*e2, hz]);
-    line_from_to([g, i, hz],
-        [g-cos(30)*100, i-sin(30)*100,hz+100]);
+                 [a-c-cos(30)*100, b+d-sin(30)*100, hz+100]);
   }
 
   for(k=[0,1])
