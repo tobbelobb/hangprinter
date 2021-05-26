@@ -125,17 +125,15 @@ module belt_roller(twod = false, outline=false){
                 }
               }
             }
-            translate([-Depth_of_roller_base/2-2, -(space_between_walls+2*wall_th)/2, Base_th])
+            translate([-Depth_of_roller_base/2-10, -(space_between_walls+2*wall_th)/2, Base_th])
               rotate([0,90,0])
                 rotate([0,0,181])
-                  rotate_extrude(angle=94, $fn=4*6)
-                    translate([2,0])
-                      circle(r=2, $fn=4*5);
+                  corner_rounder(r1=0, r2=2, angle=88);
             translate([-Depth_of_roller_base/2-2, -(space_between_walls+2*wall_th)/2-2, 0])
               cylinder(r=2, h=Base_th+2, $fn=4*5);
 
-            for(k=[0,1]) mirror([0,k,0]) mirror([1,0,0])
-              translate([Depth_of_roller_base/2, -(space_between_walls/2+wall_th),Base_th+2+(1-k)*25])
+            mirror([1,0,0])
+              translate([Depth_of_roller_base/2, -(space_between_walls/2+wall_th),Base_th+2+25])
                 rotate([0,0,90])
                   inner_round_corner(r=2, h=Belt_roller_h+2,$fn=4*4);
             mirror([0,1,0])
@@ -201,11 +199,9 @@ module belt_roller(twod = false, outline=false){
           Mounting_screw_countersink();
         translate([-Depth_of_roller_base/2-flerp/2,0,0.5])
           Mounting_screw_countersink();
-        translate([-Depth_of_roller_base/2+2, space_between_walls/2+wall_th-2, Base_th+2])
-          rotate([0,0,89])
-            rotate_extrude(angle=92, $fn=4*4)
-              translate([4,0])
-                circle(r=2, $fn=4*5);
+        translate([-Depth_of_roller_base/2, space_between_walls/2+wall_th, Base_th])
+          rotate([0,0,89.9])
+            corner_rounder(r1=2, r2=2, sq=[10,Belt_roller_h], angle=90.2);
         mirror([1,0,0])
           translate([-Depth_of_roller_base/2+2, space_between_walls/2+wall_th-2, Base_th+2])
             rotate([0,0,89])

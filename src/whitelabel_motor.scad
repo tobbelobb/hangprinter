@@ -348,13 +348,20 @@ motor_bracket_ypos = -33;
 
 // Four different brackets are needed
 // All combinations of the two options
-// |      leftHanded |     mirrored |
-// |      leftHanded | not mirrored |
-// |  not leftHanded |     mirrored |
-// |  not leftHanded | not mirrored |
+// |      leftHanded |     mirrored | C
+// |      leftHanded | not mirrored | B
+// |  not leftHanded |     mirrored | A
+// |  not leftHanded | not mirrored | D
+// It's recommended to use the named files
+// motor_bracket_A.scad
+// motor_bracket_B.scad
+// motor_bracket_C.scad
+// motor_bracket_D.scad
+// or some kind of build system when compiling
+// those stls. Doing it by hand easily leads to mistakes.
 
 //mirror([1,0,0])
-motor_bracket_extreme();
+motor_bracket_extreme(false);
 module motor_bracket_extreme(leftHanded=false) {
   translate([motor_bracket_xpos, motor_bracket_ypos, 0])
   difference(){
