@@ -100,7 +100,7 @@ module tilted_line_deflector_for_layout(rot_around_center=0, center=false){
       if(stls && !twod){
         import("../stl/tilted_line_deflector.stl");
       } else {
-        tilted_line_deflector();
+        tilted_line_deflector(rotx=-atan(sqrt(2)), rotz=-30);
       }
   }
   if(center){
@@ -216,10 +216,6 @@ module sandwich_D(){
       rotate([0,0,-90])
         if (stls) import("../stl/spool_cover.stl");
         else spool_cover();
-  translate([0,0,b608_width])
-    color(color2, color2_alpha)
-    if(stls) import("../stl/spacer_D.stl");
-    else spacer(Spacer_D_width);
 }
 
 //!placed_sandwich_D();
@@ -258,10 +254,6 @@ module sandwich_ABC(){
       rotate([0,0,-150])
         if (stls) import("../stl/spool_cover.stl");
         else spool_cover();
-  translate([0,0,b608_width])
-    color(color2, color2_alpha)
-      if(stls) import("../stl/spacer_ABC.stl");
-      else spacer(Spacer_ABC_width);
 }
 
 //!belt_roller_bearings();
@@ -429,12 +421,13 @@ module sandwich_and_whitelabel_motor_A(){
 
 //!line_guides_BC();
 module line_guides_BC(){
+  line_guide_rot=-30;
   translate([move_BC_deflectors,-spd/2,0])
     rotate([0,0,180])
-    tilted_line_deflector_for_layout(-30);
+    tilted_line_deflector_for_layout(line_guide_rot);
   translate([move_BC_deflectors+spd/sqrt(3),spd/2,0])
     rotate([0,0,180])
-    tilted_line_deflector_for_layout(-30);
+    tilted_line_deflector_for_layout(line_guide_rot);
 }
 
 //!sandwich_and_whitelabel_motor_B();
@@ -720,9 +713,9 @@ module ceiling_unit_internal_lines_v4p1(){
     c = cos(60)*b623_vgroove_small_r;
     d = sin(60)*b623_vgroove_small_r;
     line_from_to([a, abcspool_y, hz],
-                 [a, b+17, hz]);
-    line_from_to([a-c, b+d, hz],
-                 [a-c-cos(30)*100, b+d-sin(30)*100, hz+100]);
+                 [a-0.5, b+10, hz]);
+    line_from_to([a-c+0.5, b+d-0.7, hz+2],
+                 [a-c-cos(30)*100, b+d-sin(30)*100, hz+150]);
   }
 
   for(k=[0,1])
