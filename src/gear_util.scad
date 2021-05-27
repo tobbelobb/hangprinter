@@ -11,12 +11,15 @@ module spool_center(){
   center_h = Spool_height+Torx_depth-4;
   ek_w = 8;
   eang = 12; // just for placement of inner round corners
+  //b608();
   difference(){
     cylinder(r=b608_outer_dia/2+bearing_wall_th, h=center_h,$fn=6*8);
     translate([0,0,-1])
-      cylinder(d=b608_outer_dia,h=Spool_height+Torx_depth-0.4+1+2);
+      cylinder(d=b608_outer_dia,h=b608_width+1.5);
     translate([0,0,-1])
-      cylinder(d1=b608_outer_dia+2.5, d2=b608_outer_dia-0.1,h=2.2);
+      cylinder(d=b608_outer_dia-1.5,h=b608_width+2*GT2_belt_width);
+    translate([0,0,-1])
+      cylinder(d1=b608_outer_dia+1.5, d2=b608_outer_dia-0.1,h=1.5);
   }
   for(a=[0:360/6:359]){
     rotate([0,0,a]){

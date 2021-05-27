@@ -11,8 +11,6 @@ module placed_sandwich_ABC(){
     rotate([90,0,0]){
       sandwich_ABC();
       b608();
-      translate([0,0,b608_width])
-        spacer_ABC();
       translate([0,0,1+Spool_height+GT2_gear_height+Spool_height+1-b608_width])
         b608();
     }
