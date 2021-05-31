@@ -25,8 +25,8 @@ module hook(ang=2){
     rounded_cube([hook_h, 2.5, h],1,$fn=4*3);
 }
 
-beam_slider_D();
-module beam_slider_D(){
+ziptie_tensioner_wedge();
+module ziptie_tensioner_wedge(){
   // Hook
   translate([(x_w-connect_l-max_i*pl_w)/2,0,0])
     hook(0);

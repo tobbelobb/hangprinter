@@ -110,7 +110,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/util.scad
 	$(call make_layout_pdf_a4,"../layout.dxf",$@)
 
-$(STL_DIR)/beam_slider_D.stl: $(SRC_DIR)/beam_slider_D.scad \
+$(STL_DIR)/ziptie_tensioner_wedge.stl: $(SRC_DIR)/ziptie_tensioner_wedge.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -212,8 +212,7 @@ $(STL_DIR)/line_length_tuner_hook.stl: $(SRC_DIR)/line_length_tuner_hook.scad
 %.stl: $(addprefix $(STL_DIR)/, %.stl)
 	@echo Executed rule for $<
 
-all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
-	$(STL_DIR)/belt_roller.stl \
+all: | $(STL_DIR) $(STL_DIR)/belt_roller.stl \
 	$(STL_DIR)/cable_clamp.stl \
 	$(STL_DIR)/corner_clamp.stl \
 	$(STL_DIR)/dleft_spool.stl \
@@ -229,6 +228,7 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/spacer_D.stl \
 	$(STL_DIR)/spool_core.stl \
 	$(STL_DIR)/spool.stl \
+	$(STL_DIR)/ziptie_tensioner_wedge.stl \
 	layout.dxf \
 	layout_a4.pdf
 

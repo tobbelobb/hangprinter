@@ -10,7 +10,7 @@ use <line_verticalizer.scad>
 use <horizontal_line_deflector.scad>
 use <tilted_line_deflector.scad>
 use <corner_clamp.scad>
-use <beam_slider_D.scad>
+use <ziptie_tensioner_wedge.scad>
 use <util.scad>
 use <gear_util.scad>
 use <belt_roller.scad>
