@@ -360,52 +360,74 @@ motor_bracket_ypos = -33;
 // or some kind of build system when compiling
 // those stls. Doing it by hand easily leads to mistakes.
 
+module base_hull_2d(){
+  $fn=4*6;
+  hull(){
+    translate([-12,0,0])
+      circle(r=4);
+    translate([36-1.5,38,0])
+      circle(r=4);
+    translate([36-1.5-15+3,38,0])
+      circle(r=4);
+    translate([36-1.5,-38,0])
+      circle(r=4);
+    translate([36-1.5-15+3,-38,0])
+      circle(r=4);
+  }
+}
+
 //mirror([1,0,0])
-motor_bracket_extreme(false);
-module motor_bracket_extreme(leftHanded=false) {
-  translate([motor_bracket_xpos, motor_bracket_ypos, 0])
-  difference(){
-    union(){
-      hull(){
-        translate([-12,0,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([-12,0,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5,38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5-15+3,38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5,-38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
-        translate([36-1.5-15+3,-38,0])
-          cylinder(r=4, h=Base_th, $fn=4*6);
+motor_bracket_extreme(leftHanded=false, twod=false);
+module motor_bracket_extreme(leftHanded=false, twod=false) {
+  translate([motor_bracket_xpos, motor_bracket_ypos, 0]) {
+  if(!twod) {
+      difference(){
+        union(){
+          linear_extrude(height=Base_th) base_hull_2d();
+          translate([36-1.5, 36, 0])
+            cube([6, 6, Base_th]);
+          translate([0,0,35]){
+            translate([-2.5+33,0,0])
+              rotate([0,90,0])
+                motor_bracket(leftHanded);
+            //%translate([33,0,0])
+            //  if(leftHanded)
+            //    rotate([180,0,0])
+            //      import("../stl/whitelabel_motor.stl");
+            //  else
+            //    import("../stl/whitelabel_motor.stl");
+            translate([4.5-0.7,0,0])
+              rotate([0,0,2*90])
+                encoder_bracket();
+          }
+        }
+        translate([-12,0,0.5])
+          Mounting_screw_countersink();
+        translate([36-1.5-15+3,38,0.5])
+          Mounting_screw_countersink();
+        translate([36-1.5,-38,0.5])
+          Mounting_screw_countersink();
+        translate([36-1.5-15+3,-38,0.5])
+          Mounting_screw_countersink();
       }
-      translate([36-1.5, 36, 0])
-        cube([6, 6, Base_th]);
-      translate([0,0,35]){
-        translate([-2.5+33,0,0])
-          rotate([0,90,0])
-            motor_bracket(leftHanded);
-        %translate([33,0,0])
-          if(leftHanded)
-            rotate([180,0,0])
-              import("../stl/whitelabel_motor.stl");
-          else
-            import("../stl/whitelabel_motor.stl");
-        translate([4.5-0.7,0,0])
-          rotate([0,0,2*90])
-            encoder_bracket();
+    } else {
+      // twod below here
+      difference(){
+        union(){
+          base_hull_2d();
+        }
+        translate([-12,0,0])
+          Mounting_screw_countersink(twod=twod);
+        translate([36-1.5-15+3,38,0])
+          Mounting_screw_countersink(twod=twod);
+        translate([36-1.5,-38,0])
+          Mounting_screw_countersink(twod=twod);
+        translate([36-1.5-15+3,-38,0])
+          Mounting_screw_countersink(twod=twod);
       }
     }
-    translate([-12,0,0.5])
-      Mounting_screw_countersink();
-    translate([36-1.5-15+3,38,0.5])
-      Mounting_screw_countersink();
-    translate([36-1.5,-38,0.5])
-      Mounting_screw_countersink();
-    translate([36-1.5-15+3,-38,0.5])
-      Mounting_screw_countersink();
   }
+
   rotate([0,0,-90])
-    belt_roller(outline=false);
+    belt_roller(twod=twod);
 }
