@@ -82,7 +82,6 @@ layout_letter.pdf: layout.dxf
 	$(call make_layout_pdf_letter,"../layout.dxf",$@)
 
 layout.dxf: $(SRC_DIR)/belt_roller.scad \
-	$(SRC_DIR)/donkey_bracket.scad \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/layout_slicer.scad \
@@ -101,7 +100,6 @@ layout.dxf: $(SRC_DIR)/belt_roller.scad \
 
 layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/belt_roller.scad \
-	$(SRC_DIR)/donkey_bracket.scad \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/layout_slicer.scad \
@@ -136,12 +134,6 @@ $(STL_DIR)/dleft_spool.stl: $(SRC_DIR)/dleft_spool.scad \
 	$(SRC_DIR)/parameters.scad \
 	$(SRC_DIR)/gear_util.scad \
 	$(SRC_DIR)/spool.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
-$(STL_DIR)/donkey_bracket.stl: $(SRC_DIR)/donkey_bracket.scad \
-	$(SRC_DIR)/parameters.scad \
-	$(SRC_DIR)/util.scad \
-	$(SRC_DIR)/donkey.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 $(STL_DIR)/extruder_holder.stl: $(SRC_DIR)/extruder_holder.scad \
@@ -225,7 +217,6 @@ all: | $(STL_DIR) $(STL_DIR)/beam_slider_D.stl \
 	$(STL_DIR)/cable_clamp.stl \
 	$(STL_DIR)/corner_clamp.stl \
 	$(STL_DIR)/dleft_spool.stl \
-	$(STL_DIR)/donkey_bracket.stl \
 	$(STL_DIR)/extruder_holder.stl \
 	$(STL_DIR)/GT2_spool_gear.stl \
 	$(STL_DIR)/horizontal_line_deflector.stl \
