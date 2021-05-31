@@ -12,6 +12,6 @@ use <tilted_line_deflector.scad>
 rotate([90,0,0])
 horizontal_line_deflector();
 module horizontal_line_deflector(twod=false){
-  tilted_line_deflector(rotx=0, rotz=0, bullet_shootout=false);
+  tilted_line_deflector(rotx=0, rotz=0, bullet_shootout=false, twod=twod);
 }
 

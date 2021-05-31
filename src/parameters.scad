@@ -138,4 +138,4 @@ Horizontal_deflector_cube_y_size = (2/sqrt(3))*spd;
 
 
 // Top plate parameters needed for layout slicer
-Yshift_top_plate = -300;
+Yshift_top_plate = -297.8;
