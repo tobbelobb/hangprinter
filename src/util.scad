@@ -794,7 +794,7 @@ module roller_wall(space_between_walls, wall_th, height, rot_nut=0, bearing_scre
         cube([d, wall_th, height]);
       translate([0, space_between_walls/2-0.4, height - d/2])
         rotate([-90,0,0])
-          cylinder(r=3.4/2 + 1, h=wall_th, $fn=12);
+          cylinder(r=3.1/2 + 1, h=wall_th, $fn=12);
     }
     translate([0,0,height - d/2])
       rotate([-90,0,0])
@@ -802,7 +802,7 @@ module roller_wall(space_between_walls, wall_th, height, rot_nut=0, bearing_scre
     if(bearing_screw){
       translate([0,space_between_walls/2 - 1, height - d/2])
         rotate([-90,0,0]){
-          cylinder(d=3.4, h=wall_th + 2, $fn=12);
+          cylinder(d=3.1, h=wall_th + 2, $fn=12);
           translate([0,0,1+wall_th - min(wall_th/2, 2)])
             rotate([0,0,rot_nut])
               nut(h=8);
