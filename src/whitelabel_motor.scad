@@ -378,7 +378,17 @@ module base_hull_2d(){
 
 //mirror([1,0,0])
 motor_bracket_extreme(leftHanded=false, twod=false);
-module motor_bracket_extreme(leftHanded=false, twod=false) {
+module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
+  module placed_text(){
+    translate([13,5,0])
+      rotate([0,0,-90])
+        // Poor man's stencil font
+        difference(){
+          text(text);
+          translate([4.4,0])
+            square([0.5, 20]);
+        }
+  }
   translate([motor_bracket_xpos, motor_bracket_ypos, 0]) {
   if(!twod) {
       difference(){
@@ -409,6 +419,9 @@ module motor_bracket_extreme(leftHanded=false, twod=false) {
           Mounting_screw_countersink();
         translate([36-1.5-15+3,-38,0.5])
           Mounting_screw_countersink();
+        translate([0,0,-1])
+          linear_extrude(height=Base_th+2)
+            placed_text();
       }
     } else {
       // twod below here
@@ -424,6 +437,7 @@ module motor_bracket_extreme(leftHanded=false, twod=false) {
           Mounting_screw_countersink(twod=twod);
         translate([36-1.5-15+3,-38,0])
           Mounting_screw_countersink(twod=twod);
+        placed_text();
       }
     }
   }
