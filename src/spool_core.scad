@@ -32,6 +32,7 @@ module spool_core_halve(twod = false, between){
     }
   }
 
+  teeth=16;
   cubex = 2*bearing_z/sqrt(3)+sqrt(3)*w/2;
   if(!twod){
     difference(){
@@ -56,7 +57,7 @@ module spool_core_halve(twod = false, between){
       }
       translate([0,0,bearing_z])
         rotate([90,0,0])
-        cylinder(d=8.3, h=100, center=true);
+          cylinder(d=9.3, h=100, center=true, $fn=teeth);
       for(k=[0,1])
         mirror([k,0,0]){
           translate([2,w+1 + between/2 + liplen - 1,Base_th])
@@ -67,6 +68,14 @@ module spool_core_halve(twod = false, between){
             Mounting_screw_countersink();
         }
     }
+
+    translate([0,0,bearing_z])
+     rotate([90,0,0])
+       for(ang=[0:360/teeth:359])
+         rotate([0,0,ang])
+           translate([-0.25,7.90/2,-wml/2-21.6])
+             cube([0.5, 1.5, wml]);
+
   } else {
     difference(){
       translate([-cubex/2 - 13.9, between/2 + liplen])
