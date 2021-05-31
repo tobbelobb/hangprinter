@@ -352,7 +352,7 @@ module render_whitelabel_motor_and_bracket(leftHanded=false, A=false, B=false, C
     if(!twod)
       translate([-13.5,-33,35])
         rotate([ang,0,0])
-          import("../stl/whitelabel_motor.stl");
+          import("../stl/for_render/whitelabel_motor.stl");
   }
 
   module gear(){

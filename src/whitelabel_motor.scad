@@ -403,9 +403,9 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
             //%translate([33,0,0])
             //  if(leftHanded)
             //    rotate([180,0,0])
-            //      import("../stl/whitelabel_motor.stl");
+            //      import("../stl/for_render/whitelabel_motor.stl");
             //  else
-            //    import("../stl/whitelabel_motor.stl");
+            //    import("../stl/for_render/whitelabel_motor.stl");
             translate([4.5-0.7,0,0])
               rotate([0,0,2*90])
                 encoder_bracket();
