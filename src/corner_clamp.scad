@@ -346,22 +346,30 @@ module corner_clamp(){
   } // end diff
 
   difference(){
-    for(k=[0,1])
-      mirror([k,0,0])
-        translate([0,Cc_action_point_from_mid,0])
-        rotate([0,0,-60])
-        translate([-d/2,2,0]){
-          rounded_cube2([d, 20,wth], 5);
-          corner_clamp_tower();
-          translate([d,5.5,0])
-            inner_round_corner(8, wth+1.5, 90, 2, $fn=80);
-        }
+    union(){
+      for(k=[0,1])
+        mirror([k,0,0])
+          translate([0,Cc_action_point_from_mid,0])
+          rotate([0,0,-60])
+          translate([-d/2,2,0]){
+            rounded_cube2([d, 20,wth], 5);
+            corner_clamp_tower();
+            translate([d,5.5,0])
+              inner_round_corner(8, wth+1.5, 90, 2, $fn=80);
+          }
+      translate([0,Cc_action_point_from_mid,higher_bearing_z])
+        rotate([-110,0,0])
+          translate([0,0,7.4])
+            cylinder(d=7, h=4, center=true, $fn=12);
+    }
     action_point_holes();
     translate([0,Cc_action_point_from_mid-b623_vgroove_small_r,bea_z+0.1])
       rotate([0,90,0])
       cylinder(d=5.6/cos(30), h=40, $fn=6, center=true);
-    translate([-s/2,0,0])
-      cube([s, Cc_action_point_from_mid+2, 20]);
+    translate([0,Cc_action_point_from_mid,higher_bearing_z])
+      rotate([-110,0,0])
+        cylinder(d=3.3, h=100, center=true, $fn=12);
+
   }
   translate([0,Cc_action_point_from_mid+9.32,0])
     rotate([0,0,45])
