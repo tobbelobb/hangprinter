@@ -22,6 +22,13 @@ module brace_tightener(b){
     translate([-1,b/2,b/2])
       rotate([0,90,0])
       teardrop(r=3.4/2, h=30, $fn=20);
+    translate([20.5,b/2,b/2])
+      rotate([0,90,0])
+        rotate([0,0,30])
+          nut(h=4);
+    // to view section cut...
+    //translate([-50,5,-50])
+    //  cube(100);
   }
 }
 
