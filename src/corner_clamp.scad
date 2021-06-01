@@ -21,33 +21,31 @@ l = d + 2*b623_vgroove_big_r + 2*bw;
 
 foot_shape_r = 1.0;
 
+box_x = b623_vgroove_big_r*2+5.9;
+box_y = 6;
 bea_z = b623_vgroove_big_r+wth+2;
 box_z = bea_z + b623_vgroove_big_r + 3.4;
-//small_wall();
+small_r = 5;
+xwards = -3.5;
+//!small_wall();
 module small_wall(){
-  box_x = b623_vgroove_big_r*2+5.9+5;
-  box_y = 6;
   thinnest_z = (2*box_z + bea_z)/3;
   wth_at_thinnest = 2.5;
   big_r = 40;
-  small_r = 5;
-  xwards = -2.5;
 
   difference(){
     translate([xwards,0,0])
     union(){
-      translate([-box_x/2,0.4,0])
+      translate([-box_x/2,0.5,0])
         top_rounded_cube2([box_x, box_y, box_z], small_r, $fn=4*12);
       translate([-xwards,0, bea_z])
         rotate([-90,0,0])
         cylinder(d=6, h=1);
-      for(k=[0,1])
-      mirror([k,0,0])
-        translate([-box_x/2, 0.4, -big_r + box_z - small_r])
+      translate([-box_x/2, 0.5, -big_r + box_z - small_r])
         rotate([90,0,180])
         inner_round_corner(r=big_r, h=box_x, $fn=300);
     }
-    translate([0,big_r+wth_at_thinnest+0.4, thinnest_z])
+    translate([0,big_r+wth_at_thinnest+0.5, thinnest_z])
       rotate([0,90,0])
       cylinder(r=big_r, h=box_x+big_r, center=true, $fn=200);
     translate([0,-1, bea_z])
@@ -62,36 +60,58 @@ module small_wall(){
     hexagon_for_nut(h=wth_at_thinnest-1+2.5);
 }
 
-//small_walls();
+//!small_walls();
 module small_walls(){
   for(k=[0,1])
     mirror([0,k,0])
-      translate([0,b623_width/2, 0])
-      small_wall();
-  preventor_edges(bea_z+Depth_of_roller_base/2, s, false, 180+90, 360);
-  translate([1,-s/2-1,box_z-2])
+      translate([0,1+b623_width, 0])
+        small_wall();
+
+  difference(){
+    union(){
+      translate([0,0,bea_z])
+        rotate([90,0,0])
+          cylinder(d=6, h=2, center=true);
+      translate([-box_x/2+xwards,-0.5,0])
+        top_rounded_cube2([box_x, 1.0, box_z], small_r, $fn=4*12);
+    }
+    translate([0,0,bea_z])
+      rotate([90,0,0])
+        cylinder(d=3.3, h=2.0, $fn=10,  center=true);
+  }
+
+  //for(k=[0,1]) mirror([0,k,0])
+  //  translate([0, b623_width/2+1.8/2,0])
+  //    preventor_edges(bea_z+Depth_of_roller_base/2, s, false, 180+90, 360);
+  translate([1,-s-1,box_z-2])
     difference(){
-      cube([3, s+2, 2]);
+      cube([3, 2*(s+2), 2]);
       rotate([0,45,0])
         translate([-3,-1,-3])
-        cube([5, s+4, 4]);
+        cube([5, 2*s+4, 4]);
+      rotate([-90,90,0])
+        translate([-2,-small_r+0.55,-4])
+          inner_round_corner(r=small_r, h=4*s,$fn=4*12);
   }
 }
 
 module action_point_holes(){
-  translate([0,Cc_action_point_from_mid,-1])
-    cylinder(d=3.3, h=wth+2, $fn=10);
-  translate([0,Cc_action_point_from_mid-b623_vgroove_small_r*2,-1])
-    cylinder(d=3.3, h=wth+5, $fn=10);
+  for(k=[0,1]) mirror([k,0,0])
+    translate([2/2+b623_width/2,0,0]) {
+      translate([0,Cc_action_point_from_mid,-1])
+        cylinder(d=3.3, h=wth+2, $fn=10);
+      translate([0,Cc_action_point_from_mid-b623_vgroove_small_r*2,-1])
+        cylinder(d=3.3, h=wth+5, $fn=10);
+    }
 }
 
-//corner_clamp_tower();
+//!corner_clamp_tower();
 module corner_clamp_tower(base_th       = wth,
                           bearing_width = b623_width+0.2,
                           shoulder      = 0.3,
                           with_base     = false,
                           big_y_r1      = 190,
-                          big_y_r2      = 43,
+                          big_y_r2      = 140,
                           big_z_r       = 80){
 
   move_tower_x = 2.0;
@@ -122,14 +142,9 @@ module corner_clamp_tower(base_th       = wth,
                         cube([tower_h-foot_shape_r, l, b_th]);
                       else
                         cube([tower_h-foot_shape_r, l-8.03, b_th]);
-                    translate([0,-big_y_r1-w/2,-15])
-                      cylinder(r=big_y_r1, h=30, $fn=250);
                     if(big_y_r2_local)
                       translate([0,big_y_r2+w_local,-15])
                         cylinder(r=big_y_r2, h=30, $fn=250);
-                    translate([top_off_r, -w/2-0.1, -15])
-                      rotate([0,0,90])
-                        inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
                     translate([top_off_r, w_local+0.1, -15])
                       rotate([0,0,180])
                         inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
@@ -169,14 +184,9 @@ module corner_clamp_tower(base_th       = wth,
         difference(){
           translate(b_pos[0])
             rotate([-90,b_pos[1],0])
-            difference(){
               rotate_extrude(angle=90,convexity=10, $fn=60)
                 translate([rot_r,0])
                 polygon(points = [[0,0], [0,-0.5], [b+a, -0.5], [b+a,0], [b, a], [0, a]]);
-              translate([0,0,-1])
-                linear_extrude(height=b+a+1)
-                polygon(points=circle_sector(360-(b_pos[1][1]-b_pos[1][0]), 1, rot_r+b+a+1));
-            }
           translate([0, -(bearing_width + 2*wth)/2, 0]){
             rotate([-90,-90,0]){
               translate([0,0,lwth]){
@@ -208,18 +218,27 @@ module corner_clamp_tower(base_th       = wth,
                 wall();
               translate([bearing_1_x+2, -(b623_width+2)/2,tower_h-3])
                 cube([2, b623_width+2, 2]);
+              cube_h = higher_bearing_z-2*b623_vgroove_big_r-3;
+              translate([0,-w/2, 2])
+                cube([2, w, cube_h]);
+              translate([0,-w/2, tower_h-cube_h-1])
+                cube([2, w, cube_h]);
             }
-            translate([bearing_1_x+2,0,higher_bearing_z+b623_vgroove_small_r])
-              rotate([0,-60,0])
-                cylinder(r1=2, r2=6, h=10);
+            // vertical action point holes
+            translate([0,0,lower_bearing_z-b623_vgroove_small_r])
+              rotate([0,90,0])
+                cylinder(d=3.3, h=5, center=true);
+            translate([0,0,higher_bearing_z+b623_vgroove_small_r])
+              rotate([0,90,0])
+                cylinder(d=3.3, h=5, center=true);
           }
-    translate([0,-6,0])
-      three_rounded_cube2([d, 26,tower_h+10], 5);
+    translate([0,-1,0])
+      three_rounded_cube2([d, 21,tower_h+10], 5);
   }
 }
 
 //translate([60,0,0])
-//import("../stl_old/corner_clamp.stl");
+//import("../stl/corner_clamp.stl");
 corner_clamp();
 module corner_clamp(){
   a = 13;
@@ -311,8 +330,8 @@ module corner_clamp(){
       }
 
       translate([0,Cc_action_point_from_mid-b623_vgroove_small_r,0.1])
-      rotate([0,0,90])
-      small_walls();
+        rotate([0,0,90])
+          small_walls();
 
       edg_h = 1.5;
       edg_w = 19.0;
@@ -337,6 +356,7 @@ module corner_clamp(){
           translate([d,5.5,0])
             inner_round_corner(8, wth+1.5, 90, 2, $fn=80);
         }
+    action_point_holes();
     translate([0,Cc_action_point_from_mid-b623_vgroove_small_r,bea_z+0.1])
       rotate([0,90,0])
       cylinder(d=5.6/cos(30), h=40, $fn=6, center=true);
