@@ -1,27 +1,27 @@
-include <parameters.scad>
-use <spool.scad>
-use <dleft_spool.scad>
-use <sep_disc.scad>
+include <lib/parameters.scad>
+use <lib/gear_util.scad>
+use <lib/util.scad>
+use <lib/whitelabel_motor.scad>
+
 use <GT2_spool_gear.scad>
-use <spool_core.scad>
+use <corner_clamp.scad>
+use <dleft_spool.scad>
+use <dleft_spool_cover.scad>
+use <horizontal_line_deflector.scad>
+use <landing_bracket.scad>
 use <line_roller_anchor.scad>
 use <line_roller_double.scad>
 use <line_verticalizer.scad>
-use <horizontal_line_deflector.scad>
-use <tilted_line_deflector.scad>
-use <corner_clamp.scad>
-use <ziptie_tensioner_wedge.scad>
-use <util.scad>
-use <gear_util.scad>
-use <belt_roller.scad>
-use <landing_bracket.scad>
-use <whitelabel_motor.scad>
-use <spool_cover.scad>
-use <dleft_spool_cover.scad>
 use <motor_bracket_A.scad>
 use <motor_bracket_B.scad>
 use <motor_bracket_C.scad>
 use <motor_bracket_D.scad>
+use <sep_disc.scad>
+use <spool.scad>
+use <spool_core.scad>
+use <spool_cover.scad>
+use <tilted_line_deflector.scad>
+use <ziptie_tensioner_wedge.scad>
 
 
 beam_length = 400;

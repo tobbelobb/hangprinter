@@ -1,4 +1,4 @@
-use <util.scad>
+use <lib/util.scad>
 
 module sector(r1=3, r2=2, sq=[10,10], angle=90){
     rotate_extrude(angle=angle, $fn=4*10)

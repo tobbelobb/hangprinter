@@ -1,5 +1,5 @@
-include <parameters.scad>
-use <util.scad>
+include <lib/parameters.scad>
+use <lib/util.scad>
 
 pl_w = Zip_w;
 x_w = 30;

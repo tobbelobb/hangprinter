@@ -1,4 +1,4 @@
-use <util.scad>
+use <lib/util.scad>
 
 difference(){
   union(){

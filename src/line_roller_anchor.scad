@@ -1,5 +1,5 @@
-include <parameters.scad>
-use <util.scad>
+include <lib/parameters.scad>
+use <lib/util.scad>
 
 module screw_track(l){
   head_r = 3.5;

@@ -1,4 +1,5 @@
-include <parameters.scad>
+include <lib/parameters.scad>
+
 use <tilted_line_deflector.scad>
 
 

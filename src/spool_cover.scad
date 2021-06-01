@@ -1,6 +1,6 @@
-include <parameters.scad>
-use <util.scad>
-use <gear_util.scad>
+include <lib/parameters.scad>
+use <lib/util.scad>
+use <lib/gear_util.scad>
 use <spool_core.scad>
 
 //translate([0,0,-2])
@@ -36,6 +36,8 @@ module spool_cover(height=1+Spool_height+1, bottom_th=1.5){
           rotate([0,180,0])
             translate([0, -(Sep_disc_radius + Gap_between_sandwich_and_plate), 1+Spool_height+GT2_gear_height/2+1.2])
               spool_core();
+    translate([0,0,-1])
+      cylinder(h=1.75, d=12);
   }
   translate([0,0,0.75])
     cylinder(h=0.3, d=9);

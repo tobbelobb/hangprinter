@@ -1,5 +1,5 @@
-include <parameters.scad>
-use <util.scad>
+include <lib/parameters.scad>
+use <lib/util.scad>
 
 module v_roller_wall(space_between_walls, wall_th, height, rot_nut=0, bearing_screw=true){
   d = Depth_of_roller_base;

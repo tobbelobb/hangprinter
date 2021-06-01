@@ -1,8 +1,8 @@
-include <parameters.scad>
-use <util.scad>
+include <lib/parameters.scad>
+use <lib/util.scad>
 
-wall_th = Wall_th + 0; // Beef up part...
-cw = Nema17_cube_width; // For brevity...
+wall_th = Wall_th;
+cw = Nema17_cube_width; // For brevity
 wiggle = 0.54;
 r_little = 3;
 block_height = Beam_width+2*wall_th;

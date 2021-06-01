@@ -1,5 +1,4 @@
-include <parameters.scad>
-use <whitelabel_motor.scad>
+use <lib/whitelabel_motor.scad>
 
 motor_bracket_B();
 module motor_bracket_B(twod=false){

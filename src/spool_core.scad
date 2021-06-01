@@ -1,5 +1,5 @@
-include <parameters.scad>
-use <util.scad>
+include <lib/parameters.scad>
+use <lib/util.scad>
 
 bearing_z = Sep_disc_radius+Gap_between_sandwich_and_plate;
 

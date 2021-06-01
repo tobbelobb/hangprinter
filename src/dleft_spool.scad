@@ -1,5 +1,6 @@
-include <parameters.scad>
-use <gear_util.scad>
+include <lib/parameters.scad>
+use <lib/gear_util.scad>
+
 use <spool.scad>
 
 dleft_spool();

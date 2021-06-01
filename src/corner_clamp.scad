@@ -1,5 +1,5 @@
-include <parameters.scad>
-use <util.scad>
+include <lib/parameters.scad>
+use <lib/util.scad>
 
 //translate([50,0,0])
 //import("../stl/lineroller_anchor.stl");
