@@ -105,6 +105,8 @@ module action_point_holes(){
     }
 }
 
+ears_y = 21.5;
+
 //!corner_clamp_tower();
 module corner_clamp_tower(base_th       = wth,
                           bearing_width = b623_width,
@@ -128,6 +130,7 @@ module corner_clamp_tower(base_th       = wth,
     f = d-w-2*foot_shape_r; // extra x-length for swung wall
 
     b_th = lwth+e;
+    backit = 8.143;
 
     translate([move_tower_x, -lwth-shoulder-bearing_width/2, 0]){
       rotate([-90,-90,0]){
@@ -136,15 +139,15 @@ module corner_clamp_tower(base_th       = wth,
             // Foot with a swing
             translate([tower_h-b623_vgroove_big_r,w/2,lwth])
               difference(){
-                translate([-tower_h+b623_vgroove_big_r, -x_len+4.5, -b_th])
-                  if(big_y_r2_local)
-                    cube([tower_h-foot_shape_r, l, b_th]);
-                  else
-                    cube([tower_h-foot_shape_r, l-8.15, b_th]);
+                  translate([-tower_h+b623_vgroove_big_r, -x_len+4.5, -b_th])
+                    if(big_y_r2_local)
+                      cube([tower_h-foot_shape_r, l, b_th]);
+                    else
+                      cube([tower_h-foot_shape_r, l-backit, b_th]);
                 if(big_y_r2_local)
                   translate([0,big_y_r2+w_local,-15])
                     cylinder(r=big_y_r2, h=30, $fn=250);
-                translate([top_off_r, w_local+0.1, -15])
+                translate([top_off_r, l-backit-x_len+4.5, -15])
                   rotate([0,0,180])
                     inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
                 translate([0,0,-big_z_r-wth])
@@ -210,22 +213,33 @@ module corner_clamp_tower(base_th       = wth,
       rotate([0,0,-90])
         difference(){
           union(){
-            wall(w+6, big_y_r2_local=false);
+            wall(w + 6, big_y_r2_local = false);
             mirror([0,1,0])
               wall();
             translate([bearing_1_x+2, -(b623_width+2)/2,tower_h-2])
               cube([2, b623_width+2, 1]);
             cube_h = higher_bearing_z-2*b623_vgroove_big_r-3;
-            translate([0,-w/2, 2])
-              cube([2, w, cube_h]);
-            translate([0,-w/2, tower_h-cube_h-1])
-              cube([2, w, cube_h]);
+            difference(){
+              union(){
+                translate([20-ears_y,-w/2, 2])
+                  cube([2.5, w, cube_h]);
+                translate([20-ears_y,-w/2, tower_h-cube_h-1])
+                  cube([2.5, w, cube_h]);
+              }
+              translate([bearing_1_x, 0, higher_bearing_z])
+                rotate([90,0,0])
+                  cylinder(r=b623_vgroove_big_r+0.25, h=b623_width+1, center=true);
+              translate([bearing_1_x, 0, lower_bearing_z])
+                rotate([90,0,0])
+                  cylinder(r=b623_vgroove_big_r+0.25, h=b623_width+1, center=true);
+            }
           }
           // vertical action point holes
-          translate([0,0,lower_bearing_z-b623_vgroove_small_r])
+          // these measurements will be needed when cadding anchor lineroller (foot block)
+          translate([0,0,lower_bearing_z-b623_vgroove_small_r-0.75])
             rotate([0,90,0])
               cylinder(d=3.3, h=5, center=true);
-          translate([0,0,higher_bearing_z+b623_vgroove_small_r])
+          translate([0,0,higher_bearing_z+b623_vgroove_small_r+0.75])
             rotate([0,90,0])
               cylinder(d=3.3, h=5, center=true);
           // Just a tiny tiny detail
@@ -237,7 +251,7 @@ module corner_clamp_tower(base_th       = wth,
 
         }
     translate([0,-1,0])
-      three_rounded_cube2([d, 21,tower_h+10], 5);
+      three_rounded_cube2([d, ears_y+1,tower_h+10], 5, $fn=4*8);
   }
 }
 
@@ -356,7 +370,7 @@ module corner_clamp(){
           translate([0,Cc_action_point_from_mid,0])
           rotate([0,0,-60])
           translate([-d/2,2,0]){
-            rounded_cube2([d, 20,wth], 5);
+            rounded_cube2([d, ears_y,wth], 5, $fn=4*8);
             corner_clamp_tower();
             translate([d,5.5,0])
               inner_round_corner(8, wth+1.5, 90, 2, $fn=80);
@@ -366,6 +380,7 @@ module corner_clamp(){
           translate([0,0,7.4])
             cylinder(d=7, h=3.5, center=true, $fn=12);
     }
+
     action_point_holes();
     translate([0,Cc_action_point_from_mid-b623_vgroove_small_r,bea_z+0.1])
       rotate([0,90,0])
@@ -373,20 +388,20 @@ module corner_clamp(){
     translate([0,Cc_action_point_from_mid,higher_bearing_z])
       rotate([-110,0,0])
         cylinder(d=3.3, h=100, center=true, $fn=12);
+    // Just to check that lower bearing has some room to grow...
+    //for(k=[0,1])
+    //  mirror([k,0,0])
+    //    translate([0,Cc_action_point_from_mid,0])
+    //      rotate([0,0,-60])
+    //        translate([-d/2,2,0])
+    //          translate([d/2,20,0])
+    //            rotate([0,0,-90])
+    //              translate([bearing_1_x+2, 0, lower_bearing_z])
+    //                rotate([90,0,0])
+    //                  cylinder(r=b623_vgroove_big_r+1.5, h=b623_width, center=true);
 
   }
   translate([0,Cc_action_point_from_mid+9.32,0])
     rotate([0,0,45])
     inner_round_corner(5, wth+1.5, 60, 2, $fn=40);
-  %translate([b623_width/2+1,14,10])
-    rotate([0,90,0])
-      b623_vgroove();
-  %translate([0,0,higher_bearing_z+10])
-    rotate([0,0,-60])
-      translate([-22,26,0])
-        rotate([0,90,0])
-          difference(){
-            b623_vgroove();
-            cylinder(d=3, h=10, center=true);
-          }
 }
