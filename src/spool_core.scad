@@ -17,19 +17,16 @@ module placed_sandwich_ABC(){
 }
 
 //spool_core_halve();
+//%rotate([90,0,0])
+//import("../stl/spool_core.stl");
+spool_core_halve(false, Sandwich_ABC_width);
 module spool_core_halve(twod = false, between){
-  w = 15.5; // Width including the lip onto b608
-  liplen = 1.2;
-  wml = w - liplen; // w minus liplen
+  w = Spool_core_halve_width; // Width
 
   module bit(){
     rotate([0,0,90])
-    translate([-wml/2, -wml/2, 0])
-    difference(){
-      left_rounded_cube2([wml+4,wml,Base_th], 5.5, $fn=28);
-      translate([wml/2, wml/2, -1])
-        cylinder(d=Mounting_screw_d, h=Base_th+2, $fn=20);
-    }
+      translate([-w/2, -w/2, 0])
+        left_rounded_cube2([w+4, w, Base_th], 5.5, $fn=28);
   }
 
   teeth=16;
@@ -38,21 +35,21 @@ module spool_core_halve(twod = false, between){
     difference(){
       union(){
         hull(){
-          translate([0,between/2 + liplen,bearing_z])
+          translate([0, between/2, bearing_z])
             rotate([-90,0,0])
-            cylinder(d=15, h=wml, $fn=25);
-          translate([-cubex/2, between/2 + liplen, 0])
-            cube([cubex, wml, Base_th]);
+            cylinder(d=15, h=w, $fn=25);
+          translate([-cubex/2, between/2, 0])
+            cube([cubex, w, Base_th]);
         }
         for(k=[0,1])
           mirror([k,0,0]){
-            translate([cubex/2 + w/2 - 1,between/2 +wml/2 + liplen,0])
+            translate([cubex/2 + w/2 - 1, between/2 + w/2, 0])
               rotate([0,0,90])
-              bit();
-            translate([cubex/2 - 0.53, wml + between/2+liplen, Base_th - 0.915])
+                bit();
+            translate([cubex/2 - 0.53, w + between/2, Base_th - 0.915])
               rotate([90,0,0])
-              rotate([0,0,15])
-              inner_round_corner(r=5, h=wml, ang=60, $fn=12*4);
+                rotate([0,0,15])
+                  inner_round_corner(r=5, h=w, ang=60, $fn=12*4);
           }
       }
       translate([0,0,bearing_z])
@@ -60,12 +57,12 @@ module spool_core_halve(twod = false, between){
           cylinder(d=9.3, h=100, center=true, $fn=teeth);
       for(k=[0,1])
         mirror([k,0,0]){
-          translate([2,w+1 + between/2 + liplen - 1,Base_th])
+          translate([2,w+1 + between/2 - 0.5,Base_th])
             rotate([90,0,0])
-            rounded_spectri(2*bearing_z/sqrt(3)-4, w+1, 3, $fn=12*3);
-          translate([cubex/2 + w/2 - 1,between/2 +wml/2 + liplen,0.6])
+              rounded_spectri(2*bearing_z/sqrt(3)-4, w+1, 3, $fn=12*3);
+          translate([cubex/2 + w/2 - 1, between/2 + w/2, 0.6])
             rotate([0,0,90])
-            Mounting_screw_countersink();
+              Mounting_screw_countersink();
         }
     }
 
@@ -73,31 +70,32 @@ module spool_core_halve(twod = false, between){
      rotate([90,0,0])
        for(ang=[0:360/teeth:359])
          rotate([0,0,ang])
-           translate([-0.25,7.90/2,-wml/2-21.6])
-             cube([0.5, 1.5, wml]);
+           translate([-0.25, 7.90/2, -w/2 - 20.4])
+             cube([0.5, 1.5, w]);
 
   } else {
     difference(){
-      translate([-cubex/2 - 13.9, between/2 + liplen])
-        rounded_cube2_2d([cubex+2*13.9, wml], 5.5, $fn=28);
+      tot_width = 2*w+ cubex - 2;
+      translate([-tot_width/2, between/2])
+        rounded_cube2_2d([tot_width, w], 5.5, $fn=28);
       for(k=[0,1])
         mirror([k,0])
-          translate([-cubex/2 - w/2 + 1 , between/2 + liplen + wml/2])
+          translate([-cubex/2 - w/2 + 1, between/2 + w/2])
             Mounting_screw_countersink(twod=true);
     }
   }
 }
 
 //spool_cores(false, Sandwich_ABC_width);
-//#spool_cores(true, Sandwich_ABC_width);
+//spool_cores(true, Sandwich_ABC_width);
 module spool_cores(twod=false, between){
   for(k=[0,1])
     mirror([0,k,0])
-    spool_core_halve(twod, between);
+      spool_core_halve(twod, between);
 }
 
 // For printing
-spool_core();
+//spool_core();
 module spool_core(){
   rotate([-90,0,0])
     spool_core_halve(false, Sandwich_ABC_width);

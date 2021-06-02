@@ -128,14 +128,15 @@ Belt_roller_containing_cube_ywidth = Belt_roller_space_between_walls+8.5;
 Belt_roller_insert_h = 18;
 
 
-
-// Spacer parameters
 Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
 Sandwich_D_width = 3*(1+Spool_height) + GT2_gear_height;
+Spool_core_halve_width = 14.3;
+Spool_core_impression_in_spool_cover=0.75;
+Spool_core_bottom_th = 1.5;
+Spool_core_shoulder = 1;
 
-Spacer_ABC_width = Sandwich_ABC_width - 2*b608_width;
-Spacer_D_width = Sandwich_D_width -2*b608_width;
-
+Smooth_rod_length_ABC = Sandwich_ABC_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_core_bottom_th + Spool_core_shoulder);
+Smooth_rod_length_D = Sandwich_D_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_core_bottom_th + Spool_core_shoulder);
 
 spd = Spool_height+GT2_gear_height;
 // Horizontal_deflector_cube_y_size must be exact this number
