@@ -107,14 +107,15 @@ module action_point_holes(){
 
 //!corner_clamp_tower();
 module corner_clamp_tower(base_th       = wth,
-                          bearing_width = b623_width+0.2,
-                          shoulder      = 0.3,
+                          bearing_width = b623_width,
+                          shoulder      = 0.5,
                           with_base     = false,
                           big_y_r1      = 190,
                           big_y_r2      = 140,
                           big_z_r       = 80){
 
   move_tower_x = 2.0;
+  top_off_r = b623_vgroove_small_r;
   module wall(w_local        = w,
               big_y_r2_local = true){
     // Foot parameters
@@ -127,111 +128,114 @@ module corner_clamp_tower(base_th       = wth,
     f = d-w-2*foot_shape_r; // extra x-length for swung wall
 
     b_th = lwth+e;
-    top_off_r = b623_vgroove_small_r;
 
-    translate([move_tower_x, -(bearing_width + 2*wth)/2, 0]){
-        rotate([-90,-90,0]){
-          difference(){
-            union(){
-              // Foot with a swing
-              translate([0,0,lwth])
-                translate([tower_h-b623_vgroove_big_r,w/2,0])
-                  difference(){
-                    translate([-tower_h+b623_vgroove_big_r, -x_len+4.5, -b_th])
-                      if(big_y_r2_local)
-                        cube([tower_h-foot_shape_r, l, b_th]);
-                      else
-                        cube([tower_h-foot_shape_r, l-8.03, b_th]);
-                    if(big_y_r2_local)
-                      translate([0,big_y_r2+w_local,-15])
-                        cylinder(r=big_y_r2, h=30, $fn=250);
-                    translate([top_off_r, w_local+0.1, -15])
-                      rotate([0,0,180])
-                        inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
-                    translate([0,0,-big_z_r-wth])
-                      rotate([90,0,0])
-                        cylinder(r=big_z_r, h=50, center=true, $fn=250);
-                    translate([-0.1-tower_h+b623_vgroove_big_r, -(w+f+2*foot_shape_r+20)/2, -15])
-                      cube([base_th, w+f+2*foot_shape_r+32, 29]);
-                  }
-                translate([lower_bearing_z, bearing_1_x, 0]){
-                  cylinder(r=r2, h=lwth+shoulder, $fs=1);
-                  dpth=4;
-                  translate([0,0,-dpth])
-                    hexagon_for_nut(h=dpth);
-                }
-                translate([higher_bearing_z, bearing_1_x, 0]){
-                  cylinder(r=r2, h=lwth+shoulder, $fs=1);
-                  dpth=1.5;
-                  translate([0,0,-dpth])
-                    hexagon_for_nut(h=dpth);
-                }
+    translate([move_tower_x, -lwth-shoulder-bearing_width/2, 0]){
+      rotate([-90,-90,0]){
+        difference(){
+          union(){
+            // Foot with a swing
+            translate([tower_h-b623_vgroove_big_r,w/2,lwth])
+              difference(){
+                translate([-tower_h+b623_vgroove_big_r, -x_len+4.5, -b_th])
+                  if(big_y_r2_local)
+                    cube([tower_h-foot_shape_r, l, b_th]);
+                  else
+                    cube([tower_h-foot_shape_r, l-8.15, b_th]);
+                if(big_y_r2_local)
+                  translate([0,big_y_r2+w_local,-15])
+                    cylinder(r=big_y_r2, h=30, $fn=250);
+                translate([top_off_r, w_local+0.1, -15])
+                  rotate([0,0,180])
+                    inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
+                translate([0,0,-big_z_r-wth])
+                  rotate([90,0,0])
+                    cylinder(r=big_z_r, h=50, center=true, $fn=250);
+                translate([-0.1-tower_h+b623_vgroove_big_r, -(w+f+2*foot_shape_r+20)/2, -15])
+                  cube([base_th, w+f+2*foot_shape_r+32, 29]);
+              }
+            translate([lower_bearing_z, bearing_1_x, 0]){
+              cylinder(r=r2, h=lwth+shoulder, $fs=1);
+              dpth=4;
+              translate([0,0,-dpth])
+                hexagon_for_nut(h=dpth);
             }
-            translate([lower_bearing_z,bearing_1_x,-7])
-              cylinder(d=b623_bore_r*2+0.3, h=lwth+12, $fs=1);
-            translate([higher_bearing_z,bearing_1_x,-1])
-              cylinder(d=b623_bore_r*2+0.3, h=lwth+0.5+2, $fs=1);
+            translate([higher_bearing_z, bearing_1_x, 0]){
+              cylinder(r=r2, h=lwth+shoulder, $fs=1);
+              dpth=1.5;
+              translate([0,0,-dpth])
+                hexagon_for_nut(h=dpth);
+            }
           }
+          translate([lower_bearing_z,bearing_1_x,-7])
+            cylinder(d=b623_bore_r*2+0.3, h=lwth+12, $fs=1);
+          translate([higher_bearing_z,bearing_1_x,-1])
+            cylinder(d=b623_bore_r*2+0.3, h=lwth+0.5+2, $fs=1);
         }
       }
+    }
     // Edge to prevent line from falling of...
     a = 1.5;
     b = 0.8;
     rot_r = b623_vgroove_big_r+b;
-    translate([move_tower_x,0,0])
-      for(b_pos=[[[bearing_1_x, -bearing_width/2-0.8, higher_bearing_z], 270],
-          [[bearing_1_x, -bearing_width/2-0.8, lower_bearing_z], 0]])
-        difference(){
-          translate(b_pos[0])
-            rotate([-90,b_pos[1],0])
-              rotate_extrude(angle=90,convexity=10, $fn=60)
-                translate([rot_r,0])
-                polygon(points = [[0,0], [0,-0.5], [b+a, -0.5], [b+a,0], [b, a], [0, a]]);
-          translate([0, -(bearing_width + 2*wth)/2, 0]){
-            rotate([-90,-90,0]){
-              translate([0,0,lwth]){
-                translate([tower_h-b623_vgroove_big_r,w/2,0]){
-                  if(big_y_r2_local)
-                    translate([0,+big_y_r2+w,-15])
-                      cylinder(r=big_y_r2, h=30, $fn=250);
-                  translate([0,-big_y_r1-w/2,-15])
-                    cylinder(r=big_y_r1, h=30, $fn=250);
-                  translate([top_off_r, -w/2-0.1, -15])
-                    rotate([0,0,90])
-                    inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
-                  translate([top_off_r, w+0.1, -15])
-                    rotate([0,0,180])
-                    inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
-                }
+    translate([move_tower_x,0,0]) {
+      b_pos=[bearing_1_x, -bearing_width/2-0.8, higher_bearing_z];
+      difference() {
+        translate(b_pos)
+          rotate([-90,270,0])
+            rotate_extrude(angle=90,convexity=10, $fn=60)
+              translate([rot_r,0])
+              polygon(points = [[0,0], [0,-0.5], [b+a, -0.5], [b+a,0], [b, a], [0, a]]);
+        translate([0, -(bearing_width + 2*wth)/2, 0]){
+          rotate([-90,-90,0]){
+            translate([0,0,lwth]){
+              translate([tower_h-b623_vgroove_big_r,w/2,0]){
+                if(big_y_r2_local)
+                  translate([0,+big_y_r2+w,-15])
+                    cylinder(r=big_y_r2, h=30, $fn=250);
+                translate([0,-big_y_r1-w/2,-15])
+                  cylinder(r=big_y_r1, h=30, $fn=250);
+                translate([top_off_r, -w/2-0.1, -15])
+                  rotate([0,0,90])
+                  inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
+              }
             }
           }
         }
       }
     }
-    intersection(){
-      translate([d/2,20,0])
-        rotate([0,0,-90])
-          difference(){
-            union(){
-              wall(w+6, big_y_r2_local=false);
-              mirror([0,1,0])
-                wall();
-              translate([bearing_1_x+2, -(b623_width+2)/2,tower_h-3])
-                cube([2, b623_width+2, 2]);
-              cube_h = higher_bearing_z-2*b623_vgroove_big_r-3;
-              translate([0,-w/2, 2])
-                cube([2, w, cube_h]);
-              translate([0,-w/2, tower_h-cube_h-1])
-                cube([2, w, cube_h]);
-            }
-            // vertical action point holes
-            translate([0,0,lower_bearing_z-b623_vgroove_small_r])
-              rotate([0,90,0])
-                cylinder(d=3.3, h=5, center=true);
-            translate([0,0,higher_bearing_z+b623_vgroove_small_r])
-              rotate([0,90,0])
-                cylinder(d=3.3, h=5, center=true);
+  } // end module wall
+
+  intersection(){
+    translate([d/2,20,0])
+      rotate([0,0,-90])
+        difference(){
+          union(){
+            wall(w+6, big_y_r2_local=false);
+            mirror([0,1,0])
+              wall();
+            translate([bearing_1_x+2, -(b623_width+2)/2,tower_h-2])
+              cube([2, b623_width+2, 1]);
+            cube_h = higher_bearing_z-2*b623_vgroove_big_r-3;
+            translate([0,-w/2, 2])
+              cube([2, w, cube_h]);
+            translate([0,-w/2, tower_h-cube_h-1])
+              cube([2, w, cube_h]);
           }
+          // vertical action point holes
+          translate([0,0,lower_bearing_z-b623_vgroove_small_r])
+            rotate([0,90,0])
+              cylinder(d=3.3, h=5, center=true);
+          translate([0,0,higher_bearing_z+b623_vgroove_small_r])
+            rotate([0,90,0])
+              cylinder(d=3.3, h=5, center=true);
+          // Just a tiny tiny detail
+          translate([move_tower_x, -(bearing_width + 2*wth)/2, 0])
+            rotate([-90,-90,0])
+              translate([top_off_r+tower_h-b623_vgroove_big_r, w+0.1+w/2, lwth + 1])
+                rotate([0,0,180])
+                  inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
+
+        }
     translate([0,-1,0])
       three_rounded_cube2([d, 21,tower_h+10], 5);
   }
@@ -360,7 +364,7 @@ module corner_clamp(){
       translate([0,Cc_action_point_from_mid,higher_bearing_z])
         rotate([-110,0,0])
           translate([0,0,7.4])
-            cylinder(d=7, h=4, center=true, $fn=12);
+            cylinder(d=7, h=3.5, center=true, $fn=12);
     }
     action_point_holes();
     translate([0,Cc_action_point_from_mid-b623_vgroove_small_r,bea_z+0.1])
@@ -374,4 +378,15 @@ module corner_clamp(){
   translate([0,Cc_action_point_from_mid+9.32,0])
     rotate([0,0,45])
     inner_round_corner(5, wth+1.5, 60, 2, $fn=40);
+  %translate([b623_width/2+1,14,10])
+    rotate([0,90,0])
+      b623_vgroove();
+  %translate([0,0,higher_bearing_z+10])
+    rotate([0,0,-60])
+      translate([-22,26,0])
+        rotate([0,90,0])
+          difference(){
+            b623_vgroove();
+            cylinder(d=3, h=10, center=true);
+          }
 }
