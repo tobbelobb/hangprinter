@@ -19,6 +19,7 @@ module placed_sandwich_ABC(){
 //spool_core_halve();
 //%rotate([90,0,0])
 //import("../stl/spool_core.stl");
+rotate([-90,0,0])
 spool_core_halve(false, Sandwich_ABC_width);
 module spool_core_halve(twod = false, between){
   w = Spool_core_halve_width; // Width
