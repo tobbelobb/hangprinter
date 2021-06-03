@@ -132,17 +132,18 @@ module line_deflector(rot_around_center=0, center=false){
   }
 }
 
-module placed_landing_bracket(){
+module placed_landing_brackets(){
   translate([0, 128-b623_vgroove_small_r/2, 0])
     rotate([0,0,180+90])
       landing_bracket_a(twod=twod);
-  translate([0,-71,0])
+  push_bc_brackets=42;
+  translate([-push_bc_brackets*cos(60),-71+push_bc_brackets*sin(60),0])
     rotate([0,0,180])
       translate([104, 0, 0])
-        landing_bracket_b(twod=twod);
-  translate([104, -71, 0])
-    rotate([0,0,180])
-      landing_bracket_c(twod=twod);
+        rotate([0,0,180])
+          landing_bracket_b(twod=twod);
+  translate([104+push_bc_brackets*cos(60), -71+push_bc_brackets*sin(60), 0])
+    landing_bracket_c(twod=twod);
 }
 
 //placed_line_verticalizer();
@@ -322,7 +323,7 @@ module sandwich_and_motor_D(){
   if(!twod) {
     // Smooth rod
     color("grey")
-      translate([0,0,Sep_disc_radius + Gap_between_sandwich_and_plate])
+      translate([0,-Smooth_rod_length_D,Sep_disc_radius + Gap_between_sandwich_and_plate])
         rotate([90,0,0])
           translate([0,0,(Sandwich_ABC_width - Sandwich_D_width)/2])
             cylinder(d=8, h=Smooth_rod_length_D, center=true);
@@ -488,7 +489,7 @@ module full_winch(){
     sandwich_and_motor_D();
 
   placed_line_verticalizer();
-  placed_landing_bracket();
+  placed_landing_brackets();
 
   cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
   cy = 450.02+Move_d_bearings_inwards/2;
