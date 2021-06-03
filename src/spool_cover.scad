@@ -24,19 +24,20 @@ module spool_cover(tot_height=1+Spool_height+Spool_core_shoulder+Spool_core_bott
     first_rot=150;
     second_rot = first_rot - opening_width;
     rotate([0,0,first_rot])
-      translate([0, 0, -15.5+1.2+Spool_core_impression_in_spool_cover])
-        rotate([0,180,0])
-          translate([0, -(Sep_disc_radius + Gap_between_sandwich_and_plate), 1+Spool_height+GT2_gear_height/2+1.2])
-            spool_core();
-    rotate([0,0,second_rot])
-      translate([0, 0, 0.75])
-        translate([0, 0, -15.5+1.2])
+      translate([0, 0, Spool_core_impression_in_spool_cover])
+        translate([0, 0, -Spool_core_halve_width])
           rotate([0,180,0])
-            translate([0, -(Sep_disc_radius + Gap_between_sandwich_and_plate), 1+Spool_height+GT2_gear_height/2+1.2])
+            translate([0, -(Sep_disc_radius + Gap_between_sandwich_and_plate), 1+Spool_height+GT2_gear_height/2])
+              spool_core();
+    rotate([0,0,second_rot])
+      translate([0, 0, Spool_core_impression_in_spool_cover])
+        translate([0, 0, -Spool_core_halve_width])
+          rotate([0,180,0])
+            translate([0, -(Sep_disc_radius + Gap_between_sandwich_and_plate), 1+Spool_height+GT2_gear_height/2])
               spool_core();
     translate([0,0,-1])
-      cylinder(h=1.75, d=12);
+      cylinder(h=1 + Spool_core_impression_in_spool_cover, d=12);
   }
-  translate([0,0,0.75])
+  translate([0,0,Spool_core_impression_in_spool_cover])
     cylinder(h=0.3, d=9);
 }

@@ -153,7 +153,7 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
   color(color1, color1_alpha)
   for(k=[0:2])
     rotate([0,0,-30+three[k]])
-      translate([-Sidelength/sqrt(3),0,0])
+      translate([-Sidelength/sqrt(3)-Move_d_bearings_inwards,0,0])
         rotate([0,0,angs[k]])
           translate([center_it,0,0])
             if(stls && !twod){
@@ -164,11 +164,11 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
                 line_verticalizer(twod=twod);
             }
     translate([lx0-b623_vgroove_small_r,
-               Sidelength/sqrt(12)-b623_vgroove_small_r-b623_width/2-1,
+               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_vgroove_small_r-b623_width/2-1,
                0])
       line_deflector(-78, center=true);
     translate([lx1+b623_vgroove_small_r,
-               Sidelength/sqrt(12)-b623_vgroove_small_r-b623_width/2-1,
+               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_vgroove_small_r-b623_width/2-1,
                0])
       line_deflector(78, center=true);
     translate([lx2+b623_vgroove_small_r,ly2-b623_vgroove_small_r,0])
@@ -284,7 +284,7 @@ module line_roller_double_with_bearings(){
 }
 
 //!spool_core_D();
-module spool_core_D(cover_adj=0) {
+module spool_core_D(cover_adj=Spool_core_cover_adj) {
   for(k=[0,1])
     mirror([0,k,0])
       rotate([90,0,0])
@@ -294,16 +294,15 @@ module spool_core_D(cover_adj=0) {
 
 //!placed_spool_core_D();
 module placed_spool_core_D(){
-  cover_adj = 0.55;
+  cover_adj = Spool_core_cover_adj;
 
-  translate([0,Spool_height+1+cover_adj,0]) {
     if(stls && !twod){
-      spool_core_D(cover_adj);
+      translate([0,Spool_height+1+cover_adj,0])
+        spool_core_D(cover_adj);
     } else {
-      translate([0,-Sandwich_D_width/2+1+Spool_height+GT2_gear_height/2,0])
+      translate([0,Sandwich_D_width/2 - 1 - Spool_height - GT2_gear_height/2,0])
         spool_cores(twod=twod, between=Sandwich_D_width + 2*cover_adj);
     }
-  }
 }
 
 
@@ -320,12 +319,14 @@ module sandwich_and_motor_D(){
 
   placed_spool_core_D();
 
-  // Smooth rod
-  color("grey")
-    translate([0,0,Sep_disc_radius + Gap_between_sandwich_and_plate])
-      rotate([90,0,0])
-        translate([0,0,(Sandwich_ABC_width - Sandwich_D_width)/2])
-          cylinder(d=8, h=Smooth_rod_length_D, center=true);
+  if(!twod) {
+    // Smooth rod
+    color("grey")
+      translate([0,0,Sep_disc_radius + Gap_between_sandwich_and_plate])
+        rotate([90,0,0])
+          translate([0,0,(Sandwich_ABC_width - Sandwich_D_width)/2])
+            cylinder(d=8, h=Smooth_rod_length_D, center=true);
+  }
 
 }
 
@@ -391,9 +392,9 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
 
 
 belt_roller_bearing_xpos = Sep_disc_radius + b623_outer_dia/2+Belt_thickness;
-//sandwich_and_motor_ABC();
-module sandwich_and_motor_ABC(leftHanded=false, A=true, B=false, C=false, D=false){
-  cover_adj=0.55;
+//!sandwich_and_motor_ABC();
+module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
+  cover_adj=Spool_core_cover_adj;
   if(!twod)
     translate([0,
         Sandwich_ABC_width/2,
@@ -402,7 +403,7 @@ module sandwich_and_motor_ABC(leftHanded=false, A=true, B=false, C=false, D=fals
         sandwich_ABC();
   translate([belt_roller_bearing_xpos,0,0])
     rotate([0,0,90])
-      render_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=D);
+      render_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=false);
   translate([belt_roller_bearing_xpos,0,0])
     belt_roller_bearings();
   if(stls && !twod){
@@ -417,11 +418,13 @@ module sandwich_and_motor_ABC(leftHanded=false, A=true, B=false, C=false, D=fals
     spool_cores(false, Sandwich_ABC_width);
   }
 
-  // Smooth rod
-  color("grey")
-    translate([0,0,Sep_disc_radius + Gap_between_sandwich_and_plate])
-      rotate([90,0,0])
-        cylinder(d=8, h=Smooth_rod_length_ABC, center=true);
+  if(!twod) {
+    // Smooth rod
+    color("grey")
+      translate([0,0,Sep_disc_radius + Gap_between_sandwich_and_plate])
+        rotate([90,0,0])
+          cylinder(d=8, h=Smooth_rod_length_ABC, center=true);
+  }
 }
 
 //!sandwich_and_motor_A();
@@ -487,8 +490,10 @@ module full_winch(){
   placed_line_verticalizer();
   placed_landing_bracket();
 
-  cx = 452;
-  cy = 450;
+  cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
+  cy = 450.02+Move_d_bearings_inwards/2;
+  echo("Top plate width: ", cx);
+  echo(cy);
   mvy = Yshift_top_plate;
   top_plate(cx, cy, mvy);
 }
@@ -739,21 +744,21 @@ module ceiling_unit_internal_lines_v4p1(){
       }
 
     line_from_to([lx0, abcspool_y, hz],
-                 [lx0, Sidelength/sqrt(12), hz]);
-    line_from_to([lx0, Sidelength/sqrt(12), hz],
-                 [-Sidelength/2, Sidelength/sqrt(12)-b623_width/2-1, hz]);
+                 [lx0, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+    line_from_to([lx0, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
+                 [-Sidelength/2, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
 
     line_from_to([lx1, abcspool_y, hz],
-                 [lx1, Sidelength/sqrt(12), hz]);
-    line_from_to([lx1, Sidelength/sqrt(12), hz],
-                 [Sidelength/2, Sidelength/sqrt(12)-b623_width/2-1, hz]);
+                 [lx1, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+    line_from_to([lx1, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
+                 [Sidelength/2, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
 
     line_from_to([lx2, abcspool_y, hz],
                  [lx2, ly2, hz]);
     line_from_to([lx2, ly2, hz],
                  [b623_width/2+1, ly2, hz]);
     line_from_to([b623_width/2+1, ly2, hz],
-                 [b623_width/2+1, -Sidelength/sqrt(3), hz]);
+                 [b623_width/2+1, -Sidelength/sqrt(3)-Move_d_bearings_inwards, hz]);
 
     for(k=[0,spd]){
       line_from_to([lx3+k, abcspool_y, hz],
@@ -763,9 +768,9 @@ module ceiling_unit_internal_lines_v4p1(){
     }
   }
 
-  // Mover action point overlay for aiming
-  //translate([0,Sidelength*(1/sqrt(12)), 0])
-  //  rotate([0,0,180])
-  //  %eqtri(Sidelength,4);
 
 }
+// Mover action point overlay for aiming
+//%translate([0,Sidelength/sqrt(12)+Move_d_bearings_inwards/2, 0])
+//  rotate([0,0,180])
+//  eqtri(Sidelength+sqrt(12)*Move_d_bearings_inwards/2,4);

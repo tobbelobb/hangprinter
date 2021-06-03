@@ -27,6 +27,8 @@ bea_z = b623_vgroove_big_r+wth+2;
 box_z = bea_z + b623_vgroove_big_r + 3.4;
 small_r = 5;
 xwards = -3.5;
+
+
 //!small_wall();
 module small_wall(){
   thinnest_z = (2*box_z + bea_z)/3;
@@ -38,7 +40,7 @@ module small_wall(){
     union(){
       translate([-box_x/2,0.5,0])
         top_rounded_cube2([box_x, box_y, box_z], small_r, $fn=4*12);
-      translate([-xwards,0, bea_z])
+      translate([-xwards+Move_d_bearings_inwards,0, bea_z])
         rotate([-90,0,0])
         cylinder(d=6, h=1);
       translate([-box_x/2, 0.5, -big_r + box_z - small_r])
@@ -48,13 +50,13 @@ module small_wall(){
     translate([0,big_r+wth_at_thinnest+0.5, thinnest_z])
       rotate([0,90,0])
       cylinder(r=big_r, h=box_x+big_r, center=true, $fn=200);
-    translate([0,-1, bea_z])
+    translate([Move_d_bearings_inwards,-1, bea_z])
       rotate([-90,0,0])
       cylinder(d=3.3, h=box_y+2, $fn=10);
     translate([0,0,-2*big_r])
       cube(4*big_r, center=true);
   }
-  translate([0,1, bea_z])
+  translate([Move_d_bearings_inwards,1, bea_z])
     rotate([-90,0,0])
     rotate([0,0,30])
     hexagon_for_nut(h=wth_at_thinnest-1+2.5);
@@ -69,15 +71,15 @@ module small_walls(){
 
   difference(){
     union(){
-      translate([0,0,bea_z])
+      translate([Move_d_bearings_inwards,0,bea_z])
         rotate([90,0,0])
           cylinder(d=6, h=2, center=true);
       translate([-box_x/2+xwards,-0.5,0])
         top_rounded_cube2([box_x, 1.0, box_z], small_r, $fn=4*12);
     }
-    translate([0,0,bea_z])
+    translate([Move_d_bearings_inwards,0,bea_z])
       rotate([90,0,0])
-        cylinder(d=3.3, h=2.0, $fn=10,  center=true);
+        cylinder(d=3.3, h=2.2, $fn=10,  center=true);
   }
 
   //for(k=[0,1]) mirror([0,k,0])
@@ -97,10 +99,10 @@ module small_walls(){
 
 module action_point_holes(){
   for(k=[0,1]) mirror([k,0,0])
-    translate([2/2+b623_width/2,0,0]) {
-      translate([0,Cc_action_point_from_mid,-1])
-        cylinder(d=3.3, h=wth+2, $fn=10);
-      translate([0,Cc_action_point_from_mid-b623_vgroove_small_r*2,-1])
+    translate([2/2+b623_width/2,Move_d_bearings_inwards,0]) {
+      translate([0,Cc_action_point_from_mid - 0*b623_vgroove_small_r + Eyelet_extra_dist,-1])
+        cylinder(d=3.3, h=wth+5, $fn=10);
+      translate([0,Cc_action_point_from_mid - 2*b623_vgroove_small_r - Eyelet_extra_dist,-1])
         cylinder(d=3.3, h=wth+5, $fn=10);
     }
 }

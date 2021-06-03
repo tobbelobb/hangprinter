@@ -32,9 +32,11 @@ Spool_outer_wall_th = 4;
 // Corner clamp parameters
 Cc_l1 = (Fat_beam_width+2*Wall_th)*2*sqrt(3);
 Cc_rad_b = 4;
-Cc_action_point_from_mid = Cc_l1/sqrt(3)-2*Cc_rad_b-7;  // 5 chosen arbitrarily
+Cc_action_point_from_mid = Cc_l1/sqrt(3)-2*Cc_rad_b-7;
 Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
                        - (Cc_action_point_from_mid/2)*(Cc_action_point_from_mid/2));
+Eyelet_extra_dist = 0.75;
+Move_d_bearings_inwards = -2;
 
 // The distance between the two action points on the mover
 Sidelength = Beam_length + 2*Cc_plastic_length;
@@ -98,7 +100,6 @@ Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
 Bit_width = 12;
 Cable_r=2.5;
 
-
 //// Donkey and encoder parameters /////
 
 Donkey_shaft_d = 6;
@@ -134,6 +135,7 @@ Spool_core_halve_width = 14.3;
 Spool_core_impression_in_spool_cover=0.75;
 Spool_core_bottom_th = 1.5;
 Spool_core_shoulder = 1;
+Spool_core_cover_adj = Spool_core_shoulder+Spool_core_bottom_th-Spool_core_impression_in_spool_cover;
 
 Smooth_rod_length_ABC = Sandwich_ABC_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_core_bottom_th + Spool_core_shoulder);
 Smooth_rod_length_D = Sandwich_D_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_core_bottom_th + Spool_core_shoulder);
