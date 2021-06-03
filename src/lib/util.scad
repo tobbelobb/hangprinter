@@ -481,8 +481,8 @@ module nutlock(){
 }
 
 
-module nut(h){
-  cylinder(d=5.6/cos(30), h, $fn=6);
+module nut(h, center=false){
+  cylinder(d=5.6/cos(30), h, center=center, $fn=6);
 }
 
 module M3_nut(h){

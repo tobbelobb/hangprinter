@@ -384,9 +384,6 @@ module corner_clamp(){
     }
 
     action_point_holes();
-    translate([0,Cc_action_point_from_mid-b623_vgroove_small_r,bea_z+0.1])
-      rotate([0,90,0])
-      cylinder(d=5.6/cos(30), h=40, $fn=6, center=true);
     translate([0,Cc_action_point_from_mid,higher_bearing_z])
       rotate([-110,0,0])
         cylinder(d=3.3, h=100, center=true, $fn=12);
