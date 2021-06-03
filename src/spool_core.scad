@@ -21,7 +21,7 @@ module placed_sandwich_ABC(){
 //import("../stl/spool_core.stl");
 rotate([-90,0,0])
 spool_core_halve(false, Sandwich_ABC_width);
-module spool_core_halve(twod = false, between){
+module spool_core_halve(twod = false, between, cut_teeth=true){
   w = Spool_core_halve_width; // Width
 
   module bit(){
@@ -67,12 +67,13 @@ module spool_core_halve(twod = false, between){
         }
     }
 
-    translate([0,0,bearing_z])
-     rotate([90,0,0])
-       for(ang=[0:360/teeth:359])
-         rotate([0,0,ang])
-           translate([-0.25, 7.90/2, -w/2 - 20.4])
-             cube([0.5, 1.5, w]);
+    if (cut_teeth)
+      translate([0,0,bearing_z])
+       rotate([90,0,0])
+         for(ang=[0:360/teeth:359])
+           rotate([0,0,ang])
+             translate([-0.25, 7.90/2, -w/2 - 20.4])
+               cube([0.5, 1.5, w]);
 
   } else {
     difference(){
@@ -97,7 +98,7 @@ module spool_cores(twod=false, between){
 
 // For printing
 //spool_core();
-module spool_core(){
+module spool_core(cut_teeth=true){
   rotate([-90,0,0])
-    spool_core_halve(false, Sandwich_ABC_width);
+    spool_core_halve(false, Sandwich_ABC_width, cut_teeth=cut_teeth);
 }
