@@ -489,6 +489,10 @@ module M3_nut(h){
   nut(h);
 }
 
+module M3_screw(d=3.3, h=10, center=false){
+  cylinder(d=d, h=h, center=center, $fn=12);
+}
+
 module nut_wall(h){
   cylinder(d=7/cos(30), h, $fn=6);
 }
@@ -834,7 +838,7 @@ module preventor_edges(tower_h,
                        back2 = 0){
   // Edge to prevent line from falling of...
   a = 1.75;
-  b= 0.8;
+  b= b623_vgroove_room_to_grow_r;
   rot_r = b623_vgroove_big_r+b;
 
   if(with_bearing){

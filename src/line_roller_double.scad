@@ -17,7 +17,7 @@ module line_roller_double(twod=false,
       rotate([90,0,0])
       difference(){
         b623_vgroove();
-        cylinder(r=1.6, h=40, center=true); // Screw hole in vgroove bearing
+        M3_screw(h=40, center=true);
       }
   }
 

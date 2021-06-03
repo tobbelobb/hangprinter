@@ -42,7 +42,7 @@ module eyelet(){
   color("sandybrown")
   difference(){
     union(){
-      cylinder(d=3.42,h=hi);
+      cylinder(d=Eyelet_diameter,h=hi);
       translate([0,0,hi-1])
         cylinder(d=4.66, h=1);
     }
@@ -101,20 +101,20 @@ module line_verticalizer(twod = false, with_bearing = false){
             cube([Depth_of_roller_base, space_between_walls+2*wall_th, 9]);
           translate([0,0,tower_h-Depth_of_roller_base/2])
             rotate([90,0,0])
-            cylinder(r=b623_vgroove_big_r*1.13, h=100, center=true,
+            cylinder(r=b623_vgroove_big_r + b623_vgroove_room_to_grow_r, h=100, center=true,
                       $fn=14*4);
         }
       }
       // Line in/out-lets
       for(k=[0,1]) mirror([0,k,0]){
-        translate([b623_vgroove_small_r, -1-b623_width/2, tower_h-9-1])
-          cylinder(d=3.37, h=11);
-        translate([-b623_vgroove_small_r, -1-b623_width/2, tower_h-9-1])
-          cylinder(d=3.37, h=11);
-        translate([-b623_vgroove_small_r, -1-b623_width/2-b623_width-1, tower_h-3.7])
-          cylinder(d=3.37, h=11);
-        bigr=22;
-        translate([-b623_vgroove_small_r, -1-b623_width-1-b623_width/2,tower_h-3.5])
+        translate([b623_vgroove_small_r + Eyelet_extra_dist, -1-b623_width/2, tower_h-9-1])
+          cylinder(d=Eyelet_diameter, h=11);
+        translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2, tower_h-9-1])
+          cylinder(d=Eyelet_diameter, h=11);
+        translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2-b623_width-1, tower_h-3.7])
+          cylinder(d=Eyelet_diameter, h=11);
+        bigr=25;
+        translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width-1-b623_width/2,tower_h-3.5])
           rotate([0,0,90])
             translate([0,bigr,0])
               rotate([0,90,0])

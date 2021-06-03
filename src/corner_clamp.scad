@@ -52,7 +52,7 @@ module small_wall(){
       cylinder(r=big_r, h=box_x+big_r, center=true, $fn=200);
     translate([Move_d_bearings_inwards,-1, bea_z])
       rotate([-90,0,0])
-      cylinder(d=3.3, h=box_y+2, $fn=10);
+      M3_screw();
     translate([0,0,-2*big_r])
       cube(4*big_r, center=true);
   }
@@ -228,22 +228,22 @@ module corner_clamp_tower(base_th       = wth,
                 translate([20-ears_y,-w/2, tower_h-cube_h-1])
                   cube([2.5, w, cube_h]);
               }
-              translate([bearing_1_x, 0, higher_bearing_z])
+              translate([bearing_1_x+move_tower_x, 0, higher_bearing_z])
                 rotate([90,0,0])
-                  cylinder(r=b623_vgroove_big_r+0.25, h=b623_width+1, center=true);
-              translate([bearing_1_x, 0, lower_bearing_z])
+                  cylinder(r=b623_vgroove_big_r + b623_vgroove_room_to_grow_r, h=b623_width+1, center=true);
+              translate([bearing_1_x+move_tower_x, 0, lower_bearing_z])
                 rotate([90,0,0])
-                  cylinder(r=b623_vgroove_big_r+0.25, h=b623_width+1, center=true);
+                  cylinder(r=b623_vgroove_big_r + b623_vgroove_room_to_grow_r, h=b623_width+1, center=true);
             }
           }
           // vertical action point holes
           // these measurements will be needed when cadding anchor lineroller (foot block)
-          translate([0,0,lower_bearing_z-b623_vgroove_small_r-0.75])
+          translate([0,0, lower_bearing_z - b623_vgroove_small_r - Eyelet_extra_dist])
             rotate([0,90,0])
-              cylinder(d=3.3, h=5, center=true);
-          translate([0,0,higher_bearing_z+b623_vgroove_small_r+0.75])
+              cylinder(d=Eyelet_diameter, h=5, center=true);
+          translate([0,0, higher_bearing_z + b623_vgroove_small_r + Eyelet_extra_dist])
             rotate([0,90,0])
-              cylinder(d=3.3, h=5, center=true);
+              cylinder(d=Eyelet_diameter, h=5, center=true);
           // Just a tiny tiny detail
           translate([move_tower_x, -(bearing_width + 2*wth)/2, 0])
             rotate([-90,-90,0])
@@ -386,7 +386,7 @@ module corner_clamp(){
     action_point_holes();
     translate([0,Cc_action_point_from_mid,higher_bearing_z])
       rotate([-110,0,0])
-        cylinder(d=3.3, h=100, center=true, $fn=12);
+        M3_screw(h=100, center=true);
     // Just to check that lower bearing has some room to grow...
     //for(k=[0,1])
     //  mirror([k,0,0])

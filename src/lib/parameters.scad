@@ -36,6 +36,7 @@ Cc_action_point_from_mid = Cc_l1/sqrt(3)-2*Cc_rad_b-7;
 Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
                        - (Cc_action_point_from_mid/2)*(Cc_action_point_from_mid/2));
 Eyelet_extra_dist = 0.75;
+Eyelet_diameter = 3.35;
 Move_d_bearings_inwards = -2;
 
 // The distance between the two action points on the mover
@@ -64,6 +65,7 @@ b623_bore_r = 3/2;
 b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 b623_outer_dia = 10;
+b623_vgroove_room_to_grow_r = 1.0;
 
 Depth_of_roller_base = 18;
 Roller_flerp = 6;
