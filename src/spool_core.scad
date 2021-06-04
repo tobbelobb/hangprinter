@@ -72,8 +72,8 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
        rotate([90,0,0])
          for(ang=[0:360/teeth:359])
            rotate([0,0,ang])
-             translate([-0.25, 7.90/2, -w/2 - 20.4])
-               cube([0.5, 1.5, w]);
+             translate([-0.5, 7.90/2, -w/2 - 20.4])
+               cube([1.0, 1.5, w]);
 
   } else {
     difference(){
