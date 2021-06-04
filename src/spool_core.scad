@@ -27,7 +27,7 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
   module bit(){
     rotate([0,0,90])
       translate([-w/2, -w/2, 0])
-        left_rounded_cube2([w+4, w, Base_th], 5.5, $fn=28);
+        left_rounded_cube2([w+4, w, Base_th], 3, $fn=28);
   }
 
   teeth=16;
