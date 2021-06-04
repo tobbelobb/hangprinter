@@ -3,9 +3,8 @@ use <lib/util.scad>
 use <lib/gear_util.scad>
 use <spool_core.scad>
 
-//translate([0,0,-2])
-!spool_cover();
-module spool_cover(tot_height=1+Spool_height+Spool_core_shoulder+Spool_core_bottom_th, bottom_th=Spool_core_bottom_th){
+spool_cover();
+module spool_cover(tot_height=Spool_cover_tot_height, bottom_th=Spool_cover_bottom_th){
   opening_width = 60;
   difference(){
     union(){
@@ -17,7 +16,7 @@ module spool_cover(tot_height=1+Spool_height+Spool_core_shoulder+Spool_core_bott
           translate([Sep_disc_radius - 1, bottom_th])
             square([5,tot_height]);
       }
-      cylinder(h=bottom_th+1, d1=12+(bottom_th+1)*2, d2=12);
+      cylinder(h=bottom_th+Spool_cover_shoulder, d1=12+(bottom_th+1)*2, d2=12);
     }
     translate([0,0,-1])
       cylinder(d = 8.3, h=tot_height, $fn=24);

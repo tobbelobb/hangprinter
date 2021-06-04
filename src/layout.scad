@@ -179,7 +179,7 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//!sandwich_D();
+//sandwich_D();
 module sandwich_D(){
   translate([0,0, (1 + Spool_height)]){
     color(color2, color2_alpha)
@@ -198,7 +198,7 @@ module sandwich_D(){
               sep_disc();
           }
         color(color1, spool_cover_alpha)
-          translate([0,0,-1.5-1])
+          translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
             rotate([0,0,-150])
               if (stls) import("../stl/dleft_spool_cover.stl");
               else dleft_spool_cover();
@@ -208,7 +208,7 @@ module sandwich_D(){
     if(stls) import("../stl/spool.stl");
     else spool();
   color(color1, spool_cover_alpha)
-    translate([0,0,-1.5-1])
+    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
       rotate([0,0,-90])
         if (stls) import("../stl/spool_cover.stl");
         else spool_cover();
@@ -236,7 +236,7 @@ module sandwich_ABC(){
           if(stls) import("../stl/spool.stl");
           else spool();
         color(color1, spool_cover_alpha)
-          translate([0,0,-1.5-1])
+          translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
             rotate([0,0,-90])
               if (stls) import("../stl/spool_cover.stl");
               else spool_cover();
@@ -246,7 +246,7 @@ module sandwich_ABC(){
     if(stls) import("../stl/spool.stl");
     else spool();
   color(color1, spool_cover_alpha)
-    translate([0,0,-1.5-1])
+    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
       rotate([0,0,-150])
         if (stls) import("../stl/spool_cover.stl");
         else spool_cover();
@@ -413,10 +413,8 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
         translate([0,cover_adj,0])
           rotate([90,0,0])
             import("../stl/spool_core.stl");
-  } else if(twod) {
-    spool_cores(twod=true, between=Sandwich_ABC_width + 2*cover_adj);
-  } else { // not stls, not twod
-    spool_cores(false, Sandwich_ABC_width);
+  } else {
+    spool_cores(twod=twod, between=Sandwich_ABC_width + 2*cover_adj);
   }
 
   if(!twod) {
@@ -461,6 +459,11 @@ module sandwich_and_motor_C(){
 }
 
 
+cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
+cy = 450.02+Move_d_bearings_inwards/2;
+bc_x_pos = cx/2-GT2_gear_height/2-Spool_cover_tot_height+Spool_core_impression_in_spool_cover-Spool_core_halve_width-2;
+
+
 if(mounted_in_ceiling && !twod){
   translate([0,0,43+ANCHOR_D_Z])
     rotate([180,0,0])
@@ -476,11 +479,11 @@ module full_winch(){
     rotate([0,0,-90])
     sandwich_and_motor_A();
 
-  translate([-sep*3/2,y,0])
+  translate([-bc_x_pos,y,0])
     rotate([0,0,90])
     sandwich_and_motor_B();
 
-  translate([sep*3/2,y,0])
+  translate([bc_x_pos,y,0])
     rotate([0,0,90])
     sandwich_and_motor_C();
 
@@ -491,8 +494,6 @@ module full_winch(){
   placed_line_verticalizer();
   placed_landing_brackets();
 
-  cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
-  cy = 450.02+Move_d_bearings_inwards/2;
   echo("Top plate width: ", cx);
   echo(cy);
   mvy = Yshift_top_plate;
@@ -501,7 +502,7 @@ module full_winch(){
 
 if(mover && !twod)
   translate([0,0,lift_mover_z])
-  !mover();
+  mover();
 module mover(){
   //translate([0,0,7])
   //color("white")
@@ -726,7 +727,7 @@ module ceiling_unit_internal_lines_v4p1(){
 
   module one_b_line(e=0, e2=30){
     bbc = e2+5;
-    a = -abc_sep*3/2-spd/2;
+    a = -bc_x_pos-spd/2;
     b = abcspool_y+move_BC_deflectors+e;
     c = cos(60)*b623_vgroove_small_r;
     d = sin(60)*b623_vgroove_small_r;

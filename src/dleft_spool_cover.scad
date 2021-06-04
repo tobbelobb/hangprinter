@@ -6,5 +6,5 @@ use <spool_cover.scad>
 
 dleft_spool_cover();
 module dleft_spool_cover(){
-  spool_cover(height=1+Spool_height+1+Spool_height+1);
+  spool_cover(tot_height=Spool_cover_D_left_tot_height);
 }
