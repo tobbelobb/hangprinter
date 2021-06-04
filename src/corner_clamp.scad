@@ -14,6 +14,7 @@ bearing_1_x = b623_vgroove_small_r+w/6-0.8;
 s = b623_width + 0.8;
 
 wth = Wall_th;
+edg_h = 1.5;
 lwth = 2.3;
 
 x_len = d-4; // For the two "wings" with tracks for screws
@@ -23,7 +24,7 @@ foot_shape_r = 1.0;
 
 box_x = b623_vgroove_big_r*2+5.9;
 box_y = 6;
-bea_z = b623_vgroove_big_r+wth+2;
+bea_z = b623_vgroove_big_r+wth+b623_vgroove_room_to_grow_r+edg_h;
 box_z = bea_z + b623_vgroove_big_r + 3.4;
 small_r = 5;
 xwards = -3.5;
@@ -180,7 +181,7 @@ module corner_clamp_tower(base_th       = wth,
     }
     // Edge to prevent line from falling of...
     a = 1.5;
-    b = 0.8;
+    b = b623_vgroove_room_to_grow_r;
     rot_r = b623_vgroove_big_r+b;
     translate([move_tower_x,0,0]) {
       b_pos=[bearing_1_x, -bearing_width/2-0.8, higher_bearing_z];
@@ -210,7 +211,7 @@ module corner_clamp_tower(base_th       = wth,
     }
   } // end module wall
 
-  intersection(){
+  intersection() {
     translate([d/2,20,0])
       rotate([0,0,-90])
         difference(){
@@ -220,12 +221,12 @@ module corner_clamp_tower(base_th       = wth,
               wall();
             translate([bearing_1_x+2, -(b623_width+2)/2,tower_h-2])
               cube([2, b623_width+2, 1]);
-            cube_h = higher_bearing_z-2*b623_vgroove_big_r-3;
+            cube_h = tower_h - higher_bearing_z-1;
             difference(){
               union(){
-                translate([20-ears_y,-w/2, 2])
+                translate([20-ears_y,-w/2, lower_bearing_z-cube_h])
                   cube([2.5, w, cube_h]);
-                translate([20-ears_y,-w/2, tower_h-cube_h-1])
+                translate([20-ears_y,-w/2, higher_bearing_z])
                   cube([2.5, w, cube_h]);
               }
               translate([bearing_1_x+move_tower_x, 0, higher_bearing_z])
@@ -342,18 +343,20 @@ module corner_clamp(){
       } // end diff
       // slanting
       difference(){
-        translate([-channel_r2/2,0.3,0])
-          rounded_cube2([channel_r2+0, channel_l-4, Fat_beam_width+wth+1.5], 2, $fn=20);
+        translate([-channel_r2/2, 0.3, 0])
+          rounded_cube2([channel_r2, channel_l-4.2, Fat_beam_width+wth+1.5], 2, $fn=20);
         translate([-(channel_r2+6)/2,channel_l,wth+3])
           rotate([90-atan((Fat_beam_width+0.5)/channel_l),0,0])
           cube([channel_r2+6,16,sqrt(channel_l*channel_l + Min_beam_width*Min_beam_width)]);
+        translate([0.5,Cc_action_point_from_mid+Move_d_bearings_inwards-b623_vgroove_small_r, bea_z])
+          rotate([0,90,0])
+            cylinder(r=b623_vgroove_big_r+b623_vgroove_room_to_grow_r, h=b623_width+1);
       }
 
       translate([0,Cc_action_point_from_mid-b623_vgroove_small_r,0.1])
         rotate([0,0,90])
           small_walls();
 
-      edg_h = 1.5;
       edg_w = 19.0;
       rh = 2.8;
       for(k=[0,1])
@@ -363,6 +366,7 @@ module corner_clamp(){
           }
     } // end union
     action_point_holes();
+
   } // end diff
 
   difference(){
