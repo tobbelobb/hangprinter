@@ -1,8 +1,8 @@
 $fn=48;
 
 inner_d = 10.15;
-small_d = 10.55;
-big_d = 12.5;
+small_d = 11.1;
+big_d = 13.1;
 
 difference(){
   cylinder(d=big_d, h=3.95, center=true);
@@ -14,4 +14,6 @@ difference(){
       rotate([0,0,45])
         square(U_r*sqrt(2), center=true);
     }
+  //translate([-50,-50,0])
+  //  cube(100);
 }
