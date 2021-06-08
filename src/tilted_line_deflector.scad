@@ -51,6 +51,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true){
       %translate([ 0, 0, bz ])
         rotate([ rotx, 0, rotz ])
           translate([-a*cos(rotx)*sin(rotz),-a, 0]){
+          color("yellow")
             b623_vgroove();
           }
       difference(){
@@ -83,8 +84,8 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true){
               rotate([0,0,-rotz*cos(rotx)])
                 scale([(b623_vgroove_big_r+extra_b_width/2)/b623_vgroove_big_r,
                     (b623_vgroove_big_r+extra_b_width/2)/b623_vgroove_big_r,
-                    (b623_width + extra_b_height)/b623_width]){
-                  elong_b623_vgroove(20);
+                    1]){
+                  elong_b623_vgroove(20, extra_b_height);
                 }
         }
         translate([0,0,bz])

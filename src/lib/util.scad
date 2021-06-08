@@ -603,23 +603,27 @@ module b623_vgroove(){
 }
 
 //elong_b623_vgroove();
-module elong_b623_vgroove(elong=10){
+module elong_b623_vgroove(elong=10, extra_height=0){
   $fn=4*8;
   color("purple"){
     hull(){
-      cylinder(r=b623_vgroove_small_r, h=b623_width, center=true);
+      cylinder(r=b623_vgroove_small_r, h=b623_width+extra_height, center=true);
       translate([0,elong,0])
-        cylinder(r=b623_vgroove_small_r, h=b623_width, center=true);
+        cylinder(r=b623_vgroove_small_r, h=b623_width+extra_height, center=true);
     }
-    for(k=[0,0,1])
-      mirror([0,0,k]){
+    for(k=[0,1])
+      mirror([0,0,k])
         hull(){
+          cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
+          if (extra_height != 0) translate([0,0,b623_width/2])
+            cylinder(r=b623_vgroove_big_r, h=extra_height/2);
           cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
           translate([0,elong,0]){
             cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
+            if (extra_height != 0) translate([0,0,b623_width/2])
+              cylinder(r=b623_vgroove_big_r, h=extra_height/2);
           }
         }
-      }
   }
 
 }
