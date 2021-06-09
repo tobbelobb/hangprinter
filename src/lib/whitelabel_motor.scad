@@ -3,6 +3,17 @@ use <util.scad>
 
 base_ywidth = 84;
 
+module belt_adj_nut_locks(){
+  hull(){
+    translate([Belt_roller_top_adj_screw_x, Belt_roller_top_adj_screw_y+0.3, Belt_roller_h-33])
+      rotate([0,0,30])
+      nut(4);
+    translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y-0.3, Belt_roller_h-33])
+      rotate([0,0,30])
+      nut(4);
+  }
+}
+
 //rotate([0,90,0])
 //belt_roller();
 module belt_roller(twod = true){
@@ -68,18 +79,11 @@ module belt_roller(twod = true){
             translate([Depth_of_roller_base/2, -(Belt_roller_space_between_walls/2+Belt_roller_wall_th),Base_th+2])
               rotate([0,0,90])
                 inner_round_corner(r=2, h=Belt_roller_h+2,$fn=4*4);
-
-
           translate([0,0,-9])
             belt_roller_containing_cube();
-          hull(){
-            translate([Belt_roller_top_adj_screw_x, Belt_roller_top_adj_screw_y+0.3, Belt_roller_h-33])
-              rotate([0,0,30])
-              nut(4);
-            translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y-0.3, Belt_roller_h-33])
-              rotate([0,0,30])
-              nut(4);
-          }
+
+          belt_adj_nut_locks();
+
           for(k=[0,1]) {
             mirror([0,k,0]) {
               translate([-7, -Belt_roller_containing_cube_ywidth/2, Belt_roller_h-27])
@@ -540,6 +544,7 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
             square([0.5, 20]);
         }
   }
+
   translate([motor_bracket_xpos, motor_bracket_ypos, 0]) {
   if(!twod) {
       difference(){
@@ -573,6 +578,10 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
         translate([0,0,-1])
           linear_extrude(height=Base_th+2)
             placed_text();
+        translate([-motor_bracket_xpos, -motor_bracket_ypos, 0])
+          rotate([0,0,-90])
+            belt_adj_nut_locks();
+
       }
     } else {
       // twod below here
