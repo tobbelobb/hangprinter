@@ -14,7 +14,9 @@ module v_roller_wall(space_between_walls, wall_th, height, rot_nut=0, bearing_sc
     if(bearing_screw){
       translate([0,space_between_walls/2 - 1, height - d/2])
         rotate([-90,0,0]){
-          cylinder(d=3.1, h=wall_th + 2, $fn=12);
+          M3_screw(h=wall_th+2);
+          translate([0,0,4])
+            nut(h=8);
         }
     }
   }
@@ -85,8 +87,12 @@ module line_verticalizer(twod = false, with_bearing = false){
       for(k=[0,1]) mirror([0,k,0]){
         translate([b623_vgroove_small_r + Eyelet_extra_dist, -1-b623_width/2, tower_h-9-1])
           cylinder(d=Eyelet_diameter, h=11);
+        translate([b623_vgroove_small_r + Eyelet_extra_dist, -1-b623_width/2, tower_h-eyelet_holder_h-0.01])
+          cylinder(d1=Eyelet_diameter*1.4, d2=Eyelet_diameter*0.9, h=2);
         translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2, tower_h-9-1])
           cylinder(d=Eyelet_diameter, h=11);
+        translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2, tower_h-eyelet_holder_h-0.01])
+          cylinder(d1=Eyelet_diameter*1.4, d2=Eyelet_diameter*0.9, h=2);
         translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2-b623_width-1, tower_h-3.7])
           cylinder(d=Eyelet_diameter, h=11);
         bigr=25;
@@ -115,8 +121,7 @@ module line_verticalizer(twod = false, with_bearing = false){
       }
       translate([0,0,tower_h-Depth_of_roller_base/2])
         rotate([90,0,0])
-        cylinder(d=3.1, h=4, center=true,
-                  $fn=14*4);
+        M3_screw(h=4, center=true);
     }
   } else {
     roller_base(twod=true, space_between_walls=space_between_walls, base_extra_w=base_extra_w);
