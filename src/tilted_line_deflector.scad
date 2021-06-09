@@ -42,7 +42,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true){
   mirror([1,0,0]) {
     if(!twod){
       extra_b_height = 0.8; // half of this above, half below
-      extra_b_width = 2*b623_vgroove_room_to_grow_r; // half of this to the left of bearing
+      extra_b_width = 3*b623_vgroove_room_to_grow_r; // half of this to the left of bearing
       full_h = bz+8-b623_vgroove_big_r*sin(rotx);
       take_away_angle = 90;
 
@@ -94,7 +94,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true){
               translate([0, 0,-1-bz]){
                 M3_screw(h=100, center=true);
                 translate([0,0,-10])
-                  nut(h=bz+1-b623_width/2-extra_b_height/2 + 5);
+                  nut(h=bz+1-b623_width/2-extra_b_height/2 + 8);
                 translate([0,0,full_h - 1.5 + 3*sin(rotx)])
                   nut(h=10);
               }
