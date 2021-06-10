@@ -36,7 +36,7 @@ Cc_action_point_from_mid = Cc_l1/sqrt(3)-2*Cc_rad_b-7;
 Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
                        - (Cc_action_point_from_mid/2)*(Cc_action_point_from_mid/2));
 Eyelet_extra_dist = 0.75;
-Eyelet_diameter = 3.35;
+Eyelet_diameter = 3.40;
 Move_d_bearings_inwards = -2;
 
 // The distance between the two action points on the mover

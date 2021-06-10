@@ -102,9 +102,9 @@ module action_point_holes(){
   for(k=[0,1]) mirror([k,0,0])
     translate([2/2+b623_width/2,Move_d_bearings_inwards,0]) {
       translate([0,Cc_action_point_from_mid - 0*b623_vgroove_small_r + Eyelet_extra_dist,-1])
-        cylinder(d=3.3, h=wth+5, $fn=10);
+        eyelet(h=wth+5);
       translate([0,Cc_action_point_from_mid - 2*b623_vgroove_small_r - Eyelet_extra_dist,-1])
-        cylinder(d=3.3, h=wth+5, $fn=10);
+        eyelet(h=wth+5);
     }
 }
 
@@ -241,10 +241,10 @@ module corner_clamp_tower(base_th       = wth,
           // these measurements will be needed when cadding anchor lineroller (foot block)
           translate([0,0, lower_bearing_z - b623_vgroove_small_r - Eyelet_extra_dist])
             rotate([0,90,0])
-              cylinder(d=Eyelet_diameter, h=5, center=true);
+              eyelet(h=5, center=true);
           translate([0,0, higher_bearing_z + b623_vgroove_small_r + Eyelet_extra_dist])
             rotate([0,90,0])
-              cylinder(d=Eyelet_diameter, h=5, center=true);
+              eyelet(h=5, center=true);
           // Just a tiny tiny detail
           translate([move_tower_x, -(bearing_width + 2*wth)/2, 0])
             rotate([-90,-90,0])
