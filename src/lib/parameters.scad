@@ -128,6 +128,7 @@ Belt_roller_wall_th = (Depth_of_roller_base - Belt_roller_space_between_walls)/2
 Belt_roller_top_adj_screw_x = Depth_of_roller_base/2-3.7;
 Belt_roller_top_adj_screw_y = Belt_roller_space_between_walls/2+2;
 Belt_roller_containing_cube_ywidth = Belt_roller_space_between_walls+8.5;
+Belt_roller_containing_cube_xwidth = 14;
 Belt_roller_insert_h = 18;
 
 

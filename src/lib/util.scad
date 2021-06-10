@@ -907,6 +907,6 @@ module inner_corner_rounder(r, ang1=90, ang2=90, back=1){
 }
 
 module belt_roller_containing_cube(){
-  translate([-7, -Belt_roller_containing_cube_ywidth/2, Belt_roller_h - Belt_roller_insert_h])
-    cube([14, Belt_roller_containing_cube_ywidth, Belt_roller_h]);
+  translate([-Belt_roller_containing_cube_xwidth/2, -Belt_roller_containing_cube_ywidth/2, Belt_roller_h - Belt_roller_insert_h])
+    cube([Belt_roller_containing_cube_xwidth, Belt_roller_containing_cube_ywidth, Belt_roller_h]);
 }
