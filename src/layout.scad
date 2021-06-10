@@ -51,10 +51,12 @@ between_action_points_z = ANCHOR_D_Z-Higher_bearing_z -3 - 175;
 lift_mover_z = 200;
 //lift_mover_z = ANCHOR_D_Z-300;
 
-dspool_y = -50;
-abcspool_y = -50;
+dspool_y = -50+30;
+bcspool_y = -50;
+aspool_y = -20;
+aspool_lineroller_y = -110;
 abc_sep = 105+18;
-move_BC_deflectors = -100;
+move_BC_deflectors = -105;
 
 extra_space_in_middle = -10;
 
@@ -62,7 +64,7 @@ lx0 = -abc_sep/2-extra_space_in_middle-spd/2;
 lx1 = -abc_sep/2-extra_space_in_middle+spd/2;
 lx2 = -abc_sep/2-extra_space_in_middle+spd/2 + 1 + Spool_height;
 lx3 = abc_sep/2+extra_space_in_middle-spd/2;
-ly2 = Sidelength/sqrt(12) - 69;
+ly2 = Sidelength/sqrt(12) - 50;
 
 color0 = "sandybrown";
 color0_alpha = 0.55;
@@ -429,7 +431,7 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
 //!sandwich_and_motor_A();
 module sandwich_and_motor_A(){
   sandwich_and_motor_ABC(A=true);
-  translate([-90,-1-Spool_height/2 + Sandwich_ABC_width/2,0])
+  translate([aspool_lineroller_y,-1-Spool_height/2 + Sandwich_ABC_width/2,0])
     line_roller_double_with_bearings();
 }
 
@@ -473,9 +475,9 @@ if(mounted_in_ceiling && !twod){
 }
 module full_winch(){
   sep = abc_sep;
-  y = abcspool_y;
+  y = bcspool_y;
 
-  translate([lx3+spd/2,y,0])
+  translate([lx3+spd/2,aspool_y,0])
     rotate([0,0,-90])
     sandwich_and_motor_A();
 
@@ -728,10 +730,10 @@ module ceiling_unit_internal_lines_v4p1(){
   module one_b_line(e=0, e2=30){
     bbc = e2+5;
     a = -bc_x_pos-spd/2;
-    b = abcspool_y+move_BC_deflectors+e;
+    b = bcspool_y+move_BC_deflectors+e;
     c = cos(60)*b623_vgroove_small_r;
     d = sin(60)*b623_vgroove_small_r;
-    line_from_to([a, abcspool_y, hz],
+    line_from_to([a, bcspool_y, hz],
                  [a-0.5, b+10, hz]);
     line_from_to([a-c+0.5, b+d-0.7, hz+2],
                  [a-c-cos(30)*100, b+d-sin(30)*100, hz+150]);
@@ -745,17 +747,17 @@ module ceiling_unit_internal_lines_v4p1(){
           one_b_line(e=-spd/sqrt(3), e2=30+spd/2);
       }
 
-    line_from_to([lx0, abcspool_y, hz],
+    line_from_to([lx0, bcspool_y, hz],
                  [lx0, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
     line_from_to([lx0, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
                  [-Sidelength/2, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
 
-    line_from_to([lx1, abcspool_y, hz],
+    line_from_to([lx1, bcspool_y, hz],
                  [lx1, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
     line_from_to([lx1, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
                  [Sidelength/2, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
 
-    line_from_to([lx2, abcspool_y, hz],
+    line_from_to([lx2, bcspool_y, hz],
                  [lx2, ly2, hz]);
     line_from_to([lx2, ly2, hz],
                  [b623_width/2+1, ly2, hz]);
@@ -763,10 +765,10 @@ module ceiling_unit_internal_lines_v4p1(){
                  [b623_width/2+1, -Sidelength/sqrt(3)-Move_d_bearings_inwards, hz]);
 
     for(k=[0,spd]){
-      line_from_to([lx3+k, abcspool_y, hz],
-                   [lx3+k, abcspool_y+90, hz]);
-      line_from_to([lx3+k, abcspool_y+93, hz],
-                   [lx3+k, abcspool_y+190, 100+hz]);
+      line_from_to([lx3+k, aspool_y, hz],
+                   [lx3+k, aspool_y-aspool_lineroller_y, hz]);
+      line_from_to([lx3+k, aspool_y-aspool_lineroller_y+3, hz],
+                   [lx3+k, aspool_y+190, 100+hz]);
     }
   }
 
