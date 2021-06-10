@@ -66,6 +66,8 @@ b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 b623_outer_dia = 10;
 b623_vgroove_room_to_grow_r = 1.1;
+b623_flange_dia = 11.5;
+b623_flange_room_to_grow_r = 0.5;
 
 Depth_of_roller_base = 18;
 Roller_flerp = 6;
