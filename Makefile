@@ -79,7 +79,7 @@ make_layout_pdf_a4 = $(call make_layout_pdf_,$(1),$(2),210,297)
 make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),216,279)
 
 layout_letter.pdf: layout.dxf
-	$(call make_layout_pdf_letter,"../layout.dxf",$@)
+	$(call make_layout_pdf_letter,"../../layout.dxf",$@)
 
 layout.dxf: $(SRC_DIR)/lib/whitelabel_motor.scad \
 	$(SRC_DIR)/lib/layout_slicer.scad \
@@ -110,7 +110,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/spool_core.scad \
 	$(SRC_DIR)/tilted_line_deflector.scad
-	$(call make_layout_pdf_a4,"../layout.dxf",$@)
+	$(call make_layout_pdf_a4,"../../layout.dxf",$@)
 
 $(STL_DIR)/1XD_holder.stl: $(SRC_DIR)/1XD_holder.scad \
 	$(SRC_DIR)/lib/util.scad

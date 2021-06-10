@@ -9,7 +9,7 @@ x_overlap = 40;
 page = 1; // To be defined in call via Makefile
 //all = true; // Used only for quick visual double-checking
 all = false;
-layout_file = "../layout.dxf";
+layout_file = "../../layout.dxf";
 
 x0 = -a4_width*2 + x_overlap;
 x1 = -a4_width;
