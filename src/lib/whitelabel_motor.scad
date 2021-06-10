@@ -123,9 +123,9 @@ module belt_roller(twod = true){
       translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y,Belt_roller_h-27])
         cylinder(d=M3_screw_head_d, h=Belt_roller_h, $fn=13);
       translate([Belt_roller_top_adj_screw_x, Belt_roller_top_adj_screw_y,-5])
-        cylinder(d=3.2, h=Belt_roller_h, $fn=13);
+        M3_screw(h=Belt_roller_h);
       translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y,-5])
-        cylinder(d=3.2, h=Belt_roller_h, $fn=13);
+        M3_screw(h=Belt_roller_h);
 
       translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2,0.5])
         Mounting_screw_countersink();
@@ -480,18 +480,18 @@ module encoder_bracket() {
         translate([0,-45.5/2,-5])
           hull(){
             translate([0,3,0])
-              cylinder(d=3.1, h=16, $fn=10);
+              M3_screw(h=16);
             translate([0,-1,0])
-              cylinder(d=3.1, h=16, $fn=10);
+              M3_screw(h=16);
           }
         translate([0,-45.5/2,-0.4-2])
           hull(){
             translate([0,3,0])
               rotate([0,0,30])
-                cylinder(d=6.2, h=5, $fn=6);
+                M3_nut(h=5);
             translate([0,-1,0])
               rotate([0,0,30])
-                cylinder(d=6.2, h=5, $fn=6);
+                M3_nut(h=5);
           }
     }
   }

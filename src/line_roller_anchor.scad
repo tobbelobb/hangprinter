@@ -2,6 +2,7 @@ include <lib/parameters.scad>
 use <lib/util.scad>
 
 module screw_track(l){
+  // These are not M3 machine screws...
   head_r = 3.5;
   screw_r = 1.5;
   $fn=40;

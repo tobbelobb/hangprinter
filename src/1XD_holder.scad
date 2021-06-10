@@ -8,24 +8,24 @@ difference(){
         ydir_rounded_cube2([50+2*12, 9.5, 2], r=2, $fn=10*4);
     translate([3.5+12,1.1,9.5-3.5])
       rotate([90,0,0])
-        cylinder(d=7/cos(30), 2, $fn=6);
+        nut_wall(h=2);
     translate([50-3.5+12,1.1,9.5-3.5])
       rotate([90,0,0])
-        cylinder(d=7/cos(30), 2, $fn=6);
+        nut_wall(h=2);
   }
 
   translate([3.5+12,0,9.5-3.5])
     rotate([90,0,0])
-      cylinder(d=3.2, h=10, center=true, $fn=10);
+      M3_screw(h=10, center=true);
   translate([50-3.5+12,0,9.5-3.5])
     rotate([90,0,0])
-      cylinder(d=3.2, h=10, center=true, $fn=10);
+      M3_screw(h=10, center=true);
   translate([50-3.5+12,1,9.5-3.5])
     rotate([90,0,0])
-      nut(h=2);
+      M3_nut(h=2);
   translate([3.5+12,1,9.5-3.5])
     rotate([90,0,0])
-      nut(h=2);
+      M3_nut(h=2);
   translate([5, 12-5, 0])
     Mounting_screw_countersink();
   translate([50+2*12-5, 12-5, 0])
