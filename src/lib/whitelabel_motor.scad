@@ -27,10 +27,11 @@ module belt_roller(twod = true){
           ydir_rounded_cube2([Depth_of_roller_base, Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp, Base_th], r=3, $fn=4*5);
         translate([-(Depth_of_roller_base/2+flerp), -(Belt_roller_space_between_walls+2*Belt_roller_wall_th)/2,0])
           left_rounded_cube2([Depth_of_roller_base+flerp, Belt_roller_space_between_walls+2*Belt_roller_wall_th, Base_th], r=3, $fn=4*5);
+        // tower
         difference(){
           union(){
             for(k=[0,1]) mirror([0,k,0])
-              roller_wall(Belt_roller_space_between_walls-0.8, Belt_roller_wall_th+0.4, Belt_roller_h, rot_nut=30, bearing_screw=false);
+              roller_wall(Belt_roller_space_between_walls-0.8, Belt_roller_wall_th+0.4, Belt_roller_h - 2, rot_nut=30, bearing_screw=false);
             translate([-Depth_of_roller_base/2,-Belt_roller_space_between_walls/2,0])
               cube([Depth_of_roller_base, Belt_roller_space_between_walls+2, Belt_roller_h-43]);
             translate([-(Depth_of_roller_base)/2, Belt_roller_space_between_walls/2+Belt_roller_wall_th, Base_th])
@@ -70,6 +71,12 @@ module belt_roller(twod = true){
                 corner_rounder(r1=0, r2=2, angle=88);
           translate([-Depth_of_roller_base/2-2, -(Belt_roller_space_between_walls+2*Belt_roller_wall_th)/2-2, 0])
             cylinder(r=2, h=Base_th+2, $fn=4*5);
+          opening_ang = 12;
+          opening_len = 11;
+          for(k=[0,1]) mirror([0, k,0])
+            translate([-Depth_of_roller_base/2, -(Belt_roller_space_between_walls-0.8)/2-opening_len*sin(opening_ang), Belt_roller_h-43])
+              rotate([0,0,opening_ang])
+                cube([opening_len, 3, Belt_roller_h]);
 
           mirror([1,0,0])
             translate([Depth_of_roller_base/2, -(Belt_roller_space_between_walls/2+Belt_roller_wall_th),Base_th+2+25])
@@ -252,7 +259,7 @@ module erasor_cubes(cubesize_x, yextra) {
   translate([-51,-20,-1])
     cube([30,40,50]);
   for(k=[0,1]) mirror([0,k,0]) {
-    translate([-50+6, -cubesize_x-1,-1])
+    translate([-15-Belt_roller_h+27, -cubesize_x-1,-1])
       cube([50,50,50]);
     translate([6,-cubesize_x/2+6,-1])
       rotate([0,0,-90])
