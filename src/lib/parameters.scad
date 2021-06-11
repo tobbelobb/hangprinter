@@ -137,10 +137,11 @@ Belt_roller_insert_h = 18;
 Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
 Sandwich_D_width = 3*(1+Spool_height) + GT2_gear_height;
 Spool_core_halve_width = 14.3;
-Spool_core_impression_in_spool_cover = 0.75;
+Spool_core_impression_in_spool_cover = 0;
 Spool_cover_bottom_th = 1.5;
 Spool_cover_shoulder = 2;
 Spool_core_cover_adj = Spool_cover_shoulder+Spool_cover_bottom_th-Spool_core_impression_in_spool_cover;
+Spool_core_tot_length = 136.458;
 
 Smooth_rod_length_ABC = Sandwich_ABC_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);
 Smooth_rod_length_D = Sandwich_D_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);

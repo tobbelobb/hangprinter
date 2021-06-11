@@ -23,11 +23,12 @@ rotate([-90,0,0])
 spool_core_halve(false, Sandwich_ABC_width);
 module spool_core_halve(twod = false, between, cut_teeth=true){
   w = Spool_core_halve_width; // Width
+  foot_r = 3;
 
   module bit(){
     rotate([0,0,90])
       translate([-w/2, -w/2, 0])
-        left_rounded_cube2([w+4, w, Base_th], 3, $fn=28);
+        left_rounded_cube2([w+4, w, Base_th], foot_r, $fn=28);
   }
 
   teeth=16;
@@ -77,9 +78,8 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
 
   } else {
     difference(){
-      tot_width = 2*w+ cubex - 2;
-      translate([-tot_width/2, between/2])
-        rounded_cube2_2d([tot_width, w], 5.5, $fn=28);
+      translate([-Spool_core_tot_length/2, between/2])
+        rounded_cube2_2d([Spool_core_tot_length, w], foot_r, $fn=28);
       for(k=[0,1])
         mirror([k,0])
           translate([-cubex/2 - w/2 + 1, between/2 + w/2])
