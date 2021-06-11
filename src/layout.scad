@@ -12,6 +12,7 @@ use <landing_brackets.scad>
 use <line_roller_anchor.scad>
 use <line_roller_double.scad>
 use <line_verticalizer.scad>
+use <mirrored_spool_cover.scad>
 use <motor_bracket_A.scad>
 use <motor_bracket_B.scad>
 use <motor_bracket_C.scad>
@@ -138,7 +139,7 @@ module placed_landing_brackets(){
   translate([0, 128-b623_vgroove_small_r/2, 0])
     rotate([0,0,180+90])
       landing_bracket_a(twod=twod);
-  push_bc_brackets=42;
+  push_bc_brackets=12;
   translate([-push_bc_brackets*cos(60),-71+push_bc_brackets*sin(60),0])
     rotate([0,0,180])
       translate([104, 0, 0])
@@ -181,7 +182,7 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//sandwich_D();
+//!sandwich_D();
 module sandwich_D(){
   translate([0,0, (1 + Spool_height)]){
     color(color2, color2_alpha)
@@ -201,7 +202,7 @@ module sandwich_D(){
           }
         color(color1, spool_cover_alpha)
           translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
-            rotate([0,0,-150])
+            rotate([0,0,90])
               if (stls) import("../stl/dleft_spool_cover.stl");
               else dleft_spool_cover();
       }
@@ -249,9 +250,9 @@ module sandwich_ABC(){
     else spool();
   color(color1, spool_cover_alpha)
     translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
-      rotate([0,0,-150])
-        if (stls) import("../stl/spool_cover.stl");
-        else spool_cover();
+      rotate([0,0,90])
+        if (stls) import("../stl/mirrored_spool_cover.stl");
+        else mirrored_spool_cover();
 }
 
 //!belt_roller_bearings();
@@ -453,7 +454,7 @@ module sandwich_and_motor_B(){
 }
 
 
-//sandwich_and_motor_C();
+//!sandwich_and_motor_C();
 module sandwich_and_motor_C(){
   sandwich_and_motor_ABC(C=true);
   mirror([0,1,0])
