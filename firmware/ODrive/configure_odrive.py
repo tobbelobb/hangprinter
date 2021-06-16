@@ -21,6 +21,16 @@ odrv0 = odrive.find_any()
 # At 140000 the plastic parts starts to resonate
 odrv0.axis0.controller.config.vel_limit = 40
 odrv0.axis0.encoder.config.cpr = 8192     # AMT102-V
+# The AMT102-V has an index signal.
+# See https://docs.odriverobotics.com/encoders#encoder-with-index-signal
+# for how to use it
+# You do things like
+# odrv0.axis0.encoder.config.use_index = True
+# odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+# odrv0.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+# odrv0.axis0.encoder.config.pre_calibrated = True
+# odrv0.axis0.config.startup_encoder_index_search = True
+# odrv0.axis0.motor.config.pre_calibrated = True
 odrv0.axis0.motor.config.current_lim = 20 # Strong enough...
 odrv0.axis0.motor.config.current_lim_margin=18
 odrv0.axis0.motor.config.calibration_current = 20
@@ -48,13 +58,13 @@ while my_drive.axis1.current_state != AXIS_STATE_IDLE:
 odrv0.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 # Have the same startup sequence automatically from now on
-odrv0.axis0.config.startup_encoder_offset_calibration = True
+odrv0.axis0.config.startup_encoder_offset_calibration = False # True if you don't use encoder indexing
+odrv0.axis0.config.startup_motor_calibration = False # True if you don't use encoder indexing
 odrv0.axis0.config.startup_closed_loop_control = True
-odrv0.axis0.config.startup_motor_calibration = True
 
-odrv0.axis1.config.startup_encoder_offset_calibration = True
+odrv0.axis1.config.startup_encoder_offset_calibration = False # True if you don't use encoder indexing
+odrv0.axis1.config.startup_motor_calibration = False # True if you don't use encoder indexing
 odrv0.axis1.config.startup_closed_loop_control = True
-odrv0.axis1.config.startup_motor_calibration = True
 
 # PID tuning
 odrv0.axis0.controller.config.pos_gain = 47
@@ -84,6 +94,21 @@ odrv0.axis0.config.enable_step_dir = True
 #odrv0.axis1.config.dir_gpio_pin = 8  # Default
 odrv0.axis1.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025
 odrv0.axis1.config.enable_step_dir = True
+
+# Calibrate anti cogging like this
+# odrv0.axis0.controller.config.vel_gain = 0.05
+# odrv0.axis0.controller.start_anticogging_calibration()
+
+# Check progress with:
+# odrv0.axis0.controller.config.anticogging
+# As long as calib_anticogging is True, the calibration is still going on
+# You can also check the odrv0.axis0.controller.input_pos to see progress
+
+# When it's done:
+# odrv0.axis0.controller.config.anticogging.pre_calibrated = True
+# odrv0.axis0.controller.config.anticogging.anticogging_enabled = True
+# odrv0.axis0.controller.config.vel_gain = 0.09
+
 
 odrv0.save_configuration()
 odrv0.reboot()
