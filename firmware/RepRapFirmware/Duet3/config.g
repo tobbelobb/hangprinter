@@ -1,19 +1,18 @@
 ; Communication and general
-M552 P0.0.0.0 S1 ; Enable network
 G21              ; Work in millimetres
 G90              ; Send absolute coordinates...
 M83              ; ...but relative extruder moves
 
 ; Kinematics
 G4 S1                           ; Wait 1 second because expansion boards might not be ready to receive CAN signal yet.
-M584 X40.0 Y41.0 Z42.0 D43.0 P4 ; map ABCD-axes to CAN addresses, and set four visible axes. Please excuse that ABC motors are called XYZ here.
+M584 X43.0 Y41.0 Z42.0 D40.0 P4 ; map ABCD-axes to CAN addresses, and set four visible axes. Please excuse that ABC motors are called XYZ here.
 M584 E0:1:2:3:4:5               ; Regard all built in stepper drivers as extruder drives
 M669 K6                         ; "This is a Hangprinter"
 M669 P2000.0                    ; Printable radius (unused by Hangprinters for now)
 M669 S200                       ; Segments per second
 
 ; Output of auto calibration script for Hangprinter
-M669 A0.0:-1604.54:-114.08 B1312.51:1270.88:-162.19 C-1440.27:741.63:-161.23 D2345.00
+M669 A0.0:-1604.54:-114.08 B1312.51:1270.88:-162.19 C-1440.27:741.63:-161.23 D0:0:2345.00
 M666 Q0.035619 R65.239:65.135:65.296:64.673
 ; Explanation:
 ; ; M669 defines the positions of the anchors, expressed as X:Y:Z distances between a line's pivot points, when the machine is homed.
@@ -23,7 +22,7 @@ M208 Z2000.00  ; set maximum Z somewhere below to D anchor. See M669 ... D<numbe
 M208 S1 Z-10.0 ; set minimum Z
 
 ; The following values must also be in the auto calibration script for Hangprinter (if you plan to use it)
-M666 U2:2:2:2         ; Mechanical advantages on ABCD
+M666 U2:2:2:4         ; Mechanical advantages on ABCD
 M666 O1:1:1:1         ; Number of lines per spool
 M666 L20:20:20:20     ; Motor gear teeth of ABCD axes
 M666 H255:255:255:255 ; Spool gear teeth of ABCD axes
@@ -45,25 +44,16 @@ M569 P7 S0 ; Drive 7 (B) goes backwards
 M569 P8 S1 ; Drive 8 (C) goes forwards
 M569 P9 S0 ; Drive 9 (D) goes backwards
 
-;M569 P5 I"0x0a" ; i2c addresses set up, but will probably not be used on HP4
-;M569 P6 I"0x0b"
-;M569 P7 I"0x0c"
-;M569 P8 I"0x0d"
-;;;; DRIVER CONFIG END
-
-;;;; CAN SETTINGS
-;;;; CAN SETTINGS END
-
 ; Speeds
 M201 X10000 Y10000 Z10000 E1000              ; Accelerations (mm/s^2)
 M203 X36000 Y36000 Z36000 E3600              ; Maximum speeds (mm/min)
 M566 X1200 Y1200 Z1200 E1200                 ; Maximum instant speed changes mm/minute
 
 ; Currents
-M906 X1200 Y1200 Z1200 E1400 I60             ; Set motor currents (mA) and increase idle current to 60%
+M906 E1400 I60             ; Set motor currents (mA) and increase idle current to 60%
 
 ; Endstops
-M574 X2 Y2 Z2 S1                             ; set endstop configuration (all endstops at high end, active high)
+M574 X0 Y0 Z0                                ; set endstop configuration (no endstops)
 
 ; Thermistors and heaters
 M308 S1 P"temp1" Y"thermistor" T100000 B3950 ; Configure sensor 1 as thermistor on temp1
@@ -86,5 +76,5 @@ G10 P0 S0 R0                                       ; Set initial tool 0 active a
 
 ; Miscellaneous
 M92 E415                                           ; Set extruder steps per mm
-M911 S10 R11 P"M913 X0 Y0 G91 M83 G1 Z3 E-5 F1000" ; set voltage thresholds and actions to run on power loss
+M911 S10 R11 P"M913 X0 Y0 Z0 G91 M83 G1 Z3 E-5 F1000" ; set voltage thresholds and actions to run on power loss
 T0                                                 ; Select tool 0
