@@ -1,6 +1,11 @@
-The board I'm using while developing is an ODrive v3.5 24V.
-The binaries in this directory only works for that board.
-If you have another version, I recommend that you head over to the source and compile it for the board that you have.
+## ODrive Usage On Hangprinter
+
+Use stock ODrive Firmware.
 
 The source is kept here:
-https://github.com/madcowswe/ODrive
+[https://github.com/madcowswe/ODrive](github.com/madcowswe/ODrive).
+
+Other file(s) in this directory are ther to help your manual configuration process of the ODrive.
+Read every line, including the comments manually before executing any of them.
+
+[The official ODrive docs](https://docs.odriverobotics.com/) are helpful in explaining many of the commands.
