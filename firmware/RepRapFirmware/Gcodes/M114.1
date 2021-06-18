@@ -10,12 +10,13 @@ the reference position could be any fixed value.
 The returned encoder position is in arc degrees (1/360'ths of turns).
 
 ;Parameters
-:<code>Z</code> Subsequent M114.1 calls returns numbers that are relative to the previous M114.1 S call
+:<code>S</code> Subsequent M114.1 calls returns numbers that are relative to the previous M114.1 S call
 
 ;Examples
  M114.1
 <tt>[-155.28, -4089.60, 6842.04, 0.00, ],</tt>
-M114.1 S
+
+ M114.1 S
  M114.1
 <tt>[0.00, 0.00, 0.00, 0.00, ],</tt>
  ; Rotate the first encoder by a full turn
