@@ -4,16 +4,16 @@
 This causes the RepRap machine to report its current motor encoder positions to the host in units of arc degrees (1/360'ths of turns).
 
 ;Parameters
-:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Several drivers may be specified, separated by colon, or by specifying a sequence of P parameters.
+:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Several (remote) drivers may be specified, separated by colon. No more than number of visible axes, as specified by M584 P parameter, are allowed.
 
-If no parameters are supplied, then empty brackets are returned.
+If no parameters are supplied, an error is returned.
 
 ;Examples
  M569.3
-<tt>[],</tt>
- M569.3 P0:1:2:3
+<tt>Error: M569: missing parameter 'P'</tt>
+ M569.3 P50.0:51.0:52.0:53.0
 <tt>[-155.28, -4089.60, 6842.04, 0.00, ],</tt>
- M569.3 P3:1 P2 P0
+ M569.3 P53.0:51.0:52.0:50.0
 <tt>[0.00, -4089.60, 6842.04, -155.28, ],</tt>
 
 ;Notes
