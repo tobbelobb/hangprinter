@@ -50,6 +50,9 @@ module walls(space_between_walls, wall_th, height, rot_nut=0, bearing_screw=true
                   }
               }
             }
+      rotate([0,30,0])
+        translate([0,0,-b623_vgroove_big_r-b623_vgroove_room_to_grow_r])
+        preventor_edges(16, space_between_walls+0.75, edge_stop=120);
     }
   }
 }
@@ -58,7 +61,6 @@ rotate([0,90,0])
 line_roller_double(with_bearings=false);
 module line_roller_double(twod=false,
                           tower_h = Line_roller_ABC_winch_h,
-                          edge_stop=180,
                           with_bearings=false){
 
   s = b623_width + 0.8;
