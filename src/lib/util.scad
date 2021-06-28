@@ -690,7 +690,8 @@ module roller_base(twod=false,
                    mv_edg=0,
                    wall_th=Line_roller_wall_th,
                    space_between_walls,
-                   openings=[false, false, false, false]){
+                   openings=[false, false, false, false],
+                   with_fillets = true){
   l = Roller_l+base_extra_w;
   d = Depth_of_roller_base;
   s = space_between_walls;
@@ -708,24 +709,27 @@ module roller_base(twod=false,
             translate([-d/2,-d/2-k*yextra, 0])
             rotate([0,0,180])
             inner_round_corner(r=2, h=Base_th, $fn=6*4); // Fillet
-        for(k=[0,1])
-          mirror([0,k,0])
-            translate([0,s/2 + wall_th+(1-k)*mv_edg, Base_th])
-            rotate([90,0,90])
-            translate([0,0,-(d+10)/2])
-            inner_round_corner(h=d+10, r=5, back=0.1, $fn=4*5);
-        if(mv_edg>wall_th+s){
-          translate([-d/2, s/2+wall_th+mv_edg, Base_th])
-            rotate([0,-90,90])
-            // new fillet for outermost wall
-            inner_round_corner(r=5, h=wall_th, $fn=4*5);
+        if (with_fillets)
           for(k=[0,1])
             mirror([0,k,0])
-              translate([-d/2, s/2+wall_th+(1-k)*(mv_edg-wall_th-s), Base_th])
+              translate([0,s/2 + wall_th+(1-k)*mv_edg, Base_th])
+              rotate([90,0,90])
+              translate([0,0,-(d+10)/2])
+              inner_round_corner(h=d+10, r=5, back=0.1, $fn=4*5);
+        if(mv_edg>wall_th+s) {
+          if (with_fillets)
+            translate([-d/2, s/2+wall_th+mv_edg, Base_th])
               rotate([0,-90,90])
-              inner_round_corner(r=5,
-                  h=wall_th+(1-k)*(mv_edg - wall_th - s),
-                  $fn=4*5);
+              // new fillet for outermost wall
+              inner_round_corner(r=5, h=wall_th, $fn=4*5);
+          if (with_fillets)
+            for(k=[0,1])
+              mirror([0,k,0])
+                translate([-d/2, s/2+wall_th+(1-k)*(mv_edg-wall_th-s), Base_th])
+                rotate([0,-90,90])
+                inner_round_corner(r=5,
+                    h=wall_th+(1-k)*(mv_edg - wall_th - s),
+                    $fn=4*5);
         } else {
           for(k=[0,1])
             mirror([0,k,0])
