@@ -1,20 +1,31 @@
 ==== M569.3: Read Motor Driver Encoder ====
 {{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{yes}}<sup>1</sup> | klipper={{no}} | bfb={{no}} | machinekit={{no}} | makerbot={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} | grbl={{no}} }}
 
-This causes the RepRap machine to report its current motor encoder positions to the host in units of arc degrees (1/360'ths of turns).
+This causes the RepRap machine to report its current motor encoder positions to the host in units of arc degrees (1/360'ths of turns), relative to some reference position that you set with the <code>S</code> parameter.
+
+Before the first call with the <code>S</code> parameter, the reference is unknown and arbitrary.
 
 ;Parameters
-:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Several (remote) drivers may be specified, separated by colon. No more than number of visible axes, as specified by M584 P parameter, are allowed.
+:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Several (remote) drivers may be specified, separated by colon. No more than number of visible axes, as specified by <code>M584 P</code> parameter, are allowed.
+:<code>S</code> Sets an encoder reference point. Current and subsequent <code>M569.3 Pn.n</code> calls returns numbers that are relative to the <code>M569.3 Pn.n S</code> call.
 
-If no parameters are supplied, an error is returned.
+If <code>P</code> is not supplied, an error is returned.
+
+A maximum of four CAN-connected drivers can be reached with <code>M569.3</code> counting from machine boot. CAN addresses that fail to respond don't count towards this maximum.
 
 ;Examples
  M569.3
 <tt>Error: M569: missing parameter 'P'</tt>
+ M569.3 P54.0
+<tt>Error: M569.3: Message not received</tt>
  M569.3 P50.0:51.0:52.0:53.0
 <tt>[-155.28, -4089.60, 6842.04, 0.00, ],</tt>
  M569.3 P53.0:51.0:52.0:50.0
 <tt>[0.00, -4089.60, 6842.04, -155.28, ],</tt>
+ M569.3 P53.0:51.0:52.0:50.0 S
+<tt>[0.00, 0.00, 0.00, 0.00, ],</tt>
+ M569.3 P49.0
+<tt>Error: M569.3: Max CAN addresses we can reference is 4. Can't reference board 49.</tt>
 
 ;Notes
 <sup>1</sup> Planned for RepRapFirmware 3.4.
