@@ -670,16 +670,13 @@ module b608_lips(h){
 }
 
 
-module Mounting_screw_countersink(twod=false){
+module Mounting_screw(twod=false){
   if (twod) {
     circle(d=Mounting_screw_d, $fn=12*4);
   } else {
-    translate([0,0,-19.9])
+    translate([0,0,-18])
       cylinder(d=Mounting_screw_d, h=20, $fn=20);
-    cylinder(d1=Mounting_screw_d,
-             d2=Mounting_screw_d + 2*2.7, // 90 degree countersink
-             h=2.7, $fn=20);
-    translate([0,0,2.64])
+    translate([0,0,1.701])
       cylinder(d=Mounting_screw_d + 2*2.7, h=3, $fn=20);
   }
 }
@@ -743,12 +740,12 @@ module roller_base(twod=false,
         mirror([0,k,0]){
           if(yextra>s)
             translate([-14, -k*yextra, mounting_screw_z])
-              Mounting_screw_countersink();
+              Mounting_screw();
           else
             translate([-14, 0, mounting_screw_z])
-              Mounting_screw_countersink();
+              Mounting_screw();
           translate([0,-14-k*yextra-base_extra_w/2 - (1-k)*wing, mounting_screw_z])
-            Mounting_screw_countersink();
+            Mounting_screw();
           translate([-d/2-5,5,5+Base_th])
             rotate([90,0,0])
             cylinder(r=5, h=50, center=true,$fn=4*5);
@@ -784,12 +781,12 @@ module roller_base(twod=false,
           mirror([0,k]){
             if(yextra>s)
               translate([-14,-k*yextra])
-                Mounting_screw_countersink(twod=true);
+                Mounting_screw(twod=true);
             else
               translate([-14,0])
-                Mounting_screw_countersink(twod=true);
+                Mounting_screw(twod=true);
             translate([0,-14-k*yextra-base_extra_w/2-(1-k)*wing])
-              Mounting_screw_countersink(twod=true);
+              Mounting_screw(twod=true);
           }
         }
       }

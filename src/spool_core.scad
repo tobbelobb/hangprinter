@@ -64,7 +64,7 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
               rounded_spectri(2*bearing_z/sqrt(3)-4, w+1, 3, $fn=12*3);
           translate([cubex/2 + w/2 - 1, between/2 + w/2, 0.6])
             rotate([0,0,90])
-              Mounting_screw_countersink();
+              Mounting_screw();
         }
     }
 
@@ -83,7 +83,7 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
       for(k=[0,1])
         mirror([k,0])
           translate([-cubex/2 - w/2 + 1, between/2 + w/2])
-            Mounting_screw_countersink(twod=true);
+            Mounting_screw(twod=true);
     }
   }
 }

@@ -135,9 +135,9 @@ module belt_roller(twod = true){
         M3_screw(h=Belt_roller_h);
 
       translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2,0.5])
-        Mounting_screw_countersink();
+        Mounting_screw();
       translate([-Depth_of_roller_base/2-flerp/2,0,0.5])
-        Mounting_screw_countersink();
+        Mounting_screw();
       translate([-Depth_of_roller_base/2, Belt_roller_space_between_walls/2+Belt_roller_wall_th, Base_th])
         rotate([0,0,89.9])
           corner_rounder(r1=2, r2=2, sq=[10,Belt_roller_h], angle=90.2);
@@ -157,9 +157,9 @@ module belt_roller(twod = true){
           left_rounded_cube2_2d([Depth_of_roller_base+flerp, Belt_roller_space_between_walls+2*Belt_roller_wall_th], r=3, $fn=4*5);
       }
       translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2])
-        Mounting_screw_countersink(twod=twod);
+        Mounting_screw(twod=twod);
       translate([-Depth_of_roller_base/2-flerp/2,0])
-        Mounting_screw_countersink(twod=twod);
+        Mounting_screw(twod=twod);
     }
   }
 }
@@ -575,13 +575,13 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
           }
         }
         translate([-12,0,0.5])
-          Mounting_screw_countersink();
+          Mounting_screw();
         translate([36-1.5-15+3,38,0.5])
-          Mounting_screw_countersink();
-        translate([36-1.5,-38,0.5])
-          Mounting_screw_countersink();
+          Mounting_screw();
+        translate([36-1.5,-38,0.3])
+          Mounting_screw();
         translate([36-1.5-15+3,-38,0.5])
-          Mounting_screw_countersink();
+          Mounting_screw();
         translate([0,0,-1])
           linear_extrude(height=Base_th+2)
             placed_text();
@@ -597,13 +597,13 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
           base_hull_2d();
         }
         translate([-12,0,0])
-          Mounting_screw_countersink(twod=twod);
+          Mounting_screw(twod=twod);
         translate([36-1.5-15+3,38,0])
-          Mounting_screw_countersink(twod=twod);
+          Mounting_screw(twod=twod);
         translate([36-1.5,-38,0])
-          Mounting_screw_countersink(twod=twod);
+          Mounting_screw(twod=twod);
         translate([36-1.5-15+3,-38,0])
-          Mounting_screw_countersink(twod=twod);
+          Mounting_screw(twod=twod);
         placed_text();
       }
     }

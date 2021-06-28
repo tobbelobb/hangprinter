@@ -84,10 +84,10 @@ module landing_bracket_a(tunnel=true, twist=0, rightside=1, twod=false){
             ydir_rounded_cube2([th2, th + (th2-th)/2, 5], r=5.5, $fn=13*4);
           for(k=[0,rightside])
             mirror([k,0]){
-              translate([th2/2-5.5,th/2 +  (th2-th)/2 - 5.5,3])
-                Mounting_screw_countersink();
-              translate([th2/2-5.5, 2 ,3])
-                Mounting_screw_countersink();
+              translate([th2/2-5.5,th/2 +  (th2-th)/2 - 5.5,3.3])
+                Mounting_screw();
+              translate([th2/2-5.5, 2 ,3.3])
+                Mounting_screw();
             }
         }
 
@@ -112,9 +112,9 @@ module landing_bracket_a(tunnel=true, twist=0, rightside=1, twod=false){
       for(k=[0,rightside])
         mirror([k,0]){
           translate([th2/2-5.5,th/2 +  (th2-th)/2 - 5.5])
-            Mounting_screw_countersink(twod);
+            Mounting_screw(twod);
           translate([th2/2-5.5, 2])
-            Mounting_screw_countersink(twod);
+            Mounting_screw(twod);
         }
     }
     //color("sandybrown")

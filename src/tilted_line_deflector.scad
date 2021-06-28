@@ -74,7 +74,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true){
                 translate([cx/2,5,Base_th])
                   corner_rounder();
                 translate([cx/2+pl,ybit_hole,0.5])
-                  Mounting_screw_countersink();
+                  Mounting_screw();
               }
             }
         }
@@ -159,7 +159,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true){
         for(k=[0,1])
           mirror([k,0])
             translate([cx/2+pl,ybit_hole])
-              Mounting_screw_countersink(twod=true);
+              Mounting_screw(twod=true);
       }
     }
   }

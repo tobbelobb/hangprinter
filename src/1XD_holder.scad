@@ -26,10 +26,10 @@ difference(){
   translate([3.5+12,1,9.5-3.5])
     rotate([90,0,0])
       M3_nut(h=2);
-  translate([5, 12-5, 0])
-    Mounting_screw_countersink();
-  translate([50+2*12-5, 12-5, 0])
-    Mounting_screw_countersink();
+  translate([5, 12-5, 0.3])
+    Mounting_screw();
+  translate([50+2*12-5, 12-5, 0.3])
+    Mounting_screw();
   translate([17, 4, -1])
     ymdir_rounded_cube2([50+2*12-2*17, 8.1, 5], r=2, $fn=10*4);
   translate([17, 12, -1])
