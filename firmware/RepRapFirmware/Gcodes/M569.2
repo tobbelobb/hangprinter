@@ -4,17 +4,21 @@
 Tell one or more motor drivers to apply a specified torque regardless of position.
 
 ;Parameters
-:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number
-:<code>Tn</code> Where n is the mode/torque to apply.
+:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Can also be a colon separated list of driver numbers.
+:<code>Tn</code> Where n is the mode/torque to apply in units of Nm.
 
-If no parameter is supplied then no action is taken.
-The driver is put back into position mode by requesting a torque of exactly 0.
-Torque is interpreted as having units of Nm.
-Several different driver/torque pairs may be set by specifying them in sequence.
+If <code>P</code> or <code>T</code> parameter is missing, then no action is taken.
+The driver is put back into position mode by requesting a torque smaller than 0.0001 Nm.
 
 ;Examples
- M569.2 P2 T-1.0      ; Sets driver 2 into torque mode with -1.0 Nm of torque.
- M569.2 P0 T1.5 P2 T0 ; Sets driver 0 into torque mode with 1.5 Nm of torque, and sets driver 2 into position mode.
+ M569.2
+<tt>Error: M569: missing parameter 'P'</tt>
+ M569.2 P50.0:51.0
+<tt>Error: M569: missing parameter 'T'</tt>
+ M569.2 P50.0 T0.001
+<tt>0.001000 Nm,</tt>
+ M569.2 P50.0:51.0 T0
+<tt>pos_mode, pos_mode,</tt>
 
 ;Notes
 Hangprinter's "torque mode" will be implemented as a ReprapFirmware macro that depends on M569.2.
