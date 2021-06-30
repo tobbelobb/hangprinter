@@ -51,7 +51,7 @@ rotate([0,90,0])
 translate([-b623_vgroove_small_r,0,0])
 line_verticalizer(with_bearing=false);
 module line_verticalizer(twod = false, with_bearing = false){
-  wall_th = Line_roller_wall_th+1.0;
+  wall_th = Line_roller_wall_th+1.6;
   base_extra_w = b623_width+2;
   eyelet_holder_h = min(9, tower_h-Base_th-2*(b623_vgroove_big_r+b623_vgroove_room_to_grow_r));
   if(!twod){
@@ -77,10 +77,10 @@ module line_verticalizer(twod = false, with_bearing = false){
           eyelet(h=11);
         translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2, tower_h-eyelet_holder_h-0.01])
           cylinder(d1=Eyelet_diameter*1.4, d2=Eyelet_diameter*0.9, h=2);
-        translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2-b623_width-1, tower_h-3.7])
+        translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2-b623_width-2.1, tower_h-3.7])
           eyelet(h=11);
         bigr=25;
-        translate([-b623_vgroove_small_r - Eyelet_extra_dist + 0.1, -1-b623_width-1-b623_width/2,tower_h-3.5])
+        translate([-b623_vgroove_small_r - Eyelet_extra_dist + 0.1, -1-b623_width-2.1-b623_width/2,tower_h-3.5])
           rotate([0,0,90])
             translate([0,bigr,0])
               rotate([0,90,0])
