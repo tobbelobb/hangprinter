@@ -281,8 +281,14 @@ module line_roller_double_with_bearings(){
   if(!twod){
     for(y=[0,Spool_height + GT2_gear_height])
       translate([0,-y,bearing_center_z])
+		mirror([0,y,0])
         rotate([90,0,0])
         translate([0,0,0.1])
+        rotate([-90,0,0])
+        translate([0,0,-(b623_vgroove_small_r+Eyelet_extra_dist)])
+        rotate([-10,0,0])
+        translate([0,0,(b623_vgroove_small_r+Eyelet_extra_dist)])
+        rotate([90,0,0])
         b623_vgroove();
   }
 }
@@ -357,7 +363,7 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
   }
 
   module motor(ang=0) {
-    if(!twod)
+    if (!twod)
       translate([-13.5,-33,35])
         rotate([ang,0,0])
           import("../stl/for_render/whitelabel_motor.stl");
@@ -769,7 +775,7 @@ module ceiling_unit_internal_lines_v4p1(){
       line_from_to([lx3+k, aspool_y, hz],
                    [lx3+k, aspool_y-aspool_lineroller_y, hz]);
       line_from_to([lx3+k, aspool_y-aspool_lineroller_y+3, hz],
-                   [lx3+k, aspool_y+190, 100+hz]);
+                   [lx3+k+(k-spd/2), aspool_y+190, 100+hz]);
     }
   }
 
