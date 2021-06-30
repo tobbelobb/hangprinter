@@ -379,14 +379,14 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
       mirror([1,0,0])
         motor();
     else if(B)
-      motor(180);
-    else if(C)
       mirror([1,0,0])
         motor(180);
+    else if(C)
+      motor(180);
     else if(D)
       motor();
 
-  if (A || C)
+  if (A || B)
     mirror([1,0,0])
       gear();
   else
@@ -450,15 +450,15 @@ module line_guides_BC(){
 //!sandwich_and_motor_B();
 module sandwich_and_motor_B(){
   sandwich_and_motor_ABC(B=true);
-  line_guides_BC();
+  mirror([0,1,0])
+    line_guides_BC();
 }
 
 
 //!sandwich_and_motor_C();
 module sandwich_and_motor_C(){
   sandwich_and_motor_ABC(C=true);
-  mirror([0,1,0])
-   line_guides_BC();
+ line_guides_BC();
 }
 
 
@@ -484,11 +484,11 @@ module full_winch(){
 
   translate([-bc_x_pos,y,0])
     rotate([0,0,90])
-    sandwich_and_motor_B();
+    sandwich_and_motor_C();
 
   translate([bc_x_pos,y,0])
     rotate([0,0,90])
-    sandwich_and_motor_C();
+    sandwich_and_motor_B();
 
   translate([-sep/2-extra_space_in_middle,dspool_y,0])
     rotate([0,0,-90])
