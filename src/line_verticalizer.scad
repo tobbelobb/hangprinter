@@ -34,22 +34,6 @@ module v_roller_wall_pair(space_between_walls, wall_th, height, rot_nut=0, base_
 }
 
 
-//!local_eyelet();
-module local_eyelet(){
-  $fn=24;
-  hi = 3.45;
-  color("sandybrown")
-  difference(){
-    union(){
-      cylinder(d=Eyelet_diameter,h=hi);
-      translate([0,0,hi-1])
-        cylinder(d=4.66, h=1);
-    }
-    translate([0,0,-1])
-      cylinder(d=1.75,h=hi+2);
-  }
-}
-
 space_between_walls = 2*b623_width + 0.8 + 2;
 tower_h = Line_roller_ABC_winch_h;
 
@@ -67,7 +51,7 @@ rotate([0,90,0])
 translate([-b623_vgroove_small_r,0,0])
 line_verticalizer(with_bearing=false);
 module line_verticalizer(twod = false, with_bearing = false){
-  wall_th = Line_roller_wall_th;
+  wall_th = Line_roller_wall_th+1.0;
   base_extra_w = b623_width+2;
   eyelet_holder_h = min(9, tower_h-Base_th-2*(b623_vgroove_big_r+b623_vgroove_room_to_grow_r));
   if(!twod){
@@ -96,7 +80,7 @@ module line_verticalizer(twod = false, with_bearing = false){
         translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2-b623_width-1, tower_h-3.7])
           eyelet(h=11);
         bigr=25;
-        translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width-1-b623_width/2,tower_h-3.5])
+        translate([-b623_vgroove_small_r - Eyelet_extra_dist + 0.1, -1-b623_width-1-b623_width/2,tower_h-3.5])
           rotate([0,0,90])
             translate([0,bigr,0])
               rotate([0,90,0])

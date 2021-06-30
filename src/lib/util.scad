@@ -505,8 +505,8 @@ module hexagon_for_nut(h = 1.5){
   }
 }
 
-module eyelet(h, center=false){
-  cylinder(d=Eyelet_diameter, h=h, center=center, $fn=10);
+module eyelet(h, center=false, d=Eyelet_diameter){
+  cylinder(d=d, h=h, center=center, $fn=10);
 }
 
 module teardrop(r=10, h=10){
