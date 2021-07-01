@@ -1,4 +1,4 @@
-==== M569.2: Set Motor Driver Torque Mode ====
+==== M569.4: Set Motor Driver Torque Mode ====
 {{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{yes}}<sup>1</sup> | bfb={{no}} | grbl={{no}} | makerbot={{no}} | machinekit={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} }}
 
 Tell one or more motor drivers to apply a specified torque regardless of position.
@@ -11,13 +11,13 @@ If <code>P</code> or <code>T</code> parameter is missing, then no action is take
 The driver is put back into position mode by requesting a torque smaller than 0.0001 Nm.
 
 ;Examples
- M569.2
+ M569.4
 <tt>Error: M569: missing parameter 'P'</tt>
- M569.2 P50.0:51.0
+ M569.4 P50.0:51.0
 <tt>Error: M569: missing parameter 'T'</tt>
- M569.2 P50.0 T0.001
+ M569.4 P50.0 T0.001
 <tt>0.001000 Nm,</tt>
- M569.2 P50.0:51.0 T0
+ M569.4 P50.0:51.0 T0
 <tt>pos_mode, pos_mode,</tt>
 
 ;Notes
