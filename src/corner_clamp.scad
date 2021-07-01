@@ -376,7 +376,14 @@ module corner_clamp(){
           translate([0,Cc_action_point_from_mid,0])
           rotate([0,0,-60])
           translate([-d/2,2,0]){
-            rounded_cube2([d, ears_y,wth], 5, $fn=4*8);
+		    difference(){
+              rounded_cube2([d, ears_y,wth], 5, $fn=4*8);
+              translate([d/2,20,0])
+                rotate([0,0,-90])
+                translate([0,0, lower_bearing_z - b623_vgroove_small_r - Eyelet_extra_dist])
+                rotate([0,90,0])
+                eyelet(h=6, center=true);
+			}
             corner_clamp_tower();
             translate([d,5.5,0])
               inner_round_corner(8, wth+1.5, 90, 2, $fn=80);
