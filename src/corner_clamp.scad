@@ -46,7 +46,11 @@ module small_wall(){
         cylinder(d=6, h=1);
       translate([-box_x/2, 0.5, -big_r + box_z - small_r])
         rotate([90,0,180])
-        inner_round_corner(r=big_r, h=box_x, $fn=300);
+		difference(){
+          inner_round_corner(r=big_r, h=box_x, $fn=300);
+		  translate([0,-21.7,0])
+		  cube(100, center=true);
+		}
     }
     translate([0,big_r+wth_at_thinnest+0.5, thinnest_z])
       rotate([0,90,0])
