@@ -79,7 +79,7 @@ module line_verticalizer(twod = false, with_bearing = false){
           cylinder(d1=Eyelet_diameter*1.4, d2=Eyelet_diameter*0.9, h=2);
         translate([-b623_vgroove_small_r - Eyelet_extra_dist, -1-b623_width/2-b623_width-2.1, tower_h-3.7])
           eyelet(h=11);
-        bigr=25;
+        bigr=23;
         translate([-b623_vgroove_small_r - Eyelet_extra_dist + 0.1, -1-b623_width-2.1-b623_width/2,tower_h-3.5])
           rotate([0,0,90])
             translate([0,bigr,0])
@@ -87,7 +87,7 @@ module line_verticalizer(twod = false, with_bearing = false){
                 rotate([0,0,220])
                   rotate_extrude(angle=90, $fn=20)
                     translate([bigr,0,0])
-                      circle(d=2);
+                      circle(d=3);
 
       }
       for(k=[0,1]) mirror([0,k,0])
