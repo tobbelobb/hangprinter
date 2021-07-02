@@ -177,6 +177,12 @@ $(STL_DIR)/line_roller_anchor.stl: $(SRC_DIR)/line_roller_anchor.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/line_roller_anchor_mirrored.stl: $(SRC_DIR)/line_roller_anchor_mirrored.scad \
+	$(SRC_DIR)/line_roller_anchor.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 $(STL_DIR)/line_roller_anchor_template.stl: $(SRC_DIR)/line_roller_anchor_template.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad \
@@ -286,6 +292,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/horizontal_line_deflector.stl \
 	$(STL_DIR)/landing_brackets.stl \
 	$(STL_DIR)/line_roller_anchor.stl \
+	$(STL_DIR)/line_roller_anchor_mirrored.stl \
 	$(STL_DIR)/line_roller_anchor_template.stl \
 	$(STL_DIR)/line_roller_double.stl \
 	$(STL_DIR)/line_verticalizer.stl \
