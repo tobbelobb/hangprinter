@@ -48,9 +48,10 @@ module tower() {
             translate([-Depth_of_roller_base+down_from_top,-Depth_of_roller_base/2,-b623_width/2-shoulder-Line_roller_wall_th])
               translate([-2, -4, Line_roller_wall_th])
                 cube([Depth_of_roller_base, Depth_of_roller_base+2, b623_width + 2*shoulder]);
-            rotate([0,0,45])
+            rotate([0,0,48])
               translate([b623_vgroove_small_r + Eyelet_extra_dist,0,0])
                 rotate([90,0,0])
+                  scale([1.1,1,1])
                   cylinder(d1=0.3, d2=21.15, h=16);
           }
           translate([0,0,b623_width/2])
@@ -150,7 +151,7 @@ module eiffel(){
           translate([w_small-1.5,2.5])
           circle(r=2, $fn=4*6);
           translate([1.5,2.5])
-          circle(r=2, $fn=4*6);
+          #circle(r=2, $fn=4*6);
         }
       }
     }
@@ -159,7 +160,8 @@ module eiffel(){
 module vertical_screws(){
   for(k=[0,1]) mirror([k,0,0]) {
     translate([3.2,front+3.3/2+1.36/2,7+Corner_clamp_bearings_center_to_center-7]){
-      M3_screw(h=30);
+      translate([0,0,-3])
+        M3_screw(h=50);
       translate([0,0.3,0])
       hull(){
         rotate([0,0,30])
