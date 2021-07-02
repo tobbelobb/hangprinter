@@ -151,7 +151,7 @@ module eiffel(){
           translate([w_small-1.5,2.5])
           circle(r=2, $fn=4*6);
           translate([1.5,2.5])
-          #circle(r=2, $fn=4*6);
+          circle(r=2, $fn=4*6);
         }
       }
     }
@@ -175,6 +175,17 @@ module vertical_screws(){
 
 }
 
+module top(){
+  difference(){
+    intersection(){
+      eiffel();
+      cutoff_cube();
+    }
+    vertical_screws();
+    action_points();
+  }
+}
+
 newer_line_roller_anchor();
 module newer_line_roller_anchor(){
   difference(){
@@ -191,17 +202,8 @@ module newer_line_roller_anchor(){
     cutoff_cube();
     vertical_screws();
   }
+
+  translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_vgroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])
+    top();
 }
 
-translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_vgroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])
-top();
-module top(){
-  difference(){
-    intersection(){
-      eiffel();
-      cutoff_cube();
-    }
-    vertical_screws();
-    action_points();
-  }
-}
