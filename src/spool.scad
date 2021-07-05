@@ -18,7 +18,7 @@ module spool_outer(spools = 1){
     }
     for(s=[0:spools-1]){
       for(v=[0:120:359])
-        rotate([0,0,v + 30*s])
+        rotate([0,0,v + 30*s + 30])
           translate([0, Spool_r/2, 1+Spool_height/2 + s*(1 + Spool_height)])
             rotate([-90,00,0])
               for(i=[-2.2,2.2])

@@ -21,31 +21,55 @@ module spool_center(){
     translate([0,0,-1])
       cylinder(d1=b608_outer_dia+1.5, d2=b608_outer_dia-0.1,h=1.5);
   }
+  difference(){
+    cylinder(r=Spool_r-1, h=0.2);
+    translate([0,0,-1])
+      cylinder(r=13, h=2.2);
+  }
+  trout=40;
   for(a=[0:360/6:359]){
     rotate([0,0,a]){
-    translate([b608_outer_dia/2+bearing_wall_th-1,-ek_w/2,0])
-      cube([(Spool_r-bearing_wall_th-b608_outer_dia/2), ek_w, center_h]);
+      translate([b608_outer_dia/2+bearing_wall_th-1,0,0])
+      rotate([0,0,-90])
+      translate([-trout-ek_w/2,0,0])
+      rotate_extrude(angle=86, $fn=100)
+      translate([trout, 0])
+      square([ek_w, center_h]);
     }
   }
   difference(){
     for(a=[0:360/6:359])
       rotate([0,0,a]){
-        translate([Spool_r-Spool_outer_wall_th-4, -ek_w/2,0])
-          cube([5,ek_w,center_h+4]);
         for(m=[0,1])
           mirror([0,m,0]){
-            translate([Spool_r-Spool_outer_wall_th-0.37,ek_w/2,0])
-              rotate([0,0,90])
-                inner_round_corner(r=2, h=Spool_height+Torx_depth, back=0.4, $fn=4*6);
             translate([b608_outer_dia/2+bearing_wall_th-0.95, ek_w/2-0.2,0])
-              rotate([0,0,eang/2])
-                inner_round_corner(r=2, h=center_h, ang=90-eang, $fn=4*5);
+            rotate([0,0,eang/2])
+            inner_round_corner(r=2, h=center_h, ang=90-eang, $fn=4*5);
+          }
+
+          rotate([0,0,34]){
+            translate([Spool_r-Spool_outer_wall_th-4, -ek_w*1.2,0])
+              cube([5,ek_w*2.1,center_h+4]);
           }
       }
     translate([0,0,Spool_height+Torx_depth])
       rotate_extrude($fn=100)
         translate([Spool_r-Spool_outer_wall_th-4,0])
           circle(r=4,$fn=40);
+    for(a=[0:360/6:359]){
+      rotate([0,0,a]){
+        translate([b608_outer_dia/2+bearing_wall_th-1,0,0])
+        rotate([0,0,-90])
+        translate([-trout-ek_w/2,0,-1])
+        rotate([0,0,3*360/100])
+        rotate_extrude(angle=92, $fn=100){
+          translate([trout+ek_w, 0])
+            square([ek_w, center_h*2]);
+          translate([trout-ek_w, 0])
+            square([ek_w, center_h*2]);
+        }
+      }
+    }
   }
 }
 
