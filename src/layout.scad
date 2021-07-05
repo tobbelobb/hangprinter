@@ -12,7 +12,7 @@ use <landing_brackets.scad>
 use <line_roller_anchor.scad>
 use <line_roller_double.scad>
 use <line_verticalizer.scad>
-use <mirrored_spool_cover.scad>
+use <spool_cover_mirrored.scad>
 use <motor_bracket_A.scad>
 use <motor_bracket_B.scad>
 use <motor_bracket_C.scad>
@@ -251,8 +251,8 @@ module sandwich_ABC(){
   color(color1, spool_cover_alpha)
     translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
       rotate([0,0,90])
-        if (stls) import("../stl/mirrored_spool_cover.stl");
-        else mirrored_spool_cover();
+        if (stls) import("../stl/spool_cover_mirrored.stl");
+        else spool_cover_mirrored();
 }
 
 //!belt_roller_bearings();

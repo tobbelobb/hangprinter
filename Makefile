@@ -242,7 +242,7 @@ $(STL_DIR)/spool_cover.stl: $(SRC_DIR)/spool_cover.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/mirrored_spool_cover.stl: $(SRC_DIR)/mirrored_spool_cover.scad \
+$(STL_DIR)/spool_cover_mirrored.stl: $(SRC_DIR)/spool_cover_mirrored.scad \
 	$(SRC_DIR)/spool_cover.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
@@ -303,7 +303,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/line_roller_anchor_template.stl \
 	$(STL_DIR)/line_roller_double.stl \
 	$(STL_DIR)/line_verticalizer.stl \
-	$(STL_DIR)/mirrored_spool_cover.stl \
+	$(STL_DIR)/spool_cover_mirrored.stl \
 	$(STL_DIR)/motor_bracket_A.stl \
 	$(STL_DIR)/motor_bracket_B.stl \
 	$(STL_DIR)/motor_bracket_C.stl \
