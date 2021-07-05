@@ -254,6 +254,13 @@ $(STL_DIR)/spool.stl: $(SRC_DIR)/spool.scad \
 	$(SRC_DIR)/lib/gear_util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/spool_mirrored.stl: $(SRC_DIR)/spool_mirrored.scad \
+	$(SRC_DIR)/spool.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad \
+	$(SRC_DIR)/lib/gear_util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 $(STL_DIR)/tilted_line_deflector.stl: $(SRC_DIR)/tilted_line_deflector.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
@@ -306,6 +313,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/spool_core.stl \
 	$(STL_DIR)/spool_cover.stl \
 	$(STL_DIR)/spool.stl \
+	$(STL_DIR)/spool_mirrored.stl \
 	$(STL_DIR)/tilted_line_deflector_mirrored.stl \
 	$(STL_DIR)/tilted_line_deflector.stl \
 	$(STL_DIR)/ziptie_tensioner_wedge.stl \
