@@ -303,7 +303,6 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/line_roller_anchor_template.stl \
 	$(STL_DIR)/line_roller_double.stl \
 	$(STL_DIR)/line_verticalizer.stl \
-	$(STL_DIR)/spool_cover_mirrored.stl \
 	$(STL_DIR)/motor_bracket_A.stl \
 	$(STL_DIR)/motor_bracket_B.stl \
 	$(STL_DIR)/motor_bracket_C.stl \
@@ -312,6 +311,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/sep_disc.stl \
 	$(STL_DIR)/spool_core.stl \
 	$(STL_DIR)/spool_cover.stl \
+	$(STL_DIR)/spool_cover_mirrored.stl \
 	$(STL_DIR)/spool.stl \
 	$(STL_DIR)/spool_mirrored.stl \
 	$(STL_DIR)/tilted_line_deflector_mirrored.stl \
