@@ -32,12 +32,8 @@ module spool_cover(tot_height=Spool_cover_tot_height, bottom_th=Spool_cover_bott
         for(ang=[90+45, 180+45])
           rotate([0,0,ang])
             translate([outer_r+(M3_screw_head_d+3)/2, 0, 0]){
-              translate([0,0,-tot_height/2-1])
-                nut(h=tot_height);
-              translate([0,0,tot_height-tot_height/2+1])
-                nut(h=tot_height);
-              translate([0,0,2])
-                M3_screw(h=tot_height);
+              translate([0,0,-2])
+                M3_screw(h=tot_height+4);
             }
         translate([0,0,bottom_th])
           cylinder(r = outer_r - 1, h=tot_height, $fn=150);
