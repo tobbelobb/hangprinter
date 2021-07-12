@@ -8,9 +8,9 @@ use <spool_core.scad>
 //    spool_cover();
 spool_cover();
 module spool_cover(tot_height=Spool_cover_tot_height, bottom_th=Spool_cover_bottom_th){
-  opening_width = 60;
+  opening_width = 42;
   rot = 150 - opening_width;
-  outer_r = Sep_disc_radius + 2;
+  outer_r = Spool_cover_outer_r;
   space_for_belt_roller = 12;
   difference(){
     union(){
@@ -26,8 +26,22 @@ module spool_cover(tot_height=Spool_cover_tot_height, bottom_th=Spool_cover_bott
               }
           translate([0,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
             right_rounded_cube2([Sep_disc_radius + Gap_between_sandwich_and_plate, Spool_core_tot_length - space_for_belt_roller, tot_height], 3, $fn=24);
-          translate([Sep_disc_radius+1,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
-            cube([Gap_between_sandwich_and_plate-1, (Spool_core_tot_length - space_for_belt_roller)/2, tot_height+GT2_gear_height/2]);
+
+          difference(){
+            translate([Sep_disc_radius+Gap_between_sandwich_and_plate-30,0,0])
+              one_rounded_cube2_2([30, (Spool_core_tot_length - space_for_belt_roller)/2, tot_height+GT2_gear_height/2], 3, $fn=24);
+            translate([Sep_disc_radius+Gap_between_sandwich_and_plate-30,0,0])
+            translate([0,-1,tot_height+GT2_gear_height/2])
+              translate([27,0,0])
+              rotate([0,-9,0])
+              translate([-28,0,0])
+              cube([40, 70, 20]);
+            translate([Sep_disc_radius+Gap_between_sandwich_and_plate-30,0,0])
+            translate([0,-1,0])
+              cube([27.0,40.5,40]);
+          }
+          translate([Sep_disc_radius+0.5,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
+            cube([Gap_between_sandwich_and_plate-0.5, (Spool_core_tot_length - space_for_belt_roller)/2, tot_height+GT2_gear_height/2]);
         }
         for(ang=[90+45, 180+45])
           rotate([0,0,ang])
@@ -36,10 +50,13 @@ module spool_cover(tot_height=Spool_cover_tot_height, bottom_th=Spool_cover_bott
                 M3_screw(h=tot_height+4);
             }
         translate([0,0,bottom_th])
-          cylinder(r = outer_r - 1, h=tot_height, $fn=150);
-        rotate_extrude(angle=opening_width, $fn=150)
-          translate([outer_r-3, bottom_th])
-            square([50,tot_height]);
+          cylinder(r = outer_r - 1.5, h=tot_height, $fn=150);
+        //rotate([0,0,opening_width])
+        //#rotate_extrude(angle=opening_width, $fn=150)
+        //  translate([outer_r-3, bottom_th])
+        //    square([50,tot_height]);
+        translate([72.5,0,bottom_th+Spool_cover_shoulder+1])
+          cube([outer_r-74,100,Spool_height]);
         translate([Sep_disc_radius+Gap_between_sandwich_and_plate, -Spool_core_tot_length/2+space_for_belt_roller/2, -1])
           rotate([0,0,90])
             inner_round_corner(r=3, h=tot_height+GT2_gear_height/2+2, $fn=24);
@@ -48,5 +65,21 @@ module spool_cover(tot_height=Spool_cover_tot_height, bottom_th=Spool_cover_bott
     }
     translate([0,0,-1])
       cylinder(d = 8.3, h=tot_height, $fn=24);
+
+    translate([0,0,tot_height])
+      cylinder(r=Sep_disc_radius+1.5, h=7, $fn=150);
+
+    //for(a=[30:360/6:359])
+    //  rotate([0,0,a])
+    //for(a=[0:360/6:359])
+    //  rotate([0,0,a]){
+    //    for(i=[0:6])
+    //      rotate([0,0,30*(i%2)])
+    //      translate([18+8*i+i, 0, -1])
+    //      cylinder(d=11+i, h=4);
+    //  }
+
   }
+//%translate([0,0,tot_height])
+//import("../stl/GT2_spool_gear.stl");
 }
