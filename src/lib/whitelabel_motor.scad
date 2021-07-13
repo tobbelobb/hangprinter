@@ -1,5 +1,6 @@
 include <parameters.scad>
 use <util.scad>
+use <spool_core.scad>
 
 base_ywidth = 84;
 
@@ -22,11 +23,6 @@ module belt_roller(twod = true){
   if(!twod){
     difference(){
       union(){
-        // base
-        translate([-Depth_of_roller_base/2, 0,0])
-          ydir_rounded_cube2([Depth_of_roller_base, Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp, Base_th], r=3, $fn=4*5);
-        translate([-(Depth_of_roller_base/2+flerp), -(Belt_roller_space_between_walls+2*Belt_roller_wall_th)/2,0])
-          left_rounded_cube2([Depth_of_roller_base+flerp, Belt_roller_space_between_walls+2*Belt_roller_wall_th, Base_th], r=3, $fn=4*5);
         // tower
         difference(){
           union(){
@@ -41,7 +37,7 @@ module belt_roller(twod = true){
             translate([-Depth_of_roller_base/2, (Belt_roller_space_between_walls+2*Belt_roller_wall_th)/2, Base_th])
               rotate([90,0,0])
                 rotate([0,0,90])
-                  inner_round_corner(h=Belt_roller_space_between_walls+2*Belt_roller_wall_th+2, r=2, $fn=5*4);
+                  inner_round_corner(h=Belt_roller_space_between_walls+2*Belt_roller_wall_th+7, r=2, $fn=5*4);
 
             for(k=[0,1]) mirror([0,k,0])
               translate([-Depth_of_roller_base/2, Belt_roller_space_between_walls/2+Belt_roller_wall_th,0])
@@ -65,12 +61,9 @@ module belt_roller(twod = true){
               }
             }
           }
-          translate([-Depth_of_roller_base/2-10, -(Belt_roller_space_between_walls+2*Belt_roller_wall_th)/2, Base_th])
-            rotate([0,90,0])
-              rotate([0,0,181])
-                corner_rounder(r1=0, r2=2, angle=88);
-          translate([-Depth_of_roller_base/2-2, -(Belt_roller_space_between_walls+2*Belt_roller_wall_th)/2-2, 0])
-            cylinder(r=2, h=Base_th+2, $fn=4*5);
+          translate([-Depth_of_roller_base/2, -(Belt_roller_space_between_walls+2*Belt_roller_wall_th)/2-5, Base_th])
+            rotate([0,0,180])
+              corner_rounder(r1=2, r2=2, angle=90);
           opening_ang = 12;
           opening_len = 11;
           for(k=[0,1]) mirror([0, k,0])
@@ -134,10 +127,6 @@ module belt_roller(twod = true){
       translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y,-5])
         M3_screw(h=Belt_roller_h);
 
-      translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2,0.5])
-        Mounting_screw();
-      translate([-Depth_of_roller_base/2-flerp/2,0,0.5])
-        Mounting_screw();
       translate([-Depth_of_roller_base/2, Belt_roller_space_between_walls/2+Belt_roller_wall_th, Base_th])
         rotate([0,0,89.9])
           corner_rounder(r1=2, r2=2, sq=[10,Belt_roller_h], angle=90.2);
@@ -522,20 +511,68 @@ motor_bracket_ypos = -33;
 // or some kind of build system when compiling
 // those stls. Doing it by hand easily leads to mistakes.
 
-module base_hull_2d(){
+module base_hull_2d(isD = false){
   $fn=4*6;
+  pos0 = [73.5,53,0];
+  pos0D = [73.5 + (Sandwich_D_width - Sandwich_ABC_width),53,0];
+
+  pos1 = [32-1.5-15+3,53,0];
+  pos2 = [-12,0,0];
+  pos3 = [36-1.5,53,0];
+  pos4 = [36-1.5,-38,0];
+  pos5 = [36-1.5-15+3,-38,0];
+  pos6 = [68.5,40,0];
+  pos7 = [36,40,0];
+  pos8 = [69.5,27,0];
+  pos9 = [36,28,0];
+  pos10 = [36,40,0];
   hull(){
-    translate([-12,0,0])
+    translate(pos6)
       circle(r=4);
-    translate([36-1.5,38,0])
+    translate(pos8)
+      circle(r=3);
+    translate(pos9)
       circle(r=4);
-    translate([36-1.5-15+3,38,0])
-      circle(r=4);
-    translate([36-1.5,-38,0])
-      circle(r=4);
-    translate([36-1.5-15+3,-38,0])
+    translate(pos10)
       circle(r=4);
   }
+  hull(){
+    if (isD)
+      translate(pos0D)
+        circle(r=4);
+    else
+      translate(pos0)
+        circle(r=4);
+    translate(pos6)
+      circle(r=4);
+    translate(pos7)
+      circle(r=4);
+    translate(pos1)
+      circle(r=4);
+  }
+  hull(){
+    translate(pos2)
+      circle(r=4);
+    translate(pos3)
+      circle(r=4);
+    translate(pos1)
+      circle(r=4);
+    translate(pos4)
+      circle(r=4);
+    translate(pos5)
+      circle(r=4);
+  }
+}
+
+//spool_legs();
+module spool_legs(isD = false){
+  translate([0,Belt_roller_bearing_xpos,0])
+    rotate([0,0,90])
+    if (isD)
+      translate([0,-(Sandwich_D_width - Sandwich_ABC_width)/2, 0])
+      spool_cores(twod=false, between=Sandwich_D_width + 2*Spool_core_cover_adj);
+    else
+      spool_cores(twod=false, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
 }
 
 //mirror([1,0,0])
@@ -552,11 +589,14 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
         }
   }
 
+  translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,153.5,0])
+    cube([Sandwich_ABC_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+
   translate([motor_bracket_xpos, motor_bracket_ypos, 0]) {
   if(!twod) {
       difference(){
         union(){
-          linear_extrude(height=Base_th) base_hull_2d();
+          linear_extrude(height=Base_th) base_hull_2d(text == "D");
           translate([36-1.5, 36, 0])
             cube([6, 6, Base_th]);
           translate([0,0,35]){
@@ -575,6 +615,12 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
           }
         }
         translate([-12,0,0.5])
+          Mounting_screw();
+
+        flerp=15;
+        translate([-motor_bracket_xpos, -motor_bracket_ypos, 0])
+        rotate([0,0,-90])
+        translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2,0.5])
           Mounting_screw();
         translate([36-1.5-15+3,38,0.5])
           Mounting_screw();
@@ -611,4 +657,5 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
 
   rotate([0,0,-90])
     belt_roller(twod=twod);
+  spool_legs(text == "D");
 }

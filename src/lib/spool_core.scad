@@ -1,5 +1,5 @@
-include <lib/parameters.scad>
-use <lib/util.scad>
+include <parameters.scad>
+use <util.scad>
 
 bearing_z = Sep_disc_radius+Gap_between_sandwich_and_plate;
 
@@ -19,9 +19,9 @@ module placed_sandwich_ABC(){
 //spool_core_halve();
 //%rotate([90,0,0])
 //import("../stl/spool_core.stl");
-rotate([-90,0,0])
-spool_core_halve(false, Sandwich_ABC_width);
-module spool_core_halve(twod = false, between, cut_teeth=true){
+//rotate([-90,0,0])
+spool_core_halve(false, Sandwich_ABC_width+2*Spool_core_cover_adj);
+module spool_core_halve(twod = false, between){
   w = Spool_core_halve_width; // Width
   foot_r = 3;
 
@@ -56,7 +56,7 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
       }
       translate([0,0,bearing_z])
         rotate([90,0,0])
-          cylinder(d=9.3, h=100, center=true, $fn=teeth);
+          cylinder(d=8.0, h=100, center=true, $fn=teeth);
       for(k=[0,1])
         mirror([k,0,0]){
           translate([2,w+1 + between/2 - 0.5,Base_th])
@@ -67,15 +67,6 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
               Mounting_screw();
         }
     }
-
-    if (cut_teeth)
-      translate([0,0,bearing_z])
-       rotate([90,0,0])
-         for(ang=[0:360/teeth:359])
-           rotate([0,0,ang])
-             translate([-0.5, 7.90/2, -w/2 - 20.4])
-               cube([1.0, 1.5, w]);
-
   } else {
     difference(){
       translate([-Spool_core_tot_length/2, between/2])
@@ -88,7 +79,7 @@ module spool_core_halve(twod = false, between, cut_teeth=true){
   }
 }
 
-//spool_cores(false, Sandwich_ABC_width);
+//!spool_cores(false, Sandwich_ABC_width + 2*Spool_core_cover_adj);
 //spool_cores(true, Sandwich_ABC_width);
 module spool_cores(twod=false, between){
   for(k=[0,1])
@@ -98,7 +89,7 @@ module spool_cores(twod=false, between){
 
 // For printing
 //spool_core();
-module spool_core(cut_teeth=true){
+module spool_core(){
   rotate([-90,0,0])
-    spool_core_halve(false, Sandwich_ABC_width, cut_teeth=cut_teeth);
+    spool_core_halve(false, Sandwich_ABC_width);
 }

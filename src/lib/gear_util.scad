@@ -21,11 +21,11 @@ module spool_center(){
     translate([0,0,-1])
       cylinder(d1=b608_outer_dia+1.5, d2=b608_outer_dia-0.1,h=1.5);
   }
-  difference(){
-    cylinder(r=Spool_r-1, h=0.2);
-    translate([0,0,-1])
-      cylinder(r=13, h=2.2);
-  }
+  //difference(){
+  //  cylinder(r=Spool_r-1, h=0.2);
+  //  translate([0,0,-1])
+  //    cylinder(r=13, h=2.2);
+  //}
   trout=40;
   for(a=[0:360/6:359]){
     rotate([0,0,a]){

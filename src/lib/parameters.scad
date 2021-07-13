@@ -104,16 +104,6 @@ Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
 Bit_width = 12;
 Cable_r=2.5;
 
-//// Donkey and encoder parameters /////
-
-Donkey_shaft_d = 6;
-Donkey_h = 65.12;
-Donkey_body_d = 50;
-Donkey_feet_th = 3.5;
-
-Encoder_LDP3806_shaft_d = 6;
-Encoder_LDP3806_d = 38;
-
 // Belt drive parameters
 GT2_belt_width = 6.5;
 GT2_gear_height = GT2_belt_width + 2;
@@ -132,7 +122,6 @@ Belt_roller_top_adj_screw_y = Belt_roller_space_between_walls/2+2;
 Belt_roller_containing_cube_ywidth = Belt_roller_space_between_walls+8.5;
 Belt_roller_containing_cube_xwidth = 14;
 Belt_roller_insert_h = 18;
-
 
 Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
 Sandwich_D_width = 3*(1+Spool_height) + GT2_gear_height;
@@ -159,6 +148,8 @@ spd = Spool_height+GT2_gear_height;
 // deflectors in a row and get a distance between bearings
 // that maintain the distance d when deflecting 60 degrees
 Horizontal_deflector_cube_y_size = (2/sqrt(3))*spd;
+
+Belt_roller_bearing_xpos = Sep_disc_radius + b623_outer_dia/2+Belt_thickness;
 
 
 // Top plate parameters needed for layout slicer

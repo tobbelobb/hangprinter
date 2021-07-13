@@ -2,6 +2,7 @@ include <lib/parameters.scad>
 use <lib/gear_util.scad>
 use <lib/util.scad>
 use <lib/whitelabel_motor.scad>
+use <lib/spool_core.scad>
 
 use <GT2_spool_gear.scad>
 use <corner_clamp.scad>
@@ -12,15 +13,15 @@ use <landing_brackets.scad>
 use <line_roller_anchor.scad>
 use <line_roller_double.scad>
 use <line_verticalizer.scad>
-use <spool_cover_mirrored.scad>
 use <motor_bracket_A.scad>
 use <motor_bracket_B.scad>
 use <motor_bracket_C.scad>
 use <motor_bracket_D.scad>
 use <sep_disc.scad>
 use <spool.scad>
-use <spool_core.scad>
+use <spool_mirrored.scad>
 use <spool_cover.scad>
+use <spool_cover_mirrored.scad>
 use <tilted_line_deflector.scad>
 use <ziptie_tensioner_wedge.scad>
 
@@ -236,8 +237,8 @@ module sandwich_ABC(){
     translate([0,0,Torx_depth + 1 + Spool_height + GT2_gear_height/2])
       rotate([0,180,0]){
         color(color1, color1_alpha)
-          if(stls) import("../stl/spool.stl");
-          else spool();
+          if(stls) import("../stl/spool_mirrored.stl");
+          else spool_mirrored();
         color(color1, spool_cover_alpha)
           translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
             rotate([0,0,-90])
@@ -293,41 +294,16 @@ module line_roller_double_with_bearings(){
   }
 }
 
-//!spool_core_D();
-module spool_core_D(cover_adj=Spool_core_cover_adj) {
-  for(k=[0,1])
-    mirror([0,k,0])
-      rotate([90,0,0])
-      translate([0,0,-k*(Spool_height+1+2*cover_adj)])
-      import("../stl/spool_core.stl");
-}
-
-//!placed_spool_core_D();
-module placed_spool_core_D(){
-  cover_adj = Spool_core_cover_adj;
-
-    if(stls && !twod){
-      translate([0,Spool_height+1+cover_adj,0])
-        spool_core_D(cover_adj);
-    } else {
-      translate([0,Sandwich_D_width/2 - 1 - Spool_height - GT2_gear_height/2,0])
-        spool_cores(twod=twod, between=Sandwich_D_width + 2*cover_adj);
-    }
-}
-
-
 //!sandwich_and_motor_D();
 module sandwich_and_motor_D(){
   if(!twod){
     placed_sandwich_D();
   }
-  translate([belt_roller_bearing_xpos,0,0]){
+  translate([Belt_roller_bearing_xpos,0,0]){
     rotate([0,0,90])
       render_motor_and_bracket(D=true);
     belt_roller_bearings();
   }
-
-  placed_spool_core_D();
 
   if(!twod) {
     // Smooth rod
@@ -401,7 +377,6 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
 }
 
 
-belt_roller_bearing_xpos = Sep_disc_radius + b623_outer_dia/2+Belt_thickness;
 //!sandwich_and_motor_ABC();
 module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
   cover_adj=Spool_core_cover_adj;
@@ -411,20 +386,11 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
         Sep_disc_radius+Gap_between_sandwich_and_plate])
       rotate([90,0,0])
         sandwich_ABC();
-  translate([belt_roller_bearing_xpos,0,0])
+  translate([Belt_roller_bearing_xpos,0,0])
     rotate([0,0,90])
       render_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=false);
-  translate([belt_roller_bearing_xpos,0,0])
+  translate([Belt_roller_bearing_xpos,0,0])
     belt_roller_bearings();
-  if(stls && !twod){
-    for(k=[0,1])
-      mirror([0,k,0])
-        translate([0,cover_adj,0])
-          rotate([90,0,0])
-            import("../stl/spool_core.stl");
-  } else {
-    spool_cores(twod=twod, between=Sandwich_ABC_width + 2*cover_adj);
-  }
 
   if(!twod) {
     // Smooth rod
@@ -470,7 +436,7 @@ module sandwich_and_motor_C(){
 
 cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
 cy = 450.02+Move_d_bearings_inwards/2;
-bc_x_pos = cx/2-GT2_gear_height/2-Spool_cover_tot_height+Spool_core_impression_in_spool_cover-Spool_core_halve_width-2;
+bc_x_pos = cx/2-GT2_gear_height/2-Spool_cover_tot_height-Spool_core_halve_width-2;
 
 
 if(mounted_in_ceiling && !twod){

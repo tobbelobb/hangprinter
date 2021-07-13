@@ -90,7 +90,7 @@ layout.dxf: $(SRC_DIR)/lib/whitelabel_motor.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/landing_brackets.scad \
 	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/spool_core.scad \
+	$(SRC_DIR)/lib/spool_core.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) \
 		-D twod=true \
@@ -108,7 +108,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
-	$(SRC_DIR)/spool_core.scad \
+	$(SRC_DIR)/lib/spool_core.scad \
 	$(SRC_DIR)/tilted_line_deflector.scad
 	$(call make_layout_pdf_a4,"../../layout.dxf",$@)
 
@@ -232,11 +232,6 @@ $(STL_DIR)/sep_disc.stl: $(SRC_DIR)/sep_disc.scad \
 	$(SRC_DIR)/spool.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/spool_core.stl: $(SRC_DIR)/spool_core.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
 $(STL_DIR)/spool_cover.stl: $(SRC_DIR)/spool_cover.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
@@ -309,7 +304,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/motor_bracket_D.stl \
 	$(STL_DIR)/pi_mount.stl \
 	$(STL_DIR)/sep_disc.stl \
-	$(STL_DIR)/spool_core.stl \
+	$(STL_DIR)/lib/spool_core.stl \
 	$(STL_DIR)/spool_cover.stl \
 	$(STL_DIR)/spool_cover_mirrored.stl \
 	$(STL_DIR)/spool.stl \
