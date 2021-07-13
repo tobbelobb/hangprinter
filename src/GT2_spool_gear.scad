@@ -4,9 +4,9 @@ use <lib/gear_util.scad>
 
 module GT2_flanged_spool_gear(teeth, additional_tooth_depth=0){
   // Magic number 161.83 is big GT pulley outer diameter. Printed in console.
-  cylinder(d1 = 161.83+1.4, d2 = 161.83, h = 1, $fn=teeth);
+  cylinder(d1 = 161.83+1, d2 = 161.83, h = 1, $fn=teeth);
   translate([0, 0, GT2_belt_width + 1])
-    cylinder(d2 = 161.83+1.4, d1 = 161.83, h = 1, $fn=teeth);
+    cylinder(d2 = 161.83+1, d1 = 161.83, h = 1, $fn=teeth);
   GT2_2mm_pulley_extrusion(GT2_gear_height, teeth, additional_tooth_depth=additional_tooth_depth);
 }
 
@@ -25,7 +25,7 @@ module GT2_spool_gear(perfect_world=true){
       //scale([161.45/161, 161.45/161, 1])
       //  GT2_flanged_spool_gear(GT2_spool_gear_teeth, additional_tooth_depth=0.12);
     }
-    extra_space = 0.1;
+    extra_space = 0.05;
     scale([(Spool_r+extra_space)/Spool_r, (Spool_r+extra_space)/Spool_r, 1])
       translate([0,0,GT2_gear_height+GT2_gear_height-Torx_depth])
       rotate([180,0,0])
