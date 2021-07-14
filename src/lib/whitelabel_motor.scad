@@ -568,11 +568,19 @@ module base_hull_2d(isD = false){
 module spool_legs(isD = false){
   translate([0,Belt_roller_bearing_xpos,0])
     rotate([0,0,90])
-    if (isD)
-      translate([0,-(Sandwich_D_width - Sandwich_ABC_width)/2, 0])
-      spool_cores(twod=false, between=Sandwich_D_width + 2*Spool_core_cover_adj);
-    else
-      spool_cores(twod=false, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
+      if (isD) {
+        translate([0,-(Sandwich_D_width - Sandwich_ABC_width)/2, 0])
+        spool_cores(twod=false, between=Sandwich_D_width + 2*Spool_core_cover_adj);
+      } else {
+        spool_cores(twod=false, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
+      }
+
+  translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,153.5,0])
+    if (isD) {
+        cube([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+    } else {
+        cube([Sandwich_ABC_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+    }
 }
 
 //mirror([1,0,0])
@@ -588,9 +596,6 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
             square([0.5, 20]);
         }
   }
-
-  translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,153.5,0])
-    cube([Sandwich_ABC_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
 
   translate([motor_bracket_xpos, motor_bracket_ypos, 0]) {
   if(!twod) {
