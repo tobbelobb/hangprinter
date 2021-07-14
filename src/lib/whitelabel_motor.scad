@@ -565,21 +565,29 @@ module base_hull_2d(isD = false){
 }
 
 //spool_legs();
-module spool_legs(isD = false){
+module spool_legs(isD = false, twod=false){
   translate([0,Belt_roller_bearing_xpos,0])
     rotate([0,0,90])
       if (isD) {
         translate([0,-(Sandwich_D_width - Sandwich_ABC_width)/2, 0])
-        spool_cores(twod=false, between=Sandwich_D_width + 2*Spool_core_cover_adj);
+        spool_cores(twod=twod, between=Sandwich_D_width + 2*Spool_core_cover_adj);
       } else {
-        spool_cores(twod=false, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
+        spool_cores(twod=twod, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
       }
 
   translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,153.5,0])
     if (isD) {
+      if (twod){
+        square([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2]);
+      } else {
         cube([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+      }
     } else {
+      if (twod) {
+        square([Sandwich_ABC_width + 2*Spool_core_cover_adj+6, 2]);
+      } else {
         cube([Sandwich_ABC_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+      }
     }
 }
 
@@ -611,9 +619,9 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
             //%translate([33,0,0])
             //  if(leftHanded)
             //    rotate([180,0,0])
-            //      import("../stl/for_render/whitelabel_motor.stl");
+            //      import("../../stl/for_render/whitelabel_motor.stl");
             //  else
-            //    import("../stl/for_render/whitelabel_motor.stl");
+            //    import("../../stl/for_render/whitelabel_motor.stl");
             translate([4.5-0.7,0,0])
               rotate([0,0,2*90])
                 encoder_bracket();
@@ -644,10 +652,14 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
     } else {
       // twod below here
       difference(){
-        union(){
-          base_hull_2d();
-        }
+        base_hull_2d();
         translate([-12,0,0])
+          Mounting_screw(twod=twod);
+
+        flerp=15;
+        translate([-motor_bracket_xpos, -motor_bracket_ypos, 0])
+        rotate([0,0,-90])
+        translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2,0.5])
           Mounting_screw(twod=twod);
         translate([36-1.5-15+3,38,0])
           Mounting_screw(twod=twod);
@@ -662,5 +674,5 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
 
   rotate([0,0,-90])
     belt_roller(twod=twod);
-  spool_legs(text == "D");
+  spool_legs(text == "D", twod=twod);
 }
