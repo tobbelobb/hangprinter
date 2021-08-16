@@ -30,7 +30,7 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
           rotate([0,0,-80])
             translate([0,0,tot_height+0.2])
             rotate_extrude(angle=80, $fn=150)
-            translate([outer_r-1, 0])
+            translate([outer_r-0.5, 0])
             circle(d=1.0);
 
           difference(){
@@ -44,7 +44,7 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
               cube([40, 70, 20]);
           }
           translate([Sep_disc_radius+0.5,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
-            cube([Gap_between_sandwich_and_plate-0.5, (Spool_core_tot_length - space_for_belt_roller)/2, tot_height+GT2_gear_height/2-0.2]);
+            cube([Gap_between_sandwich_and_plate-0.5, (Spool_core_tot_length - space_for_belt_roller)/2 -0, tot_height+GT2_gear_height/2-0.2]);
         }
         for(ang=ears)
           rotate([0,0,ang])
@@ -83,6 +83,8 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
     //      translate([18+8*i+i, 0, -1])
     //      cylinder(d=11+i, h=4);
     //  }
+    translate([0,0,tot_height+0.008])
+      cylinder(h=GT2_belt_width, r=outer_r-0.5, $fn=120);
 
   }
 //%translate([0,0,tot_height])
