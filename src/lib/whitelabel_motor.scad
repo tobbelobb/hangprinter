@@ -575,7 +575,7 @@ module spool_legs(isD = false, twod=false){
         spool_cores(twod=twod, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
       }
 
-  translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,153.5,0])
+  translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,154.35,0])
     if (isD) {
       if (twod){
         square([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2]);

@@ -53,7 +53,7 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
                 M3_screw(h=tot_height+4);
             }
         translate([0,0,bottom_th])
-          cylinder(r = outer_r - 1.5, h=tot_height, $fn=150);
+          cylinder(r = Sep_disc_radius + Gap_between_sep_disc_and_spool_cover, h=tot_height, $fn=150);
         //rotate([0,0,opening_width])
         //#rotate_extrude(angle=opening_width, $fn=150)
         //  translate([outer_r-3, bottom_th])

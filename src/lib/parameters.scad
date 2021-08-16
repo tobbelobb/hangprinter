@@ -55,7 +55,7 @@ Spool_height = 8;
 Spool_pitch                      = (Spool_teeth*Circular_pitch/360);
 Spool_pitch_diametrial           = Spool_teeth/(2*Spool_pitch);
 Spool_outer_radius               = Spool_pitch + 1/Spool_pitch_diametrial;
-Sep_disc_radius = 161.83/2; // Made to match 255 teeth gt2 pulley
+Sep_disc_radius = (161.83+1)/2; // Made to match 255 teeth gt2 pulley + 1
 Motor_bracket_depth = Gear_height+1+7+Nema17_ring_height+1+Gap_between_sandwich_and_plate;
 Spool_core_flerp0 = 16+3;
 
@@ -132,6 +132,7 @@ Spool_cover_shoulder = 2;
 Spool_core_cover_adj = Spool_cover_shoulder+Spool_cover_bottom_th-Spool_core_impression_in_spool_cover;
 Spool_core_tot_length = 136.458;
 Spool_cover_outer_r = Sep_disc_radius + 2;
+Gap_between_sep_disc_and_spool_cover = 0.5;
 
 Smooth_rod_length_ABC = Sandwich_ABC_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);
 Smooth_rod_length_D = Sandwich_D_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);
