@@ -5,7 +5,7 @@ M83              ; ...but relative extruder moves
 
 ; Kinematics
 G4 S1                           ; Wait 1 second because expansion boards might not be ready to receive CAN signal yet.
-M584 X43.0 Y42.0 Z41.0 U40.0 P4 ; map ABCD-axes to CAN addresses, and set four visible axes. Please excuse that ABCD motors are called XYZU here.
+M584 X40.0 Y41.0 Z42.0 U43.0 P4 ; map ABCD-axes to CAN addresses, and set four visible axes. Please excuse that ABCD motors are called XYZU here.
 M584 E0:1:2:3:4:5               ; Regard all built in stepper drivers as extruder drives
 M669 K6                         ; "This is a Hangprinter"
 M669 P2000.0                    ; Printable radius (unused by Hangprinters for now)

@@ -84,13 +84,13 @@ odrv0.config.enable_uart = False
 # odrv0.config.enable_uart_a = False
 
 #odrv0.can.set_baud_rate(250000) # Default
-# odrv0.axis0.config.can_node_id = 43 # A
-# odrv0.axis1.config.can_node_id = 42 # B
+# odrv0.axis0.config.can_node_id = 40 # A
+# odrv0.axis1.config.can_node_id = 41 # B
 # For the other board
-odrv0.axis0.config.can_node_id = 41 # C
-odrv0.axis1.config.can_node_id = 40 # D
+odrv0.axis0.config.can_node_id = 42 # C
+odrv0.axis1.config.can_node_id = 43 # D
 # Later ODrive Firmware versions (0.5.2 onwards) configure can_node_id like this:
-# odrv0.axis0.config.can.node_id = 51
+# odrv0.axis0.config.can.node_id = 42
 
 odrv0.axis0.config.step_gpio_pin = 1
 odrv0.axis0.config.dir_gpio_pin = 2
