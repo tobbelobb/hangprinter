@@ -39,10 +39,31 @@ M569 P2 S1 ; Drive 2 goes forwards
 M569 P3 S1 ; Drive 3 goes forwards
 M569 P4 S1 ; Drive 4 goes forwards
 M569 P5 S1 ; Drive 5 goes forwards
-M569 P43.0 S1 ; Drive 43.0 (A) goes forwards
-M569 P42.0 S1 ; Drive 42.0 (B) goes forwards
-M569 P41.0 S0 ; Drive 41.0 (C) goes backwards
-M569 P40.0 S0 ; Drive 40.0 (D) goes backwards
+
+;; Warning: On a Hangprinter, ABCD motor directions shouldn't be changed, at least not
+;;          via this config.g file.
+;;          They are duplicated and hard coded into the firmware
+;;          to make ODrive's torque mode go the right way.
+;;          Please connect BLDC wires, from left to right, looking at the board
+;;          from the front, so that ODrive silk screen is readable from left to right:
+;;          |---------------------------------------------------------------|
+;;          |                                                               |
+;;          |                     ODrive                                    |
+;;          |                                                               |
+;;          |                          AUX                                  |
+;;          |--||---||---||------------------------------------||---||---||-|
+;;             ||   ||   ||                                    ||   ||   ||
+;;          Black, Red, Blue                                Black, Red, Blue
+;;
+;;
+;; Also, as of Aug 18, 2021, Hangprinter users must use the unstable repository for the Duet3 Rpi.
+;; See here for how to set that up:
+;; https://duet3d.dozuki.com/Wiki/Getting_Started_With_Duet_3#Section_Software_Installation
+
+M569 P40.0 S1 ; Drive 40.0 (A) goes forwards
+M569 P41.0 S1 ; Drive 41.0 (B) goes forwards
+M569 P42.0 S0 ; Drive 42.0 (C) goes backwards
+M569 P43.0 S0 ; Drive 43.0 (D) goes backwards
 
 ; Speeds
 M201 X10000 Y10000 Z10000 E1000              ; Accelerations (mm/s^2)
@@ -56,7 +77,7 @@ M906 E1400 I60             ; Set motor currents (mA) and increase idle current t
 M574 X0 Y0 Z0                                ; set endstop configuration (no endstops)
 
 ; Thermistors and heaters
-M308 S1 P"temp1" Y"thermistor" T100000 B3950 ; Configure sensor 1 as thermistor on temp1
+M308 S1 P"temp0" Y"thermistor" T100000 B3950 ; Configure sensor 1 as thermistor on temp1
 M950 H1 C"out1" T1                           ; create nozzle heater output on out1 and map it to sensor 1
 M307 H1 B0 S1.00                             ; disable bang-bang mode for nozzle heater and set PWM limit
 M307 H1 A1271.9 C432.5 D8.2 V24              ; Set heater parameters (for Super Volcano 80W. You probably want to tune this yourself with M303.)
@@ -64,10 +85,10 @@ M143 H1 S280                                 ; set temp limit for nozzle heater 
 M570 S180                                    ; Hot end may be a little slow to heat up so allow it 180 seconds
 
 ; Fans
-M950 F1 C"out4" Q500
-M106 P1 X150 T45 H1                                ; Enable Fan 1 thermostatic mode for sensor or heater 1 at 45 degrees
+M950 F1 C"out7"
+M106 P1 X255 T45 H1                                ; Enable Fan 1 thermostatic mode for sensor or heater 1 at 45 degrees
 
-; Find "temp1" and "out4" pins in the wiring diagram:
+; Find "temp0" and "out7" pins in the wiring diagram:
 ; https://duet3d.dozuki.com/Wiki/Duet_3_Mainboard_6HC_Wiring_Diagram
 
 ; Tool definitions
