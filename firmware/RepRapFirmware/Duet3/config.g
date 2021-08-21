@@ -13,7 +13,7 @@ M669 S200                       ; Segments per second
 
 ; Output of auto calibration script for Hangprinter
 M669 A0.0:-1604.54:-114.08 B1312.51:1270.88:-162.19 C-1440.27:741.63:-161.23 D0:0:2345.00
-M666 Q0.035619 R65.239:65.135:65.296:64.673
+M666 Q0.035619 R75.5:75.5:75.5:75.5
 ; Explanation:
 ; ; M669 defines the positions of the anchors, expressed as X:Y:Z distances between a line's pivot points, when the machine is homed.
 ; ; M666 sets Q=spool buildup, R=spool radii (incl buildup, when homed)
