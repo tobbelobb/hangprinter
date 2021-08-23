@@ -87,6 +87,7 @@ M570 S180                                    ; Hot end may be a little slow to h
 ; Fans
 M950 F1 C"out7"
 M106 P1 X255 T45 H1                                ; Enable Fan 1 thermostatic mode for sensor or heater 1 at 45 degrees
+M950 F0 C"out8"                                    ; Defines a part cooling fan
 
 ; Find "temp0" and "out7" pins in the wiring diagram:
 ; https://duet3d.dozuki.com/Wiki/Duet_3_Mainboard_6HC_Wiring_Diagram
