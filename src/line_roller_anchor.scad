@@ -33,8 +33,7 @@ module screw_tracks(){
 }
 
 line_action_lower_z = 9.15;
-module tower() {
-  tilt=10;
+module tower(tilt=10) {
   rotate([0,tilt-90,0]) {
     translate([b623_vgroove_small_r + Eyelet_extra_dist,0,0]){
       %b623_vgroove();

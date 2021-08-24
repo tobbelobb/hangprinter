@@ -12,8 +12,8 @@ M669 P2000.0                    ; Printable radius (unused by Hangprinters for n
 M669 S200                       ; Segments per second
 
 ; Output of auto calibration script for Hangprinter
-M669 A0.0:-1604.54:-114.08 B1312.51:1270.88:-162.19 C-1440.27:741.63:-161.23 D0:0:2345.00
-M666 Q0.035619 R75.5:75.5:75.5:75.5
+M669 A0.0:-1610.98:-131.53 B1314.22:1268.14:-121.28 C-1415.73:707.61:-121.82 D-0.00:0.01:2299.83
+M666 Q0.128181 R75.546:75.659:76.128:75.192
 ; Explanation:
 ; ; M669 defines the positions of the anchors, expressed as X:Y:Z distances between a line's pivot points, when the machine is homed.
 ; ; M666 sets Q=spool buildup, R=spool radii (incl buildup, when homed)
