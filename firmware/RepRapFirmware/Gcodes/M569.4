@@ -13,14 +13,16 @@ The driver is put back into position mode by requesting a torque smaller than 0.
 ;Examples
  M569.4
 <tt>Error: M569: missing parameter 'P'</tt>
- M569.4 P50.0:51.0
+ M569.4 P40.0:41.0
 <tt>Error: M569: missing parameter 'T'</tt>
- M569.4 P50.0 T0.001
+ M569.4 P40.0 T0.001
 <tt>0.001000 Nm,</tt>
- M569.4 P50.0:51.0 T0
+ M569.4 P40.0:41.0 T0
 <tt>pos_mode, pos_mode,</tt>
 
 ;Notes
-Hangprinter's "torque mode" will be implemented as a ReprapFirmware macro that depends on M569.2.
+Hangprinter's "torque mode" is implemented as a ReprapFirmware macro that depends on M569.4.
+
+Practical torques for tightening lines in daily use tend to lie between 0.1 Nm and 0.001 Nm for a Hangprinter.
 
 <sup>1</sup> Planned for RepRapFirmware 3.4.
