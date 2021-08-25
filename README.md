@@ -1,37 +1,34 @@
 Hangprinter ![Hangprinter logo](./hangprinter_logo_blue_50.png)
 ===========
 
-This is the version 4 dev branch of the Hangprinter repository.
-Breaking changes occur all the time.
-The Hangprinter repo does not yet have a stable branch, but the Openscad\_version\_3 branch is at least a bit less volatile than this one.
+Welcome to the Hangprinter repository!
+
+This branch contains Hangprinter version 4.
+Breaking changes might occur from time to time.
 
 For more general information about the Hangprinter Project, refer to [hangprinter.org](https://hangprinter.org).
 
-Bill of Materials
+Documentation
 ----------------
-The BOM for the version 3 is found here: [Google docs](https://docs.google.com/spreadsheets/d/1lOPZoF1P2OSdJcijZRVrwAEVFh3LLAnf6-s6k-hlbZU/edit?usp=sharing).
-The version 4 will use oDrives and BLDC motors instead of the steppers and Mechaduino/Smart Steppers.
-It will also use DuetWifi instead of the Mega+RAMPS electronics.
+Start here: [hangprinter.org/doc/v4](https://hangprinter.org/doc/v4/).
 
-Assembly Instructions
----------------------
-Does not exist yet. Take a look at `layout_a4.pdf` though.
 
-Using letter sized paper?
+Using letter sized paper for the layout?
 -------------------------
-You can wedge that into the make-calls, like
+You can specify that in a make-call:
 ```
 make layout_letter.pdf
 ```
 
-The pdf creation command requires Cairosvg, sed, and Ghostscript. Already installed on many standard GNU/Linux systems.
+The `make` call will require Cairosvg, sed, and Ghostscript to work.
+Already installed on many standard GNU/Linux systems.
 
 Contributing Improvements
 -------------------------
-Your design improvements will help the rest of the community if you build your machine according to the files and instructions found in this repo.
-The maintainers (me) are super grateful if you can structure your improvement into a merge request, and submit it to this repo on Gitlab.
+We're super grateful for merge request.
+Please submit to this repo on Gitlab.
 
-The second best option is to make an issue here on Gitlab.
+The second best option for contributing improvements is to make an issue on Gitlab.
 
 Lead Dev
 ---------------------------------
@@ -39,7 +36,7 @@ Lead Dev
 
 Campaign
 ---------------------------------
-[Bountysource](https://salt.bountysource.com/teams/hangprinter)
+[Github Sponsors](https://github.com/sponsors/tobbelobb/)
 
 Merchandise
 ---------------------------------
@@ -48,18 +45,12 @@ Merchandise
 
 Credits
 -------
-See [contributors](https://gitlab.com/tobben/hangprinter/graphs/version_4_dev) for committer stats.
+See [contributors](https://gitlab.com/tobben/hangprinter/graphs/version_4) for committer stats.
 Note that almost all ideas implemented by the commits have come up in conversations among fellow Reprappers.
-None mentioned, none forgotten, but you know who you are.
 Thanks!
 
-This repo also contains external code from many places. Some of them:
-* [droftarts' belt gear code](https://www.thingiverse.com/thing:16627)
-* [Marlin firmware](https://github.com/MarlinFirmware/Marlin)
-
-Currently donating $25 or more:
-* [Brooks Talley](https://www.bountysource.com/people/62525-brooks-talley)
+Currently donating $25 or more via [Bountysource](https://salt.bountysource.com/teams/hangprinter):
 * [David Lang](https://www.bountysource.com/people/50149-david-lang)
 * [Delloman](https://www.bountysource.com/people/56602-delloman)
 
-Lists sorted alphabetically.
+List sorted alphabetically.
