@@ -438,6 +438,14 @@ cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
 cy = 450.02+Move_d_bearings_inwards/2;
 bc_x_pos = cx/2-GT2_gear_height/2-Spool_cover_tot_height-Spool_core_halve_width-2;
 
+module odrive(){
+  color([0.1,0.1,0.1])
+    cube([140, 50, 2]);
+  translate([47,18,2])
+    color([0.9,0.9,0.9])
+      text("ODrive");
+}
+
 
 if(mounted_in_ceiling && !twod){
   translate([0,0,43+ANCHOR_D_Z])
@@ -473,6 +481,13 @@ module full_winch(){
   echo(cy);
   mvy = Yshift_top_plate;
   top_plate(cx, cy, mvy);
+
+  translate([188, -200, 0])
+    rotate([0,0,180])
+      odrive();
+  translate([-48, -200, 0])
+    rotate([0,0,180])
+      odrive();
 }
 
 if(mover && !twod)
