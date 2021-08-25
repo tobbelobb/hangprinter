@@ -1,10 +1,8 @@
 Hangprinter ![Hangprinter logo](./hangprinter_logo_blue_50.png)
 ===========
 
-This is the working branch of the Hangprinter repository.
-Breaking changes may occur from time to time.
-The Hangprinter repo does not yet have a stable branch.
-This branch will become our (first!) stable branch when stock Marlin v2 is ready to be included as the default Hangprinter firmware.
+This is the version 3 branch of the Hangprinter repository.
+Version 3 has been superseeded by version 4, and there's no development on this branch anymore.
 
 This document and this repo are solely about technical aspects of Hangprinter version 3.
 For more general information about the Hangprinter Project, refer to [hangprinter.org](https://hangprinter.org).
