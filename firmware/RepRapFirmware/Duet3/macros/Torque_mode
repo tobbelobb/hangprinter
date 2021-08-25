@@ -1,0 +1,21 @@
+var foundParam = false
+
+if exists(param.A)
+	M569.4 P40.0 T{param.A}
+	set var.foundParam = true
+
+if exists(param.B)
+	M569.4 P41.0 T{param.B}
+	set var.foundParam = true
+	
+if exists(param.C)
+	M569.4 P42.0 T{param.C}
+	set var.foundParam = true
+
+if exists(param.D)
+	M569.4 P43.0 T{param.D}
+	set var.foundParam = true
+	
+if !var.foundParam
+	M569.4 P40.0:41.0:42.0 T0.04
+	M569.4 P43.0 T0.01
