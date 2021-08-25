@@ -1,11 +1,5 @@
-# This is meant for resetting A-motor if its oDrive settings get erased
-# Could also speed up configuration of the other motors considerably
+# Hangprinter version 4 configures its ODrives like is described in this file
 
-import odrive
-odrv0 = odrive.find_any()
-
-# Default values used on the dev setup.
-# If your setup is different in any way, you might have to change these values
 #odrv0.config.brake_resistance = 0.4699999988079071 # Default
 # Later ODrive Firmware versions (0.5.2 onwards) might disable break resistor by default
 # So you need to set a boolean to true to enable it again:
@@ -17,8 +11,9 @@ odrv0 = odrive.find_any()
 #odrv0.axis1.motor.config.pole_pairs = 7            # Default
 #odrv0.axis1.controller.current_setpoint = 0        # Default. Torque mode with zero torque
 
-# 4500 rpm specced here:
+# 7500 rpm specced for AMT-10 here:
 # https://docs.google.com/spreadsheets/d/1OBDwYrBb5zUPZLrhL98ezZbg94tUsZcdTuwiVNgVqpU/edit#gid=0
+# Being conservative, we use 4500
 # (4500/60)*2400 = 180000
 #odrv0.axis0.controller.config.vel_limit = 180000
 # At 140000 the plastic parts starts to resonate
