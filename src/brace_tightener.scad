@@ -17,7 +17,7 @@ module brace_tightener(b){
       translate([12.9,b,0])
         rotate([90,90,0])
         translate([-b-3,0,0])
-        sector(3, 0, [b, b], 180+45, $fn = 4*12);
+        sector(3, 0, [b, b], 180+90, $fn = 4*12);
     }
     translate([-1,b/2,b/2])
       rotate([0,90,0])
