@@ -66,9 +66,9 @@ M569 P42.0 S0 ; Drive 42.0 (C) goes backwards
 M569 P43.0 S0 ; Drive 43.0 (D) goes backwards
 
 ; Speeds
-M201 X10000 Y10000 Z10000 E1000              ; Accelerations (mm/s^2)
+M201 X2000 Y2000 Z2000 U10000 E1000              ; Accelerations (mm/s^2)
 M203 X36000 Y36000 Z36000 E3600              ; Maximum speeds (mm/min)
-M566 X1200 Y1200 Z1200 E1200                 ; Maximum instant speed changes mm/minute
+M566 X240 Y240 Z1200 E1200                 ; Maximum instant speed changes mm/minute
 
 ; Currents
 M906 E1400 I60             ; Set motor currents (mA) and increase idle current to 60%
