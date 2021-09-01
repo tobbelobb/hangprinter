@@ -44,14 +44,21 @@ module tower(tilt=10) {
           difference() {
             translate([-Depth_of_roller_base+down_from_top-1, -Depth_of_roller_base/2, -b623_width/2-shoulder-Line_roller_wall_th])
               right_rounded_cube2([Depth_of_roller_base+1, Depth_of_roller_base, Line_roller_wall_th*2 + shoulder*2 + b623_width], 2, $fn=6*4);
-            translate([-Depth_of_roller_base+down_from_top,-Depth_of_roller_base/2,-b623_width/2-shoulder-Line_roller_wall_th])
-              translate([-2, -4, Line_roller_wall_th])
-                cube([Depth_of_roller_base, Depth_of_roller_base+2, b623_width + 2*shoulder]);
-            rotate([0,0,48])
+            difference(){
+              translate([-Depth_of_roller_base+down_from_top,-Depth_of_roller_base/2,-b623_width/2-shoulder-Line_roller_wall_th])
+                translate([-2, -4, Line_roller_wall_th])
+                  cube([Depth_of_roller_base+1, Depth_of_roller_base+2, b623_width + 2*shoulder]);
+              translate([down_from_top-1.6,-20,-20])
+                translate([0,0,20])
+                  rotate([0,-tilt,0])
+                    translate([0,0,-20])
+                      cube(40);
+            }
+            rotate([0,0,54])
               translate([b623_vgroove_small_r + Eyelet_extra_dist,0,0])
                 rotate([90,0,0])
                   scale([1.1,1,1])
-                  cylinder(d1=0.3, d2=21.15, h=16);
+                    cylinder(d1=0.4, d2=24.4, h=16);
           }
           translate([0,0,b623_width/2])
             cylinder(h=shoulder+1, d=5, $fn=4*6);
@@ -186,14 +193,14 @@ module top(){
 }
 
 newer_line_roller_anchor();
-module newer_line_roller_anchor(){
+module newer_line_roller_anchor(tilt=10){
   difference(){
     union(){
       translate([-w/2, -l+Depth_of_roller_base/2, 0])
         rounded_cube2([w, l, 7], 2, $fn=4*6);
       eiffel();
       translate([0,0,line_action_lower_z])
-        tower();
+        tower(tilt);
     }
     translate([0,Depth_of_roller_base/2, 0])
       screw_tracks();
