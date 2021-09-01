@@ -11,8 +11,12 @@ difference(){
   rotate_extrude()
     translate([U_r + small_d/2, 0, 0]){
       scale([1,1.6])
-      rotate([0,0,45])
-        square(U_r*sqrt(2), center=true);
+      difference(){
+        rotate([0,0,45])
+          square(U_r*sqrt(2), center=true);
+        translate([-10-U_r+0.25, -5])
+          square([10, 10]);
+      }
     }
   //translate([-50,-50,0])
   //  cube(100);
