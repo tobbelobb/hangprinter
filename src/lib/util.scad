@@ -489,7 +489,15 @@ module M3_nut(h){
   nut(h);
 }
 
+module M8_nut(h, center=false){
+  cylinder(d=14.65, h, center=center, $fn=6);
+}
+
 module M3_screw(d=3.3, h=10, center=false){
+  cylinder(d=d, h=h, center=center, $fn=12);
+}
+
+module M8_screw(d=8.3, h=10, center=false){
   cylinder(d=d, h=h, center=center, $fn=12);
 }
 
@@ -632,6 +640,32 @@ module elong_b623_vgroove(elong=10, extra_height=0){
 
 }
 
+//!elong_b608_vgroove();
+module elong_b608_vgroove(elong=10, extra_height=0){
+  $fn=4*8;
+  color("purple"){
+    hull(){
+      cylinder(r=b608_vgroove_small_r, h=b608_width+extra_height, center=true);
+      translate([0,elong,0])
+        cylinder(r=b608_vgroove_small_r, h=b608_width+extra_height, center=true);
+    }
+    for(k=[0,1])
+      mirror([0,0,k])
+        hull(){
+          cylinder(r1=b608_vgroove_small_r,r2=b608_vgroove_big_r,h=b608_width/2);
+          if (extra_height != 0) translate([0,0,b608_width/2])
+            cylinder(r=b608_vgroove_big_r, h=extra_height/2);
+          cylinder(r1=b608_vgroove_small_r,r2=b608_vgroove_big_r,h=b608_width/2);
+          translate([0,elong,0]){
+            cylinder(r1=b608_vgroove_small_r,r2=b608_vgroove_big_r,h=b608_width/2);
+            if (extra_height != 0) translate([0,0,b608_width/2])
+              cylinder(r=b608_vgroove_big_r, h=extra_height/2);
+          }
+        }
+  }
+
+}
+
 module b623(){
   color("purple")
   difference(){
@@ -654,6 +688,17 @@ module b608(){
     cylinder(d = b608_outer_dia, h = b608_width, $fn=32);
     translate([0,0,-1])
       cylinder(r = b608_bore_r, h = b608_width + 2);
+  }
+}
+
+module b608_vgroove(){
+  color("purple")
+  difference(){
+    union(){
+      cylinder(r1 = b608_vgroove_big_r, r2 = b608_outer_dia/2-2, h=b608_width, center=true, $fn=32);
+      cylinder(r2 = b608_vgroove_big_r, r1 = b608_outer_dia/2-2, h=b608_width, center=true, $fn=32);
+    }
+    cylinder(r = b608_bore_r, h = b608_width + 2, center=true);
   }
 }
 

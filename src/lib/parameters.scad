@@ -20,6 +20,8 @@ Nema17_shaft_radius        = 5/2;
 b608_outer_dia = 22.2;
 b608_width = 7.05;
 b608_bore_r = 4;
+b608_vgroove_big_r = b608_outer_dia/2 + 2;
+b608_vgroove_small_r = b608_outer_dia/2;
 Gap_between_sandwich_and_plate = 1.5 + Base_th; // 1.5 mm for wiggle
 Motor_bracket_flerp_r = 6;
 Motor_bracket_flerp = 14;
@@ -66,6 +68,7 @@ b623_vgroove_big_r = 12/2;
 b623_vgroove_small_r = 10/2;
 b623_outer_dia = 10;
 b623_vgroove_room_to_grow_r = 1.1;
+b608_vgroove_room_to_grow_r = 1.1;
 b623_flange_dia = 11.5;
 b623_flange_room_to_grow_r = 0.5;
 
