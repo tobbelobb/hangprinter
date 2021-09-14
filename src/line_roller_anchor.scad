@@ -41,7 +41,7 @@ module tower(tilt=10) {
   rotate([0,tilt-90,0]) {
     translate([b608_vgroove_small_r + Eyelet_extra_dist,0,0]){
       %b608_vgroove();
-      //import("../stl/bearing_v_608.stl");
+      //import("../stl/bearing_u_608.stl");
       down_from_top = 3;
       shoulder = 0.5;
       difference() {

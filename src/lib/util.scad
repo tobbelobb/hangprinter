@@ -490,7 +490,7 @@ module M3_nut(h){
 }
 
 module M8_nut(h, center=false){
-  cylinder(d=14.65, h, center=center, $fn=6);
+  cylinder(d=14.85, h, center=center, $fn=6);
 }
 
 module M3_screw(d=3.3, h=10, center=false){
@@ -498,7 +498,7 @@ module M3_screw(d=3.3, h=10, center=false){
 }
 
 module M8_screw(d=8.3, h=10, center=false){
-  cylinder(d=d, h=h, center=center, $fn=12);
+  cylinder(d=d, h=h, center=center, $fn=12*2);
 }
 
 module nut_wall(h){

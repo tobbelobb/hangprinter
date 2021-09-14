@@ -164,7 +164,6 @@ $(STL_DIR)/GT2_spool_gear.stl: $(SRC_DIR)/GT2_spool_gear.scad \
 $(STL_DIR)/horizontal_line_deflector.stl: $(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad \
-	$(SRC_DIR)/tilted_line_deflector.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 $(STL_DIR)/landing_brackets.stl: $(SRC_DIR)/landing_brackets.scad \
@@ -281,6 +280,7 @@ $(STL_DIR)/tilted_line_deflector.stl: $(SRC_DIR)/tilted_line_deflector.scad \
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 $(STL_DIR)/tilted_line_deflector_mirrored.stl: $(SRC_DIR)/tilted_line_deflector_mirrored.scad \
+	$(SRC_DIR)/tilted_line_deflector.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad

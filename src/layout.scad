@@ -54,11 +54,11 @@ lift_mover_z = 200;
 //lift_mover_z = ANCHOR_D_Z-300;
 
 dspool_y = -50+30;
-bcspool_y = -50;
+bcspool_y = -40;
 aspool_y = -20;
 aspool_lineroller_y = -110;
 abc_sep = 105+18;
-move_BC_deflectors = -105;
+move_BC_deflectors = -113;
 
 extra_space_in_middle = -10;
 
@@ -411,10 +411,7 @@ module sandwich_and_motor_A(){
 //!line_guides_BC();
 module line_guides_BC(){
   line_guide_rot=-30;
-  translate([move_BC_deflectors,-spd/2,0])
-    rotate([0,0,180])
-    tilted_line_deflector_for_layout(line_guide_rot);
-  translate([move_BC_deflectors+spd/sqrt(3),spd/2,0])
+  translate([move_BC_deflectors+spd/sqrt(3)+1,spd/2,0])
     rotate([0,0,180])
     tilted_line_deflector_for_layout(line_guide_rot);
 }
@@ -731,7 +728,7 @@ module ceiling_unit_internal_lines_v4p1(){
     for(k=[0,1])
       mirror([k,0,0]){
         one_b_line();
-        translate([spd,0,0])
+        translate([spd,-11,0])
           one_b_line(e=-spd/sqrt(3), e2=30+spd/2);
       }
 
