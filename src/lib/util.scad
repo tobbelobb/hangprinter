@@ -890,7 +890,7 @@ module preventor_edges(tower_h,
                        edge_stop=180,
                        back1 = 0.5,
                        back2 = 0){
-  // Edge to prevent line from falling of...
+  // Edge to prevent line from falling off...
   a = 1.75;
   b = b623_vgroove_room_to_grow_r;
   rot_r = b623_vgroove_big_r+b;

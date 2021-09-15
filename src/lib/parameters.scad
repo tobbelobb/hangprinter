@@ -83,8 +83,9 @@ Line_roller_ABC_winch_h =  Gap_between_sandwich_and_plate
                            + Sep_disc_radius
                            - Spool_r
                            + Depth_of_roller_base/2
-                           + b623_vgroove_small_r;
+                           + b608_vgroove_small_r;
 
+Shear_line_roller_double_bearings = 20;
 
 Ptfe_r = 2.1;
 Roller_base_r = 8;

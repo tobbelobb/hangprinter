@@ -273,7 +273,6 @@ module line_roller_double_with_bearings(){
   if(stls && !twod){
     //import("../stl/line_roller_double.stl");
     translate([0,-spd,0])
-      rotate([0,-90,0])
       import("../stl/line_roller_double.stl");
   } else {
     translate([0,-spd])
@@ -281,16 +280,16 @@ module line_roller_double_with_bearings(){
   }
   if(!twod){
     for(y=[0,Spool_height + GT2_gear_height])
-      translate([0,-y,bearing_center_z])
-		mirror([0,y,0])
+      translate([Shear_line_roller_double_bearings*(0.5-y/(Spool_height + GT2_gear_height)),-y,bearing_center_z])
+		    mirror([0,y,0])
         rotate([90,0,0])
         translate([0,0,0.1])
         rotate([-90,0,0])
         translate([0,0,-(b623_vgroove_small_r+Eyelet_extra_dist)])
-        rotate([-10,0,0])
+        rotate([-5,0,0])
         translate([0,0,(b623_vgroove_small_r+Eyelet_extra_dist)])
         rotate([90,0,0])
-        b623_vgroove();
+        b608_vgroove();
   }
 }
 
@@ -750,10 +749,11 @@ module ceiling_unit_internal_lines_v4p1(){
                  [b623_width/2+1, -Sidelength/sqrt(3)-Move_d_bearings_inwards, hz]);
 
     for(k=[0,spd]){
+      ydiff = Shear_line_roller_double_bearings*(0.5-k/spd);
       line_from_to([lx3+k, aspool_y, hz],
-                   [lx3+k, aspool_y-aspool_lineroller_y, hz]);
-      line_from_to([lx3+k, aspool_y-aspool_lineroller_y+3, hz],
-                   [lx3+k+(k-spd/2), aspool_y+190, 100+hz]);
+                   [lx3+k, ydiff+aspool_y-aspool_lineroller_y+7, hz]);
+      line_from_to([lx3+k, ydiff+aspool_y-aspool_lineroller_y+7, hz],
+                   [lx3+k+(k-spd/2), ydiff+aspool_y+190, 100+hz]);
     }
   }
 
