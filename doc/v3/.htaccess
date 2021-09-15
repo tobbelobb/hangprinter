@@ -1,5 +1,0 @@
-RewriteEngine On
-RewriteCond %{REQUEST_URI} /*\.html$ [or]
-RewriteCond %{REQUEST_URI} /([^\./]+)$
-RewriteRule ^([^\.]+).*$ $1.xml [NC,L]
-DirectoryIndex index.xml
