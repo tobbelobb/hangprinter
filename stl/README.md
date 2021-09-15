@@ -1,8 +1,11 @@
-Note: If you're using this branch, which is a development branch, you shouldn't trust that stls are up to date.
+Make individual stls on your own by
+ * Opening up the scad-files with OpenSCAD GUI and exporting from there
 
-Make your own by
- * Opening up the scad-files with OpenSCAD GUI, or
+Or with `make`
+ * `make stl/<thefileyouwant.stl>`
+ * `make <thefileyouwant.stl>`,
+
+... which will both place the stl inside the `hangprinter/stl/` directory.
+
+Make all the stls on your own by
  * `make all` (this will take a long time),
- * or `make stl/<thefileyouwant.stl>`
-
-
