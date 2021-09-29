@@ -124,9 +124,12 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
                   rotate([0,0,11])
                   translate([-b608_vgroove_small_r-1.5, 0,0])
                     rotate([90,0,rotz/2])
-                      translate([-0.4,0,-3])
-                      scale([1.0,0.8,1]){
-                        cylinder(d1=1.5, d2=27.5, h=21);
+                      translate([-2.6,0,-8]){
+                        translate([0,0,-4])
+                        cylinder(d=8, h=26);
+                        scale([1.0,0.8,1]){
+                          cylinder(d1=4.8, d2=31.5, h=26);
+                        }
                       }
                   translate([0, b608_vgroove_small_r,0])
                     rotate([90,0,90])
@@ -167,21 +170,21 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
 
     } else { //twod
       translate([0,-4.85])
-      difference(){
-        translate([-cx/2+thicken_along_line*cos(-rotz)-Bit_width+0.5, (-cy+8)+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz)])
-          ydir_rounded_cube2_2d([cx-thicken_along_line*cos(-rotz)+2*Bit_width-1, cy], r=5.5, $fn=12*2);
-        for(k=[0,1])
-          mirror([k,0]){
-             translate([cx/2+pl-k*thicken_along_line*cos(-rotz),ybit_hole])
-               Mounting_screw(twod=true);
-             translate([cx/2+pl-k*thicken_along_line*cos(-rotz),ybit_hole+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz)])
-               Mounting_screw(twod=true);
-          }
-        rotate([0,0,180-30])
-          translate([-6, 20])
+        difference(){
+          translate([-cx/2+thicken_along_line*cos(-rotz)-Bit_width+0.5, (-cy+8)+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz)])
+            ydir_rounded_cube2_2d([cx-thicken_along_line*cos(-rotz)+2*Bit_width-1, cy], r=5.5, $fn=12*2);
+          for(k=[0,1])
+            mirror([k,0]){
+              translate([cx/2+pl-k*thicken_along_line*cos(-rotz),ybit_hole])
+                Mounting_screw(twod=true);
+              translate([cx/2+pl-k*thicken_along_line*cos(-rotz),ybit_hole+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz)])
+                Mounting_screw(twod=true);
+            }
+          rotate([0,0,180-30])
+            translate([-6, 20])
             square([50, 50]);
-      }
+        }
     }
   }
 }
-
+//%import("../stl/tilted_line_deflector.stl");

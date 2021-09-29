@@ -8,20 +8,23 @@ big_d = b608_vgroove_big_r*2;
 U_r = 3.7;
 scl = [1.2, 1.4];
 
+
+//bearing_u_608(true);
 module bearing_u_608(core=false){
-  difference(){
-    cylinder(d=big_d, h=b608_width-0.1, center=true);
-    if(!core)
-      cylinder(d=inner_d, h=b608_width-0.1+2, center=true);
-    rotate_extrude()
-      translate([U_r + small_d/2, 0, 0]){
+  rotate_extrude(){
+    difference(){
+      translate([inner_d/2,-(b608_width-0.1)/2])
+        square([(big_d-inner_d)/2, b608_width-0.1]);
+      translate([U_r + small_d/2, 0])
         scale(scl)
-        circle(d=6);
-      }
+          circle(d=6);
+    }
   }
+  if(core)
+    cylinder(d=inner_d+0.2, h=b608_width-0.1, center=true);
 }
 
-//elong_b608_ugroove(elong=12, extra_height=0.8);
+elong_b608_ugroove(elong=12, extra_height=0.8);
 module elong_b608_ugroove(elong=10, extra_height=0){
   color("purple"){
     bearing_u_608(core=true);
