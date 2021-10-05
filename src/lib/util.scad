@@ -736,9 +736,9 @@ module roller_base(twod=false,
                    wall_th=Line_roller_wall_th,
                    space_between_walls,
                    openings=[false, false, false, false],
-                   with_fillets = true){
+                   with_fillets = true,
+                   d = Depth_of_roller_base){
   l = Roller_l+base_extra_w;
-  d = Depth_of_roller_base;
   s = space_between_walls;
   mounting_screw_z = Base_th-1.7;
 
