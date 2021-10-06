@@ -116,7 +116,10 @@ $(STL_DIR)/1XD_holder.stl: $(SRC_DIR)/1XD_holder.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/bearing_v.stl: $(SRC_DIR)/bearing_v.scad
+$(STL_DIR)/bearing_u_608.stl: $(SRC_DIR)/bearing_u_608.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/bearing_v_623.stl: $(SRC_DIR)/bearing_v_623.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 $(STL_DIR)/belt_roller_insert.stl: $(SRC_DIR)/belt_roller_insert.scad \
@@ -301,7 +304,7 @@ $(STL_DIR)/ziptie_tensioner_wedge.stl: $(SRC_DIR)/ziptie_tensioner_wedge.scad \
 
 all: | $(STL_DIR) \
 	$(STL_DIR)/1XD_holder.stl \
-	$(STL_DIR)/bearing_v.stl \
+	$(STL_DIR)/bearing_v_623.stl \
 	$(STL_DIR)/belt_roller_insert.stl \
 	$(STL_DIR)/brace_tightener.stl \
 	$(STL_DIR)/cable_clamp.stl \

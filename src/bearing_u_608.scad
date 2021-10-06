@@ -9,7 +9,7 @@ U_r = 3.7;
 scl = [1.2, 1.4];
 
 
-//bearing_u_608(true);
+bearing_u_608();
 module bearing_u_608(core=false){
   rotate_extrude(){
     difference(){
@@ -24,7 +24,7 @@ module bearing_u_608(core=false){
     cylinder(d=inner_d+0.2, h=b608_width-0.1, center=true);
 }
 
-elong_b608_ugroove(elong=12, extra_height=0.8);
+//elong_b608_ugroove(elong=12, extra_height=0.8);
 module elong_b608_ugroove(elong=10, extra_height=0){
   color("purple"){
     bearing_u_608(core=true);
