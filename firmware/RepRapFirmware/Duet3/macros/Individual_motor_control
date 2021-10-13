@@ -1,0 +1,54 @@
+var was_relative = inputs[0].axesRelative
+
+if !{var.was_relative}
+	G91
+
+var old_x = move.axes[0].userPosition
+var old_y = move.axes[1].userPosition
+var old_z = move.axes[2].userPosition
+
+var A_exists = exists(param.A)
+var B_exists = exists(param.B)
+var C_exists = exists(param.C)
+var D_exists = exists(param.D)
+var F_exists = exists(param.F)
+
+if {var.F_exists}
+	G1 H2 F{param.F}
+
+if {var.A_exists} && {var.B_exists} && {var.C_exists} && {var.D_exists}
+	G1 H2 X{param.A} Y{param.B} Z{param.C} U{param.D}
+elif {var.A_exists} && {var.B_exists} && {var.C_exists}
+	G1 H2 X{param.A} Y{param.B} Z{param.C}
+elif {var.A_exists} && {var.B_exists} && {var.D_exists}
+	G1 H2 X{param.A} Y{param.B} U{param.D}
+elif {var.A_exists} && {var.C_exists} && {var.D_exists}
+	G1 H2 X{param.A} Z{param.C} U{param.D}
+elif {var.B_exists} && {var.C_exists} && {var.D_exists}
+	G1 H2 Y{param.B} Z{param.C} U{param.D}
+elif {var.A_exists} && {var.B_exists}
+	G1 H2 X{param.A} Y{param.B}
+elif {var.A_exists} && {var.C_exists}
+	G1 H2 X{param.A} Z{param.C}
+elif {var.A_exists} && {var.D_exists}
+	G1 H2 X{param.A} U{param.D}
+elif {var.B_exists} && {var.C_exists}
+	G1 H2 Y{param.B} Z{param.C}
+elif {var.B_exists} && {var.D_exists}
+	G1 H2 Y{param.B} U{param.D}
+elif {var.C_exists} && {var.D_exists}
+	G1 H2 Z{param.C} U{param.D}
+elif {var.A_exists}
+	G1 H2 X{param.A}
+elif {var.B_exists}
+	G1 H2 Y{param.B}
+if {var.C_exists}
+	G1 H2 Z{param.C}
+if {var.D_exists}
+	G1 H2 U{param.D}
+
+
+G92 X{var.old_x} Y{var.old_y} Z{var.old_z}
+
+if !{var.was_relative}
+	G90
