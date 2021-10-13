@@ -65,9 +65,9 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
       take_away_angle = 90;
 
       // something to aim for
-      //%the_bearing();
-      //translate([move_along_line*cos(-rotz),Horizontal_deflector_cube_y_size-move_along_line*sin(-rotz),0])
-      //%the_bearing();
+      %the_bearing();
+      translate([move_along_line*cos(-rotz),Horizontal_deflector_cube_y_size-move_along_line*sin(-rotz),0])
+      %the_bearing();
       difference(){
         translate([0,-4.85,0])
         union(){
@@ -122,22 +122,22 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
                     }
                   }
                   rotate([0,0,11])
-                  translate([-b608_vgroove_small_r-1.5, 0,0])
-                    rotate([90,0,rotz/2])
-                      translate([-2.6,0,-8]){
-                        translate([0,0,-4])
-                        cylinder(d=8, h=26);
-                        difference(){
-                          scale([1.0,0.8,1]){
-                            cylinder(d1=4.8, d2=31.5, h=26);
+                    translate([-b608_vgroove_small_r-1.5, 0,0])
+                      rotate([90,0,rotz/2])
+                        translate([-2.6,0,-8]){
+                          translate([0,0,-4])
+                            cylinder(d=8, h=26);
+                          difference(){
+                            scale([1.0,0.8,1]){
+                              cylinder(d1=4.8, d2=31.5, h=26);
+                            }
+                            translate([14,10.98,7])
+                              rotate([90,0,0])
+                                cylinder(d=b608_vgroove_big_r*2, h=7);
+                            translate([14,-3,7])
+                              rotate([90,0,0])
+                                cylinder(d=b608_vgroove_big_r*2, h=7);
                           }
-                          translate([14,10.98,7])
-                            rotate([90,0,0])
-                              cylinder(d=b608_vgroove_big_r*4, h=7);
-                          translate([14,-3,7])
-                            rotate([90,0,0])
-                              cylinder(d=b608_vgroove_big_r*2, h=7);
-                        }
                       }
                   translate([0, b608_vgroove_small_r,0])
                     rotate([90,0,90])
