@@ -21,11 +21,13 @@ module slanted_lines_for_aiming(liney=0){
                r=1.1);
 }
 
-tilted_line_deflector(twod=false,rotx=-atan(sqrt(2)), rotz=-30); // Angle atan(sqrt(2)) works if ABCD anchors form like sided tetrahedron
+//%import("../stl/tilted_line_deflector.stl");
+tilted_line_deflector(twod=false,rotx=-atan(sqrt(2))-6, rotz=-30); // Angle atan(sqrt(2)) works if ABCD anchors form like sided tetrahedron
 //tilted_line_deflector(rotz=-30, rotx=-10, bullet_shootout=true);
 module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, behind=false){
+  extra_ythick = 3;
   cx = b608_vgroove_big_r*2 + 8;
-  cy = Horizontal_deflector_cube_y_size*(2+sin(-rotz));
+  cy = Horizontal_deflector_cube_y_size*(2+sin(-rotz)) + extra_ythick;
   move_along_line = -11.5;
   thicken_along_line = move_along_line-5;
   bz = Gap_between_sandwich_and_plate + Sep_disc_radius - Spool_r;
@@ -34,7 +36,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
 
   pl = 5.5;
   ybit = -cy+5+bit_y/2;
-  ybit_hole = ybit + 21;
+  ybit_hole = ybit + 21+extra_ythick/2;
   module bit(){
     rotate([0,0,90])
       translate([-Bit_width/2, -bit_y/2, 0])
@@ -71,20 +73,20 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
       difference(){
         translate([0,-4.85,0])
         union(){
-          translate([-cx/2+thicken_along_line*cos(-rotz), (-cy+8)+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz), 0])
+          translate([-cx/2+thicken_along_line*cos(-rotz), (-cy+8)+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz) + extra_ythick, 0])
             ydir_rounded_cube2([cx-thicken_along_line*cos(-rotz), cy, full_h], r=3, $fn=12*2);
           for(k=[0,1])
             mirror([k,0,0]){
               difference(){
                 union(){
-                  translate([cx/2-k*thicken_along_line*cos(-rotz),(-cy+8)+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz),Base_th])
+                  translate([cx/2-k*thicken_along_line*cos(-rotz),(-cy+8)+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz) + extra_ythick,Base_th])
                     rotate([0,-90,-90])
                     inner_round_corner(r=2, h=cy, $fn=4*5, back=Base_th-0.1);
-                  translate([cx/2+pl-k*thicken_along_line*cos(-rotz),ybit+3+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz),0])
+                  translate([cx/2+pl-k*thicken_along_line*cos(-rotz),ybit+3+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz) + extra_ythick,0])
                     rotate([0,0,90])
                     bit();
                 }
-                translate([cx/2-k*thicken_along_line*cos(-rotz),8+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz),Base_th])
+                translate([cx/2-k*thicken_along_line*cos(-rotz),8+Horizontal_deflector_cube_y_size-thicken_along_line*sin(-rotz)+extra_ythick,Base_th])
                   corner_rounder();
                 translate([cx/2+pl-k*thicken_along_line*cos(-rotz),ybit_hole,0.6])
                   Mounting_screw();
@@ -118,7 +120,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
                     translate([0,0,full_h - 9.9 + 3*sin(rotx)]){
                       cylinder(d1=8.3, d2=14.2, h=4.5, $fn=12*2);
                       translate([0,0,4.49])
-                        cylinder(d=14.2, h=21, $fn=12*2);
+                        cylinder(d=14.2, h=23, $fn=12*2);
                     }
                   }
                   rotate([0,0,11])

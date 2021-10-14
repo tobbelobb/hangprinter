@@ -287,7 +287,7 @@ module line_roller_double_with_bearings(){
         rotate([-90,0,0])
         translate([0,0,-(b623_vgroove_small_r+Eyelet_extra_dist)])
         rotate([-5,0,0])
-        translate([0,0,(b623_vgroove_small_r+Eyelet_extra_dist)])
+        translate([0,0.7,(b623_vgroove_small_r+Eyelet_extra_dist)])
         rotate([90,0,0])
         b608_vgroove();
   }
