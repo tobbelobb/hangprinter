@@ -514,9 +514,9 @@ motor_bracket_ypos = -33;
 module base_hull_2d(isD = false){
   $fn=4*6;
   pos0 = [73.5,53,0];
-  pos0D = [73.5 + (Sandwich_D_width - Sandwich_ABC_width),53,0];
-
+  pos0D = [73.5 + (Sandwich_D_width - Sandwich_ABC_width) - (Spool_height+1),53,0];
   pos1 = [32-1.5-15+3,53,0];
+  pos1D = pos1 - [Spool_height+1, 0, 0];
   pos2 = [-12,0,0];
   pos3 = [36-1.5,53,0];
   pos4 = [36-1.5,-38,0];
@@ -547,16 +547,24 @@ module base_hull_2d(isD = false){
       circle(r=4);
     translate(pos7)
       circle(r=4);
-    translate(pos1)
-      circle(r=4);
+    if (isD)
+      translate(pos1D)
+        circle(r=4);
+    else
+      translate(pos1)
+        circle(r=4);
   }
   hull(){
     translate(pos2)
       circle(r=4);
     translate(pos3)
       circle(r=4);
-    translate(pos1)
-      circle(r=4);
+    if (isD)
+      translate(pos1D)
+        circle(r=4);
+    else
+      translate(pos1)
+        circle(r=4);
     translate(pos4)
       circle(r=4);
     translate(pos5)
@@ -569,8 +577,8 @@ module spool_legs(isD = false, twod=false){
   translate([0,Belt_roller_bearing_xpos,0])
     rotate([0,0,90])
       if (isD) {
-        translate([0,-(Sandwich_D_width - Sandwich_ABC_width)/2, 0])
-        spool_cores(twod=twod, between=Sandwich_D_width + 2*Spool_core_cover_adj);
+        translate([0,-(Sandwich_D_width - Sandwich_ABC_width)/2+Spool_height+1, 0])
+          spool_cores(twod=twod, between=Sandwich_D_width + 2*Spool_core_cover_adj);
       } else {
         spool_cores(twod=twod, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
       }
@@ -578,9 +586,11 @@ module spool_legs(isD = false, twod=false){
   translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,154.35,0])
     if (isD) {
       if (twod){
-        square([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2]);
+        translate([-Spool_height-1,0,0])
+          square([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2]);
       } else {
-        cube([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+        translate([-Spool_height-1,0,0])
+          cube([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
       }
     } else {
       if (twod) {

@@ -130,7 +130,7 @@ Belt_roller_containing_cube_xwidth = 14;
 Belt_roller_insert_h = 18;
 
 Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
-Sandwich_D_width = 3*(1+Spool_height) + GT2_gear_height;
+Sandwich_D_width = 4*(1+Spool_height) + GT2_gear_height;
 Spool_core_halve_width = 14.3;
 Spool_core_impression_in_spool_cover = 0;
 Spool_cover_bottom_th = 1.5;
