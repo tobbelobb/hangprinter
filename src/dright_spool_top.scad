@@ -18,7 +18,7 @@ module dright_spool_top(){
       difference(){
         cylinder(r=Spool_r-1, h=0.4);
         translate([0,0,-1])
-          cylinder(r=Spool_r/4+1, h=3);
+          cylinder(r=Spool_r/4+1, h=3, $fn=100);
       }
     }
   }
