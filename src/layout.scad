@@ -8,6 +8,8 @@ use <GT2_spool_gear.scad>
 use <corner_clamp.scad>
 use <dleft_spool.scad>
 use <dleft_spool_cover.scad>
+use <dright_spool.scad>
+use <dright_spool_cover.scad>
 use <horizontal_line_deflector.scad>
 use <landing_brackets.scad>
 use <line_roller_anchor.scad>
@@ -183,7 +185,7 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//!sandwich_D();
+//sandwich_D();
 module sandwich_D(){
   translate([0,0, (1 + Spool_height)]){
     color(color2, color2_alpha)
@@ -208,14 +210,17 @@ module sandwich_D(){
               else dleft_spool_cover();
       }
   }
-  color(color1, color1_alpha)
-    if(stls) import("../stl/spool.stl");
-    else spool();
-  color(color1, spool_cover_alpha)
-    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
+  color(color1, color1_alpha){
+    if(stls) import("../stl/dright_spool_top.stl");
+    else dright_spool_top();
+    translate([0,0,-Spool_height-1])
+    if(stls) import("../stl/dright_spool_bottom.stl");
+    else dright_spool_bottom();
+    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder - Spool_height - 1])
       rotate([0,0,-90])
-        if (stls) import("../stl/spool_cover.stl");
-        else spool_cover();
+        if (false) import("../stl/dright_spool_cover.stl");
+        else dright_spool_cover();
+  }
 }
 
 //!placed_sandwich_D();
