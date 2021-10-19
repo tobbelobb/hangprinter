@@ -3,7 +3,6 @@ use <lib/util.scad>
 
 
 bearing_lift = b608_vgroove_small_r+Gap_between_sandwich_and_plate + Sep_disc_radius - Spool_r;
-bearing_rot = 5;
 
 //walls(b608_width+0.8, Line_roller_wall_th, Line_roller_ABC_winch_h, tilt=5, with_bearing=false);
 module walls(space_between_walls, wall_th, height, tilt, rot_nut=0, bearing_screw=true, with_bearing=true){
@@ -85,8 +84,8 @@ module line_roller_double(twod=false,
 
   s = b608_width + 0.8;
   wall_th = Line_roller_wall_th;
-  d = Depth_of_roller_base;
   shear_them = Shear_line_roller_double_bearings;
+  bearing_rot = 5;
 
   %if(with_bearings){
     for(tr=[0,spd])
