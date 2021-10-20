@@ -178,11 +178,10 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
                0])
       line_deflector(-78, center=true);
     translate([lxm1,
-               Sidelength/sqrt(39),
+               79,
                0])
       rotate([0,0,90])
-      //if(stls && !twod){
-      if(false){
+      if(stls && !twod){
         import("../stl/line_roller_wire_rewinder.stl");
       } else {
         line_roller_wire_rewinder(twod=twod);
