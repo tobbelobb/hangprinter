@@ -87,6 +87,7 @@ layout.dxf: $(SRC_DIR)/lib/whitelabel_motor.scad \
 	$(SRC_DIR)/tilted_line_deflector.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/line_roller_double.scad \
+	$(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/landing_brackets.scad \
 	$(SRC_DIR)/lib/parameters.scad \
@@ -107,6 +108,7 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/layout.scad \
 	$(SRC_DIR)/line_roller_double.scad \
+	$(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/lib/spool_core.scad \
 	$(SRC_DIR)/tilted_line_deflector.scad
@@ -147,7 +149,26 @@ $(STL_DIR)/dleft_spool_cover.stl: $(SRC_DIR)/dleft_spool_cover.scad \
 	$(SRC_DIR)/spool_cover.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/dright_spool_cover.stl: $(SRC_DIR)/dright_spool_cover.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad \
+	$(SRC_DIR)/lib/gear_util.scad \
+	$(SRC_DIR)/spool_cover.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 $(STL_DIR)/dleft_spool.stl: $(SRC_DIR)/dleft_spool.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/gear_util.scad \
+	$(SRC_DIR)/spool.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/dright_spool_bottom.stl: $(SRC_DIR)/dright_spool_bottom.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/gear_util.scad \
+	$(SRC_DIR)/spool.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/dright_spool_top.stl: $(SRC_DIR)/dright_spool_top.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/gear_util.scad \
 	$(SRC_DIR)/spool.scad
@@ -211,6 +232,11 @@ $(STL_DIR)/line_roller_anchor_template.stl: $(SRC_DIR)/line_roller_anchor_templa
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 $(STL_DIR)/line_roller_double.stl: $(SRC_DIR)/line_roller_double.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/line_roller_wire_rewinder.stl: $(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -310,7 +336,10 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/cable_clamp.stl \
 	$(STL_DIR)/corner_clamp.stl \
 	$(STL_DIR)/dleft_spool_cover.stl \
+	$(STL_DIR)/dright_spool_cover.stl \
 	$(STL_DIR)/dleft_spool.stl \
+	$(STL_DIR)/dright_spool_top.stl \
+	$(STL_DIR)/dright_spool_bottom.stl \
 	$(STL_DIR)/extruder_holder.stl \
 	$(STL_DIR)/GT2_spool_gear.stl \
 	$(STL_DIR)/horizontal_line_deflector.stl \
@@ -322,6 +351,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/line_roller_anchor_straight.stl \
 	$(STL_DIR)/line_roller_anchor_template.stl \
 	$(STL_DIR)/line_roller_double.stl \
+	$(STL_DIR)/line_roller_wire_rewinder.stl \
 	$(STL_DIR)/line_verticalizer.stl \
 	$(STL_DIR)/motor_bracket_A.stl \
 	$(STL_DIR)/motor_bracket_B.stl \

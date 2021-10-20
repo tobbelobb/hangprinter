@@ -18,7 +18,7 @@ module walls(space_between_walls, wall_th, height, rot_nut=0, bearing_screw=true
   translate([10.1,-8/2,bearing_lift+b608_outer_dia/2+3])
     difference(){
       cube([6, 8, 5]);
-      translate([6/2,8/2,0.4])
+      translate([6/2,8/2,0.3])
         cylinder(d=2.7, h=10);
       translate([6/2,8/2,-1])
         translate([0,0,6-3.3-0.4])
@@ -63,8 +63,8 @@ module walls(space_between_walls, wall_th, height, rot_nut=0, bearing_screw=true
 }
 
 module base_2d(){
-  w = 47;
-  l = 28;
+  w = 29.2;
+  l = 44;
   translate([1.5,0,0])
   difference(){
     translate([-w/2,-l/2])
@@ -73,7 +73,7 @@ module base_2d(){
       for(mirry = [0,1])
         mirror([mirrx,0,0]){
           mirror([0,mirry,0])
-            translate([w/2-4,-l/2+4])
+            translate([w/2-4.5,-l/2+4.5])
               Mounting_screw(twod=true);
     }
   }
@@ -84,7 +84,7 @@ module base(){
     base_2d();
 }
 
-line_roller_wire_rewinder(with_bearings=true, twod=false);
+line_roller_wire_rewinder(with_bearings=false, twod=false);
 module line_roller_wire_rewinder(twod=false,
                           tower_h = Line_roller_ABC_winch_h,
                           with_bearings=false){
@@ -94,12 +94,28 @@ module line_roller_wire_rewinder(twod=false,
 
   if(!twod){
     difference() {
-      union() {
-        translate([0,0,0])
-          walls(s, wall_th, tower_h, with_bearing=with_bearings);
+      union(){
+        walls(s, wall_th, tower_h, with_bearing=with_bearings);
       }
       translate([0,0,-50])
         cube(100, center=true);
+      translate([-40/2,-Spool_height-1-Spool_height/2-1, Base_th])
+        cube([40,Spool_height+1, Gap_between_sandwich_and_plate+(Sep_disc_radius-Spool_r)/2 + (Sep_disc_radius - Spool_r)/sqrt(2)]);
+      translate([-40/2,-Spool_height-1-Spool_height/2, Gap_between_sandwich_and_plate+(Sep_disc_radius-Spool_r)/2])
+        translate([0,Spool_height,(Sep_disc_radius - Spool_r)])
+          rotate([-45,0,0])
+            translate([0,-Spool_height,-(Sep_disc_radius - Spool_r)])
+              cube([40,Spool_height, Sep_disc_radius - Spool_r]);
+    }
+
+    difference(){
+      translate([-b608_vgroove_big_r,-b608_width/2-1,  0])
+        cube([2*(b608_vgroove_big_r)+3,b608_width+2,  bearing_lift]);
+      translate([0,0,bearing_lift])
+        rotate([90,0,0])
+          cylinder(r=b608_vgroove_big_r+2, h=b608_width+4, center=true, $fn=4*12);
+      translate([-2*b608_vgroove_big_r-3,-b608_width/2-1,  bearing_lift - b608_vgroove_big_r - 2])
+        cube([2*(b608_vgroove_big_r)+3,b608_width+2,  bearing_lift]);
     }
     base();
 

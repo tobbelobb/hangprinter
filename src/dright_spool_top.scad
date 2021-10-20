@@ -2,7 +2,6 @@ include <lib/parameters.scad>
 use <lib/gear_util.scad>
 
 use <spool.scad>
-use <dright_spool_bottom.scad>
 
 //intersection(){
 //  dright_spool_top();

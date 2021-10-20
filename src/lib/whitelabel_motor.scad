@@ -539,7 +539,7 @@ module base_hull_2d(isD = false){
   hull(){
     if (isD)
       translate(pos0D)
-        circle(r=4);
+        circle(r=4, $fn=40);
     else
       translate(pos0)
         circle(r=4);
@@ -549,7 +549,7 @@ module base_hull_2d(isD = false){
       circle(r=4);
     if (isD)
       translate(pos1D)
-        circle(r=4);
+        circle(r=4, $fn=40);
     else
       translate(pos1)
         circle(r=4);
@@ -561,7 +561,7 @@ module base_hull_2d(isD = false){
       circle(r=4);
     if (isD)
       translate(pos1D)
-        circle(r=4);
+        circle(r=4, $fn=40);
     else
       translate(pos1)
         circle(r=4);
@@ -662,14 +662,14 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
     } else {
       // twod below here
       difference(){
-        base_hull_2d();
+        base_hull_2d(text=="D");
         translate([-12,0,0])
           Mounting_screw(twod=twod);
 
         flerp=15;
         translate([-motor_bracket_xpos, -motor_bracket_ypos, 0])
         rotate([0,0,-90])
-        translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2,0.5])
+        translate([0,Belt_roller_space_between_walls/2+Belt_roller_wall_th+flerp/2,0])
           Mounting_screw(twod=twod);
         translate([36-1.5-15+3,38,0])
           Mounting_screw(twod=twod);

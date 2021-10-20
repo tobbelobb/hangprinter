@@ -8,12 +8,14 @@ use <GT2_spool_gear.scad>
 use <corner_clamp.scad>
 use <dleft_spool.scad>
 use <dleft_spool_cover.scad>
-use <dright_spool.scad>
+use <dright_spool_top.scad>
+use <dright_spool_bottom.scad>
 use <dright_spool_cover.scad>
 use <horizontal_line_deflector.scad>
 use <landing_brackets.scad>
 use <line_roller_anchor.scad>
 use <line_roller_double.scad>
+use <line_roller_wire_rewinder.scad>
 use <line_verticalizer.scad>
 use <motor_bracket_A.scad>
 use <motor_bracket_B.scad>
@@ -64,6 +66,7 @@ move_BC_deflectors = -113;
 
 extra_space_in_middle = -10;
 
+lxm1 = -abc_sep/2-extra_space_in_middle-spd/2 - 1 - Spool_height;
 lx0 = -abc_sep/2-extra_space_in_middle-spd/2;
 lx1 = -abc_sep/2-extra_space_in_middle+spd/2;
 lx2 = -abc_sep/2-extra_space_in_middle+spd/2 + 1 + Spool_height;
@@ -142,7 +145,7 @@ module placed_landing_brackets(){
   translate([0, 128-b623_vgroove_small_r/2, 0])
     rotate([0,0,180+90])
       landing_bracket_a(twod=twod);
-  push_bc_brackets=12;
+  push_bc_brackets=23;
   translate([-push_bc_brackets*cos(60),-71+push_bc_brackets*sin(60),0])
     rotate([0,0,180])
       translate([104, 0, 0])
@@ -174,6 +177,16 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
                Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_vgroove_small_r-b623_width/2-1,
                0])
       line_deflector(-78, center=true);
+    translate([lxm1,
+               Sidelength/sqrt(39),
+               0])
+      rotate([0,0,90])
+      //if(stls && !twod){
+      if(false){
+        import("../stl/line_roller_wire_rewinder.stl");
+      } else {
+        line_roller_wire_rewinder(twod=twod);
+      }
     translate([lx1+b623_vgroove_small_r,
                Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_vgroove_small_r-b623_width/2-1,
                0])
@@ -185,7 +198,7 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//sandwich_D();
+//!sandwich_D();
 module sandwich_D(){
   translate([0,0, (1 + Spool_height)]){
     color(color2, color2_alpha)
