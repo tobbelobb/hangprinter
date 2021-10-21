@@ -17,6 +17,8 @@ module dright_spool_bottom(){
       scale([1.005,1.005,1])
         spool_center();
     translate([0,0,-1])
-      cylinder(d=b608_outer_dia+0.2, h=20);
+      cylinder(d=b608_outer_dia, h=20);
+    translate([0,0,Spool_height+1])
+      cylinder(d=b608_outer_dia+1, h=20);
   }
 }
