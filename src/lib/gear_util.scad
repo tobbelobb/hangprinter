@@ -14,12 +14,11 @@ module spool_center(){
   //b608();
   difference(){
     cylinder(r=b608_outer_dia/2+bearing_wall_th, h=center_h,$fn=6*8);
-    translate([0,0,-1])
+    translate([0,0,-1]){
       cylinder(d=b608_outer_dia,h=b608_width+1.5);
-    translate([0,0,-1])
       cylinder(d=b608_outer_dia-1.5,h=b608_width+2*GT2_belt_width);
-    translate([0,0,-1])
       cylinder(d1=b608_outer_dia+1.5, d2=b608_outer_dia-0.1,h=1.5);
+    }
   }
   //difference(){
   //  cylinder(r=Spool_r-1, h=0.2);
