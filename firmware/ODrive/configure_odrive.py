@@ -75,10 +75,12 @@ odrv0.axis1.config.startup_closed_loop_control = True
 
 # Interface
 odrv0.config.enable_uart = False
+odrv0.axis0.config.can_heartbeat_rate_ms = 0 # Disable heartbeat
+odrv0.axis1.config.can_heartbeat_rate_ms = 0 # Disable heartbeat
 
 #odrv0.can.set_baud_rate(250000) # Default
-# odrv0.axis0.config.can.node_id = 40 # A
-# odrv0.axis1.config.can.node_id = 41 # B
+# odrv0.axis0.config.can_node_id = 40 # A
+# odrv0.axis1.config.can_node_id = 41 # B
 # For the other board
 odrv0.axis0.config.can_node_id = 42 # C
 odrv0.axis1.config.can_node_id = 43 # D
