@@ -329,7 +329,7 @@ module rounded_2corner(v, r){
     circle(r=r,$fs = 1);
 }
 
-module Nema17_screw_translate(corners){
+module Nema17_screw_translate(corners=4){
   for (i=[0:90:90*corners - 1]){
     rotate([0,0,i+45])
       translate([Nema17_screw_hole_width/2,0,0])
@@ -460,6 +460,22 @@ module D_shaft(height, extra_radius=0.25){
       cube([10,10,height+1]);
   }
 }
+
+module ring(d1, d2, h){
+  if (d2 < d1)
+    difference(){
+      cylinder(d=d1, h=h);
+      translate([0,0,-1])
+        cylinder(d=d2, h=h+2);
+    }
+  else
+    difference(){
+      cylinder(d=d2, h=h);
+      translate([0,0,-1])
+        cylinder(d=d1, h=h+2);
+    }
+}
+
 
 // For making nut locks and stuff
 module point_cube(v, ang){

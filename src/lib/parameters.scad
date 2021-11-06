@@ -161,3 +161,7 @@ Belt_roller_bearing_xpos = Sep_disc_radius + b623_outer_dia/2+Belt_thickness;
 
 // Top plate parameters needed for layout slicer
 Yshift_top_plate = -297.8;
+
+Pen_holder_w = 55;
+Pen_holder_rail_w = 36;
+Pen_holder_bottom_th = 7;
