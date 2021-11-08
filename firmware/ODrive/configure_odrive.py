@@ -17,11 +17,6 @@
 
 # At 58, the plastic parts start to vibrate badly
 odrv0.axis0.controller.config.vel_limit = 58
-# Calculating backwards from the RRF-configured max acceleration of 10000 mm/s^2, we get
-# 10000/((20/255)*(2*75*pi)) = 270.6
-# Let's allow around double of that in the ODrives
-odrv0.axis0.controller.config.accel_limit = 540
-odrv0.axis0.controller.config.decel_limit = 540
 
 odrv0.axis0.encoder.config.cpr = 8192     # AMT102-V
 odrv0.axis0.motor.config.current_lim = 20 # Strong enough...
@@ -30,8 +25,6 @@ odrv0.axis0.motor.config.calibration_current = 20
 odrv0.axis0.motor.config.torque_constant = 8.27/310 # = 0.0266774193548387
 
 odrv0.axis1.controller.config.vel_limit = 58
-odrv0.axis1.controller.config.accel_limit = 540
-odrv0.axis1.controller.config.decel_limit = 540
 odrv0.axis1.encoder.config.cpr = 8192     # AMT102-V
 odrv0.axis1.motor.config.current_lim = 20 # Strong enough...
 odrv0.axis1.motor.config.current_lim_margin=18
