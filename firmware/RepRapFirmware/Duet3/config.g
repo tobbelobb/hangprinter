@@ -93,6 +93,11 @@ M950 F0 C"out8"                                    ; Defines a part cooling fan
 ; Find "temp0" and "out7" pins in the wiring diagram:
 ; https://duet3d.dozuki.com/Wiki/Duet_3_Mainboard_6HC_Wiring_Diagram
 
+; Bltouch
+M950 S0 C"io7.out"
+M558 P9 C"io7.in" H5 F120 T6000
+G31 X15 Y27 Z8 P25 ; This is about right for the pen holder tool
+
 ; Tool definitions
 M563 P0 D0 H1                                      ; Tool number 0, with extruder drive 0 uses heater 1 and no fan
 G10 P0 S0 R0                                       ; Set initial tool 0 active at standby temperature 0

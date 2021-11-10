@@ -128,6 +128,11 @@ $(STL_DIR)/belt_roller_insert.stl: $(SRC_DIR)/belt_roller_insert.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/bltouch_arm.stl: $(SRC_DIR)/bltouch_arm.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 $(STL_DIR)/brace_tightener.stl: $(SRC_DIR)/brace_tightener.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -347,6 +352,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/1XD_holder.stl \
 	$(STL_DIR)/bearing_v_623.stl \
 	$(STL_DIR)/belt_roller_insert.stl \
+	$(STL_DIR)/bltouch_arm.stl \
 	$(STL_DIR)/brace_tightener.stl \
 	$(STL_DIR)/cable_clamp.stl \
 	$(STL_DIR)/corner_clamp.stl \

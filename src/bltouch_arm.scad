@@ -1,10 +1,12 @@
 include <lib/parameters.scad>
 use <lib/util.scad>
 
-translate([-50,0,0])
-%import("../stl/extruder_holder.stl");
+//translate([-2.79-6,-4,2.5+145-42.65])
+//  rotate([90,0,90])
+//    %import("../stl/extruder_holder.stl");
 
-bltouch();
+//translate([0,0,-10.4-26.2-8-2])
+//bltouch();
 module bltouch(){
   cylinder(d=2, h=11);
   // The pin when fully stretched is 10.4 mm long
@@ -23,7 +25,7 @@ module bltouch(){
                   translate([7.2/2, -10.6/2])
                     square([0.1, 10.6]);
                   translate([18/2, 0])
-                    circle(r=3.65);
+                    circle(r=3.65, $fn=6*4);
                 }
                 translate([18/2, 0])
                   circle(d=3.2);
@@ -40,7 +42,29 @@ module bltouch(){
 }
 
 
+rotate([90,0,0])
 bltouch_arm();
 module bltouch_arm(){
-  ydir_rounded_cube2([6, 145-43, 4], 3, $fn=6*4);
+  difference(){
+    translate([-8/2, 3.65, 0])
+      rotate([90,0,0])
+        ydir_rounded_cube2([8, 145-43-3.5, 2*3.65], 3, $fn=6*4);
+    for(k=[-1,1])
+      translate([0,0,145-43-3.3/2-Nema17_cube_width/2+k*(Nema17_screw_hole_width/sqrt(2))/2])
+        rotate([90,0,0])
+          rotate([0,0,15])
+          cylinder(d=3.4, h=8, center=true, $fn=11);
+  }
+  difference(){
+    translate([-(18+2*3.65)/2, -3.65, 0])
+      rounded_cube2([18+2*3.65, 2*3.65, 4], r=3.65, $fn=6*4);
+    for(k=[0,1]) mirror([k,0,0])
+      translate([18/2, 0, -1])
+        cylinder(d=3.3, h=6);
+  }
+  for(k=[0,1]) mirror([k,0,0])
+    translate([4,0,4])
+      rotate([90,0,0])
+        translate([0,0,-3.65])
+          inner_round_corner(r=1.5, h=2*3.65, $fn=6*4);
 }
