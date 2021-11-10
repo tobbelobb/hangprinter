@@ -94,9 +94,14 @@ M950 F0 C"out8"                                    ; Defines a part cooling fan
 ; https://duet3d.dozuki.com/Wiki/Duet_3_Mainboard_6HC_Wiring_Diagram
 
 ; Bltouch
+; If you have a bltouch, see
+; https://duet3d.dozuki.com/Wiki/Connecting_a_Z_probe#Section_BLTouch
+; for how to install it
+; Some of the commands below here might be different for you
+; (eg if you don't have a Duet3 board, don't use the io7 headers, or have your bltouch mounted differently than me)
 M950 S0 C"io7.out"
 M558 P9 C"io7.in" H5 F120 T6000
-G31 X15 Y27 Z8 P25 ; This is about right for the pen holder tool
+G31 X15 Y27 Z8 P25 ; Measure these values in your own setup.
 
 ; Tool definitions
 M563 P0 D0 H1                                      ; Tool number 0, with extruder drive 0 uses heater 1 and no fan
