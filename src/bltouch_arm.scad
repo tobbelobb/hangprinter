@@ -43,20 +43,26 @@ module bltouch(){
 
 
 rotate([90,0,0])
-//bltouch_arm(len = 98.5 - 49);
-bltouch_arm(len = 98.5);
-module bltouch_arm(len = 98.5){
+bltouch_arm(len = 98.5, rotit = false);
+module bltouch_arm(len = 98.5, rotit = false){
   difference(){
     translate([-8/2, 3.65, 0])
       rotate([90,0,0])
         ydir_rounded_cube2([8, len, 2*3.65], 3, $fn=6*4);
     for(k=[-1,1])
       translate([0,0,len+1.85-Nema17_cube_width/2+k*(Nema17_screw_hole_width/sqrt(2))/2])
-        rotate([90,0,0]){
-          cylinder(d=3.4, h=8, center=true, $fn=11);
-          translate([0,0,-6.5])
-            nut(5);
-        }
+        if (rotit)
+          rotate([0,90,0]){
+            cylinder(d=3.4, h=8, center=true, $fn=11);
+            translate([0,0,-6.5])
+              nut(5);
+          }
+        else
+          rotate([90,0,0]){
+            cylinder(d=3.4, h=8, center=true, $fn=11);
+            translate([0,0,-6.5])
+              nut(5);
+          }
   }
   difference(){
     translate([-(19+2*3.65)/2, -3.65, 0])
@@ -74,3 +80,7 @@ module bltouch_arm(len = 98.5){
         translate([0,0,-3.65])
           inner_round_corner(r=1.5, h=2*3.65, $fn=6*4);
 }
+
+// For use with flying pen braces
+//rotate([90,0,0])
+//bltouch_arm(len = 98.5 - 49, rotit = true);
