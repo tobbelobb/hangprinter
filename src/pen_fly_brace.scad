@@ -11,7 +11,7 @@ difference(){
           rotate([0,0,-5])
             translate([0,-k,0])
               cube([3+k, 11.5+k*1.5, 10]);
-    for(ang=[90,60+120,30-120])
+    for(ang=[90,70+120,50-120])
       rotate([0,0,ang])
         translate([-2.5/2, 13/2-1, 0])
           hull(){
@@ -50,9 +50,9 @@ difference(){
       rotate([0,0,90+5])
         translate([4.425,0,1.5])
           point_cube([5.6,2.5,11],120);
-  for(ang=[00,60+120,30-120])
+  for(ang=[20,60+120,40-120])
     rotate([0,0,ang])
       translate([13/2 + 1.2, 0, 5])
         rotate([90,0,0])
-          cylinder(d=2, h=4, center=true);
+          cylinder(d=2, h=3.2, center=true);
 }
