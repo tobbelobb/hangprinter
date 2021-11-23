@@ -43,7 +43,7 @@ module bltouch(){
 
 
 rotate([90,0,0])
-bltouch_arm(len = 98.5, rotit = false);
+bltouch_arm(len = 98.5-14, rotit = false); // 98.5 - 14 works with my bondtech and supervolcano
 module bltouch_arm(len = 98.5, rotit = false){
   difference(){
     translate([-8/2, 3.65, 0])
@@ -61,7 +61,7 @@ module bltouch_arm(len = 98.5, rotit = false){
           rotate([90,0,0]){
             cylinder(d=3.4, h=8, center=true, $fn=11);
             translate([0,0,-6.5])
-              nut(5);
+              nut(8);
           }
   }
   difference(){
