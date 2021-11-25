@@ -68,7 +68,7 @@ M569 P43.0 S0 ; Drive 43.0 (D) goes backwards
 ; Speeds and accelerations
 M201 X10000 Y10000 Z10000 U10000 E1000       ; Max accelerations (mm/s^2)
 M203 X36000 Y36000 Z36000 E3600              ; Max speeds (mm/min)
-M204 P2000 T10000                            ; Accelerations while printing and for travel moves
+M204 P2000 T5000                            ; Accelerations while printing and for travel moves
 M566 X240 Y240 Z1200 E1200                 ; Maximum instant speed changes mm/minute
 
 ; Currents
