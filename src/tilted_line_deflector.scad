@@ -22,6 +22,7 @@ module slanted_lines_for_aiming(liney=0){
 }
 
 //%import("../stl/tilted_line_deflector.stl");
+mirror([1,0,0])
 tilted_line_deflector(twod=false,rotx=-atan(sqrt(2))-6, rotz=-30); // Angle atan(sqrt(2)) works if ABCD anchors form like sided tetrahedron
 //tilted_line_deflector(rotz=-30, rotx=-10, bullet_shootout=true);
 module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, behind=false){
@@ -145,7 +146,30 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
                     rotate([90,0,90])
                       translate([0,0,2])
                       difference(){
-                        cylinder(d1=2, d2=2.1*(Spool_height+0.5), h=2*16);
+                        teardrop_pointiness = 0.5;
+                        hull() {
+                          rotate([0,0,131]){
+                            union(){
+                              cylinder(d=2, h=0.1);
+                              rotate([0,0,45])
+                                translate([-teardrop_pointiness/sqrt(2),0,0])
+                                  scale([1 + teardrop_pointiness,1,1])
+                                    rotate([0,0,-45])
+                                      cube([1,1,0.1]);
+                            }
+                            translate([0,0,2*16])
+                              union(){
+                                d = 2.1*(Spool_height+0.5);
+                                cylinder(d=d, h=0.1);
+                                rotate([0,0,45])
+                                  translate([-teardrop_pointiness*(d/2)/sqrt(2),0,0])
+                                    scale([1+teardrop_pointiness,1,1])
+                                      rotate([0,0,-45])
+                                        cube([d/2,d/2,0.1]);
+                            }
+                          }
+                        }
+                        //cylinder(d1=2, d2=2.1*(Spool_height+0.5), h=2*16);
                         rotate([0,0,-rotx-90])
                         translate([7.8, -25, 0])
                           cube(50);
@@ -155,6 +179,18 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
             }
           }
         }
+        // Cutout to make mounting easier
+        for (tr = [[0, 0], [move_along_line*cos(-rotz), Horizontal_deflector_cube_y_size-move_along_line*sin(-rotz)]])
+          translate(tr)
+            rotate([ rotx, 0, rotz ])
+              translate([-a*cos(rotx)*sin(rotz),-a, 0])
+                rotate([0,0,-rotz*cos(rotx)])
+                  translate([0,-33,3.75])
+                    translate([40/2, 30/2, 0])
+                      rotate([0,0,-13])
+                        translate([-40/2, -30/2, 1])
+                          cube([40, 30, 2]);
+
         translate([0,-4.85,0])
           rotate([0,0,180-30])
             translate([-6, 20, -1])
