@@ -22,7 +22,6 @@ module slanted_lines_for_aiming(liney=0){
 }
 
 //%import("../stl/tilted_line_deflector.stl");
-mirror([1,0,0])
 tilted_line_deflector(twod=false,rotx=-atan(sqrt(2))-6, rotz=-30); // Angle atan(sqrt(2)) works if ABCD anchors form like sided tetrahedron
 //tilted_line_deflector(rotz=-30, rotx=-10, bullet_shootout=true);
 module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, behind=false){
