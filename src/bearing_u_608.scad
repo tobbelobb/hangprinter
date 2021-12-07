@@ -13,8 +13,8 @@ bearing_u_608();
 module bearing_u_608(core=false){
   rotate_extrude(){
     difference(){
-      translate([inner_d/2,-(b608_width+0.4)/2])
-        square([(big_d-inner_d)/2, b608_width+0.4]);
+      translate([inner_d/2,-(b608_width+0.1)/2])
+        square([(big_d-inner_d)/2, b608_width+0.1]);
       translate([U_r + small_d/2, 0])
         scale(scl)
           circle(d=6);
