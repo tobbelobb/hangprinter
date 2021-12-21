@@ -103,6 +103,12 @@ M950 S0 C"io7.out"
 M558 P9 C"io7.in" H5 F120 T6000
 G31 X15 Y27 Z8 P25 ; Measure these values in your own setup.
 
+; These affect how you create and your mesh/grid bed compensation heightmap.csv values
+; M557 X-200.001:200 Y-277.001:277 S80 ; Define a A2 sized grid with 1 cm margin...
+; M376 H20 ; Taper the mesh bed compensation over 20 mm of z-height
+; G29 S1 ; Load the default heightmap.csv and enable grid compensation
+
+
 ; Tool definitions
 M563 P0 D0 H1                                      ; Tool number 0, with extruder drive 0 uses heater 1 and no fan
 G10 P0 S0 R0                                       ; Set initial tool 0 active at standby temperature 0
