@@ -409,6 +409,50 @@ module motor_bracket(leftHanded=false){
 }
 
 
+// encoder_stabilizer();
+module encoder_stabilizer() {
+  xdim = 10;
+  ydim = 8.9+4.5*2;
+  zdim = 60;
+  translate([0,16,-34])
+  translate([ydim, 0, 0])
+    rotate([0,0,90]){
+      union(){
+        difference(){
+          top_rounded_cube2([xdim,ydim,zdim], 3, $fn=5*4);
+          translate([-15+xdim/2,4.5+0.05,11])
+            rounded_cube([30, 8.8, 57], 3, $fn=5*4);
+        }
+        translate([xdim/2, ydim/2, 1]){
+          for(k=[0, 1]) mirror([0,k,0])
+            difference(){
+              translate([-xdim/2-8/2,ydim/2,0])
+                rotate([90,0,90])
+                  inner_round_corner(r=2, h=xdim+8, $fn=10*4, ang=90, center=false);
+              for(l=[0,1]) mirror([l,0,0])
+                rotate([0,0,45])
+                  translate([-25,2.80,-1])
+                    mirror([0,1,0])
+                      cube(50);
+            }
+          for(k=[0, 1]) mirror([k,0,0])
+            difference(){
+              translate([xdim/2,ydim/2+8/2,0])
+                rotate([90,0,0])
+                  inner_round_corner(r=2, h=ydim+8, $fn=10*4, ang=90, center=false);
+              for(l=[0,1]) mirror([0,l,0])
+                rotate([0,0,45])
+                  translate([-25,2.80,-1])
+                    cube(50);
+            }
+        }
+      }
+  }
+  //translate([4.5,0,0])
+  //  rotate([90,0,90])
+  //    encoder();
+
+}
 
 // encoder_bracket();
 module encoder_bracket() {
@@ -517,7 +561,8 @@ module base_hull_2d(isD = false){
   pos0D = [73.5 + (Sandwich_D_width - Sandwich_ABC_width) - (Spool_height+1),53,0];
   pos1 = [32-1.5-15+3,53,0];
   pos1D = pos1 - [Spool_height+1, 0, 0];
-  pos2 = [-12,0,0];
+  pos2 = [-13,0,0];
+  pos2p5 = [-13,-32,0];
   pos3 = [36-1.5,53,0];
   pos4 = [36-1.5,-38,0];
   pos5 = [36-1.5-15+3,-38,0];
@@ -556,6 +601,8 @@ module base_hull_2d(isD = false){
   }
   hull(){
     translate(pos2)
+      circle(r=4);
+    translate(pos2p5)
       circle(r=4);
     translate(pos3)
       circle(r=4);
@@ -633,11 +680,15 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
             //  else
             //    import("../../stl/for_render/whitelabel_motor.stl");
             translate([4.5-0.7,0,0])
-              rotate([0,0,2*90])
-                encoder_bracket();
+              rotate([0,0,2*90]){
+                  encoder_bracket();
+                  encoder_stabilizer();
+              }
           }
         }
         translate([-12,0,0.5])
+          Mounting_screw();
+        translate([-12,-32,0.5])
           Mounting_screw();
 
         flerp=15;
@@ -664,6 +715,8 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
       difference(){
         base_hull_2d(text=="D");
         translate([-12,0,0])
+          Mounting_screw(twod=twod);
+        translate([-12,-32,0])
           Mounting_screw(twod=twod);
 
         flerp=15;
