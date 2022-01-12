@@ -169,7 +169,7 @@ module stationary_part(){
     scale([61.1/60.8,61.1/60.8,1])
       linear_extrude(height=7, convexity=6)
         scale(0.1550)
-          for(i=[-1,0,1]){
+          for(i=[-1.1,0,1.1]){
             extra_wiggle_room = 0.2;
             wiggle_degs = i*extra_wiggle_room/(60.8/2)*(180/PI);
                 rotate([0,0,-32-180+wiggle_degs])
@@ -650,7 +650,7 @@ module spool_legs(isD = false, twod=false){
 }
 
 //mirror([1,0,0])
-motor_bracket_extreme(leftHanded=false, twod=false);
+  motor_bracket_extreme(leftHanded=false, twod=false);
 module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
   module placed_text(){
     translate([13,5,0])
@@ -664,7 +664,7 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
   }
 
   translate([motor_bracket_xpos, motor_bracket_ypos, 0]) {
-  if(!twod) {
+    if(!twod) {
       difference(){
         union(){
           linear_extrude(height=Base_th) base_hull_2d(text == "D");
