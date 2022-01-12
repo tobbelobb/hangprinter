@@ -16,7 +16,7 @@ module belt_adj_nut_locks(){
 }
 
 //rotate([0,90,0])
-//belt_roller();
+//  belt_roller(false);
 module belt_roller(twod = true){
   wing=7;
   flerp=15;
@@ -27,7 +27,7 @@ module belt_roller(twod = true){
         difference(){
           union(){
             for(k=[0,1]) mirror([0,k,0])
-              roller_wall(Belt_roller_space_between_walls-0.8, Belt_roller_wall_th+0.4, Belt_roller_h - 2, rot_nut=30, bearing_screw=false);
+              roller_wall(Belt_roller_space_between_walls-0.7, Belt_roller_wall_th+0.4, Belt_roller_h - 2, rot_nut=30, bearing_screw=false);
             translate([-Depth_of_roller_base/2,-Belt_roller_space_between_walls/2,0])
               cube([Depth_of_roller_base, Belt_roller_space_between_walls+2, Belt_roller_h-43]);
             translate([-(Depth_of_roller_base)/2, Belt_roller_space_between_walls/2+Belt_roller_wall_th, Base_th])
@@ -67,20 +67,21 @@ module belt_roller(twod = true){
           opening_ang = 12;
           opening_len = 11;
           for(k=[0,1]) mirror([0, k,0])
-            translate([-Depth_of_roller_base/2, -(Belt_roller_space_between_walls-0.8)/2-opening_len*sin(opening_ang), Belt_roller_h-43])
+            translate([-Depth_of_roller_base/2, -(Belt_roller_space_between_walls-0.7)/2-opening_len*sin(opening_ang), Belt_roller_h-43])
               rotate([0,0,opening_ang])
                 cube([opening_len, 3, Belt_roller_h]);
 
           mirror([1,0,0])
-            translate([Depth_of_roller_base/2, -(Belt_roller_space_between_walls/2+Belt_roller_wall_th),Base_th+2+25])
+            translate([Depth_of_roller_base/2, -(Belt_roller_space_between_walls/2+Belt_roller_wall_th)-0.05,Base_th+2+25])
               rotate([0,0,90])
                 inner_round_corner(r=2, h=Belt_roller_h+2,$fn=4*4);
           mirror([0,1,0])
-            translate([Depth_of_roller_base/2, -(Belt_roller_space_between_walls/2+Belt_roller_wall_th),Base_th+2])
+            translate([Depth_of_roller_base/2, -(Belt_roller_space_between_walls/2+Belt_roller_wall_th)-0.05,Base_th+2])
               rotate([0,0,90])
                 inner_round_corner(r=2, h=Belt_roller_h+2,$fn=4*4);
           translate([0,0,-9])
-            belt_roller_containing_cube();
+            scale([1,(Belt_roller_containing_cube_ywidth+0.1)/Belt_roller_containing_cube_ywidth, 1])
+              belt_roller_containing_cube();
 
           belt_adj_nut_locks();
 
@@ -118,10 +119,10 @@ module belt_roller(twod = true){
           }
         }
       }
-      translate([Belt_roller_top_adj_screw_x, Belt_roller_top_adj_screw_y,Belt_roller_h-27])
-        cylinder(d=M3_screw_head_d, h=Belt_roller_h, $fn=13);
-      translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y,Belt_roller_h-27])
-        cylinder(d=M3_screw_head_d, h=Belt_roller_h, $fn=13);
+      translate([Belt_roller_top_adj_screw_x, Belt_roller_top_adj_screw_y, Belt_roller_h-27])
+        cylinder(d=M3_screw_head_d+0.1, h=Belt_roller_h, $fn=13);
+      translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y, Belt_roller_h-27])
+        cylinder(d=M3_screw_head_d+0.1, h=Belt_roller_h, $fn=13);
       translate([Belt_roller_top_adj_screw_x, Belt_roller_top_adj_screw_y,-5])
         M3_screw(h=Belt_roller_h);
       translate([Belt_roller_top_adj_screw_x, -Belt_roller_top_adj_screw_y,-5])
@@ -239,7 +240,7 @@ module encoder(){
         translate([0,-32.5/2,0.5])
           cylinder(d=5, h=5, $fn=12);
       }
-  }
+    }
   }
 }
 
@@ -426,7 +427,7 @@ module encoder_stabilizer() {
         translate([xdim/2, ydim/2, 1]){
           for(k=[0, 1]) mirror([0,k,0])
             difference(){
-              translate([-xdim/2-8/2,ydim/2,0])
+              translate([-xdim/2-8/2,ydim/2-0.01,0])
                 rotate([90,0,90])
                   inner_round_corner(r=2, h=xdim+8, $fn=10*4, ang=90, center=false);
               for(l=[0,1]) mirror([l,0,0])
