@@ -357,11 +357,15 @@ module motor_bracket(leftHanded=false){
       // Remove overhang for ease of printing upright
       if (leftHanded) {
         translate([7.075,-29.720,-0.5])
-          rotate([0,0,45])
+          rotate([0,0,38])
+            cube(3);
+        translate([8.555,29.285,-0.5])
+          rotate([0,0,-19])
+            translate([-3, -3, 0])
               cube(3);
       } else {
         translate([8.555,29.285,-0.5])
-          rotate([0,0,45])
+          rotate([0,0,38])
             translate([-3, -3, 0])
               cube(3);
       }
@@ -433,8 +437,8 @@ module encoder_stabilizer() {
       union(){
         difference(){
           top_rounded_cube2([xdim,ydim,zdim], 3, $fn=5*4);
-          translate([-15+xdim/2,4.5+0.05,11])
-            rounded_cube([30, 8.8, 57], 3, $fn=5*4);
+          translate([-15+xdim/2,4.5,11])
+            rounded_cube([30, 8.90, 57], 3, $fn=5*4);
         }
         translate([xdim/2, ydim/2, 1]){
           for(k=[0, 1]) mirror([0,k,0])
