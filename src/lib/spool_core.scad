@@ -56,7 +56,7 @@ module spool_core_halve(twod = false, between){
       }
       translate([0,0,bearing_z])
         rotate([90,0,0])
-          cylinder(d=8.0, h=100, center=true, $fn=teeth);
+          cylinder(d=8.2, h=100, center=true, $fn=teeth);
       for(k=[0,1])
         mirror([k,0,0]){
           translate([2,w+1 + between/2 - 0.5,Base_th])
