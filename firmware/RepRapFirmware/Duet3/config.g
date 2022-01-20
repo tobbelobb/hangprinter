@@ -9,7 +9,7 @@ M584 X40.0 Y41.0 Z42.0 U43.0 P4 ; map ABCD-axes to CAN addresses, and set four v
 M584 E0:1:2:3:4:5               ; Regard all built in stepper drivers as extruder drives
 M669 K6                         ; "This is a Hangprinter"
 M669 P2000.0                    ; Printable radius (unused by Hangprinters for now)
-M669 S300 T0.1                  ; Segments per second and min segment length
+M669 S430 T0.1                  ; Segments per second and min segment length
 
 ; Output of auto calibration script for Hangprinter
 M669 A0.0:-1610.98:-131.53 B1314.22:1268.14:-121.28 C-1415.73:707.61:-121.82 D-0.00:0.01:2299.83
