@@ -84,7 +84,11 @@ module torx(h = Spool_height + 2, r = Spool_r, r2=Spool_r/4.2, female=false){
     for(i=[0:1:circs])
       rotate([0,0,i*360/circs]){
         translate([r-5,0,-1])
-        cylinder(r=r2, h=h+2, $fn=50);
+          if(!female) {
+            cylinder(r=r2-0.05, h=h+2, $fn=50);
+          } else {
+            cylinder(r=r2, h=h+2, $fn=50);
+          }
       if(female){
         rotate([0,0,360/(2*circs)]){
            translate([r/2 + 16,0,-1])

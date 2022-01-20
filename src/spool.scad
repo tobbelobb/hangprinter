@@ -27,6 +27,12 @@ module spool_outer(spools = 1){
     }
     translate([0,0,-1])
       cylinder(r=Spool_r-Spool_outer_wall_th, h=spools*(Spool_height + 1)+Torx_depth+1,$fn=150);
+    translate([0,0,spools*(Spool_height+1)+Torx_depth+4.5])
+      rotate_extrude($fn=150) {
+        translate([Spool_r+1,0])
+          rotate([0,0,45])
+            square(10, center=true);
+      }
   }
 }
 
