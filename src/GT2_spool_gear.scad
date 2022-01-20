@@ -30,10 +30,26 @@ module GT2_spool_gear(perfect_world=true){
     extra_space = 0.05;
     scale([(Spool_r+extra_space)/Spool_r, (Spool_r+extra_space)/Spool_r, 1])
       translate([0,0,GT2_gear_height+GT2_gear_height-Torx_depth])
-      rotate([180,0,0])
-      torx(h = GT2_gear_height, female=true);
+        rotate([180,0,0])
+          torx(h = GT2_gear_height, female=true);
     scale([(Spool_r+extra_space)/Spool_r, (Spool_r+extra_space)/Spool_r, 1])
       translate([0,0,-(GT2_gear_height+2)/2])
-      torx(h = GT2_gear_height+2, female=true);
+        torx(h = GT2_gear_height+2, female=true);
+    difference(){
+      for(k=[0,1])
+        translate([0,0,k*GT2_gear_height])
+          mirror([0,0,k])
+            translate([0,0,GT2_gear_height+6])
+              rotate_extrude($fn=150) {
+                translate([Spool_r,0])
+                  rotate([0,0,45])
+                    square(10, center=true);
+              }
+      for(ang=[0:30:359]) {
+        rotate([0,0,15+ang])
+          translate([-3/2, 0, -1])
+            cube([3, Spool_r+10, GT2_gear_height*3]);
+      }
+    }
   }
 }
