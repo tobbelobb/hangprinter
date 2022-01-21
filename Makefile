@@ -124,6 +124,9 @@ $(STL_DIR)/bearing_u_608.stl: $(SRC_DIR)/bearing_u_608.scad
 $(STL_DIR)/bearing_v_623.stl: $(SRC_DIR)/bearing_v_623.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/bearing_u_big_623.stl: $(SRC_DIR)/bearing_u_big_623.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 $(STL_DIR)/belt_roller_insert.stl: $(SRC_DIR)/belt_roller_insert.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -192,7 +195,7 @@ $(STL_DIR)/GT2_spool_gear.stl: $(SRC_DIR)/GT2_spool_gear.scad \
 
 $(STL_DIR)/horizontal_line_deflector.stl: $(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad \
+	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
 $(STL_DIR)/landing_brackets.stl: $(SRC_DIR)/landing_brackets.scad \
@@ -345,6 +348,7 @@ $(STL_DIR)/ziptie_tensioner_wedge.stl: $(SRC_DIR)/ziptie_tensioner_wedge.scad \
 all: | $(STL_DIR) \
 	$(STL_DIR)/1XD_holder.stl \
 	$(STL_DIR)/bearing_v_623.stl \
+	$(STL_DIR)/bearing_u_big_623.stl \
 	$(STL_DIR)/belt_roller_insert.stl \
 	$(STL_DIR)/bltouch_arm.stl \
 	$(STL_DIR)/brace_tightener.stl \

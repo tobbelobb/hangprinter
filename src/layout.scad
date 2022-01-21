@@ -125,7 +125,7 @@ module tilted_line_deflector_for_layout(rot_around_center=0, center=false){
 module line_deflector(rot_around_center=0, center=false){
   module line_deflector_always_center(){
       rotate([0,0,rot_around_center]) // Rotate around bearing center
-      translate([0,b623_vgroove_small_r,0])
+      translate([0,b623_big_ugroove_small_r-3,0])
       if(stls && !twod){
         rotate([-90,0,0])
           import("../stl/horizontal_line_deflector.stl");
@@ -136,7 +136,7 @@ module line_deflector(rot_around_center=0, center=false){
   if(center){
     line_deflector_always_center();
   } else {
-    translate([0,-b623_vgroove_small_r,0])
+    translate([0,-b623_big_ugroove_small_r,0])
       line_deflector_always_center();
   }
 }
@@ -173,27 +173,25 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
               translate([-b623_vgroove_small_r,0,0])
                 line_verticalizer(twod=twod);
             }
-    translate([lx0-b623_vgroove_small_r,
-               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_vgroove_small_r-b623_width/2-1,
+    translate([lx0-b623_big_ugroove_small_r,
+               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
                0])
-      line_deflector(-78, center=true);
-    translate([lxm1,
-               79,
-               0])
+      line_deflector(-67, center=true);
+    translate([lxm1, 79, 0])
       rotate([0,0,90])
       if(stls && !twod){
         import("../stl/line_roller_wire_rewinder.stl");
       } else {
         line_roller_wire_rewinder(twod=twod);
       }
-    translate([lx1+b623_vgroove_small_r,
-               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_vgroove_small_r-b623_width/2-1,
+    translate([lx1+b623_big_ugroove_small_r,
+               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
                0])
-      line_deflector(78, center=true);
-    translate([lx2+b623_vgroove_small_r,ly2-b623_vgroove_small_r,0])
-      line_deflector(78, center=true);
-    translate([-b623_vgroove_small_r+b623_width/2+1,ly2-b623_vgroove_small_r,0])
-      line_deflector(-78, center=true);
+      line_deflector(67, center=true);
+    translate([lx2+b623_big_ugroove_small_r, ly2-b623_big_ugroove_small_r,0])
+      line_deflector(63, center=true);
+    translate([-b623_big_ugroove_small_r+b623_width/2+1,ly2-b623_big_ugroove_small_r,0])
+      line_deflector(-90-90-90, center=true);
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])

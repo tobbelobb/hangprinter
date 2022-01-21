@@ -11,7 +11,7 @@ use <lib/util.scad>
 rotate([90,0,0])
 horizontal_line_deflector();
 module horizontal_line_deflector(twod=false){
-  cx = b623_vgroove_big_r*2 + 7;
+  cx = b623_big_ugroove_big_r*2 + 7;
   cy = Horizontal_deflector_cube_y_size;
   bz = Gap_between_sandwich_and_plate + Sep_disc_radius - Spool_r;
   bit_y = cy;
@@ -23,7 +23,10 @@ module horizontal_line_deflector(twod=false){
     rotate([0,0,90])
       translate([-Bit_width/2, -bit_y/2, 0])
       difference(){
-        one_rounded_cube2([Bit_width+4,bit_y,Base_th], 5.5, $fn=28);
+        one_rounded_cube2([Bit_width+4,bit_y,Base_th], 6.5, $fn=28);
+        translate([-2,8,-1])
+          rotate([0,0,45])
+            cube([20, 20, Base_th+2]);
       }
   }
 
@@ -35,11 +38,11 @@ module horizontal_line_deflector(twod=false){
       take_away_angle = 90;
 
       // something to aim for
-      a = b623_vgroove_small_r;
+      a = b623_big_ugroove_small_r-3;
       %translate([ 0, 0, bz ])
         translate([0,-a, 0]){
           color("yellow")
-            b623_vgroove();
+            b623_big_ugroove();
           }
       difference(){
         union(){
@@ -68,10 +71,10 @@ module horizontal_line_deflector(twod=false){
         translate([0,0,bz]){
           translate([0,-a, 0])
             rotate([0,0,0])
-              scale([(b623_vgroove_big_r+extra_b_width/2)/b623_vgroove_big_r,
-                  (b623_vgroove_big_r+extra_b_width/2)/b623_vgroove_big_r,
+              scale([(b623_big_ugroove_big_r+extra_b_width/2)/b623_big_ugroove_big_r,
+                  (b623_big_ugroove_big_r+extra_b_width/2)/b623_big_ugroove_big_r,
                   1]){
-                elong_b623_vgroove(20, extra_b_height);
+                elong_b623_big_ugroove(20, extra_b_height);
               }
         }
         translate([0,0,bz])
@@ -117,11 +120,16 @@ module horizontal_line_deflector(twod=false){
     } else { //twod
       difference(){
         translate([-cx/2-Bit_width+0.5, -cy+5])
-          ydir_rounded_cube2_2d([cx+2*Bit_width-1, cy], 5.5, $fn=28);
+          ydir_rounded_cube2_2d([cx+2*Bit_width-1, cy], 6.5, $fn=28);
         for(k=[0,1])
-          mirror([k,0])
+          mirror([k,0]){
             translate([cx/2+pl,ybit_hole])
               Mounting_screw(twod=true);
+            translate([-cx/2-Bit_width+0.5, -cy+5])
+              translate([-2,-17.23])
+                rotate([0,0,45])
+                  square([20, 20]);
+          }
       }
     }
   }
