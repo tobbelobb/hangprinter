@@ -96,12 +96,12 @@ w = 27;
 l = 35;
 front = -l+Depth_of_roller_base/2;
 module action_points(){
-  translate([0, front+4.5, b623_vgroove_small_r + Eyelet_extra_dist + line_action_lower_z]){
-    translate([0,15, 0 - b623_vgroove_small_r - Eyelet_extra_dist])
+  translate([0, front+4.5, b623_big_ugroove_small_r + Eyelet_extra_dist + line_action_lower_z]){
+    translate([0,15, 0 - b623_big_ugroove_small_r - Eyelet_extra_dist])
       rotate([90,90,0]){
         eyelet(h=20);
       }
-    translate([0,-3, Corner_clamp_bearings_center_to_center + b623_vgroove_small_r + Eyelet_extra_dist])
+    translate([0,-3, Corner_clamp_bearings_center_to_center + b623_big_ugroove_small_r + Eyelet_extra_dist])
       rotate([90,0,0]){
         cylinder(h=3, d=0.5);
       }
@@ -110,8 +110,8 @@ module action_points(){
 
 //cutoff_cube();
 module cutoff_cube(){
-  translate([0, front+6, b623_vgroove_small_r + Eyelet_extra_dist + line_action_lower_z])
-    translate([0,0, Corner_clamp_bearings_center_to_center + b623_vgroove_small_r + Eyelet_extra_dist])
+  translate([0, front+6, b623_big_ugroove_small_r + Eyelet_extra_dist + line_action_lower_z])
+    translate([0,0, Corner_clamp_bearings_center_to_center + b623_big_ugroove_small_r + Eyelet_extra_dist])
       rotate([90,0,0])
         translate([-15/2,0,-1])
           cube(15);
@@ -138,49 +138,44 @@ module eiffel(){
     union(){
       hull(){
         linear_extrude(height=0.1)
-        hull() {
-          translate([w_small/2+w/2-2,2])
-          circle(r=2, $fn=4*6);
-          translate([-6.5,2])
-          circle(r=2, $fn=4*6);
-          translate([-6.5,13])
-          circle(r=2, $fn=4*6);
-          translate([w_small/2+w/2-2,13])
-          circle(r=2, $fn=4*6);
-        }
+          hull() {
+            translate([w_small/2+w/2-2,2])  circle(r=2, $fn=4*6);
+            translate([-6.5,2])             circle(r=2, $fn=4*6);
+            translate([-6.5,13])            circle(r=2, $fn=4*6);
+            translate([w_small/2+w/2-2,13]) circle(r=2, $fn=4*6);
+          }
         mid_section();
       }
       hull(){
         mid_section();
-        translate([0,0,Corner_clamp_bearings_center_to_center + 2*b623_vgroove_small_r + 2*Eyelet_extra_dist + 5])
-        linear_extrude(height=0.1)
-        hull() {
-          translate([w_small-1.5,2.0])
-          circle(r=2, $fn=4*6);
-          translate([1.5,2])
-          circle(r=2, $fn=4*6);
-          translate([w_small-1.5,2.8])
-          circle(r=2, $fn=4*6);
-          translate([1.5,2.8])
-          circle(r=2, $fn=4*6);
-        }
+        translate([0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + 5])
+          linear_extrude(height=0.1)
+            hull() {
+              translate([w_small-1.5,2.0]) circle(r=2, $fn=4*6);
+              translate([1.5,2])           circle(r=2, $fn=4*6);
+              translate([w_small-1.5,2.8]) circle(r=2, $fn=4*6);
+              translate([1.5,2.8])         circle(r=2, $fn=4*6);
+            }
       }
     }
 }
 
 module vertical_screws(){
   for(k=[0,1]) mirror([k,0,0]) {
-    translate([3.2,front+3.6/2+1.36/2,7+Corner_clamp_bearings_center_to_center-7]){
+    translate([3.2,
+               front+3.6/2+1.36/2,
+               line_action_lower_z + Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist - 31
+              ]){
       translate([0,0,-3])
         M3_screw(h=50);
       translate([0,0.3,0])
-      hull(){
-        rotate([0,0,30])
-        nut(h=2.5);
-        translate([0,-10,0])
+        hull(){
           rotate([0,0,30])
             nut(h=2.5);
-      }
+          translate([0,-10,0])
+            rotate([0,0,30])
+              nut(h=2.5);
+        }
     }
   }
 
@@ -214,7 +209,6 @@ module newer_line_roller_anchor(tilt=10){
     vertical_screws();
   }
 
-  translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_vgroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])
+  translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_big_ugroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])
     top();
 }
-

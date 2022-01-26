@@ -208,6 +208,13 @@ module one_rounded_cube2_3(v, r){
   translate([r,v[1]-r,0]) cylinder(h=v[2], r=r);
 }
 
+module one_rounded_cube2_4(v, r){
+  $fs = 1;
+  translate([0,0,0]) cube([v[0]-  r, v[1]  , v[2]]);
+  translate([0,r,0]) cube([v[0]   , v[1]-r, v[2]]);
+  translate([v[0]-r,r,0]) cylinder(h=v[2], r=r);
+}
+
 module one_rounded_cube3(v, r){
   translate([0,0,0])           cube([v[0]-  r, v[1]  , v[2]]);
   translate([0,0,0])           cube([v[0]   , v[1]-r, v[2]]);

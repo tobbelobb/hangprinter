@@ -589,10 +589,10 @@ if(mover && !twod)
   d_lines();
 module d_lines(){
   color("pink")
-  for(k=[0,120,240])
-    rotate([0,0,k])
-      translate([0,Sidelength/sqrt(3),lift_mover_z])
-        cylinder(r=1.9, h=ANCHOR_D_Z-lift_mover_z);
+    for(k=[0,120,240])
+      rotate([0,0,k])
+        translate([0,Sidelength/sqrt(3),lift_mover_z])
+          cylinder(r=1.9, h=ANCHOR_D_Z-lift_mover_z+15);
 }
 
 if(bottom_triangle)
