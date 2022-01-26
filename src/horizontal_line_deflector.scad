@@ -33,7 +33,7 @@ module horizontal_line_deflector(twod=false){
   mirror([1,0,0]) {
     if(!twod){
       extra_b_height = 0.8; // half of this above, half below
-      extra_b_width = 3*b623_vgroove_room_to_grow_r; // half of this to the left of bearing
+      extra_b_width = 3*b623_ugroove_room_to_grow_r; // half of this to the left of bearing
       full_h = bz+8;
       take_away_angle = 90;
 
@@ -114,7 +114,7 @@ module horizontal_line_deflector(twod=false){
               difference(){
                 cylinder(d=5, h=2, $fn=12);
                   translate([0,0,-1])
-                    cylinder(d=3.3, h=4, $fn=12); // The ring to rest b623_vgroove bore on
+                    cylinder(d=3.3, h=4, $fn=12); // The ring to rest b623 bore on
               }
 
     } else { //twod

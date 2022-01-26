@@ -38,15 +38,6 @@ module u_roller_wall_pair(space_between_walls, wall_th, height, rot_nut=0, base_
 space_between_walls = 2*b623_width + 0.8 + 2;
 tower_h = Line_roller_ABC_winch_h - b608_vgroove_small_r + b623_big_ugroove_small_r - 0.5 + 3;
 
-//translate([b623_vgroove_small_r,-1-b623_width/2,0]){
-//translate([0, b623_width + 2, tower_h-2.5])
-//  eyelet();
-//translate([-b623_vgroove_small_r*2, 0, tower_h-2.5])
-//  eyelet();
-//translate([0, 0, tower_h-2.5])
-//  eyelet();
-//}
-
 //rotate([0,-90,0])
 //%import("../stl/line_verticalizer.stl");
 rotate([0,90,0])
@@ -55,7 +46,7 @@ line_verticalizer();
 module line_verticalizer(twod = false){
   wall_th = Line_roller_wall_th+1.6;
   base_extra_w = b623_width+2;
-  eyelet_holder_h = min(9, tower_h-Base_th-2*(b623_big_ugroove_big_r+b623_vgroove_room_to_grow_r));
+  eyelet_holder_h = min(9, tower_h-Base_th-2*(b623_big_ugroove_big_r+b623_ugroove_room_to_grow_r));
   if(!twod){
     difference(){
       union(){
@@ -65,7 +56,7 @@ module line_verticalizer(twod = false){
             cube([Depth_of_roller_base+3, space_between_walls+2*wall_th, eyelet_holder_h]);
           translate([0,0,tower_h-(Depth_of_roller_base+3)/2])
             rotate([90,0,0])
-            cylinder(r=b623_big_ugroove_big_r + b623_vgroove_room_to_grow_r, h=100, center=true,
+            cylinder(r=b623_big_ugroove_big_r + b623_ugroove_room_to_grow_r, h=100, center=true,
                       $fn=14*4);
         }
       }

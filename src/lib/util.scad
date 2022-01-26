@@ -626,17 +626,6 @@ module line_from_to(v0, v1, r = 1.0){
     }
 }
 
-module b623_vgroove(){
-  $fn=4*8;
-  color("purple"){
-    cylinder(r=b623_vgroove_small_r, h=b623_width, center=true);
-    for(k=[0,0,1])
-      mirror([0,0,k]){
-        cylinder(r1=b623_vgroove_small_r, r2=b623_vgroove_big_r, h=b623_width/2);
-      }
-  }
-}
-
 module b623_big_ugroove(){
   $fn=4*8;
   color("purple"){
@@ -645,31 +634,6 @@ module b623_big_ugroove(){
       mirror([0,0,k]){
         cylinder(r1=b623_big_ugroove_small_r, r2=b623_big_ugroove_big_r, h=b623_width/2);
       }
-  }
-}
-
-//elong_b623_vgroove();
-module elong_b623_vgroove(elong=10, extra_height=0){
-  $fn=4*8;
-  color("purple"){
-    hull(){
-      cylinder(r=b623_vgroove_small_r, h=b623_width+extra_height, center=true);
-      translate([0,elong,0])
-        cylinder(r=b623_vgroove_small_r, h=b623_width+extra_height, center=true);
-    }
-    for(k=[0,1])
-      mirror([0,0,k])
-        hull(){
-          cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
-          if (extra_height != 0) translate([0,0,b623_width/2])
-            cylinder(r=b623_vgroove_big_r, h=extra_height/2);
-          cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
-          translate([0,elong,0]){
-            cylinder(r1=b623_vgroove_small_r,r2=b623_vgroove_big_r,h=b623_width/2);
-            if (extra_height != 0) translate([0,0,b623_width/2])
-              cylinder(r=b623_vgroove_big_r, h=extra_height/2);
-          }
-        }
   }
 }
 
@@ -937,60 +901,6 @@ module roller_wall_pair(space_between_walls, wall_th, height, rot_nut=0, base_ex
       roller_wall(space_between_walls, wall_th, height, rot_nut, bearing_screw);
       mirror([0,1,0])
         roller_wall(space_between_walls, wall_th, height, rot_nut, bearing_screw);
-}
-
-//preventor_edges(22, b623_width, back1=1.9, back2=0.9);
-module preventor_edges(tower_h,
-                       space_between_walls,
-                       with_bearing=false,
-                       edge_start=0,
-                       edge_stop=180,
-                       back1 = 0.5,
-                       back2 = 0){
-  // Edge to prevent line from falling off...
-  a = 1.75;
-  b = b623_vgroove_room_to_grow_r;
-  rot_r = b623_vgroove_big_r+b;
-
-  if(with_bearing){
-    translate([0,0,tower_h-Depth_of_roller_base/2])
-    rotate([90,0,0])
-      b623_vgroove();
-  }
-
-  module preventor_edge(){
-    difference(){
-      translate([0, -space_between_walls/2 - 0.4,
-          tower_h - Depth_of_roller_base/2])
-        rotate([-90,0,0])
-        difference(){
-          rotate_extrude(angle=360, convexity=10, $fn=60)
-            translate([rot_r,0])
-            polygon(points = [[0,-back2],[0,-back1],[b+a, -back1],[b+a,-back2],[b, a],[0, a]]);
-          rotate([0,0,edge_stop])
-            translate([0,0,-0.5-back1])
-            linear_extrude(height=b+a+0.5+back1)
-            polygon(points=circle_sector(360-(edge_stop-edge_start),1,rot_r+b+a+1));
-          rotate([0,0,edge_start])
-            translate([rot_r-1,0,0])
-            rotate([45,0,0])
-            cube(b+a+1);
-          rotate([0,0,edge_stop])
-            translate([rot_r-1,0,0])
-            rotate([45,0,0])
-            cube(b+a+1);
-        }
-      translate([Depth_of_roller_base/2,-10,0])
-        cube([10,10,tower_h]);
-      translate([-Depth_of_roller_base/2-10,-10,0])
-        cube([10,10,tower_h]);
-    }
-
-  }
-
-  preventor_edge();
-  mirror([0,1,0])
-    preventor_edge();
 }
 
 //corner_rounder();

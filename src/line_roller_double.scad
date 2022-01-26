@@ -50,9 +50,6 @@ module walls(space_between_walls, wall_th, height, tilt, rot_nut=0, bearing_scre
                   }
               }
             }
-      //rotate([0,30,0])
-      //  translate([0,0,-b608_vgroove_big_r-b608_vgroove_room_to_grow_r])
-      //  preventor_edges_608(height, space_between_walls+0.75, edge_stop=120);
     }
   }
 }

@@ -24,7 +24,7 @@ foot_shape_r = 1.0;
 
 box_x = b623_big_ugroove_big_r*2+2.9;
 box_y = 6;
-bea_z = b623_big_ugroove_big_r+wth+b623_vgroove_room_to_grow_r+edg_h;
+bea_z = b623_big_ugroove_big_r+wth+b623_ugroove_room_to_grow_r+edg_h;
 box_z = bea_z + b623_big_ugroove_big_r + 3.4;
 small_r = 5;
 xwards = -3.5;
@@ -90,9 +90,6 @@ module small_walls(){
         cylinder(d=3.3, h=2.2, $fn=10,  center=true);
   }
 
-  //for(k=[0,1]) mirror([0,k,0])
-  //  translate([0, b623_width/2+1.8/2,0])
-  //    preventor_edges(bea_z+Depth_of_roller_base/2, s, false, 180+90, 360);
   translate([1,-s-1,box_z-2])
     difference(){
       cube([3, 2*(s+2), 2]);
@@ -113,7 +110,7 @@ module action_point_holes(){
       translate([0,Cc_action_point_from_mid - 1*b623_big_ugroove_small_r, 2*b623_big_ugroove_small_r-0.3])
         rotate([0,90,0])
           difference(){
-            cylinder(h=b623_width+1, r=b623_big_ugroove_big_r+b623_vgroove_room_to_grow_r, center=true);
+            cylinder(h=b623_width+1, r=b623_big_ugroove_big_r+b623_ugroove_room_to_grow_r, center=true);
             cylinder(h=b623_width+2, r=3, center=true, $fn=4*5);
           }
     }
@@ -198,7 +195,7 @@ module corner_clamp_tower(base_th       = wth,
     }
     // Edge to prevent line from falling of...
     a = 1.5;
-    b = b623_vgroove_room_to_grow_r;
+    b = b623_ugroove_room_to_grow_r;
     rot_r = b623_big_ugroove_big_r+b;
     translate([move_tower_x,0,0]) {
       b_pos=[bearing_1_x, -bearing_width/2-0.8, higher_bearing_z];
@@ -245,10 +242,10 @@ module corner_clamp_tower(base_th       = wth,
               }
               translate([bearing_1_x+move_tower_x, 0, higher_bearing_z])
                 rotate([90,0,0])
-                  cylinder(r=b623_big_ugroove_big_r + b623_vgroove_room_to_grow_r, h=b623_width+1, center=true);
+                  cylinder(r=b623_big_ugroove_big_r + b623_ugroove_room_to_grow_r, h=b623_width+1, center=true);
               translate([bearing_1_x+move_tower_x, 0, lower_bearing_z])
                 rotate([90,0,0])
-                  cylinder(r=b623_big_ugroove_big_r + b623_vgroove_room_to_grow_r, h=b623_width+1, center=true);
+                  cylinder(r=b623_big_ugroove_big_r + b623_ugroove_room_to_grow_r, h=b623_width+1, center=true);
             }
           }
           // vertical action point holes
@@ -362,7 +359,7 @@ module corner_clamp(){
             cube([channel_r2+6,16,1+sqrt(channel_l*channel_l + Min_beam_width*Min_beam_width)]);
         translate([0.5,Cc_action_point_from_mid+Move_d_bearings_inwards-b623_big_ugroove_small_r, bea_z])
           rotate([0,90,0])
-            cylinder(r=b623_big_ugroove_big_r+b623_vgroove_room_to_grow_r, h=b623_width+1);
+            cylinder(r=b623_big_ugroove_big_r+b623_ugroove_room_to_grow_r, h=b623_width+1);
       }
 
       translate([0,Cc_action_point_from_mid-b623_big_ugroove_small_r,0.1])

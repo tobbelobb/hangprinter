@@ -23,6 +23,4 @@ module bearing_u_big_623(){
   }
 }
 //#cylinder(d=small_d+0.01, h=b623_width, center=true);
-
-//import("../stl/bearing_v_623.stl");
 //#cylinder(d=13.1, h=b623_width, center=true);

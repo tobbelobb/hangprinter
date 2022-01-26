@@ -105,7 +105,7 @@ module top_plate(cx, cy, mvy){
 module tilted_line_deflector_for_layout(rot_around_center=0, center=false){
   module tilted_line_deflector_always_center(){
       rotate([0,0,rot_around_center]) // Rotate around bearing center
-      translate([0,b623_vgroove_small_r,0])
+      translate([0,b623_big_ugroove_small_r,0])
       if(stls && !twod){
         import("../stl/tilted_line_deflector.stl");
       } else {
@@ -115,7 +115,7 @@ module tilted_line_deflector_for_layout(rot_around_center=0, center=false){
   if(center){
     tilted_line_deflector_always_center();
   } else {
-    translate([0,-b623_vgroove_small_r,0])
+    translate([0,-b623_big_ugroove_small_r,0])
       tilted_line_deflector_always_center();
   }
 }
@@ -142,7 +142,7 @@ module line_deflector(rot_around_center=0, center=false){
 }
 
 module placed_landing_brackets(){
-  translate([0, 128-b623_vgroove_small_r/2, 0])
+  translate([0, 128-b623_big_ugroove_small_r/2, 0])
     rotate([0,0,180+90])
       landing_bracket_a(twod=twod);
   push_bc_brackets=23;
@@ -170,7 +170,7 @@ module placed_line_verticalizer(angs=[180+30,180,180-30]){
               rotate([0,-90,0])
               import("../stl/line_verticalizer.stl");
             } else {
-              translate([-b623_vgroove_small_r,0,0])
+              translate([-b623_big_ugroove_small_r,0,0])
                 line_verticalizer(twod=twod);
             }
     translate([lx0-b623_big_ugroove_small_r,
@@ -300,9 +300,9 @@ module line_roller_double_with_bearings(){
         rotate([90,0,0])
         translate([0,0,0.1])
         rotate([-90,0,0])
-        translate([0,0,-(b623_vgroove_small_r+Eyelet_extra_dist)])
+        translate([0,0,-(b623_big_ugroove_small_r+Eyelet_extra_dist)])
         rotate([-5,0,0])
-        translate([0,0.7,(b623_vgroove_small_r+Eyelet_extra_dist)])
+        translate([0,0.7,(b623_big_ugroove_small_r+Eyelet_extra_dist)])
         rotate([90,0,0])
         b608_vgroove();
   }
@@ -626,9 +626,9 @@ module lr(){
     //    cube(50);
     //}
     color("yellow")
-      translate([Back_bearing_x+Move_tower+b623_vgroove_small_r/sqrt(2),
+      translate([Back_bearing_x+Move_tower+b623_big_ugroove_small_r/sqrt(2),
                  0,
-                 Higher_bearing_z + b623_vgroove_small_r/sqrt(2)])
+                 Higher_bearing_z + b623_big_ugroove_small_r/sqrt(2)])
       rotate([0,-90+atan(ANCHOR_D_Z/ay),0])
       cylinder(r = 0.75, h = 0.5*sqrt(ay*ay + ANCHOR_D_Z*ANCHOR_D_Z));
 
@@ -653,46 +653,46 @@ module lr(){
       rotate([90,0,0]){
         if(tr[2])
           color("purple")
-            cylinder(r=b623_vgroove_small_r, h=1.5, center=true);
+            cylinder(r=b623_big_ugroove_small_r, h=1.5, center=true);
         color("yellow")
           rotate([0,tr[1][2],tr[1][0]])
           rotate_extrude(angle=tr[1][1])
-          translate([b623_vgroove_small_r+tr[1][2]*0.04,0,0])
+          translate([b623_big_ugroove_small_r+tr[1][2]*0.04,0,0])
           circle(r=0.75);
       }
     color("yellow")
-      translate([Front_bearing_x+Move_tower-2, 0, Higher_bearing_z-b623_vgroove_small_r+0.8])
+      translate([Front_bearing_x+Move_tower-2, 0, Higher_bearing_z-b623_big_ugroove_small_r+0.8])
       rotate([0,-90,0])
       rotate([0,0,235])
       rotate_extrude(angle=194, $fn=20)
         translate([2.1,0])
           circle(r=0.75);
-    translate([Front_bearing_x+Move_tower-1.5, 0, Higher_bearing_z-b623_vgroove_small_r+1.9])
+    translate([Front_bearing_x+Move_tower-1.5, 0, Higher_bearing_z-b623_big_ugroove_small_r+1.9])
       color("yellow")
       rotate([-90,0,0])
       cylinder(r=0.75, h=Sidelength/2);
-    translate([Front_bearing_x+Move_tower-2, -2.3, Higher_bearing_z-b623_vgroove_small_r-0.1])
+    translate([Front_bearing_x+Move_tower-2, -2.3, Higher_bearing_z-b623_big_ugroove_small_r-0.1])
       color("yellow")
       rotate([-90,0,0])
       cylinder(r=0.75, h=3);
     // Within lineroller_anchor
-    line_from_to([Front_bearing_x+Move_tower + sin(ang_b0_b1)*b623_vgroove_small_r, 0,
-                    Lower_bearing_z - cos(ang_b0_b1)*b623_vgroove_small_r],
-                 [Back_bearing_x+Move_tower + sin(ang_b0_b1)*b623_vgroove_small_r, 0,
-                    Higher_bearing_z - cos(ang_b0_b1)*b623_vgroove_small_r], r=0.75, $fn=6);
+    line_from_to([Front_bearing_x+Move_tower + sin(ang_b0_b1)*b623_big_ugroove_small_r, 0,
+                    Lower_bearing_z - cos(ang_b0_b1)*b623_big_ugroove_small_r],
+                 [Back_bearing_x+Move_tower + sin(ang_b0_b1)*b623_big_ugroove_small_r, 0,
+                    Higher_bearing_z - cos(ang_b0_b1)*b623_big_ugroove_small_r], r=0.75, $fn=6);
     // From lower bearing to effector
-    line_from_to([Front_bearing_x+Move_tower-sin(ang_action)*b623_vgroove_small_r, 0,
-                    Lower_bearing_z-cos(ang_action)*b623_vgroove_small_r],
-                 [Front_bearing_x+Move_tower-sin(ang_action)*b623_vgroove_small_r
+    line_from_to([Front_bearing_x+Move_tower-sin(ang_action)*b623_big_ugroove_small_r, 0,
+                    Lower_bearing_z-cos(ang_action)*b623_big_ugroove_small_r],
+                 [Front_bearing_x+Move_tower-sin(ang_action)*b623_big_ugroove_small_r
                    -between_action_points_x, 0,
-                   Lower_bearing_z-cos(ang_action)*b623_vgroove_small_r
+                   Lower_bearing_z-cos(ang_action)*b623_big_ugroove_small_r
                    +between_action_points_z], r=0.75, $fn=6);
     // From effector to higher bearing
-    line_from_to([Front_bearing_x+Move_tower+sin(ang_action)*b623_vgroove_small_r, 0,
-                    Higher_bearing_z + cos(ang_action)*b623_vgroove_small_r],
-                 [Front_bearing_x+Move_tower+sin(ang_action)*b623_vgroove_small_r
+    line_from_to([Front_bearing_x+Move_tower+sin(ang_action)*b623_big_ugroove_small_r, 0,
+                    Higher_bearing_z + cos(ang_action)*b623_big_ugroove_small_r],
+                 [Front_bearing_x+Move_tower+sin(ang_action)*b623_big_ugroove_small_r
                    -between_action_points_x, 0,
-                    Higher_bearing_z + cos(ang_action)*b623_vgroove_small_r
+                    Higher_bearing_z + cos(ang_action)*b623_big_ugroove_small_r
                    +between_action_points_z],  r=0.75,$fn=6);
 }
 
@@ -730,8 +730,8 @@ module ceiling_unit_internal_lines_v4p1(){
     bbc = e2+5;
     a = -bc_x_pos-spd/2;
     b = bcspool_y+move_BC_deflectors+e;
-    c = cos(60)*b623_vgroove_small_r;
-    d = sin(60)*b623_vgroove_small_r;
+    c = cos(60)*b623_big_ugroove_small_r;
+    d = sin(60)*b623_big_ugroove_small_r;
     line_from_to([a, bcspool_y, hz],
                  [a-0.5, b+10, hz]);
     line_from_to([a-c+0.5, b+d-0.7, hz+2],
