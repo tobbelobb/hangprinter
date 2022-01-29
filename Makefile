@@ -328,6 +328,18 @@ $(STL_DIR)/tilted_line_deflector_mirrored.stl: $(SRC_DIR)/tilted_line_deflector_
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/tilted_line_deflector_steeper_downwards.stl: $(SRC_DIR)/tilted_line_deflector_steeper_downwards.scad \
+	$(SRC_DIR)/tilted_line_deflector.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/tilted_line_deflector_steeper_downwards_mirrored.stl: $(SRC_DIR)/tilted_line_deflector_steeper_downwards_mirrored.scad \
+	$(SRC_DIR)/tilted_line_deflector.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 $(STL_DIR)/ziptie_tensioner_wedge.stl: $(SRC_DIR)/ziptie_tensioner_wedge.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
@@ -383,6 +395,8 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/spool_mirrored.stl \
 	$(STL_DIR)/tilted_line_deflector_mirrored.stl \
 	$(STL_DIR)/tilted_line_deflector.stl \
+	$(STL_DIR)/tilted_line_deflector_steeper_downwards_mirrored.stl \
+	$(STL_DIR)/tilted_line_deflector_steeper_downwards.stl \
 	$(STL_DIR)/ziptie_tensioner_wedge.stl \
 	layout.dxf \
 	layout_a4.pdf

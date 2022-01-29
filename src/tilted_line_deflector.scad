@@ -24,7 +24,7 @@ module slanted_lines_for_aiming(liney=0){
 //%import("../stl/tilted_line_deflector.stl");
 tilted_line_deflector();
 //tilted_line_deflector(rotz=-30, rotx=-10, bullet_shootout=true);
-module tilted_line_deflector(twod=false, rotx=-atan(sqrt(2))-17, rotz=-30, bullet_shootout=true, behind=false){
+module tilted_line_deflector(twod=false, rotx=Tilted_line_deflector_tilt, rotz=-30, bullet_shootout=true, behind=false){
   extra_ythick = 3;
   cx = b608_vgroove_big_r*2 + 8;
   cy = Horizontal_deflector_cube_y_size*(2+sin(-rotz)) + extra_ythick;
