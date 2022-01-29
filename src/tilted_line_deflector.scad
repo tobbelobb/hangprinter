@@ -62,7 +62,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
   mirror([1,0,0]) {
     if(!twod){
       extra_b_height = 0.9; // half of this above, half below
-      extra_b_width = 3*b608_vgroove_room_to_grow_r; // half of this to the left of bearing
+      extra_b_width = 3*b608_ugroove_room_to_grow_r; // half of this to the left of bearing
       full_h = bz+8-b608_vgroove_big_r*sin(rotx);
       take_away_angle = 90;
 
