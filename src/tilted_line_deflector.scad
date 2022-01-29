@@ -22,9 +22,9 @@ module slanted_lines_for_aiming(liney=0){
 }
 
 //%import("../stl/tilted_line_deflector.stl");
-tilted_line_deflector(twod=false,rotx=-atan(sqrt(2))-6, rotz=-30);
+tilted_line_deflector();
 //tilted_line_deflector(rotz=-30, rotx=-10, bullet_shootout=true);
-module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, behind=false){
+module tilted_line_deflector(twod=false, rotx=-atan(sqrt(2))-17, rotz=-30, bullet_shootout=true, behind=false){
   extra_ythick = 3;
   cx = b608_vgroove_big_r*2 + 8;
   cy = Horizontal_deflector_cube_y_size*(2+sin(-rotz)) + extra_ythick;
@@ -120,7 +120,7 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
                     translate([0,0,full_h - 9.9 + 3*sin(rotx)]){
                       cylinder(d1=8.3, d2=14.2, h=4.5, $fn=12*2);
                       translate([0,0,4.49])
-                        cylinder(d=14.2, h=23, $fn=12*2);
+                        cylinder(d=14.2, h=39, $fn=12*2);
                     }
                   }
                   rotate([0,0,11])
@@ -181,14 +181,10 @@ module tilted_line_deflector(twod=false, rotx=0, rotz=0, bullet_shootout=true, b
         // Cutout to make mounting easier
         for (tr = [[0, 0], [move_along_line*cos(-rotz), Horizontal_deflector_cube_y_size-move_along_line*sin(-rotz)]])
           translate(tr)
-            rotate([ rotx, 0, rotz ])
-              translate([-a*cos(rotx)*sin(rotz),-a, 0])
-                rotate([0,0,-rotz*cos(rotx)])
-                  translate([0,-33,3.75])
-                    translate([40/2, 30/2, 0])
-                      rotate([0,0,-13])
-                        translate([-40/2, -30/2, 1])
-                          cube([40, 30, 2]);
+            translate([ 0, 0, bz ])
+              rotate([ rotx, 0, rotz ])
+                translate([-a*cos(rotx)*sin(rotz)+20,-a-1, 0])
+                  cube([40, 30, 2], center=true);
 
         translate([0,-4.85,0])
           rotate([0,0,180-30])
