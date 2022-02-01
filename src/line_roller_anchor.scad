@@ -64,6 +64,13 @@ module tower(tilt=10) {
                 rotate([90,0,0])
                   scale([1.2,1,1])
                     cylinder(d1=0.4, d2=29.4, h=18);
+            // Take off sharp edge so we don't rub into bearing U
+            translate([-2, -b608_vgroove_small_r-4,0])
+              rotate([0,0,54])
+                translate([b608_vgroove_small_r + Eyelet_extra_dist, 0,0])
+                  rotate([90,0,0])
+                    scale([1.2,1,1])
+                      cylinder(d1=2.4, d2=35.4, h=18);
           }
           translate([0,0,b608_width/2])
             cylinder(h=shoulder+1, d=10, $fn=4*6);
@@ -81,15 +88,15 @@ module tower(tilt=10) {
     }
   }
   translate([9.0,0,-1.97])
-  rotate([90,0,0])
-  translate([0,0,-Depth_of_roller_base/2-(b608_vgroove_big_r*1.8-Depth_of_roller_base)])
-  rotate([0,0,-tilt/2])
-  inner_round_corner(r=2, h=b608_vgroove_big_r*1.8, ang=90+tilt, back=1, $fn=7*4);
+    rotate([90,0,0])
+      translate([0,0,-Depth_of_roller_base/2-(b608_vgroove_big_r*1.8-Depth_of_roller_base)])
+        rotate([0,0,-tilt/2])
+          inner_round_corner(r=2, h=b608_vgroove_big_r*1.8, ang=90+tilt, back=1, $fn=7*4);
   translate([-9.1,0,-2.15])
-  rotate([90,0,0])
-  translate([0,0,-Depth_of_roller_base/2-(b608_vgroove_big_r*1.8-Depth_of_roller_base)])
-  rotate([0,0,90])
-  inner_round_corner(r=3, h=b608_vgroove_big_r*1.8, ang=90-tilt, back=1, $fn=8*4);
+    rotate([90,0,0])
+      translate([0,0,-Depth_of_roller_base/2-(b608_vgroove_big_r*1.8-Depth_of_roller_base)])
+        rotate([0,0,90])
+          inner_round_corner(r=3, h=b608_vgroove_big_r*1.8, ang=90-tilt, back=1, $fn=8*4);
 }
 
 w = 27;
@@ -133,36 +140,39 @@ module mid_section() {
   }
 }
 
+//eiffel();
 module eiffel(){
   translate([-w_small/2, front, 7-0.1])
-    union(){
-      hull(){
-        linear_extrude(height=0.1)
-          hull() {
-            translate([w_small/2+w/2-2,2])  circle(r=2, $fn=4*6);
-            translate([-6.5,2])             circle(r=2, $fn=4*6);
-            translate([-6.5,13])            circle(r=2, $fn=4*6);
-            translate([w_small/2+w/2-2,13]) circle(r=2, $fn=4*6);
-          }
-        mid_section();
-      }
-      hull(){
-        mid_section();
-        translate([0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + 5])
+    difference(){
+      union(){
+        hull(){
           linear_extrude(height=0.1)
             hull() {
-              translate([w_small-1.5,2.0]) circle(r=2, $fn=4*6);
-              translate([1.5,2])           circle(r=2, $fn=4*6);
-              translate([w_small-1.5,2.8]) circle(r=2, $fn=4*6);
-              translate([1.5,2.8])         circle(r=2, $fn=4*6);
+              translate([w_small/2+w/2-2,2])  circle(r=2, $fn=4*6);
+              translate([-6.5,2])             circle(r=2, $fn=4*6);
+              translate([-6.5,13])            circle(r=2, $fn=4*6);
+              translate([w_small/2+w/2-2,13]) circle(r=2, $fn=4*6);
             }
+          mid_section();
+        }
+        hull(){
+          mid_section();
+          translate([0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + 5])
+            linear_extrude(height=0.1)
+              hull() {
+                translate([w_small-0.4, 2])   circle(r=2, $fn=4*6);
+                translate([0.4, 2])           circle(r=2, $fn=4*6);
+                translate([w_small-0.4, 2.8]) circle(r=2, $fn=4*6);
+                translate([0.4, 2.8])         circle(r=2, $fn=4*6);
+              }
+        }
       }
     }
 }
 
 module vertical_screws(){
   for(k=[0,1]) mirror([k,0,0]) {
-    translate([3.2,
+    translate([3.2 + 1,
                front+3.6/2+1.36/2,
                line_action_lower_z + Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist - 31
               ]){
@@ -192,6 +202,40 @@ module top(){
   }
 }
 
+module top2(){
+  difference(){
+    intersection(){
+      eiffel();
+      translate([0,0,-3])
+        cutoff_cube();
+    }
+    vertical_screws();
+    action_points();
+    cutoff_cube();
+  }
+}
+
+module slit_core(width=0.801){
+  translate([0,-30,line_action_lower_z + Corner_clamp_bearings_center_to_center + 2*(b623_big_ugroove_small_r+Eyelet_extra_dist) + 1])
+    rotate([0,90,0])
+      translate([0,0,-width/2])
+        cube([Corner_clamp_bearings_center_to_center + 2*(b623_big_ugroove_small_r+Eyelet_extra_dist) + 1,20,width]);
+}
+
+//slit();
+module slit(width=0.8){
+  difference(){
+    intersection(){
+      eiffel();
+      slit_core(width=width);
+    }
+    translate([0,0,-3])
+      cutoff_cube();
+    vertical_screws();
+    action_points();
+  }
+}
+
 newer_line_roller_anchor();
 module newer_line_roller_anchor(tilt=10){
   difference(){
@@ -205,10 +249,23 @@ module newer_line_roller_anchor(tilt=10){
     translate([0,Depth_of_roller_base/2, 0])
       screw_tracks();
     action_points();
-    cutoff_cube();
+    translate([0,0,-3])
+      cutoff_cube();
     vertical_screws();
+
+    slit_core();
   }
+
 
   translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_big_ugroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])
     top();
+
+  translate([-22, -40.5, Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + line_action_lower_z])
+    rotate([180,0,0])
+      top2();
+
+  slit_w = 0.79;
+  translate([-42,-24, slit_w/2])
+    rotate([0,90,90])
+      slit(slit_w);
 }
