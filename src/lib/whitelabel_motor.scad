@@ -617,7 +617,7 @@ module base_hull_2d(isD = false){
         circle(r=4);
   }
   hull(){
-    translate(pos2)
+    #translate(pos2)
       circle(r=4);
     translate(pos2p5)
       circle(r=4);
@@ -690,20 +690,22 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
             translate([-2.5+33,0,0])
               rotate([0,90,0])
                 motor_bracket(leftHanded);
-            //%translate([33,0,0])
-            //  if(leftHanded)
-            //    rotate([180,0,0])
-            //      import("../../stl/for_render/whitelabel_motor.stl");
-            //  else
-            //    import("../../stl/for_render/whitelabel_motor.stl");
+            %translate([33,0,0])
+              if(leftHanded)
+                rotate([180,0,0])
+                  import("../../stl/for_render/whitelabel_motor.stl");
+              else
+                import("../../stl/for_render/whitelabel_motor.stl");
             translate([4.5-0.7,0,0])
               rotate([0,0,2*90]){
-                  encoder_bracket();
-                  encoder_stabilizer();
+                translate([11.45,0,0])
+                  mirror([1,0,0])
+                    encoder_bracket();
+                    encoder_stabilizer();
               }
           }
         }
-        translate([-12,0,0.5])
+        #translate([-12,0,0.5])
           Mounting_screw();
         translate([-12,-32,0.5])
           Mounting_screw();
@@ -732,7 +734,7 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
       difference(){
         base_hull_2d(text=="D");
         translate([-12,0,0])
-          Mounting_screw(twod=twod);
+          #Mounting_screw(twod=twod); // use motor_bracket_extreme(..., twod=true) to see this one
         translate([-12,-32,0])
           Mounting_screw(twod=twod);
 
