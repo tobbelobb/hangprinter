@@ -47,18 +47,14 @@ M569 P5 S1 ; Drive 5 goes forwards
 ;;          Please connect BLDC wires, from left to right, looking at the board
 ;;          from the front, so that ODrive silk screen is readable from left to right:
 ;;          |---------------------------------------------------------------|
-;;          |                                                               |
-;;          |                     ODrive                                    |
-;;          |                                                               |
+;;          |DC                                                             |
+;;          |-                    ODrive                                    |
+;;          |+                                                              |
 ;;          |                          AUX                                  |
 ;;          |--||---||---||------------------------------------||---||---||-|
 ;;             ||   ||   ||                                    ||   ||   ||
-;;          Black, Red, Blue                                Black, Red, Blue
-;;
-;;
-;; Also, as of Aug 18, 2021, Hangprinter users must use the unstable repository for the Duet3 Rpi.
-;; See here for how to set that up:
-;; https://duet3d.dozuki.com/Wiki/Getting_Started_With_Duet_3#Section_Software_Installation
+;; ALT 1:   Black, Red, Blue                                Black, Red, Blue
+;; ALT 2:  Yellow, Black, Red                              Yellow, Black, Red
 
 M569 P40.0 S1 ; Drive 40.0 (A) goes forwards
 M569 P41.0 S1 ; Drive 41.0 (B) goes forwards
