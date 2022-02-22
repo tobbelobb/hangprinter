@@ -1,4 +1,4 @@
-height = 24;
+height = 28.5; // High enough to let USB-C power enter easily.
 
 difference(){
   union(){
