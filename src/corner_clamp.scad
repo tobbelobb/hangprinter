@@ -262,6 +262,20 @@ module corner_clamp_tower(base_th       = wth,
               translate([top_off_r+tower_h-b623_big_ugroove_big_r, w+0.1+w/2, lwth + 1])
                 rotate([0,0,180])
                   inner_round_corner(r=top_off_r, h=30, back=5, $fn=50);
+          width = 0.801;
+          translate([-1.5-1, 0, higher_bearing_z+b623_big_ugroove_small_r+Eyelet_extra_dist-Eyelet_diameter/2+1])
+            rotate([90,90,0])
+              translate([0,0,-width/2]){
+                difference(){
+                  //#cube([Corner_clamp_bearings_center_to_center+10.5, 2.5+2, width]);
+                  cube([higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter+2, 2.5+2, width]);
+                  translate([5.3,-1,-1])
+                    cube([0.8, 22, width+2]);
+                  //#translate([b623_big_ugroove_small_r,-1,-1])
+                  //  cube([0.8, 22, width+2]);
+                }
+              }
+
         }
     translate([0,-1,0])
       three_rounded_cube2([d, ears_y+1,tower_h*2], 5, $fn=4*8);
@@ -431,3 +445,8 @@ module corner_clamp(){
     rotate([0,0,45])
       inner_round_corner(5, wth+1.5, 60, 2, $fn=40);
 }
+
+
+width=0.795;
+translate([-(higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter)/2,45,0])
+  cube([higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter, 2.5, width]);
