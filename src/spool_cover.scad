@@ -12,21 +12,14 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
   rot = 150 - opening_width;
   outer_r = Spool_cover_outer_r;
   space_for_belt_roller = 12;
-  ears = [90+45, 180+45, -50, 50];
+  ears = [90+45, 180+45];
   difference(){
     union(){
       difference(){
         union(){
           cylinder(r = outer_r, h=tot_height, $fn=150);
-          for(ang=[ears[0], ears[1], ears[2]])
-            rotate([0,0,ang])
-              translate([outer_r+(M3_screw_head_d+3)/2, 0, 0]){
-                cylinder(d=M3_screw_head_d+3, h=tot_height, $fn=4*6);
-                translate([-(M3_screw_head_d+4)/2,-(M3_screw_head_d+3)/2,0])
-                  cube([(M3_screw_head_d+4)/2, M3_screw_head_d+3, tot_height]);
-              }
-          if(second_hole)
-            rotate([0,0,ears[3]])
+          for(ear=ears)
+            rotate([0,0,ear])
               translate([outer_r+(M3_screw_head_d+3)/2, 0, 0]){
                 cylinder(d=M3_screw_head_d+3, h=tot_height, $fn=4*6);
                 translate([-(M3_screw_head_d+4)/2,-(M3_screw_head_d+3)/2,0])
@@ -53,8 +46,8 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
           translate([Sep_disc_radius+0.5,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
             cube([Gap_between_sandwich_and_plate-0.5, (Spool_core_tot_length - space_for_belt_roller)/2, tot_height+GT2_gear_height/2-0.2]);
         }
-        for(ang=ears)
-          rotate([0,0,ang])
+        for(ear=ears)
+          rotate([0,0,ear])
             translate([outer_r+(M3_screw_head_d+3)/2, 0, 0]){
               translate([0,0,-2])
                 M3_screw(h=tot_height+4);
