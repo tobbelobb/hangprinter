@@ -3,6 +3,26 @@ use <lib/util.scad>
 use <lib/gear_util.scad>
 use <lib/spool_core.scad>
 
+slit_rot = -16;
+slit_z = 4.5;
+
+module rail(l, rightside=true, leftside=true){
+  difference(){
+    cube([3, l, 0.6]);
+    translate([0.7,-1,-0.1])
+      cube([1.6, l+2, 0.8]);
+    if (!rightside) {
+      translate([0.7,-1,-0.1])
+        cube([1.6+0.8, l+2, 0.8]);
+    }
+    if (!leftside) {
+      translate([-0.7,-1,-0.1])
+        cube([1.6+0.8, l+2, 0.8]);
+    }
+  }
+}
+
+
 //translate([0,0,2*Spool_cover_tot_height+GT2_gear_height])
 //  mirror([0,0,1])
 //    spool_cover();
@@ -46,6 +66,26 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
           translate([Sep_disc_radius+0.5,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
             cube([Gap_between_sandwich_and_plate-0.5, (Spool_core_tot_length - space_for_belt_roller)/2, tot_height+GT2_gear_height/2-0.2]);
         }
+        // Slit for line entry from below
+        if (second_hole) {
+          translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z])
+            rotate([slit_rot,0,0])
+              translate([0,-2*Sep_disc_radius,0])
+                cube([5,2*Sep_disc_radius, 0.8]);
+        }
+        if (tot_height > 2*Spool_height) {
+          translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + Spool_height + 1])
+            rotate([slit_rot,0,0])
+              translate([0,-2*Sep_disc_radius,0])
+                cube([5,2*Sep_disc_radius, 0.8]);
+        }
+        // Create a line slit for dright spool cover
+        if (!second_hole) {
+          translate([Sep_disc_radius-10, 38.0, bottom_th+Spool_height/2+2.5])
+            cube([50, 0.8, 2*Spool_height-3]);
+          translate([Sep_disc_radius/2, 38.0, bottom_th+Spool_height/2+2.5])
+            cube([50, 28, 0.9]);
+        }
         for(ear=ears)
           rotate([0,0,ear])
             translate([outer_r+(M3_screw_head_d+3)/2, 0, 0]){
@@ -54,10 +94,6 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
             }
         translate([0,0,bottom_th])
           cylinder(r = Sep_disc_radius + Gap_between_sep_disc_and_spool_cover, h=tot_height, $fn=150);
-        //rotate([0,0,opening_width])
-        //#rotate_extrude(angle=opening_width, $fn=150)
-        //  translate([outer_r-3, bottom_th])
-        //    square([50,tot_height]);
         if (second_hole){
           translate([72.5,0,bottom_th + Spool_cover_shoulder + 1])
             cube([outer_r-74,100,Spool_height]);
@@ -67,11 +103,37 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
           translate([69.5,0,bottom_th + Spool_cover_shoulder + 1 + Spool_height + 1])
             cube([outer_r-71,39,tot_height*2]);
         }
+
         translate([Sep_disc_radius+Gap_between_sandwich_and_plate, -Spool_core_tot_length/2+space_for_belt_roller/2, -1])
           rotate([0,0,90])
             inner_round_corner(r=3, h=tot_height+GT2_gear_height/2+2, $fn=24);
       }
       cylinder(h=bottom_th+Spool_cover_shoulder, d1=12+(bottom_th+1)*2, d2=12);
+
+      // Fill up slit for line entry from below
+      if (second_hole) {
+        translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z])
+          rotate([slit_rot,0,0])
+            translate([0.5,-(tot_height)/sin(-slit_rot)+5-0.3,0.1])
+              rail((tot_height)/sin(-slit_rot)-5);
+      }
+      if (tot_height > 2*Spool_height) {
+        translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + Spool_height + 1])
+          rotate([slit_rot,0,0])
+            translate([0.5,-(tot_height-Spool_height-1)/sin(-slit_rot)+5-0.3,0.1])
+              rail((tot_height-Spool_height-1)/sin(-slit_rot)-5);
+      }
+      if (!second_hole) {
+          translate([Sep_disc_radius, Sep_disc_radius*sin(28.5), bottom_th+Spool_height/2+2.5+0.15]) {
+            translate([0.5,0,0])
+              rail(23, true, false);
+            translate([-3.8,23,0])
+              rotate([0,0,-37])
+                translate([0,-18,0])
+                  rail(18, false, true);
+          }
+
+      }
     }
     translate([0,0,-1])
       cylinder(d = 8.3, h=tot_height, $fn=24);
