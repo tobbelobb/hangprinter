@@ -106,7 +106,10 @@ odrv0.reboot() # Reboot is automatic upon save_configuration() for newer fw vers
 
 # WARNING: Anticogging calibration can be finicky
 # Save configuration and reboot (if you're on newer fw reboot is automatic) before you start calibrating anticogging
-# Calibrate anti cogging like this
+# Don't change any variables in the firmware during anticogging calibration
+# Leave the motor spinning freely without load and don't touch it during anticogging calibration
+# Calibrate anticogging like this
+#
 # odrv0.axis0.controller.config.anticogging.anticogging_enabled = False
 # odrv0.axis0.controller.start_anticogging_calibration()
 
@@ -115,10 +118,6 @@ odrv0.reboot() # Reboot is automatic upon save_configuration() for newer fw vers
 # As long as calib_anticogging is True, the calibration is still going on
 # You can also check the odrv0.axis0.controller.input_pos to see progress
 # When odrv0.axis0.controller.config.anticogging.index reaches 3600, calibration is done
-#
-# If it gets stuck, it could help to lower the vel_gain, like this
-# odrv0.axis0.controller.config.vel_gain = 0.05
-# But remember to reset it to 0.09 before saving and rebooting!
 #
 # When anticogging calibration is done:
 # odrv0.axis0.controller.config.anticogging.pre_calibrated = True
