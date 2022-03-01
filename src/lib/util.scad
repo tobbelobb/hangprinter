@@ -641,9 +641,9 @@ module elong_b623_big_ugroove(elong=10, extra_height=0){
   $fn=4*8;
   color("purple"){
     hull(){
-      cylinder(r=b623_big_ugroove_small_r, h=b623_width+extra_height, center=true);
+      cylinder(r=b623_big_ugroove_small_r+0.5, h=b623_width+extra_height, center=true);
       translate([0,elong,0])
-        cylinder(r=b623_big_ugroove_small_r, h=b623_width+extra_height, center=true);
+        cylinder(r=b623_big_ugroove_small_r+0.5, h=b623_width+extra_height, center=true);
     }
     for(k=[0,1])
       mirror([0,0,k])
