@@ -2,8 +2,8 @@ include <lib/parameters.scad>
 
 $fn=32;
 
-inner_d = b608_vgroove_small_r*2;
-small_d = inner_d + 1;;
+inner_d = b608_outer_dia;
+small_d = inner_d + 2;
 big_d = b608_vgroove_big_r*2;
 U_r = 3.7;
 scl = [1.2, 1.4];

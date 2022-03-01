@@ -20,8 +20,8 @@ Nema17_shaft_radius        = 5/2;
 b608_outer_dia = 22.2;
 b608_width = 7.05;
 b608_bore_r = 4;
-b608_vgroove_big_r = b608_outer_dia/2 + 2;
-b608_vgroove_small_r = b608_outer_dia/2;
+b608_vgroove_big_r = b608_outer_dia/2 + 2.5;
+b608_vgroove_small_r = b608_outer_dia/2 + 0.5;
 b608_ugroove_big_r = b608_vgroove_big_r;
 b608_ugroove_small_r = b608_vgroove_small_r;
 Gap_between_sandwich_and_plate = 1.5 + Base_th; // 1.5 mm for wiggle
@@ -87,7 +87,7 @@ Line_roller_ABC_winch_h =  Gap_between_sandwich_and_plate
                            + Depth_of_roller_base/2
                            + b608_vgroove_small_r;
 
-Shear_line_roller_double_bearings = 20;
+Shear_line_roller_double_bearings = 21;
 
 Ptfe_r = 2.1;
 Roller_base_r = 8;

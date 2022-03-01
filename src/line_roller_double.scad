@@ -56,8 +56,8 @@ module walls(space_between_walls, wall_th, height, tilt, rot_nut=0, bearing_scre
 
 module base_2d(){
   difference(){
-    translate([-23,-14-3])
-      rounded_cube2_2d([46, 45+6], r=3, $fn=4*8);
+    translate([-24,-14-3])
+      rounded_cube2_2d([48, 45+6], r=3, $fn=4*8);
     translate([8,-12])
       Mounting_screw(twod=true);
     translate([18,-1])
