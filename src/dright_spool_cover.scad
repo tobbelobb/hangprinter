@@ -7,8 +7,8 @@ use <spool_cover.scad>
 
 //intersection(){
 //  dright_spool_cover();
-//  translate([28,45,5])
-//    cube([52, 42, 7]);
+//  translate([64,15,6])
+//    cube([23, 62, 20]);
 //}
 dright_spool_cover();
 module dright_spool_cover(){

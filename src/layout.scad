@@ -38,8 +38,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-//twod = true;
-twod = false;
+twod = true;
+//twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -449,12 +449,29 @@ cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
 cy = 450.02+Move_d_bearings_inwards/2;
 bc_x_pos = cx/2-GT2_gear_height/2-Spool_cover_tot_height-Spool_core_halve_width-2;
 
-module odrive(){
-  color([0.1,0.1,0.1])
-    cube([140, 50, 2]);
-  translate([47,18,2])
-    color([0.9,0.9,0.9])
+module odrive_2d(){
+  difference(){
+    square([140, 50]);
+    translate([140-2.5, 50-2.5])
+      circle(d=3);
+    translate([2.5, 50-2.5])
+      circle(d=3);
+    translate([140-2.5, 4])
+      circle(d=3);
+    translate([2.5, 4])
+      circle(d=3);
+    translate([47,18])
       text("ODrive");
+  }
+}
+
+module odrive(){
+  if (!twod) {
+    color([0.1,0.1,0.1])
+      linear_extrude(height=2) odrive_2d();
+  } else {
+    odrive_2d();
+  }
 }
 
 
@@ -493,10 +510,10 @@ module full_winch(){
   mvy = Yshift_top_plate;
   top_plate(cx, cy, mvy);
 
-  translate([188, -200, 0])
+  translate([188, -208.4, 0])
     rotate([0,0,180])
       odrive();
-  translate([-48, -200, 0])
+  translate([-48, -208.4, 0])
     rotate([0,0,180])
       odrive();
 }
