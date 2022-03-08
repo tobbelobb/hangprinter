@@ -1,0 +1,4 @@
+if exists(param.T)
+	M569.4 P43.0 T{param.T}
+else
+	M569.4 P43.0 T0.02
