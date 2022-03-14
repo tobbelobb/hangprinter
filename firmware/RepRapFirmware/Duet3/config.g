@@ -27,6 +27,22 @@ M666 O1:1:1:1         ; Number of lines per spool
 M666 L20:20:20:20     ; Motor gear teeth of ABCD axes
 M666 H255:255:255:255 ; Spool gear teeth of ABCD axes
 
+; Flex compensation
+M666 W1.0                 ; Mover weighs 1 kg. Set to 0 to disable flex compensation.
+M666 S20000.0             ; Spring constant (aka stiffness) for Garda 1.1 mm line
+M666 I0.0:0.0:0.0:0.0     ; Min planned force in four directions
+M666 X70.0:70.0:70.0:70.0 ; Max planned force in four directions
+M666 V8.0                 ; Desired vertical force. ABC motors will pull mover down with this force.
+                          ; Be aware if your ABC anchors are not far below your mover.
+                          ; Your motors might have to pull extremely hard outwards to get any downwards force.
+                          ; This wears out your line more quickly.
+
+; Guy wire lengths. Needed for flex compenation.
+; Guy wires go between spool and final line roller.
+; If your spools are all mounted on the D-anchor, on the ceiling plate, then you're all good.
+; If your spools are not all on the D-anchor then you must measure guy wire lengths and set them here.
+;M666 Y-1.0:-1.0:-1.0:-1.0
+
 ; Uncomment M564 S0 if you don't want G0/G1 moves to be be limited to a software defined volume
 ; M564 S0
 
