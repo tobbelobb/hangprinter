@@ -38,15 +38,12 @@ M666 I0.0:0.0:0.0:0.0     ; Min planned force in four directions (unit N).
 M666 X70.0:70.0:70.0:70.0 ; Max planned force in four directions (unit N)
                           ; This is a safety limit. Will affect moves close to
                           ; the limits of the reachable volume.
-M666 T20.0                ; Desired target force (unit N).
+M666 T10.0                ; Desired target force (unit N).
                           ; The flex compensation algorithm aims for at least
                           ; this amount of fource in all line directions at all times.
                           ; It can be thought of as a minimum pre-tension value.
-                          ; It's recommended to set it at least 15 times higher
+                          ; It's recommended to set it around 10 times higher
                           ; than your W (mover weight in kg) value.
-                          ; This is because the mover weight
-                          ; will pre-tighten the D-lines, and ABC-lines can not counter-act that
-                          ; by pushing upwards.
 
 ; Guy wire lengths. Needed for flex compenation.
 ; Guy wires go between spool and final line roller.
