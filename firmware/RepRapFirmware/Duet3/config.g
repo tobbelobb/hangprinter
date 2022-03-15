@@ -40,7 +40,7 @@ M666 X70.0:70.0:70.0:70.0 ; Max planned force in four directions (unit N)
                           ; the limits of the reachable volume.
 M666 T10.0                ; Desired target force (unit N).
                           ; The flex compensation algorithm aims for at least
-                          ; this amount of fource in all line directions at all times.
+                          ; this amount of fource in the ABC line directions at all times.
                           ; It can be thought of as a minimum pre-tension value.
                           ; It's recommended to set it around 10 times higher
                           ; than your W (mover weight in kg) value.
