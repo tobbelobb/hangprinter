@@ -18,7 +18,7 @@ M666 Q0.128181 R75.546:75.659:76.128:75.192
 ; ; M669 defines the positions of the anchors, expressed as X:Y:Z distances between a line's pivot points, when the machine is homed.
 ; ; M666 sets Q=spool buildup, R=spool radii (incl buildup, when homed)
 
-M208 Z2000.00  ; set maximum Z somewhere below to D anchor. See M669 ... D<number>
+M208 Z2000.00  ; set maximum Z somewhere below D anchor. See M669 ... D<number>
 M208 S1 Z-10.0 ; set minimum Z
 
 ; The following values must also be in the auto calibration script for Hangprinter (if you plan to use it)
