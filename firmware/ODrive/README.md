@@ -1,8 +1,6 @@
 ## ODrive Usage On Hangprinter
 
-Use stock ODrive Firmware version 0.5.1.
-I have not been able to make anti-cogging calibration work in later versions.
-I have tested 0.5.2 and 0.5.4.
+Use stock ODrive Firmware version 0.5.4 or later.
 
 Use a <a href="https://odriverobotics.com/shop/usb-isolator">USB isolator</a> between your laptop and your ODrive.
 
@@ -23,30 +21,20 @@ $ odrivetool restore-config odrive-config-AB.json  # With AB ODrive connected
 $ odrivetool restore-config odrive-config-CD.json  # With CD ODrive connected
 ```
 
-I haven't tried this myself, but at least one user has reported saving time by doing ODrive config this way.
-Be aware that some lower level config will be slightly off/wrong in your ODrive after you "restore" from my backup.
-I know at least these config values will be slightly off:
-
+After those commands, you need to confirm that your break resistance matches the configured one.
+You also need to do a calibration sequence and set a couple of variables:
+odrivetool:
 ```
-odrv0.axis0.encoder.config.offset_float
-odrv0.axis0.encoder.config.offset
-odrv0.axis1.encoder.config.offset_float
-odrv0.axis1.encoder.config.offset
-odrv0.axis0.motor.config.phase_inductance
-odrv0.axis0.motor.config.phase_resistance
-odrv0.axis1.motor.config.phase_inductance
-odrv0.axis1.motor.config.phase_resistance
-```
-
-My guess is that they can get fixed up by a few commands in the odrivetool:
-```
-odrv0.axis0.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+odrv0.config.brake_resistance = your_measured_value
+odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 # wait...
-odrv0.axis1.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+odrv0.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 # wait...
-odrv0.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
-# wait...
-odrv0.axis1.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+odrv0.axis0.encoder.config.pre_calibrated = True
+odrv0.axis1.encoder.config.pre_calibrated = True
+odrv0.axis0.requested_state = AXIS_STATE_IDLE
+odrv0.axis1.requested_state = AXIS_STATE_IDLE
+odrv0.save_configuration()
 # wait...
 ```
 
