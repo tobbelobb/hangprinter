@@ -1,6 +1,11 @@
 ## ODrive Usage On Hangprinter
 
-Use stock ODrive Firmware version 0.5.4 or later.
+The changes in here require that you use the custom hex file included here, for now.
+
+The changes will be included into stock ODriveFirmware later. See pull request:
+https://github.com/odriverobotics/ODrive/pull/680
+
+Probably in stock ODrive Firmware version 0.5.5 or later.
 
 Use a <a href="https://odriverobotics.com/shop/usb-isolator">USB isolator</a> between your laptop and your ODrive.
 

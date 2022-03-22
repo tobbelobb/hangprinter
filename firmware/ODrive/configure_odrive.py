@@ -8,6 +8,8 @@
 # Later ODrive Firmware versions (0.5.2 onwards) might disable break resistor by default
 # So you need to set a boolean to true to enable it again:
 odrv0.config.enable_brake_resistor = True;
+ odrv0.axis0.controller.config.anticogging.anticogging_enabled = False
+ odrv0.axis1.controller.config.anticogging.anticogging_enabled = False
 
 #odrv0.axis0.motor.config.pole_pairs = 7            # Default
 #odrv0.axis0.controller.torque_setpoint = 0        # Default. Torque mode with zero torque
@@ -88,14 +90,18 @@ odrv0.axis1.config.can.node_id = 43 # D
 
 odrv0.axis0.config.step_gpio_pin = 1
 odrv0.axis0.config.dir_gpio_pin = 2
-odrv0.axis0.controller.config.steps_per_circular_range = 400 # 25*16 (on newer fw versions)
 #odrv0.axis0.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025 # on older fw versions
+odrv0.axis0.controller.config.circular_setpoints = False
+odrv0.axis0.controller.config.circular_setpoint_range = 10000.0
+odrv0.axis0.controller.config.steps_per_circular_range = 400*odrv0.axis0.controller.config.circular_setpoint_range # 25*16 = 400 (set on newer fw versions)
 odrv0.axis0.config.enable_step_dir = True
 
 #odrv0.axis1.config.step_gpio_pin = 7 # Default
 #odrv0.axis1.config.dir_gpio_pin = 8  # Default
-odrv0.axis1.controller.config.steps_per_circular_range = 400 # 25*16
 #odrv0.axis1.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025
+odrv0.axis1.controller.config.circular_setpoints = False
+odrv0.axis1.controller.config.circular_setpoint_range = 10000.0
+odrv0.axis1.controller.config.steps_per_circular_range = 400*odrv0.axis1.controller.config.circular_setpoint_range # 25*16 = 400 (set on newer fw versions)
 odrv0.axis1.config.enable_step_dir = True
 
 odrv0.save_configuration()
