@@ -1,0 +1,11 @@
+==== M569.8: Read Axis Force ====
+{{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{yes|3.5 onwards}} | bfb={{no}} | grbl={{no}} | makerbot={{no}} | machinekit={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} }}
+
+;Parameters
+:<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Can also be a colon separated list of driver numbers.
+
+The readouts are in units of Newtons.
+
+;Example
+M569.8 P40.0:41.0:42.0:43.0
+<tt>[3.52, -0.60, 7.24, -5.84,  ],</tt>

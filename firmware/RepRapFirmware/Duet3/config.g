@@ -55,6 +55,10 @@ M666 T10.0                ; Desired target force (unit N).
 ; then you should configure zeroed guy wire lengths M666 Y0.0:0.0:0.0:0.0.
 ;M666 Y-1.0:-1.0:-1.0:-1.0
 
+; Torque constants. These are required for reading motor forces from ODrives
+; They are the same values as is configured in the ODrives themselves (8.27/330 for motors in the standard  HP4 BOM)
+;M666 C0.025061:0.025061:0.025061:0.025061
+
 ; Uncomment M564 S0 if you don't want G0/G1 moves to be be limited to a software defined volume
 ; M564 S0
 
