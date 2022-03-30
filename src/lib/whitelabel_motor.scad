@@ -578,8 +578,8 @@ module base_hull_2d(isD = false){
   pos0D = [73.5 + (Sandwich_D_width - Sandwich_ABC_width) - (Spool_height+1),53,0];
   pos1 = [32-1.5-15+3,53,0];
   pos1D = pos1 - [Spool_height+1, 0, 0];
-  pos2 = [-13,0,0];
-  pos2p5 = [-13,-32,0];
+  pos2 = [-16,0,0];
+  pos2p5 = [-16,-32,0];
   pos3 = [36-1.5,53,0];
   pos4 = [36-1.5,-38,0];
   pos5 = [36-1.5-15+3,-38,0];
@@ -617,7 +617,7 @@ module base_hull_2d(isD = false){
         circle(r=4);
   }
   hull(){
-    #translate(pos2)
+    translate(pos2)
       circle(r=4);
     translate(pos2p5)
       circle(r=4);
@@ -705,9 +705,9 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
               }
           }
         }
-        #translate([-12,0,0.5])
+        translate([-15,0,0.5])
           Mounting_screw();
-        translate([-12,-32,0.5])
+        translate([-15,-32,0.5])
           Mounting_screw();
 
         flerp=15;
@@ -733,9 +733,9 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
       // twod below here
       difference(){
         base_hull_2d(text=="D");
-        translate([-12,0,0])
-          #Mounting_screw(twod=twod); // use motor_bracket_extreme(..., twod=true) to see this one
-        translate([-12,-32,0])
+        translate([-15,0,0])
+          Mounting_screw(twod=twod); // use motor_bracket_extreme(..., twod=true) to see this one
+        translate([-15,-32,0])
           Mounting_screw(twod=twod);
 
         flerp=15;
