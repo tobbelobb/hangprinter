@@ -23,7 +23,7 @@
       },
       "can" : {
         "encoder_rate_ms" : 10,
-        "heartbeat_rate_ms" : 100,
+        "heartbeat_rate_ms" : 0,
         "is_extended" : false,
         "node_id" : 40
       },
@@ -221,7 +221,7 @@
           },
           "can" : {
             "encoder_rate_ms" : 10,
-            "heartbeat_rate_ms" : 100,
+            "heartbeat_rate_ms" : 0,
             "is_extended" : false,
             "node_id" : 41
           },
