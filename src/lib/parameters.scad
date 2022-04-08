@@ -115,6 +115,7 @@ GT2_belt_width = 6.5;
 GT2_gear_height = GT2_belt_width + 2;
 GT2_motor_gear_height = 16;
 GT2_motor_gear_outer_dia = 16;
+GT2_spool_gear_outer_dia = 161.82; // Echoed from GT2_spool_gear.scad
 GT2_spool_gear_teeth = 255;
 GT2_motor_gear_teeth = 20;
 Torx_depth = GT2_gear_height/2;

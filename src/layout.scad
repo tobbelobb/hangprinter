@@ -38,8 +38,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-twod = true;
-//twod = false;
+//twod = true;
+twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -326,6 +326,8 @@ module sandwich_and_motor_D(){
         rotate([90,0,0])
           translate([0,0,(Sandwich_ABC_width - Sandwich_D_width)/2])
             cylinder(d=8, h=Smooth_rod_length_D, center=true);
+
+    belt();
   }
 
 }
@@ -390,6 +392,68 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
 
 }
 
+//!union() {
+//  belt();
+//
+//  translate([ -13.5, -33, 35 ]) rotate([ 180, 0, 0 ])
+//      import("../stl/for_render/whitelabel_motor.stl");
+//
+//   translate([-GT2_motor_gear_height+1.5+(GT2_motor_gear_height-7.4-1.5)/2,0,0])
+//     color([0.75,0.75,0.75])
+//       translate([0,-33,35]) // Up to motor shaft center
+//         rotate([0,90,0])
+//           import("../stl/for_render/GT2_motor_gear.stl");
+//}
+module belt(){
+  module motor_belt_shape(){
+    motor_gear_to_belt_idler = 35.5;
+    rotate([0,90,0])
+      difference(){
+        cylinder(d=GT2_motor_gear_outer_dia + 2*Belt_thickness, h=GT2_belt_width);
+        translate([0,0,-1])
+          cylinder(d=GT2_motor_gear_outer_dia, h=GT2_belt_width + 2);
+        translate([-8,0,-GT2_belt_width])
+          rotate([0,0,-4])
+            cube([15,15,2*GT2_belt_width+2]);
+        translate([-7.0,0.8,-GT2_belt_width])
+          rotate([0,0,-11.1])
+            cube([15,15,2*GT2_belt_width+2]);
+      }
+    rotate([-11.1,0,0])
+      translate([0,0,-GT2_motor_gear_outer_dia/2 - Belt_thickness])
+        cube([GT2_belt_width, 120, Belt_thickness]);
+    rotate([-3,0,0])
+      translate([0,0,GT2_motor_gear_outer_dia/2])
+        cube([GT2_belt_width, 35, Belt_thickness]);
+    translate([0,motor_gear_to_belt_idler+b623_outer_dia+Belt_thickness,b623_outer_dia])
+      rotate([88,0,0])
+        translate([0,0,GT2_motor_gear_outer_dia/2])
+          cube([GT2_belt_width, 45, Belt_thickness]);
+  }
+
+    color([0.30,0.30,0.30], 0.8){
+      translate([Belt_roller_bearing_xpos,0,0])
+        rotate([0,0,90])
+          translate([-GT2_belt_width/2,0,0])
+            color([0.75,0.75,0.75])
+              translate([0,-33,35]) // Up to motor shaft center
+                 motor_belt_shape();
+
+        spool_gear_outer_dia = 161.83;
+        translate([0,0,Gap_between_sandwich_and_plate + Sep_disc_radius])
+          rotate([0,90,90])
+            difference(){
+              cylinder(d=spool_gear_outer_dia + 2*Belt_thickness, h=GT2_belt_width, center=true, $fn=12*5);
+              cylinder(d=spool_gear_outer_dia, h=GT2_belt_width + 2, center=true, $fn=12*5);
+              rotate([0,0,-11.1])
+                translate([0,-spool_gear_outer_dia/2+10,-GT2_belt_width])
+                  cube([spool_gear_outer_dia/2,spool_gear_outer_dia/2-10,2*GT2_belt_width]);
+              rotate([0,0,-1])
+                translate([-4,-spool_gear_outer_dia/2+0.1,-GT2_belt_width])
+                  cube([spool_gear_outer_dia/3,spool_gear_outer_dia/2,2*GT2_belt_width]);
+            }
+      }
+}
 
 //!sandwich_and_motor_ABC();
 module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
@@ -412,6 +476,8 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
       translate([0,0,Sep_disc_radius + Gap_between_sandwich_and_plate])
         rotate([90,0,0])
           cylinder(d=8, h=Smooth_rod_length_ABC, center=true);
+    // Belt
+    belt();
   }
 }
 
@@ -441,7 +507,7 @@ module sandwich_and_motor_B(){
 //!sandwich_and_motor_C();
 module sandwich_and_motor_C(){
   sandwich_and_motor_ABC(C=true);
- line_guides_BC();
+  line_guides_BC();
 }
 
 
