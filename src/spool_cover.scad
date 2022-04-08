@@ -51,11 +51,11 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
           cylinder(r = outer_r, h=tot_height, $fn=150);
           translate([0,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
             right_rounded_cube2([Sep_disc_radius + Gap_between_sandwich_and_plate, Spool_core_tot_length - space_for_belt_roller, tot_height], 3, $fn=24);
-          rotate([0,0,-80])
+          rotate([0,0,-81])
             translate([0,0,tot_height+0.2])
-              rotate_extrude(angle=80, $fn=150)
-                translate([outer_r-1, 0])
-                  circle(d=1.0);
+              rotate_extrude(angle=58, $fn=150)
+                translate([outer_r-(outer_r - Sep_disc_radius - Gap_between_sep_disc_and_spool_cover), -0.5])
+                  square([outer_r - Sep_disc_radius - Gap_between_sep_disc_and_spool_cover,(GT2_gear_height+0.2)/2]);
 
           difference(){
             translate([Sep_disc_radius+Gap_between_sandwich_and_plate-30,0,0])
@@ -70,6 +70,17 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
           translate([Sep_disc_radius+0.5,-Spool_core_tot_length/2+space_for_belt_roller/2, 0])
             cube([Gap_between_sandwich_and_plate-0.5, (Spool_core_tot_length - space_for_belt_roller)/2, tot_height+GT2_gear_height/2-0.2]);
         }
+        // Cut away space for belt to enter
+        rotate([0,0,-79])
+          translate([outer_r-1.5,0,tot_height+0.01])
+            rotate([0,0,-8])
+              translate([0,-4,0])
+                cube([3, 13, 10]);
+        rotate([0,0,-24])
+          translate([outer_r-1.5,0,tot_height+0.01])
+            rotate([0,0,8])
+              translate([0,-9,0])
+                cube([2,11,4]);
         // Slit for line entry from below
         if (second_hole) {
           translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z])
