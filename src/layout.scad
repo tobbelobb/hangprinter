@@ -41,21 +41,32 @@ stls = true;
 //twod = true;
 twod = false;
 
-//mounted_in_ceiling = true;
-mounted_in_ceiling = false;
+mounted_in_ceiling = true;
+//mounted_in_ceiling = false;
 
 // Render the mover
-//mover = true;
-mover = false;
+mover = true;
+//mover = false;
 
 bottom_triangle = false;
 //bottom_triangle = true;
 
-ANCHOR_D_Z = 2300;
-ANCHOR_A_Y = 2000;
-between_action_points_z = ANCHOR_D_Z-Higher_bearing_z -3 - 175;
-lift_mover_z = 200;
-//lift_mover_z = ANCHOR_D_Z-300;
+A = 0;
+B = 1;
+C = 2;
+D = 3;
+X = 0;
+Y = 1;
+Z = 2;
+
+anchors = [[16.83, -1584.86, -113.17],
+           [1290.18, 1229.19, -157.45],
+           [-1409.88, 742.61, -151.80],
+           [21.85, -0.16, 2343.67]];
+
+between_action_points_z = anchors[D][Z]-Higher_bearing_z -3 - 175;
+length_of_toolhead = 77;
+//length_of_toolhead = anchors[D][Z]-300;
 
 dspool_y = -50+30;
 bcspool_y = -40;
@@ -88,6 +99,7 @@ color_line="green";
 // Sometimes, Nema17_cube_width will have another value,
 // so that a different motor can fit
 _motor_ang = ((Nema17_cube_width-42.43)/(sqrt(2)*Spool_outer_radius))*(180/PI);
+
 
 //top_plate();
 module top_plate(cx, cy, mvy){
@@ -541,13 +553,12 @@ module odrive(){
 }
 
 
-if(mounted_in_ceiling && !twod){
-  translate([0,0,43+ANCHOR_D_Z])
+if(mounted_in_ceiling && !twod && !mover){
+  translate(anchors[D]  + [0,0,33])
     rotate([180,0,0])
       full_winch();
-} else {
-  full_winch();
 }
+//full_winch();
 module full_winch(){
   sep = abc_sep;
   y = bcspool_y;
@@ -584,10 +595,9 @@ module full_winch(){
       odrive();
 }
 
-if(mover && !twod)
-  translate([0,0,lift_mover_z])
-  mover();
-module mover(){
+
+//mover();
+module mover(pos = [0,0,0]){
   //translate([0,0,7])
   //color("white")
   //difference() {
@@ -595,87 +605,96 @@ module mover(){
   //   translate([0,0,-1])
   //     cylinder(d=beam_length-Beam_width*2,h=5,$fn=200);
   //}
-  for(k=[0,120,240])
-    rotate([180,0,k+180]){
-      translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
-        color(color_carbon)
-          cube([beam_length, Beam_width, Beam_width]);
-        marker_shift = beam_length/3;
-        marker_d = 32;
-        for(l=[0,1])
-          translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,2]){
-            color([0.9,0.9,0.9])
-              translate([0,0,-marker_d/2+7]) {
-                if (k==0)
-                  translate([26*l,0,0]){
-                    cylinder(d=90);
-                    color(color_carbon, color1_alpha){
-                      translate([-5,-10,4])
-                        cube([10,20,20]);
-                      translate([0,0,1])
-                        cylinder(d=3, h=8, center=true);
+  translate(pos + [0,0,length_of_toolhead]){
+    for(k=[0,120,240])
+      rotate([180,0,k+180]){
+        translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
+          color(color_carbon)
+            cube([beam_length, Beam_width, Beam_width]);
+          marker_shift = beam_length/3;
+          marker_d = 32;
+          for(l=[0,1])
+            translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,2]){
+              color([0.9,0.9,0.9])
+                translate([0,0,-marker_d/2+7]) {
+                  if (k==0)
+                    translate([26*l,0,0]){
+                      cylinder(d=90);
+                      color(color_carbon, color1_alpha){
+                        translate([-5,-10,4])
+                          cube([10,20,20]);
+                        translate([0,0,1])
+                          cylinder(d=3, h=8, center=true);
+                      }
                     }
-                  }
-                if (k==120)
-                  translate([-21+78*l,0,0]){
-                    cylinder(d=90);
-                    color(color_carbon, color1_alpha){
-                      translate([-5,-10,4])
-                        cube([10,20,20]);
-                      translate([0,0,1])
-                        cylinder(d=3, h=8, center=true);
+                  if (k==120)
+                    translate([-21+78*l,0,0]){
+                      cylinder(d=90);
+                      color(color_carbon, color1_alpha){
+                        translate([-5,-10,4])
+                          cube([10,20,20]);
+                        translate([0,0,1])
+                          cylinder(d=3, h=8, center=true);
+                      }
                     }
-                  }
-                if (k==240)
-                  translate([76*l-50,0,0]){
-                    cylinder(d=90);
-                    color(color_carbon, color1_alpha){
-                      translate([-5,-10,4])
-                        cube([10,20,20]);
-                      translate([0,0,1])
-                        cylinder(d=3, h=8, center=true);
+                  if (k==240)
+                    translate([76*l-50,0,0]){
+                      cylinder(d=90);
+                      color(color_carbon, color1_alpha){
+                        translate([-5,-10,4])
+                          cube([10,20,20]);
+                        translate([0,0,1])
+                          cylinder(d=3, h=8, center=true);
+                      }
                     }
-                  }
-              }
-          }
-      }
-      translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
-        color(color1, color1_alpha)
-          if(stls){
-            import("../stl/corner_clamp.stl");
-          } else {
-            corner_clamp();
-          }
-
-    }
-    sidelength_frac = 1.5;
-    shorter_beam = Sidelength/sidelength_frac;
-    offcenter_frac = 25;
-          //translate([0,-Sidelength/sqrt(12)-sqrt(3) - Wall_th+0.1, +0.35])
-            translate([-shorter_beam/2,Sidelength/offcenter_frac,0]){
-              color(color_carbon)
-                cube([shorter_beam, Beam_width, Beam_width]);
-              rotate([90,0,90])
-                translate([-2*Wall_th,
-                           0,
-                           shorter_beam/2-(Nema17_cube_width+0.54*2+2*Wall_th)/2])
-                  color(color1, color1_alpha)
-                    if(stls){
-                      import("../stl/extruder_holder.stl");
-                    } else {
-                      extruder_holder();
-                    }
+                }
             }
+        }
+        translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
+          color(color1, color1_alpha)
+            if(stls){
+              import("../stl/corner_clamp.stl");
+            } else {
+              corner_clamp();
+            }
+
+      }
+      sidelength_frac = 1.5;
+      shorter_beam = Sidelength/sidelength_frac;
+      offcenter_frac = 25;
+      translate([-shorter_beam/2,Sidelength/offcenter_frac,0]){
+        color(color_carbon)
+          cube([shorter_beam, Beam_width, Beam_width]);
+        rotate([90,0,90])
+          translate([-2*Wall_th,
+                     0,
+                     shorter_beam/2-(Nema17_cube_width+0.54*2+2*Wall_th)/2])
+            color(color1, color1_alpha)
+              if(stls){
+                import("../stl/extruder_holder.stl");
+              } else {
+                extruder_holder();
+              }
+      }
+      color("red")
+        translate([0,0,-length_of_toolhead+10]){
+          cylinder(d=10, h=length_of_toolhead);
+          translate([0,0,-10])
+            cylinder(d1=1, d2=10, h=10);
+        }
+      color([0.1,0.1,0.1])
+        translate([-20, -15, -40])
+          cube([40,25,40]);
+  }
 }
 
-if(mover && !twod)
-  d_lines();
-module d_lines(){
-  color("pink")
-    for(k=[0,120,240])
-      rotate([0,0,k])
-        translate([0,Sidelength/sqrt(3),lift_mover_z])
-          cylinder(r=1.9, h=ANCHOR_D_Z-lift_mover_z+15);
+//d_lines();
+module d_lines(pos=[0,0,0]){
+  color("pink"){
+    line_from_to(pos + [0,Sidelength/sqrt(3), length_of_toolhead], anchors[D] + [0,Sidelength/sqrt(3),0]);
+    line_from_to(pos + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[D] + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
+    line_from_to(pos + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[D] + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
+  }
 }
 
 if(bottom_triangle)
@@ -693,113 +712,53 @@ module bottom_triangle(){
       }
 }
 
-//!lr();
-module lr(){
-  ay = ANCHOR_A_Y - 10;
-  color(color1,0.6)
-    //difference(){
-      if(stls){
-        translate([4,0,0])
-        rotate([90,0,-90])
-        import("../stl/line_roller_anchor.stl");
-      } else {
-        line_roller_anchor();
-      }
-    //  translate([-25,-50,-1])
-    //    cube(50);
-    //}
-    color("yellow")
-      translate([Back_bearing_x+Move_tower+b623_big_ugroove_small_r/sqrt(2),
-                 0,
-                 Higher_bearing_z + b623_big_ugroove_small_r/sqrt(2)])
-      rotate([0,-90+atan(ANCHOR_D_Z/ay),0])
-      cylinder(r = 0.75, h = 0.5*sqrt(ay*ay + ANCHOR_D_Z*ANCHOR_D_Z));
-
-
-    between_bearings_x = Back_bearing_x - Front_bearing_x;
-    echo(between_bearings_x);
-    between_bearings_z = Higher_bearing_z - Lower_bearing_z;
-    echo(between_bearings_z);
-    ang_b0_b1 = atan(between_bearings_z/between_bearings_x);
-    echo(ang_b0_b1);
-    between_action_points_x = ANCHOR_A_Y-Sidelength/sqrt(9);
-    ang_action = atan(between_action_points_z/between_action_points_x);
-    echo(ang_action);
-
-    for(tr = [[[Back_bearing_x+Move_tower, 0, Higher_bearing_z],
-               [-ang_b0_b1+2, 90, 0], true],
-              [[Front_bearing_x+Move_tower, 0, Lower_bearing_z],
-               [-103, 60, 0], true],
-              [[Front_bearing_x+Move_tower, 0, Higher_bearing_z],
-               [180-18+90, 276-90, 0], false]])
-      translate(tr[0])
-      rotate([90,0,0]){
-        if(tr[2])
-          color("purple")
-            cylinder(r=b623_big_ugroove_small_r, h=1.5, center=true);
-        color("yellow")
-          rotate([0,tr[1][2],tr[1][0]])
-          rotate_extrude(angle=tr[1][1])
-          translate([b623_big_ugroove_small_r+tr[1][2]*0.04,0,0])
-          circle(r=0.75);
-      }
-    color("yellow")
-      translate([Front_bearing_x+Move_tower-2, 0, Higher_bearing_z-b623_big_ugroove_small_r+0.8])
-      rotate([0,-90,0])
-      rotate([0,0,235])
-      rotate_extrude(angle=194, $fn=20)
-        translate([2.1,0])
-          circle(r=0.75);
-    translate([Front_bearing_x+Move_tower-1.5, 0, Higher_bearing_z-b623_big_ugroove_small_r+1.9])
-      color("yellow")
-      rotate([-90,0,0])
-      cylinder(r=0.75, h=Sidelength/2);
-    translate([Front_bearing_x+Move_tower-2, -2.3, Higher_bearing_z-b623_big_ugroove_small_r-0.1])
-      color("yellow")
-      rotate([-90,0,0])
-      cylinder(r=0.75, h=3);
-    // Within lineroller_anchor
-    line_from_to([Front_bearing_x+Move_tower + sin(ang_b0_b1)*b623_big_ugroove_small_r, 0,
-                    Lower_bearing_z - cos(ang_b0_b1)*b623_big_ugroove_small_r],
-                 [Back_bearing_x+Move_tower + sin(ang_b0_b1)*b623_big_ugroove_small_r, 0,
-                    Higher_bearing_z - cos(ang_b0_b1)*b623_big_ugroove_small_r], r=0.75, $fn=6);
-    // From lower bearing to effector
-    line_from_to([Front_bearing_x+Move_tower-sin(ang_action)*b623_big_ugroove_small_r, 0,
-                    Lower_bearing_z-cos(ang_action)*b623_big_ugroove_small_r],
-                 [Front_bearing_x+Move_tower-sin(ang_action)*b623_big_ugroove_small_r
-                   -between_action_points_x, 0,
-                   Lower_bearing_z-cos(ang_action)*b623_big_ugroove_small_r
-                   +between_action_points_z], r=0.75, $fn=6);
-    // From effector to higher bearing
-    line_from_to([Front_bearing_x+Move_tower+sin(ang_action)*b623_big_ugroove_small_r, 0,
-                    Higher_bearing_z + cos(ang_action)*b623_big_ugroove_small_r],
-                 [Front_bearing_x+Move_tower+sin(ang_action)*b623_big_ugroove_small_r
-                   -between_action_points_x, 0,
-                    Higher_bearing_z + cos(ang_action)*b623_big_ugroove_small_r
-                   +between_action_points_z],  r=0.75,$fn=6);
-}
-
-if(mounted_in_ceiling)
-  for(i=[0:120:359])
-    rotate([0,0,-90+i])
-      translate([ANCHOR_A_Y,0,0])
-        ABC_anchor();
+//ABC_anchor();
 module ABC_anchor(){
-  for(k=[0,1])
-    mirror([0,k,0])
-      translate([0,-Sidelength/2,0])
-        lr();
   Ext_sidelength = 500;
-  translate([-35, -Ext_sidelength/2, -8])
+  translate([0, -Ext_sidelength/2, -8])
     cube([50,Ext_sidelength, 8]);
-  translate([Front_bearing_x+Move_tower-1,0,Higher_bearing_z-2])
-    color("red")
-      sphere(r=4);
+  color(color1,0.6)
+    for(k=[0,1]) mirror([0,k,0])
+      translate([26,Ext_sidelength/2-27.91,0])
+        if(stls){
+          rotate([0,0,-90])
+          import("../stl/line_roller_anchor.stl");
+        } else {
+          line_roller_anchor();
+        }
+
 }
+
+function rotation(v, ang) = [v[0]*cos(ang)-v[1]*sin(ang), v[0]*sin(ang)+v[1]*cos(ang), v[2]];
+
+module ABC_anchors(pos = [0,0,0]){
+  a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead-3];
+  a_low_left = a_high_left - [0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_big_r];
+  a_high_right = a_high_left + [Sidelength,0,0];
+  a_low_right = a_low_left + [Sidelength,0,0];
+  for(i = [A, B, C]){
+    translate(anchors[i])
+      rotate([0,0,i*120])
+        translate([0,-Sidelength/sqrt(8)+5,length_of_toolhead-46])
+          rotate([0,0,-90])
+            ABC_anchor();
+    action_high_left = rotation(a_high_left, i*120);
+    action_low_left = rotation(a_low_left, i*120);
+    action_high_right = rotation(a_high_right, i*120);
+    action_low_right = rotation(a_low_right, i*120);
+    color("pink"){
+      line_from_to(pos + action_high_left, action_high_left + anchors[i]);
+      line_from_to(pos + action_low_left, action_low_left + anchors[i]);
+      line_from_to(pos + action_high_right, action_high_right + anchors[i]);
+      line_from_to(pos + action_low_right, action_low_right + anchors[i]);
+    }
+  }
+}
+
 
 color(color_line){
   if(mounted_in_ceiling && !twod){
-    translate([0,0,43+ANCHOR_D_Z])
+    translate([0,0,43+anchors[D][Z]])
       rotate([180,0,0])
       ceiling_unit_internal_lines_v4p1();
   } else {
@@ -857,7 +816,127 @@ module ceiling_unit_internal_lines_v4p1(){
 
 
 }
-// Mover action point overlay for aiming
-//%translate([0,Sidelength/sqrt(12)+Move_d_bearings_inwards/2, 0])
-//  rotate([0,0,180])
-//  eqtri(Sidelength+sqrt(12)*Move_d_bearings_inwards/2,4);
+
+data_collection_positions_standard = [[  -0.527094,   -0.634946,    0.      ],
+                                      [-266.144   , -284.39    ,    0.      ],
+                                      [ 240.691   , -273.008   ,    0.      ],
+                                      [ 283.932   ,    7.41853 ,    0.      ],
+                                      [ 304.608   ,  435.201   ,    0.      ],
+                                      [-177.608   ,  438.733   ,    0.      ],
+                                      [-369.145   ,   45.972   ,    0.      ],
+                                      [-198.326   ,   25.0843  ,    0.      ],
+                                      [  62.8474  ,  -55.7797  , 1388.51    ]];
+                                      //[-465.720402,  -47.402828,  144.462088],
+                                      //[-632.793181,  331.407685,  122.435335],
+                                      //[-703.172374,  411.749689,   50.923223],
+                                      //[-278.128747,  523.583008,   39.482521],
+                                      //[ 441.360892,  672.851237,  123.346511],
+                                      //[ 467.518466,  132.214308,  198.583508],
+                                      //[  39.373078, -623.440677,  128.088103],
+                                      //[-344.024592, -330.341518,  169.432092],
+                                      //[-421.991046,   27.298237,  237.089385],
+                                      //[-677.856009,  394.575547,  195.634237],
+                                      //[-290.097311,  588.750296,  297.186251],
+                                      //[ 473.710129,  653.111136,  207.072464],
+                                      //[ 307.115412,  278.143918,  232.68222 ],
+                                      //[  45.919828, -414.746019,  316.203898],
+                                      //[ -28.007028, -776.782475,  232.726695],
+                                      //[-338.464034, -217.561424,  269.973839],
+                                      //[-644.658706,  365.415558,  318.17921 ],
+                                      //[-343.384771,  391.053272,  412.917205],
+                                      //[  70.982196,  550.599654,  509.60238 ],
+                                      //[ 508.298514,  644.358488,  516.594187],
+                                      //[ 238.492781,  -34.479055,  529.969725],
+                                      //[  -7.909342, -660.701143,  520.943697],
+                                      //[-312.373073, -177.474784,  578.96939 ],
+                                      //[-510.821387,  300.767972,  600.966488],
+                                      //[ -64.220889,   36.870639,  609.332198],
+                                      //[  23.381683,  458.95078 ,  667.581437],
+                                      //[ 306.075462,  473.876435,  817.046954],
+                                      //[ 189.72739 ,  -72.936578,  805.059794],
+                                      //[ -22.17987 , -518.797106,  882.381174],
+                                      //[-277.601788,  -29.334304,  955.430122],
+                                      //[ -65.297082,  279.999283,  954.259647],
+                                      //[ -30.786666,  152.851294, 1153.945947]];//,
+                                      //[  67.137601, -860.083044,  605.952846],
+                                      //[ 284.655962, -102.262586,  867.814654],
+                                      //[-560.690875,  -25.340757,  271.465517]];
+
+hp_marks_measurements = [[-0.527094, -0.634946, -0.370821],
+                         [-266.144, -284.39, 5.48368],
+                         [240.691, -273.008, 1.84387],
+                         [283.932, 7.41853, -0.878299],
+                         [304.608, 435.201, 0.00422374],
+                         [-177.608, 438.733, -1.03731],
+                         [-369.145, 45.972, 3.83473],
+                         [-198.326, 25.0843, 1.23042],
+                         [-465.56, -47.6696, 148.958],
+                         [-632.978, 330.731, 123.941],
+                         [-703.697, 410.585, 53.9513],
+                         [-277.863, 522.619, 36.4518],
+                         [443.706, 670.927, 121.135],
+                         [465.545, 131.309, 197.025],
+                         [38.9178, -623.777, 137.685],
+                         [-343.296, -331.299, 175.893],
+                         [-419.43, 25.5785, 243.119],
+                         [-684.896, 395.692, 186.824],
+                         [-287.429, 587.691, 297.107],
+                         [476.717, 650.558, 205.9],
+                         [307.146, 275.748, 231.131],
+                         [43.8489, -415.35, 318.255],
+                         [-28.077, -777.228, 241.797],
+                         [-339.945, -219.036, 269.015],
+                         [-642.961, 364.091, 321.117],
+                         [-340.953, 389.898, 413.864],
+                         [75.86, 545.978, 511.986],
+                         [510.734, 641.667, 514.656],
+                         [238.593, -33.943, 528.039],
+                         [-8.68617, -660.259, 526.475],
+                         [-307.971, -177.118, 588.672],
+                         [-506.395, 298.312, 602.812],
+                         [-59.6972, 35.2041, 611.094],
+                         [28.0547, 457.294, 667.879],
+                         [308.339, 471.581, 815.545],
+                         [189.286, -72.3184, 806.111],
+                         [-23.5655, -517.217, 886.333],
+                         [-275.386, -30.794, 959.031],
+                         [-62.4441, 278.419, 954.677],
+                         [-29.8298, 147.913, 1155.45],
+                         [62.8474, -55.7797, 1388.51]];
+
+
+translate([-14,91,-2.5])
+  cube([800,800,5], center=true);
+
+if(mounted_in_ceiling && mover && !twod){
+  partial_way = min(1.3*($t*(len(data_collection_positions_standard)-1) - floor($t*(len(data_collection_positions_standard)-1))), 1);
+  echo(partial_way);
+  render_pos = (1-partial_way)*data_collection_positions_standard[$t*(len(data_collection_positions_standard)-1)]//*(1-mod($t,1/len(data_collection_positions_standard)))
+               + partial_way*data_collection_positions_standard[$t*(len(data_collection_positions_standard)-1)+1];
+              //+ data_collection_positions_standard[$t*(len(data_collection_positions_standard)-2) + 1]*mod($t,1/len(data_collection_positions_standard));
+  render_full_position(render_pos);
+}
+module render_full_position(pos = [100,0,0]) {
+  mover(pos);
+  d_lines(pos);
+  translate(anchors[D]  + [0,0,33])
+    rotate([180,0,0])
+      full_winch();
+  ABC_anchors(pos);
+}
+
+
+
+//data_collection_points(hp_marks_measurements, 9, "cyan", "cyan");
+data_collection_points(data_collection_positions_standard, 9);
+module data_collection_points(points, knowns = 0, color0 = "green", color1 = "blue") {
+  for(i = [0:len(points)-1])
+    translate(points[i])
+      if(i < knowns)
+        color(color0)
+          sphere(d=25);
+      else
+        color(color1)
+          sphere(d=25);
+
+}
