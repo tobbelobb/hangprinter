@@ -99,12 +99,10 @@ Screw_head_h = 2;
 M3_screw_head_d = 5.8;
 Spool_center_bearing_wall_th = 5;
 Corner_clamp_bearings_center_to_center = max(15, (b623_big_ugroove_big_r + b623_ugroove_room_to_grow_r)*2 + 5);
-Anchor_bearings_center_to_center = Corner_clamp_bearings_center_to_center + b623_outer_dia;
 
 //// Lineroller anchor parameters /////
 
-Back_bearing_x = 6 + 1.5;
-Front_bearing_x = -6 - 5;
+Front_bearing_x = -5 - 5;
 Move_tower = -12.2;
 Lower_bearing_z = 13;
 Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
