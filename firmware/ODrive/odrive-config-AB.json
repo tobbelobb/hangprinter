@@ -53,7 +53,7 @@
     "controller" : {
       "config" : {
         "axis_to_mirror" : 255,
-        "circular_setpoint_range" : 1000.0,
+        "circular_setpoint_range" : 100.0,
         "circular_setpoints" : true,
         "control_mode" : 3,
         "electrical_power_bandwidth" : 20.0,
@@ -72,7 +72,7 @@
         "pos_gain" : 47.0,
         "spinout_electrical_power_threshold" : 10.0,
         "spinout_mechanical_power_threshold" : -10.0,
-        "steps_per_circular_range" : 400000,
+        "steps_per_circular_range" : 40000,
         "torque_mirror_ratio" : 0.0,
         "torque_ramp_rate" : 0.009999999776482582,
         "vel_gain" : 0.09000000357627869,
@@ -251,7 +251,7 @@
         "controller" : {
           "config" : {
             "axis_to_mirror" : 255,
-            "circular_setpoint_range" : 1000.0,
+            "circular_setpoint_range" : 100.0,
             "circular_setpoints" : true,
             "control_mode" : 3,
             "electrical_power_bandwidth" : 20.0,
@@ -270,7 +270,7 @@
             "pos_gain" : 47.0,
             "spinout_electrical_power_threshold" : 10.0,
             "spinout_mechanical_power_threshold" : -10.0,
-            "steps_per_circular_range" : 400000,
+            "steps_per_circular_range" : 40000,
             "torque_mirror_ratio" : 0.0,
             "torque_ramp_rate" : 0.009999999776482582,
             "vel_gain" : 0.09000000357627869,
