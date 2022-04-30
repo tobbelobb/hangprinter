@@ -49,8 +49,4 @@ See [contributors](https://gitlab.com/tobben/hangprinter/graphs/version_4) for c
 Note that almost all ideas implemented by the commits have come up in conversations among fellow Reprappers.
 Thanks!
 
-Currently donating $25 or more via [Bountysource](https://salt.bountysource.com/teams/hangprinter):
-* [David Lang](https://www.bountysource.com/people/50149-david-lang)
-* [Delloman](https://www.bountysource.com/people/56602-delloman)
-
 List sorted alphabetically.
