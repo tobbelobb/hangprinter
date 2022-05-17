@@ -59,7 +59,7 @@ module rounded_eqtri(s, h, r){
 
 //rounded_cube([40,61,42], 8, center=true);
 module rounded_cube(v, r, center=false){
-  fn = 4*14;
+  fn = 4*9;
   v = (v[0] == undef) ? [v, v, v] : v;
   obj_translate = center ?
     [-(v[0] / 2), -(v[1] / 2),	-(v[2] / 2)] : [0, 0, 0];
