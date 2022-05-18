@@ -164,6 +164,3 @@ Yshift_top_plate = -297.8;
 Pen_holder_w = 55;
 Pen_holder_rail_w = 36;
 Pen_holder_bottom_th = 7;
-
-Tilted_line_deflector_tilt = -atan(sqrt(2))-6;
-Tilted_line_deflector_tilt_steeper = -atan(sqrt(2))-17;
