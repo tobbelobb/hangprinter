@@ -84,9 +84,8 @@ layout_letter.pdf: layout.dxf
 layout.dxf: $(SRC_DIR)/lib/whitelabel_motor.scad \
 	$(SRC_DIR)/lib/layout_slicer.scad \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
-	$(SRC_DIR)/tilted_line_deflector.scad \
+	$(SRC_DIR)/new_tilted_line_deflector.scad \
 	$(SRC_DIR)/layout.scad \
-	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/landing_brackets.scad \
@@ -107,11 +106,10 @@ layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/lib/layout_slicer.scad \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/layout.scad \
-	$(SRC_DIR)/line_roller_double.scad \
 	$(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/lib/spool_core.scad \
-	$(SRC_DIR)/tilted_line_deflector.scad
+	$(SRC_DIR)/new_tilted_line_deflector.scad
 	$(call make_layout_pdf_a4,"../../layout.dxf",$@)
 
 $(STL_DIR)/1XD_holder.stl: $(SRC_DIR)/1XD_holder.scad \
@@ -236,11 +234,6 @@ $(STL_DIR)/line_roller_anchor_template.stl: $(SRC_DIR)/line_roller_anchor_templa
 	$(SRC_DIR)/line_roller_anchor.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/line_roller_double.stl: $(SRC_DIR)/line_roller_double.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
 $(STL_DIR)/line_roller_wire_rewinder.stl: $(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
@@ -317,25 +310,7 @@ $(STL_DIR)/spool_mirrored.stl: $(SRC_DIR)/spool_mirrored.scad \
 	$(SRC_DIR)/lib/gear_util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/tilted_line_deflector.stl: $(SRC_DIR)/tilted_line_deflector.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
-$(STL_DIR)/tilted_line_deflector_mirrored.stl: $(SRC_DIR)/tilted_line_deflector_mirrored.scad \
-	$(SRC_DIR)/tilted_line_deflector.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
-$(STL_DIR)/tilted_line_deflector_steeper_downwards.stl: $(SRC_DIR)/tilted_line_deflector_steeper_downwards.scad \
-	$(SRC_DIR)/tilted_line_deflector.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
-$(STL_DIR)/tilted_line_deflector_steeper_downwards_mirrored.stl: $(SRC_DIR)/tilted_line_deflector_steeper_downwards_mirrored.scad \
-	$(SRC_DIR)/tilted_line_deflector.scad \
+$(STL_DIR)/new_tilted_line_deflector.stl: $(SRC_DIR)/new_tilted_line_deflector.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -377,7 +352,6 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/line_roller_anchor_half_tilt_mirrored.stl \
 	$(STL_DIR)/line_roller_anchor_straight.stl \
 	$(STL_DIR)/line_roller_anchor_template.stl \
-	$(STL_DIR)/line_roller_double.stl \
 	$(STL_DIR)/line_roller_wire_rewinder.stl \
 	$(STL_DIR)/line_verticalizer.stl \
 	$(STL_DIR)/motor_bracket_A.stl \
@@ -393,10 +367,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/spool_cover_mirrored.stl \
 	$(STL_DIR)/spool.stl \
 	$(STL_DIR)/spool_mirrored.stl \
-	$(STL_DIR)/tilted_line_deflector_mirrored.stl \
-	$(STL_DIR)/tilted_line_deflector.stl \
-	$(STL_DIR)/tilted_line_deflector_steeper_downwards_mirrored.stl \
-	$(STL_DIR)/tilted_line_deflector_steeper_downwards.stl \
+	$(STL_DIR)/new_tilted_line_deflector.stl \
 	$(STL_DIR)/ziptie_tensioner_wedge.stl \
 	layout.dxf \
 	layout_a4.pdf

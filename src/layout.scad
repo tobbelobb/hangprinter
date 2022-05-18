@@ -14,7 +14,6 @@ use <dright_spool_cover.scad>
 use <horizontal_line_deflector.scad>
 use <landing_brackets.scad>
 use <line_roller_anchor.scad>
-use <line_roller_double.scad>
 use <line_roller_wire_rewinder.scad>
 use <line_verticalizer.scad>
 use <motor_bracket_A.scad>
@@ -26,7 +25,7 @@ use <spool.scad>
 use <spool_mirrored.scad>
 use <spool_cover.scad>
 use <spool_cover_mirrored.scad>
-use <tilted_line_deflector.scad>
+use <new_tilted_line_deflector.scad>
 use <ziptie_tensioner_wedge.scad>
 
 
@@ -101,23 +100,16 @@ module top_plate(cx, cy, mvy){
   }
 }
 
-//tilted_line_deflector_for_layout(9,false);
-module tilted_line_deflector_for_layout(rot_around_center=0, center=false){
-  module tilted_line_deflector_always_center(){
-      rotate([0,0,rot_around_center]) // Rotate around bearing center
-      translate([0,b623_big_ugroove_small_r,0])
-      if(stls && !twod){
-        import("../stl/tilted_line_deflector.stl");
-      } else {
-        tilted_line_deflector(rotx=-atan(sqrt(2)), rotz=-30, twod=twod);
-      }
-  }
-  if(center){
-    tilted_line_deflector_always_center();
-  } else {
-    translate([0,-b623_big_ugroove_small_r,0])
-      tilted_line_deflector_always_center();
-  }
+//tilted_line_deflector_for_layout();
+module tilted_line_deflector_for_layout(){
+  translate([-10, 0,0])
+    if(stls && !twod){
+      rotate([0,0,-90])
+        import("../stl/new_tilted_line_deflector.stl");
+    } else {
+      rotate([0,0,-90])
+        new_tilted_line_deflector(twod=twod);
+    }
 }
 
 
@@ -280,32 +272,6 @@ module belt_roller_bearings(){
         rotate([rot,0,0])
           translate([0,0,-b623_width-0.1])
             b623_flanged();
-}
-
-//!line_roller_double_with_bearings();
-module line_roller_double_with_bearings(){
-  bearing_center_z = Line_roller_ABC_winch_h - Depth_of_roller_base/2;
-  if(stls && !twod){
-    //import("../stl/line_roller_double.stl");
-    translate([0,-spd,0])
-      import("../stl/line_roller_double.stl");
-  } else {
-    translate([0,-spd])
-      line_roller_double(twod=twod);
-  }
-  if(!twod){
-    for(y=[0,Spool_height + GT2_gear_height])
-      translate([Shear_line_roller_double_bearings*(0.5-y/(Spool_height + GT2_gear_height)),-y,bearing_center_z])
-		    mirror([0,y,0])
-        rotate([90,0,0])
-        translate([0,0,0.1])
-        rotate([-90,0,0])
-        translate([0,0,-(b623_big_ugroove_small_r+Eyelet_extra_dist)])
-        rotate([-5,0,0])
-        translate([0,0.7,(b623_big_ugroove_small_r+Eyelet_extra_dist)])
-        rotate([90,0,0])
-        b608_vgroove();
-  }
 }
 
 //!sandwich_and_motor_D();
@@ -484,16 +450,16 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
 //!sandwich_and_motor_A();
 module sandwich_and_motor_A(){
   sandwich_and_motor_ABC(A=true);
-  translate([aspool_lineroller_y,-1-Spool_height/2 + Sandwich_ABC_width/2,0])
-    line_roller_double_with_bearings();
+  translate([move_BC_deflectors+spd/sqrt(3)+1, GT2_gear_height/2 + Spool_height/2,0])
+    rotate([0,0,180])
+      tilted_line_deflector_for_layout();
 }
 
 //!line_guides_BC();
 module line_guides_BC(){
-  line_guide_rot=-30;
   translate([move_BC_deflectors+spd/sqrt(3)+1,spd/2,0])
     rotate([0,0,180])
-    tilted_line_deflector_for_layout(line_guide_rot);
+      tilted_line_deflector_for_layout();
 }
 
 //!sandwich_and_motor_B();
@@ -825,8 +791,8 @@ module ceiling_unit_internal_lines_v4p1(){
     for(k=[0,1])
       mirror([k,0,0]){
         one_b_line();
-        translate([spd,-11,0])
-          one_b_line(e=-spd/sqrt(3), e2=30+spd/2);
+        translate([spd,0,0])
+          one_b_line();
       }
 
     line_from_to([lx0, bcspool_y, hz],
@@ -847,7 +813,7 @@ module ceiling_unit_internal_lines_v4p1(){
                  [b623_width/2+1, -Sidelength/sqrt(3)-Move_d_bearings_inwards, hz]);
 
     for(k=[0,spd]){
-      ydiff = Shear_line_roller_double_bearings*(0.5-k/spd);
+      ydiff = 0;
       line_from_to([lx3+k, aspool_y, hz],
                    [lx3+k, ydiff+aspool_y-aspool_lineroller_y+7, hz]);
       line_from_to([lx3+k, ydiff+aspool_y-aspool_lineroller_y+7, hz],
