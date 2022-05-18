@@ -200,6 +200,7 @@ $(STL_DIR)/landing_brackets.stl: $(SRC_DIR)/landing_brackets.scad \
 
 $(STL_DIR)/line_roller_anchor.stl: $(SRC_DIR)/line_roller_anchor.scad \
 	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/new_tilted_line_deflector.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 

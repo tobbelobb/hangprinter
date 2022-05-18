@@ -164,3 +164,8 @@ Yshift_top_plate = -297.8;
 Pen_holder_w = 55;
 Pen_holder_rail_w = 36;
 Pen_holder_bottom_th = 7;
+
+u_width = 7;
+Stick_extra = 5;
+Stick_length = b623_big_ugroove_big_r*2 + 7*2 + 1*2 + Stick_extra;
+Stick_d = 12.5;

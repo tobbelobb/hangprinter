@@ -1,4 +1,5 @@
 include <lib/parameters.scad>
+use <new_tilted_line_deflector.scad>
 use <lib/util.scad>
 
 module screw_track(l){
@@ -32,7 +33,25 @@ module screw_tracks(){
       screw_track(100);
 }
 
-line_action_lower_z = 9.15;
+line_action_lower_z = 11.15;
+module bullet(for_print=false) {
+  if (!for_print) {
+    translate([0,-15.5,line_action_lower_z])
+      rotate([0,-90,-90])
+        bearing_holder(backwall=true);
+  } else {
+    translate([0,23,0])
+      rotate([0,0,90])
+      bearing_holder(backwall=true);
+  }
+}
+
+module bullet_tower() {
+  translate([0,-15.5,line_action_lower_z])
+    bearing_holder_holder(backwall=true);
+}
+
+
 //color("lightgrey")
 //translate([-40,0,0])
 //import("../stl/line_roller_anchor.stl");
@@ -100,7 +119,7 @@ module tower(tilt=10) {
 }
 
 w = 27;
-l = 35;
+l = 37;
 front = -l+Depth_of_roller_base/2;
 module action_points(){
   translate([0, front+4.5, b623_big_ugroove_small_r + Eyelet_extra_dist + line_action_lower_z]){
@@ -140,9 +159,10 @@ module mid_section() {
   }
 }
 
+base_th = 7;
 //eiffel();
 module eiffel(){
-  translate([-w_small/2, front, 7-0.1])
+  translate([-w_small/2, front, base_th-0.1])
     difference(){
       union(){
         hull(){
@@ -241,10 +261,11 @@ module newer_line_roller_anchor(tilt=10){
   difference(){
     union(){
       translate([-w/2, -l+Depth_of_roller_base/2, 0])
-        rounded_cube2([w, l+(b608_vgroove_big_r*1.8-Depth_of_roller_base), 7], 2, $fn=4*6);
+        rounded_cube2([w, l+(b608_vgroove_big_r*1.8-Depth_of_roller_base), base_th], 2, $fn=4*6);
       eiffel();
-      translate([0,0,line_action_lower_z])
-        tower(tilt);
+      //translate([0,0,line_action_lower_z])
+      //  tower(tilt);
+      bullet_tower();
     }
     translate([0,Depth_of_roller_base/2, 0])
       screw_tracks();
@@ -254,7 +275,12 @@ module newer_line_roller_anchor(tilt=10){
     vertical_screws();
 
     slit_core();
+    translate([0,-15.5,line_action_lower_z])
+      rotate([0,-90,-90])
+        cylinder(d=Stick_d, h=Stick_length-Stick_extra);
   }
+
+  bullet(for_print=true);
 
 
   translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_big_ugroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])

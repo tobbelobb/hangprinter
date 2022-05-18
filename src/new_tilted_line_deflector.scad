@@ -3,10 +3,10 @@ use <lib/util.scad>
 use <bearing_u_big_623.scad>
 
 u_width = 7;
-extra = 5;
-stick_length = b623_big_ugroove_big_r*2 + u_width*2 + 1*2 + extra;
+extra = Stick_extra;
+stick_length = Stick_length;
 b_z = (stick_length - extra - 3)/2;
-stick_d = 12.5;
+stick_d = Stick_d;
 housing_width = b623_width + 2*0.5 + 2*2;
 housing_height = b623_big_ugroove_big_r*2 + extra;
 slit_w = 2;
@@ -37,13 +37,17 @@ module new_tilted_line_deflector(twod = false){
 
 
 //bearing_holder();
-module bearing_holder(){
+module bearing_holder(backwall = false){
   //%translate([b623_big_ugroove_small_r+1.2, 0, b_z])
   //  rotate([90,0,0])
   //    bearing_u_big_623();
   difference(){
     union(){
-      cylinder(d=stick_d, h=stick_length, $fn=4*8);
+      if (!backwall) {
+        cylinder(d=stick_d, h=stick_length, $fn=4*8);
+      } else {
+        cylinder(d=stick_d, h=stick_length-extra, $fn=4*8);
+      }
       intersection(){
         difference(){
           translate([0, -housing_width/2, u_width-1.5])
@@ -74,15 +78,21 @@ module bearing_holder(){
     translate([50/2,0,(stick_length-extra)/2])
       translate([-50/2, -(b623_width + 2*0.5)/2, -(b623_big_ugroove_big_r*2)/2])
         translate([0, 0, b623_big_ugroove_big_r*2])
-          rotate([0, -22, 0])
-            translate([0, 0, -b623_big_ugroove_big_r*2])
+          if (!backwall) {
+            rotate([0, -22, 0])
+              translate([0, 0, -b623_big_ugroove_big_r*2])
+                cube([50, b623_width + 2*0.5, b623_big_ugroove_big_r*2]);
+          } else {
+            translate([0, 0, -b623_big_ugroove_big_r*2+1])
               cube([50, b623_width + 2*0.5, b623_big_ugroove_big_r*2]);
-    translate([b623_big_ugroove_small_r+1.2, 0, b_z])
-      rotate([0,-90+41,0])
-        translate([0,0,b623_big_ugroove_small_r+2])
-          rotate([0,90,0])
-            scale([1.1, 0.83, 1])
-              cylinder(d1=2.5, d2=20, h=40);
+          }
+    if (!backwall)
+      translate([b623_big_ugroove_small_r+1.2, 0, b_z])
+        rotate([0,-90+41,0])
+          translate([0,0,b623_big_ugroove_small_r+2])
+            rotate([0,90,0])
+              scale([1.1, 0.83, 1])
+                cylinder(d1=2.5, d2=20, h=40);
     translate([0,-1,-1])
       cube([11, slit_w, stick_length/2 + 3]);
     translate([b623_big_ugroove_small_r+1.2, 0, b_z])
@@ -112,7 +122,7 @@ module bearing_holder(){
 
 
 //bearing_holder_holder(twod=true);
-module bearing_holder_holder(twod=false){
+module bearing_holder_holder(twod=false, backwall=false){
   hll = stick_length + 2.5;
   hdd = stick_d + 8;
 
@@ -129,29 +139,38 @@ module bearing_holder_holder(twod=false){
         difference(){
           union(){
             difference(){
-              cylinder(d=hdd, h=hll);
+              if (!backwall) {
+                cylinder(d=hdd, h=hll);
+              } else {
+                cylinder(d=hdd, h=hll-extra);
+              }
               translate([-(30)/2, 9, -1])
                 cube([30, 20, hll+2]);
             }
             translate([-hdd/2, 0, 0])
-              cube([hdd, bz, hll]);
-            for(h = [0, hll-12])
-              translate([-(hdd+2*10)/2,bz,h]){
-                rotate([90,0,0]){
-                  difference(){
-                    rounded_cube2([hdd+2*10, 12, Base_th], 3);
-                    translate([5, 6, 0.3])
-                      Mounting_screw();
-                    translate([hdd+2*10-5, 6, 0.3])
-                      Mounting_screw();
-                  }
-                }
-                translate([20,0,0])
-                  for(k=[0,1]) mirror([k,0,0])
-                    translate([10,-Base_th,0])
-                      rotate([0,0,3*90])
-                        inner_round_corner(h=12, r=1.5, $fn=4*4);
+              if(!backwall) {
+                cube([hdd, bz, hll]);
+              } else {
+                cube([hdd, bz, hll-extra]);
               }
+            if (!backwall)
+              for(h = [0, hll-12])
+                translate([-(hdd+2*10)/2,bz,h]){
+                  rotate([90,0,0]){
+                    difference(){
+                      rounded_cube2([hdd+2*10, 12, Base_th], 3);
+                      translate([5, 6, 0.3])
+                        Mounting_screw();
+                      translate([hdd+2*10-5, 6, 0.3])
+                        Mounting_screw();
+                    }
+                  }
+                  translate([20,0,0])
+                    for(k=[0,1]) mirror([k,0,0])
+                      translate([10,-Base_th,0])
+                        rotate([0,0,3*90])
+                          inner_round_corner(h=12, r=1.5, $fn=4*4);
+                }
           }
 
           translate([0,0,5/2])
@@ -164,10 +183,13 @@ module bearing_holder_holder(twod=false){
           translate([-(3*top_w)/2, -stick_d-stick_d/2+1.7, -1])
             cube([3*top_w, stick_d, hll+2]);
           translate([-(4*top_w)/2, -stick_d, u_width+0.5])
-            cube([4*top_w, stick_d, housing_height+5]);
+            if (!backwall) {
+              cube([4*top_w, stick_d, housing_height+5]);
+            } else {
+              cube([4*top_w, stick_d, housing_height+6-extra]);
+            }
           translate([-(4*top_w)/2, -stick_d+9.9-Base_th, 13])
             rounded_cube([4*top_w, stick_d, 7], 1);
-
         }
     } else { // twod=true
       union() {
