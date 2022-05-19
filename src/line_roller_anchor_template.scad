@@ -8,4 +8,6 @@ difference(){
     cube(100);
   translate([-115,-50,-1])
     cube(100);
+  translate([-50,16.5,-1])
+    cube(100);
 }

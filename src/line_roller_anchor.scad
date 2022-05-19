@@ -34,9 +34,10 @@ module screw_tracks(){
 }
 
 line_action_lower_z = 11.15;
+slide_in_bullet = -17;
 module bullet(for_print=false) {
   if (!for_print) {
-    translate([0,-15.5,line_action_lower_z])
+    translate([0, slide_in_bullet, line_action_lower_z])
       rotate([0,-90,-90])
         bearing_holder(backwall=true);
   } else {
@@ -47,79 +48,13 @@ module bullet(for_print=false) {
 }
 
 module bullet_tower() {
-  translate([0,-15.5,line_action_lower_z])
+  translate([0, slide_in_bullet, line_action_lower_z])
     bearing_holder_holder(backwall=true);
 }
 
 
-//color("lightgrey")
-//translate([-40,0,0])
-//import("../stl/line_roller_anchor.stl");
-//!tower();
-module tower(tilt=10) {
-  rotate([0,tilt-90,0]) {
-    translate([b608_vgroove_small_r + Eyelet_extra_dist,0,0]){
-      %b608_vgroove();
-      //import("../stl/bearing_u_608.stl");
-      down_from_top = 3;
-      shoulder = 0.5;
-      difference() {
-        union() {
-          difference() {
-            translate([-b608_vgroove_big_r-3.6, -Depth_of_roller_base/2, -b608_width/2-shoulder-Line_roller_wall_th])
-              right_rounded_cube2([b608_vgroove_big_r*2+6, b608_vgroove_big_r*1.8, Line_roller_wall_th*2 + shoulder*2 + b608_width], 2, $fn=6*4);
-            difference(){
-              translate([-Depth_of_roller_base+down_from_top,-Depth_of_roller_base/2,-b608_width/2-shoulder-Line_roller_wall_th])
-                translate([-2, -4, Line_roller_wall_th])
-                  cube([b608_vgroove_big_r*3, b608_vgroove_big_r*1.8+3, b608_width + 2*shoulder]);
-              translate([12,-20,-20])
-                translate([0,0,20])
-                  rotate([0,-tilt,0])
-                    translate([0,0,-20])
-                      cube(40);
-            }
-            rotate([0,0,54])
-              translate([b608_vgroove_small_r + Eyelet_extra_dist,0,0])
-                rotate([90,0,0])
-                  scale([1.2,1,1])
-                    cylinder(d1=0.4, d2=29.4, h=18);
-            // Take off sharp edge so we don't rub into bearing U
-            translate([-2, -b608_vgroove_small_r-4,0])
-              rotate([0,0,54])
-                translate([b608_vgroove_small_r + Eyelet_extra_dist, 0,0])
-                  rotate([90,0,0])
-                    scale([1.2,1,1])
-                      cylinder(d1=2.4, d2=35.4, h=18);
-          }
-          translate([0,0,b608_width/2])
-            cylinder(h=shoulder+1, d=10, $fn=4*6);
-          translate([0,0,-b608_width/2-shoulder-1])
-            cylinder(h=shoulder+1, d=10, $fn=4*6);
-        }
-        translate([0,0,-b608_width/2-shoulder-Line_roller_wall_th-0.1]) {
-          translate([0,0,b608_width+2*shoulder+2*Line_roller_wall_th-1.5])
-          M8_nut(2);
-          M8_screw(h=20);
-          translate([0,0,-0.5])
-            M8_nut(2);
-        }
-      }
-    }
-  }
-  translate([9.0,0,-1.97])
-    rotate([90,0,0])
-      translate([0,0,-Depth_of_roller_base/2-(b608_vgroove_big_r*1.8-Depth_of_roller_base)])
-        rotate([0,0,-tilt/2])
-          inner_round_corner(r=2, h=b608_vgroove_big_r*1.8, ang=90+tilt, back=1, $fn=7*4);
-  translate([-9.1,0,-2.15])
-    rotate([90,0,0])
-      translate([0,0,-Depth_of_roller_base/2-(b608_vgroove_big_r*1.8-Depth_of_roller_base)])
-        rotate([0,0,90])
-          inner_round_corner(r=3, h=b608_vgroove_big_r*1.8, ang=90-tilt, back=1, $fn=8*4);
-}
-
 w = 27;
-l = 37;
+l = 35;
 front = -l+Depth_of_roller_base/2;
 module action_points(){
   translate([0, front+4.5, b623_big_ugroove_small_r + Eyelet_extra_dist + line_action_lower_z]){
@@ -148,14 +83,10 @@ module mid_section() {
   translate([0,0,16])
   linear_extrude(height=0.1)
   hull() {
-    translate([w_small+1,2])
-    circle(r=2, $fn=4*6);
-    translate([-1,2])
-    circle(r=2, $fn=4*6);
-    translate([0,7])
-    circle(r=2, $fn=4*6);
-    translate([w_small,7])
-    circle(r=2, $fn=4*6);
+    translate([ w_small+1, 2]) circle(r=2, $fn=4*6);
+    translate([        -1, 2]) circle(r=2, $fn=4*6);
+    translate([         0, 7]) circle(r=2, $fn=4*6);
+    translate([   w_small, 7]) circle(r=2, $fn=4*6);
   }
 }
 
@@ -177,7 +108,7 @@ module eiffel(){
         }
         hull(){
           mid_section();
-          translate([0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + 5])
+          translate([0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + base_th])
             linear_extrude(height=0.1)
               hull() {
                 translate([w_small-0.4, 2])   circle(r=2, $fn=4*6);
@@ -257,15 +188,15 @@ module slit(width=0.8){
 }
 
 newer_line_roller_anchor();
-module newer_line_roller_anchor(tilt=10){
+module newer_line_roller_anchor(){
+  move_back = 1.5;
   difference(){
     union(){
       translate([-w/2, -l+Depth_of_roller_base/2, 0])
         rounded_cube2([w, l+(b608_vgroove_big_r*1.8-Depth_of_roller_base), base_th], 2, $fn=4*6);
       eiffel();
-      //translate([0,0,line_action_lower_z])
-      //  tower(tilt);
-      bullet_tower();
+      translate([0,move_back,0])
+        bullet_tower();
     }
     translate([0,Depth_of_roller_base/2, 0])
       screw_tracks();
@@ -275,9 +206,13 @@ module newer_line_roller_anchor(tilt=10){
     vertical_screws();
 
     slit_core();
-    translate([0,-15.5,line_action_lower_z])
+    translate([0, slide_in_bullet+move_back, line_action_lower_z])
       rotate([0,-90,-90])
-        cylinder(d=Stick_d, h=Stick_length-Stick_extra);
+        cylinder(d=Stick_d, h=Stick_length-Stick_extra, $fn=4*5);
+    for(k=[0,1]) mirror([k,0,0])
+      translate([-w/2, 14+move_back, -1])
+        rotate([0,0,-90])
+          inner_round_corner(r=11, h=20, $fn=4*9);
   }
 
   bullet(for_print=true);
@@ -290,8 +225,8 @@ module newer_line_roller_anchor(tilt=10){
     rotate([180,0,0])
       top2();
 
-  slit_w = 0.79;
-  translate([-42,-24, slit_w/2])
-    rotate([0,90,90])
-      slit(slit_w);
+  //slit_w = 0.79;
+  //translate([-42,-24, slit_w/2])
+  //  rotate([0,90,90])
+  //    slit(slit_w);
 }

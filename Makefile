@@ -204,33 +204,9 @@ $(STL_DIR)/line_roller_anchor.stl: $(SRC_DIR)/line_roller_anchor.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/line_roller_anchor_mirrored.stl: $(SRC_DIR)/line_roller_anchor_mirrored.scad \
-	$(SRC_DIR)/line_roller_anchor.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
-$(STL_DIR)/line_roller_anchor_half_tilt.stl: $(SRC_DIR)/line_roller_anchor_half_tilt.scad \
-	$(SRC_DIR)/line_roller_anchor.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
-$(STL_DIR)/line_roller_anchor_half_tilt_mirrored.stl: $(SRC_DIR)/line_roller_anchor_half_tilt_mirrored.scad \
-	$(SRC_DIR)/line_roller_anchor_half_tilt.scad \
-	$(SRC_DIR)/line_roller_anchor.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
-$(STL_DIR)/line_roller_anchor_straight.stl: $(SRC_DIR)/line_roller_anchor_straight.scad \
-	$(SRC_DIR)/line_roller_anchor.scad \
-	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/util.scad
-	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
-
 $(STL_DIR)/line_roller_anchor_template.stl: $(SRC_DIR)/line_roller_anchor_template.scad \
 	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/new_tilted_line_deflector.scad \
 	$(SRC_DIR)/lib/util.scad \
 	$(SRC_DIR)/line_roller_anchor.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -348,10 +324,6 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/horizontal_line_deflector.stl \
 	$(STL_DIR)/landing_brackets.stl \
 	$(STL_DIR)/line_roller_anchor.stl \
-	$(STL_DIR)/line_roller_anchor_mirrored.stl \
-	$(STL_DIR)/line_roller_anchor_half_tilt.stl \
-	$(STL_DIR)/line_roller_anchor_half_tilt_mirrored.stl \
-	$(STL_DIR)/line_roller_anchor_straight.stl \
 	$(STL_DIR)/line_roller_anchor_template.stl \
 	$(STL_DIR)/line_roller_wire_rewinder.stl \
 	$(STL_DIR)/line_verticalizer.stl \
