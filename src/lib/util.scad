@@ -336,17 +336,17 @@ module rounded_2corner(v, r){
     circle(r=r,$fs = 1);
 }
 
-module Nema17_screw_translate(corners=4){
+module Nema17_screw_translate(corners=4, screw_hole_width = Nema17_screw_hole_width){
   for (i=[0:90:90*corners - 1]){
     rotate([0,0,i+45])
-      translate([Nema17_screw_hole_width/2,0,0])
+      translate([screw_hole_width/2,0,0])
         rotate([0,0,-i-45])
           children();
   }
 }
 
-module Nema17_screw_holes(d, h, corners=4, teardrop=false){
-  Nema17_screw_translate(corners)
+module Nema17_screw_holes(d, h, corners=4, teardrop=false, screw_hole_width = Nema17_screw_hole_width){
+  Nema17_screw_translate(corners, screw_hole_width)
     if(teardrop)
       teardrop(r=d/2,h=h);
     else
@@ -427,27 +427,23 @@ module inner_round_corner(r, h, ang=90, back = 0.1, center=false){
     inner_round_corner_2d(r, ang, back, center);
 }
 
-module Nema17(){
-  M3_diameter = 3;
-  cw = Nema17_cube_width;
-  ch = Nema17_cube_height;
-  sh = Nema17_shaft_height;
+module Nema17(cw = Nema17_cube_width, ch =  Nema17_cube_height, sh =  Nema17_shaft_height, M3_diameter = 3, screw_hole_width = Nema17_screw_hole_width){
   union(){
     color("black")
     difference(){
       translate([-(cw-0.1)/2,-(cw-0.1)/2,1]) cube([cw-0.1,cw-0.1,ch-2]);
       for (i=[0:90:359]){ // Corner cuts black cube
-        rotate([0,0,i+45]) translate([50.36/2,-cw/2,-1]) cube([cw,cw,ch+2]);
+        rotate([0,0,i+45]) translate([(cw*sqrt(2) - 10)/2,-cw/2,-1]) cube([cw,cw,ch+2]);
       }
     }
     color("silver")
     difference(){
       translate([-cw/2,-cw/2,0]) cube([cw,cw,ch]);
       for (i=[0:90:359]){ // Corner cuts silver cube
-        rotate([0,0,i+45]) translate([53.36/2,-cw/2,-1]) cube([cw,cw,ch+2]);
+        rotate([0,0,i+45]) translate([(cw*sqrt(2) - 6.4)/2,-cw/2,-1]) cube([cw,cw,ch+2]);
       }
-      translate([0,0,ch-5]) Nema17_screw_holes(M3_diameter, h=10);
-      translate([0,0,-5]) Nema17_screw_holes(M3_diameter, h=10);
+      translate([0,0,ch-5]) Nema17_screw_holes(M3_diameter, h=10, screw_hole_width = screw_hole_width);
+      translate([0,0,-5]) Nema17_screw_holes(M3_diameter, h=10, screw_hole_width = screw_hole_width);
       translate([-cw,-cw,9]) cube([2*cw,2*cw,ch-18]);
     }
     color("silver")
@@ -458,6 +454,13 @@ module Nema17(){
     color("silver")
       cylinder(r=5/2, h=sh); // Shaft...
   }
+}
+
+module Nema23(){
+  cw = Nema23_cube_width;
+  ch = Nema23_cube_height;
+  sh = Nema23_shaft_height;
+  Nema17(cw, ch, sh, 4, Nema23_screw_hole_width);
 }
 
 module D_shaft(height, extra_radius=0.25){
