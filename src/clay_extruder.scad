@@ -5,8 +5,8 @@ clay_extruder();
 module clay_extruder(){
   lift_tube = 60;
   tube_height = 325;
-  tube_inner_d = 70;
-  tube_outer_d = tube_inner_d + 2*3.3;
+  tube_inner_d = Clay_extruder_tube_inner_d;
+  tube_outer_d = Clay_extruder_tube_outer_d;
   translate([0,0,lift_tube])
     color([0.9,0.9,0.9], 0.4)
       difference(){
@@ -46,9 +46,10 @@ module clay_extruder(){
   color([0.6,0.6,0.6])
     translate([0,0,lift_tube + tube_height + shim_height + Nema23_cube_width])
       cylinder(d=62, h=topshim_height);
-  w = 31.7;
+  w = Clay_extruder_top_square_width;
   color([0.6,0.6,0.6])
-    translate([-w/2, -w/2, lift_tube + tube_height + shim_height + Nema23_cube_width])
-      cube([w, w, 300]);
+    rotate([0,0,45])
+      translate([-w/2, -w/2, lift_tube + tube_height + shim_height + Nema23_cube_width])
+        cube([w, w, 300]);
 
 }

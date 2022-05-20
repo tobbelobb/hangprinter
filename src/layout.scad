@@ -27,6 +27,8 @@ use <spool_cover.scad>
 use <spool_cover_mirrored.scad>
 use <new_tilted_line_deflector.scad>
 use <ziptie_tensioner_wedge.scad>
+use <clay_extruder_holder.scad>
+use <clay_extruder.scad>
 
 
 beam_length = 400;
@@ -50,6 +52,8 @@ mover = true;
 bottom_triangle = false;
 //bottom_triangle = true;
 
+clay_extruder = true;
+
 A = 0;
 B = 1;
 C = 2;
@@ -58,10 +62,12 @@ X = 0;
 Y = 1;
 Z = 2;
 
-anchors = [[16.83, -1584.86, -113.17],
-           [1290.18, 1229.19, -157.45],
-           [-1409.88, 742.61, -151.80],
-           [21.85, -0.16, 2343.67]];
+clay_extruder_height_diff = 350;
+
+anchors = [[16.83, -1584.86, -113.17-clay_extruder_height_diff],
+           [1290.18, 1229.19, -157.45-clay_extruder_height_diff],
+           [-1409.88, 742.61, -151.80-clay_extruder_height_diff],
+           [21.85, -0.16, 2343.67-clay_extruder_height_diff]];
 
 between_action_points_z = anchors[D][Z]-Higher_bearing_z -3 - 175;
 length_of_toolhead = 77;
@@ -564,13 +570,6 @@ module full_winch(){
 
 //mover();
 module mover(pos = [0,0,0]){
-  //translate([0,0,7])
-  //color("white")
-  //difference() {
-  //   cylinder(d=beam_length,h=1,$fn=200);
-  //   translate([0,0,-1])
-  //     cylinder(d=beam_length-Beam_width*2,h=5,$fn=200);
-  //}
   translate(pos + [0,0,length_of_toolhead]){
     for(k=[0,120,240])
       rotate([180,0,k+180]){
@@ -625,6 +624,7 @@ module mover(pos = [0,0,0]){
             }
 
       }
+    if (!clay_extruder) {
       sidelength_frac = 1.5;
       shorter_beam = Sidelength/sidelength_frac;
       offcenter_frac = 25;
@@ -636,7 +636,7 @@ module mover(pos = [0,0,0]){
                      0,
                      shorter_beam/2-(Nema17_cube_width+0.54*2+2*Wall_th)/2])
             color(color1, color1_alpha)
-              if(stls){
+              if(stls && !twod){
                 import("../stl/extruder_holder.stl");
               } else {
                 extruder_holder();
@@ -651,6 +651,31 @@ module mover(pos = [0,0,0]){
       color([0.1,0.1,0.1])
         translate([-20, -15, -40])
           cube([40,25,40]);
+    } else {
+      translate([0,0,-clay_extruder_height_diff-76])
+        if (stls && !twod) {
+        //if (false) {
+          import("../stl/for_render/clay_extruder.stl");
+        } else {
+          clay_extruder();
+        }
+        color([0.2,0.2,0.2])
+          translate([0,0,-364])
+            if (stls && !twod) {
+            //if (false) {
+              clay_extruder_holder();
+            } else {
+              import("../stl/clay_extruder_holder.stl");
+            }
+        color([0.2,0.2,0.2])
+          translate([0,0,322])
+            if (stls && !twod) {
+            //if (false) {
+              clay_extruder_top_holder();
+            } else {
+              import("../stl/clay_extruder_top_holder.stl");
+            }
+    }
   }
 }
 
@@ -692,20 +717,19 @@ module ABC_anchor(){
         } else {
           line_roller_anchor();
         }
-
 }
 
 function rotation(v, ang) = [v[0]*cos(ang)-v[1]*sin(ang), v[0]*sin(ang)+v[1]*cos(ang), v[2]];
 
 module ABC_anchors(pos = [0,0,0]){
-  a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead-3];
+  a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead-2];
   a_low_left = a_high_left - [0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_big_r];
   a_high_right = a_high_left + [Sidelength,0,0];
   a_low_right = a_low_left + [Sidelength,0,0];
   for(i = [A, B, C]){
     translate(anchors[i])
       rotate([0,0,i*120])
-        translate([0,-Sidelength/sqrt(8)+5,length_of_toolhead-46])
+        translate([0,-Sidelength/sqrt(8)+5,length_of_toolhead-50])
           rotate([0,0,-90])
             ABC_anchor();
     action_high_left = rotation(a_high_left, i*120);
@@ -779,8 +803,6 @@ module ceiling_unit_internal_lines_v4p1(){
                    [lx3+k+(k-spd/2), ydiff+aspool_y+190, 100+hz]);
     }
   }
-
-
 }
 
 data_collection_positions_standard = [[  -0.527094,   -0.634946,    0.      ],
@@ -871,15 +893,19 @@ hp_marks_measurements = [[-0.527094, -0.634946, -0.370821],
                          [62.8474, -55.7797, 1388.51]];
 
 
-translate([-14,91,-2.5])
-  cube([800,800,5], center=true);
+if(mounted_in_ceiling && mover && !twod) {
+  color([0.7, 0.2, 0.2], 0.5)
+  bed();
+}
+module bed(){
+  translate([-14,91,-2.5-clay_extruder_height_diff])
+    cube([800,800,5], center=true);
+}
 
 if(mounted_in_ceiling && mover && !twod){
   partial_way = min(1.3*($t*(len(data_collection_positions_standard)-1) - floor($t*(len(data_collection_positions_standard)-1))), 1);
-  echo(partial_way);
-  render_pos = (1-partial_way)*data_collection_positions_standard[$t*(len(data_collection_positions_standard)-1)]//*(1-mod($t,1/len(data_collection_positions_standard)))
+  render_pos = (1-partial_way)*data_collection_positions_standard[$t*(len(data_collection_positions_standard)-1)]
                + partial_way*data_collection_positions_standard[$t*(len(data_collection_positions_standard)-1)+1];
-              //+ data_collection_positions_standard[$t*(len(data_collection_positions_standard)-2) + 1]*mod($t,1/len(data_collection_positions_standard));
   render_full_position(render_pos);
 }
 module render_full_position(pos = [100,0,0]) {
@@ -894,7 +920,7 @@ module render_full_position(pos = [100,0,0]) {
 
 
 //data_collection_points(hp_marks_measurements, 9, "cyan", "cyan");
-data_collection_points(data_collection_positions_standard, 9);
+//data_collection_points(data_collection_positions_standard, 9);
 module data_collection_points(points, knowns = 0, color0 = "green", color1 = "blue") {
   for(i = [0:len(points)-1])
     translate(points[i])
