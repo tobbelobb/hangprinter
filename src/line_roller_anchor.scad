@@ -137,6 +137,9 @@ module vertical_screws(){
             rotate([0,0,30])
               nut(h=2.5);
         }
+
+      translate([-3/2, -10, -3])
+        cube([3, 10, 4]);
     }
   }
 
@@ -205,6 +208,7 @@ module newer_line_roller_anchor(){
       cutoff_cube();
     vertical_screws();
 
+
     slit_core();
     translate([0, slide_in_bullet+move_back, line_action_lower_z])
       rotate([0,-90,-90])
@@ -230,3 +234,14 @@ module newer_line_roller_anchor(){
   //  rotate([0,90,90])
   //    slit(slit_w);
 }
+
+//difference(){
+//  import("../stl/line_roller_anchor.stl");
+//  for(k=[0,1]) mirror([k,0,0])
+//    translate([3.2 + 1,
+//               front+3.6/2+1.36/2,
+//               line_action_lower_z + Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist - 31
+//              ])
+//      translate([-3/2, -10, -3])
+//        cube([3, 10, 4]);
+//}
