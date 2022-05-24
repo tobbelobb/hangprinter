@@ -269,11 +269,17 @@ module corner_clamp_tower(base_th       = wth,
                 difference(){
                   //#cube([Corner_clamp_bearings_center_to_center+10.5, 2.5+2, width]);
                   cube([higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter+2, 2.5+2, width]);
-                  translate([5.3,-1,-1])
-                    cube([0.8, 22, width+2]);
+                  //#translate([5.3,-1,-1])
+                  //  cube([0.8, 22, width+2]);
                   //#translate([b623_big_ugroove_small_r,-1,-1])
                   //  cube([0.8, 22, width+2]);
                 }
+                q = 2.7;
+                translate([4.4,-1,-q/2])
+                  translate([(width+q)/2,0,(width+q)/2])
+                    rotate([0,45,0])
+                      translate([(-width-q)/2,0,(-width-q)/2])
+                        cube([width+q, 5, width+q]);
               }
 
         }
@@ -447,6 +453,6 @@ module corner_clamp(){
 }
 
 
-width=0.795;
-translate([-(higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter)/2,45,0])
-  cube([higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter, 2.5, width]);
+//width=0.795;
+//#translate([-(higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter)/2,45,0])
+//  cube([higher_bearing_z-lower_bearing_z+2*(b623_big_ugroove_small_r + Eyelet_extra_dist) - Eyelet_diameter, 2.5, width]);
