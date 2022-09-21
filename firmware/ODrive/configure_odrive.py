@@ -1,6 +1,13 @@
-# Hangprinter version 4 configures its ODrives like is described in this file
+# Use odrive-config-AB.json and odrive-config-CD.json to configure your ODrives:
+# $ odrivetool restore-config odrive-config-AB.json
+# Don't use this file to configure your ODrives, it's too error prone.
+#
+# Only use this file to help take notes and debug stuff if you're doing dev work
+# on your ODrives.
 
-# These instructions work for ODriveFirmware version 0.5.5.
+# Hangprinter version 4's ODrives were originally roughly configured like described in this file
+
+# These instructions have been update to roughly work for ODriveFirmware version 0.5.5.
 # Some comments in here might help you if you use earlier versions as well.
 
 #odrv0.config.brake_resistance = 0.4699999988079071 # Or 2.0. You need to check this with a multimeter
@@ -91,17 +98,17 @@ odrv0.axis1.config.can.heartbeat_rate_ms = 0
 odrv0.axis0.config.step_gpio_pin = 1
 odrv0.axis0.config.dir_gpio_pin = 2
 #odrv0.axis0.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025 # on older fw versions
-odrv0.axis0.controller.config.circular_setpoints = True
-odrv0.axis0.controller.config.circular_setpoint_range = 100.0
-odrv0.axis0.controller.config.steps_per_circular_range = 400*odrv0.axis0.controller.config.circular_setpoint_range # 25*16 = 400 (set on newer fw versions)
+odrv0.axis0.controller.config.circular_setpoints = False
+odrv0.axis0.controller.config.circular_setpoint_range = 1
+odrv0.axis0.controller.config.steps_per_circular_range = 400
 odrv0.axis0.config.enable_step_dir = True
 
 #odrv0.axis1.config.step_gpio_pin = 7 # Default
 #odrv0.axis1.config.dir_gpio_pin = 8  # Default
-#odrv0.axis1.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025
-odrv0.axis1.controller.config.circular_setpoints = True
-odrv0.axis1.controller.config.circular_setpoint_range = 100.0
-odrv0.axis1.controller.config.steps_per_circular_range = 400*odrv0.axis1.controller.config.circular_setpoint_range # 25*16 = 400 (set on newer fw versions)
+#odrv0.axis1.config.turns_per_step = 0.0025 # 1/(25*16) = 0.0025 # on older fw versions
+odrv0.axis1.controller.config.circular_setpoints = False
+odrv0.axis1.controller.config.circular_setpoint_range = 1
+odrv0.axis1.controller.config.steps_per_circular_range = 400
 odrv0.axis1.config.enable_step_dir = True
 
 odrv0.save_configuration()
