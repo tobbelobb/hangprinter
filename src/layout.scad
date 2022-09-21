@@ -42,8 +42,9 @@ stls = true;
 //twod = true;
 twod = false;
 
-mounted_in_ceiling = true;
-//mounted_in_ceiling = false;
+
+//mounted_in_ceiling = true;
+mounted_in_ceiling = false;
 
 // Render the mover
 mover = true;
@@ -362,9 +363,9 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
         motor();
     else if(B)
       mirror([1,0,0])
-        motor(180);
+        motor();
     else if(C)
-      motor(180);
+      motor();
     else if(D)
       motor();
 
@@ -529,8 +530,9 @@ if(mounted_in_ceiling && !twod && !mover){
   translate(anchors[D]  + [0,0,33])
     rotate([180,0,0])
       full_winch();
+} else if (!mounted_in_ceiling) {
+  full_winch();
 }
-//full_winch();
 module full_winch(){
   sep = abc_sep;
   y = bcspool_y;
