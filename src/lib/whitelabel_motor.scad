@@ -166,19 +166,11 @@ module screw_placeout(){
 //stationary_part();
 module stationary_part(){
   difference(){
-    scale([61.1/60.8,61.1/60.8,1])
-      linear_extrude(height=7, convexity=6)
-        scale(0.1550)
-          for(i=[-1.1,0,1.1]){
-            extra_wiggle_room = 0.2;
-            wiggle_degs = i*extra_wiggle_room/(60.8/2)*(180/PI);
-                rotate([0,0,-32-180+wiggle_degs])
-                  translate([-102,-151.5])
-                    import("./whitelabel_motor.svg");
-          }
+    cylinder(d=63, h=7, $fn=12*4);
     screw_placeout()
       translate([0,0,-1])
         cylinder(d=3, h=10);
+
   }
 }
 
