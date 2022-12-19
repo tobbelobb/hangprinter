@@ -239,7 +239,7 @@ module sandwich_D(){
     else dright_spool_bottom();
     translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder - Spool_height - 1])
       rotate([0,0,-90])
-        if (false) import("../stl/dright_spool_cover.stl");
+        if (stls) import("../stl/dright_spool_cover.stl");
         else dright_spool_cover();
   }
 }
@@ -656,7 +656,6 @@ module mover(pos = [0,0,0]){
     } else {
       translate([0,0,-clay_extruder_height_diff-76])
         if (stls && !twod) {
-        //if (false) {
           import("../stl/for_render/clay_extruder.stl");
         } else {
           clay_extruder();
@@ -664,7 +663,6 @@ module mover(pos = [0,0,0]){
         color([0.2,0.2,0.2])
           translate([0,0,-364])
             if (stls && !twod) {
-            //if (false) {
               clay_extruder_holder();
             } else {
               import("../stl/clay_extruder_holder.stl");
@@ -672,7 +670,6 @@ module mover(pos = [0,0,0]){
         color([0.2,0.2,0.2])
           translate([0,0,322])
             if (stls && !twod) {
-            //if (false) {
               clay_extruder_top_holder();
             } else {
               import("../stl/clay_extruder_top_holder.stl");

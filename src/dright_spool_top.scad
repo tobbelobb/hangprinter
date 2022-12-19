@@ -10,14 +10,16 @@ use <spool.scad>
 //}
 dright_spool_top();
 module dright_spool_top(){
-  spool_outer(1);
-  difference(){
-    union(){
-      spool_center();
-      difference(){
-        cylinder(r=Spool_r-1, h=0.4);
-        translate([0,0,-1])
-          cylinder(r=Spool_r/4+1, h=3, $fn=100);
+  mirror([1,0,0]) {
+    spool_outer(1);
+    difference(){
+      union(){
+        spool_center();
+        difference(){
+          cylinder(r=Spool_r-1, h=0.4);
+          translate([0,0,-1])
+            cylinder(r=Spool_r/4+1, h=3, $fn=100);
+        }
       }
     }
   }
