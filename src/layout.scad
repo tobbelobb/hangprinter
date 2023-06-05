@@ -27,8 +27,9 @@ use <spool_cover.scad>
 use <spool_cover_mirrored.scad>
 use <new_tilted_line_deflector.scad>
 use <ziptie_tensioner_wedge.scad>
-use <clay_extruder_holder.scad>
-use <clay_extruder.scad>
+use <ram_1000_3dpotter_holder.scad>
+use <ram_1000_3dpotter_top_holder.scad>
+use <ram_1000_3dpotter.scad>
 
 
 beam_length = 400;
@@ -43,8 +44,8 @@ stls = true;
 twod = false;
 
 
-//mounted_in_ceiling = true;
-mounted_in_ceiling = false;
+mounted_in_ceiling = true;
+//mounted_in_ceiling = false;
 
 // Render the mover
 mover = true;
@@ -53,7 +54,7 @@ mover = true;
 bottom_triangle = false;
 //bottom_triangle = true;
 
-clay_extruder = true;
+ram_1000_3dpotter = true;
 
 A = 0;
 B = 1;
@@ -63,12 +64,12 @@ X = 0;
 Y = 1;
 Z = 2;
 
-clay_extruder_height_diff = 350;
+ram_1000_3dpotter_height_diff = 350;
 
-anchors = [[16.83, -1584.86, -113.17-clay_extruder_height_diff],
-           [1290.18, 1229.19, -157.45-clay_extruder_height_diff],
-           [-1409.88, 742.61, -151.80-clay_extruder_height_diff],
-           [21.85, -0.16, 2343.67-clay_extruder_height_diff]];
+anchors = [[16.83, -1584.86, -113.17-ram_1000_3dpotter_height_diff],
+           [1290.18, 1229.19, -157.45-ram_1000_3dpotter_height_diff],
+           [-1409.88, 742.61, -151.80-ram_1000_3dpotter_height_diff],
+           [21.85, -0.16, 2343.67-ram_1000_3dpotter_height_diff]];
 
 between_action_points_z = anchors[D][Z]-Higher_bearing_z -3 - 175;
 length_of_toolhead = 77;
@@ -626,7 +627,7 @@ module mover(pos = [0,0,0]){
             }
 
       }
-    if (!clay_extruder) {
+    if (!ram_1000_3dpotter) {
       sidelength_frac = 1.5;
       shorter_beam = Sidelength/sidelength_frac;
       offcenter_frac = 25;
@@ -654,25 +655,25 @@ module mover(pos = [0,0,0]){
         translate([-20, -15, -40])
           cube([40,25,40]);
     } else {
-      translate([0,0,-clay_extruder_height_diff-76])
+      translate([0,0,-ram_1000_3dpotter_height_diff-76])
         if (stls && !twod) {
-          import("../stl/for_render/clay_extruder.stl");
+          import("../stl/for_render/ram_1000_3dpotter.stl");
         } else {
-          clay_extruder();
+          ram_1000_3dpotter();
         }
         color([0.2,0.2,0.2])
           translate([0,0,-364])
             if (stls && !twod) {
-              clay_extruder_holder();
+              ram_1000_3dpotter_holder();
             } else {
-              import("../stl/clay_extruder_holder.stl");
+              import("../stl/ram_1000_3dpotter_holder.stl");
             }
         color([0.2,0.2,0.2])
           translate([0,0,322])
             if (stls && !twod) {
-              clay_extruder_top_holder();
+              ram_1000_3dpotter_top_holder();
             } else {
-              import("../stl/clay_extruder_top_holder.stl");
+              import("../stl/ram_1000_3dpotter_top_holder.stl");
             }
     }
   }
@@ -897,7 +898,7 @@ if(mounted_in_ceiling && mover && !twod) {
   bed();
 }
 module bed(){
-  translate([-14,91,-2.5-clay_extruder_height_diff])
+  translate([-14,91,-2.5-ram_1000_3dpotter_height_diff])
     cube([800,800,5], center=true);
 }
 

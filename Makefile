@@ -297,13 +297,19 @@ $(STL_DIR)/ziptie_tensioner_wedge.stl: $(SRC_DIR)/ziptie_tensioner_wedge.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/for_render/clay_extruder.stl: $(SRC_DIR)/clay_extruder.scad \
+$(STL_DIR)/for_render/ram_1000_3dpotter.stl: $(SRC_DIR)/ram_1000_3dpotter.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
-$(STL_DIR)/clay_extruder_holder.stl: $(SRC_DIR)/clay_extruder_holder.scad \
-	$(SRC_DIR)/clay_extruder.scad \
+$(STL_DIR)/ram_1000_3dpotter_holder.stl: $(SRC_DIR)/ram_1000_3dpotter_holder.scad \
+	$(SRC_DIR)/ram_1000_3dpotter.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
+$(STL_DIR)/ram_1000_3dpotter_top_holder.stl: $(SRC_DIR)/ram_1000_3dpotter_top_holder.scad \
+	$(SRC_DIR)/ram_1000_3dpotter.scad \
 	$(SRC_DIR)/lib/parameters.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -353,8 +359,9 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/spool_mirrored.stl \
 	$(STL_DIR)/new_tilted_line_deflector.stl \
 	$(STL_DIR)/ziptie_tensioner_wedge.stl \
-	$(STL_DIR)/for_render/clay_extruder.stl \
-	$(STL_DIR)/clay_extruder_holder.stl \
+	$(STL_DIR)/for_render/ram_1000_3dpotter.stl \
+	$(STL_DIR)/ram_1000_3dpotter_holder.stl \
+	$(STL_DIR)/ram_1000_3dpotter_top_holder.stl \
 	layout.dxf \
 	layout_a4.pdf
 

@@ -173,6 +173,6 @@ Stick_extra = 5;
 Stick_length = b623_big_ugroove_big_r*2 + 7*2 + 1*2 + Stick_extra;
 Stick_d = 12.5;
 
-Clay_extruder_tube_inner_d = 70;
-Clay_extruder_tube_outer_d = Clay_extruder_tube_inner_d + 2*3.3;
-Clay_extruder_top_square_width = 31.7;
+Ram_1000_3dpotter_tube_inner_d = 70;
+Ram_1000_3dpotter_tube_outer_d = Ram_1000_3dpotter_tube_inner_d + 2*3.3;
+Ram_1000_3dpotter_top_square_width = 31.7;
