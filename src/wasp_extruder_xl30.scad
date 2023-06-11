@@ -1,7 +1,7 @@
 include <lib/parameters.scad>
 use <lib/util.scad>
 
-wasp_extruder_xl30();
+//wasp_extruder_xl30();
 module wasp_extruder_xl30(){
   // Gearbox
   cylinder(d=36, h=22.6 + 1);
@@ -157,8 +157,8 @@ module wasp_extruder_xl30_top_holder() {
   }
 }
 
-thrust_outer_dia = 23.5;
-thrust_inner_dia = 10;
+thrust_outer_dia = 24.3;
+thrust_inner_dia = 10.3;
 thrust_h = 4;
 //translate([0,0,-204])
   //thrust_bearing();
@@ -187,56 +187,61 @@ module big_bearing(){
 
 bottom_th = 4;
 wall_th = 3;
-translate([0,0,-191.6])
+//translate([0,0,-191.6])
+//rotate([180,0,0])
   bottom_holder2();
 module bottom_holder2() {
   $fn=12*4;
-  difference() {
-    union(){
-      cylinder(d=thrust_outer_dia + 2*wall_th, h=24);
-      translate([0,0,-11])
-        cylinder(d=thrust_inner_dia-0.25, h=12);
-    }
-    translate([0,0,-13])
-      cylinder(d=5, h=14);
-    translate([0,0,-0.01])
-    cylinder(d1=5, d2=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
-    translate([0,0,Wasp_xl30_funnel_h-0.02])
-      cylinder(d=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
-  }
-  color("grey")
-    translate([0,0,-thrust_h])
-      thrust_bearing();
+  //difference() {
+  //  union(){
+  //    cylinder(d=thrust_outer_dia + 2*wall_th, h=24);
+  //    translate([0,0,-11])
+  //      cylinder(d=thrust_inner_dia-0.25, h=12);
+  //  }
+  //  translate([0,0,-13])
+  //    cylinder(d=5, h=14);
+  //  translate([0,0,-0.01])
+  //  cylinder(d1=5, d2=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
+  //  translate([0,0,Wasp_xl30_funnel_h-0.02])
+  //    cylinder(d=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
+  //}
+  //color("grey")
+  //  translate([0,0,-thrust_h])
+  //    thrust_bearing();
 
   translate([0,0,-thrust_h - bottom_th])
     difference(){
-      cylinder(d=thrust_outer_dia + 2*wall_th, h=thrust_h + bottom_th - 0.25);
+      union(){
+        cylinder(d=thrust_outer_dia + 2*wall_th, h=thrust_h + bottom_th - 0.25);
+        for(ang = [0, 120, 240]) rotate([0,0,ang])
+          translate([0,0,thrust_h + bottom_th])
+          translate([Wasp_xl30_funnel_d2/2 + 5/2, 0, -4.25])
+            rotate([90,0,0]) {
+              difference(){
+                union(){
+                  cylinder(h=wall_th, d=7.5, center=true);
+                }
+                cylinder(h=wall_th+2, d=2, center=true);
+              }
+            }
+      }
       translate([0,0,bottom_th])
-        cylinder(d=thrust_outer_dia + 0.2, h=thrust_h+bottom_th);
+        cylinder(d=thrust_outer_dia, h=thrust_h+bottom_th);
       translate([0,0,bottom_th + 1])
-        cylinder(d=thrust_outer_dia + 0.5, h=thrust_h+bottom_th);
+        cylinder(d=thrust_outer_dia, h=thrust_h+bottom_th);
       translate([0,0,-1])
         cylinder(d=thrust_inner_dia, h=bottom_th+2);
     }
 
-  for(ang = [0, 120, 240]) rotate([0,0,ang])
-    translate([Wasp_xl30_funnel_d2/2 + 5/2, 0, -4.25])
-      rotate([90,0,0]) {
-        difference(){
-          union(){
-            cylinder(h=wall_th, d=7.5, center=true);
-          }
-          cylinder(h=wall_th+2, d=2, center=true);
-        }
-      }
 }
 
-translate([0,0,88])
-  top_holder2();
+//translate([0,0,88])
+//!rotate([180,0,0])
+  //!top_holder2();
 module top_holder2(){
+  //translate([0,0,bottom_th])
+  //  thrust_bearing();
   cylinder(d=thrust_inner_dia-0.3, h=bottom_th+thrust_h-0.3);
-  translate([0,0,bottom_th])
-    thrust_bearing();
   difference(){
     union(){
       cylinder(d=thrust_outer_dia + 7, h=bottom_th+thrust_h/2 - 0.25);
@@ -250,17 +255,17 @@ module top_holder2(){
     Nema17_screw_holes(d=3.2, h=10);
 
   }
-  difference(){
-    translate([0,0,bottom_th+thrust_h/2 +0.25])
-      cylinder(d=thrust_outer_dia + 7, h=bottom_th+thrust_h/2 + 16);
-    translate([0,0,-17 + bottom_th + thrust_h])
-      cylinder(d=thrust_outer_dia, h=17);
-    for (ang=[0, 120, 240]) rotate([0,0,60+ang])
-      translate([thrust_outer_dia-5-2, 0, bottom_th+thrust_h/2+16+7])
-        rotate([90,0,0])
-          rotate_extrude() {
-            translate([7, 0, 0])
-              circle(r=2);
-          }
-  }
+  //difference(){
+  //  translate([0,0,bottom_th+thrust_h/2 +0.25])
+  //    cylinder(d=thrust_outer_dia + 7, h=bottom_th+thrust_h/2 + 16);
+  //  translate([0,0,-17 + bottom_th + thrust_h])
+  //    cylinder(d=thrust_outer_dia, h=17);
+  //  for (ang=[0, 120, 240]) rotate([0,0,60+ang])
+  //    translate([thrust_outer_dia-5-2, 0, bottom_th+thrust_h/2+16+7])
+  //      rotate([90,0,0])
+  //        rotate_extrude() {
+  //          translate([7, 0, 0])
+  //            circle(r=2);
+  //        }
+  //}
 }
