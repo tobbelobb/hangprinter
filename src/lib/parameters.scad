@@ -86,7 +86,7 @@ Roller_fl = (Roller_l - Depth_of_roller_base)/2;
 
 Line_roller_wall_th = 5;
 
-Line_roller_ABC_winch_h =  Gap_between_sandwich_and_plate
+Line_roller_ABCD_winch_h =  Gap_between_sandwich_and_plate
                            + Sep_disc_radius
                            - Spool_r
                            + Depth_of_roller_base/2
@@ -131,8 +131,8 @@ Belt_roller_containing_cube_ywidth = Belt_roller_space_between_walls+8.5;
 Belt_roller_containing_cube_xwidth = 14;
 Belt_roller_insert_h = 18;
 
-Sandwich_ABC_width = 2*(1+Spool_height) + GT2_gear_height;
-Sandwich_D_width = 4*(1+Spool_height) + GT2_gear_height;
+Sandwich_ABCD_width = 2*(1+Spool_height) + GT2_gear_height;
+Sandwich_I_width = 4*(1+Spool_height) + GT2_gear_height;
 Spool_core_halve_width = 14.3;
 Spool_core_impression_in_spool_cover = 0;
 Spool_cover_bottom_th = 1.5;
@@ -142,10 +142,10 @@ Spool_core_tot_length = 136.458;
 Spool_cover_outer_r = Sep_disc_radius + 2;
 Gap_between_sep_disc_and_spool_cover = 0.55;
 
-Smooth_rod_length_ABC = Sandwich_ABC_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);
-Smooth_rod_length_D = Sandwich_D_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);
-echo("Smooth_rod_length_ABC", Smooth_rod_length_ABC);
-echo("Smooth_rod_length_D", Smooth_rod_length_D);
+Smooth_rod_length_ABCD = Sandwich_ABCD_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);
+Smooth_rod_length_I = Sandwich_I_width + 2*(Spool_core_halve_width-Spool_core_impression_in_spool_cover + Spool_cover_bottom_th + Spool_cover_shoulder);
+echo("Smooth_rod_length_ABCD", Smooth_rod_length_ABCD);
+echo("Smooth_rod_length_I", Smooth_rod_length_I);
 
 Spool_cover_tot_height = Spool_cover_bottom_th+Spool_cover_shoulder+1+Spool_height;
 Spool_cover_D_left_tot_height = Spool_cover_shoulder+Spool_cover_bottom_th+1+Spool_height+1+Spool_height;
@@ -162,7 +162,7 @@ Belt_roller_bearing_xpos = Sep_disc_radius + b623_outer_dia/2+Belt_thickness;
 
 
 // Top plate parameters needed for layout slicer
-Yshift_top_plate = -297.8;
+Yshift_top_plate = -263.8;
 
 Pen_holder_w = 55;
 Pen_holder_rail_w = 36;

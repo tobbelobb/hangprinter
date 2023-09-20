@@ -20,6 +20,7 @@ use <motor_bracket_A.scad>
 use <motor_bracket_B.scad>
 use <motor_bracket_C.scad>
 use <motor_bracket_D.scad>
+use <motor_bracket_I.scad>
 use <sep_disc.scad>
 use <spool.scad>
 use <spool_mirrored.scad>
@@ -44,8 +45,8 @@ stls = true;
 twod = false;
 
 
-mounted_in_ceiling = true;
-//mounted_in_ceiling = false;
+//mounted_in_ceiling = true;
+mounted_in_ceiling = false;
 
 // Render the mover
 mover = true;
@@ -77,21 +78,19 @@ between_action_points_z = anchors[I][Z]-Higher_bearing_z -3 - 175;
 length_of_toolhead = 77;
 //length_of_toolhead = anchors[I][Z]-300;
 
-dspool_y = -50+30;
-bcspool_y = -40;
-aspool_y = -20;
+aspool_y = 42;
+bcspool_y = -23;
+dspool_y = 19;
+ispool_y = -72;
 aspool_lineroller_y = -110;
-abc_sep = 105+18;
 move_BC_deflectors = -113;
 
-extra_space_in_middle = -10;
-
-lxm1 = -abc_sep/2-extra_space_in_middle-spd/2 - 1 - Spool_height;
-lx0 = -abc_sep/2-extra_space_in_middle-spd/2;
-lx1 = -abc_sep/2-extra_space_in_middle+spd/2;
-lx2 = -abc_sep/2-extra_space_in_middle+spd/2 + 1 + Spool_height;
-lx3 = abc_sep/2+extra_space_in_middle-spd/2;
-ly2 = Sidelength/sqrt(12) - 50;
+lxm1 = -spd/2 - 1 - Spool_height;
+lx0 = -spd/2;
+lx1 = spd/2;
+lx2 = spd/2 + 1 + 32;
+lx3 = -spd/2 + 106;
+ly2 = 126;
 
 color0 = "sandybrown";
 color0_alpha = 0.55;
@@ -155,28 +154,15 @@ module line_deflector(rot_around_center=0, center=false){
   }
 }
 
-module placed_landing_brackets(){
-  translate([0, 128-b623_big_ugroove_small_r/2, 0])
-    rotate([0,0,180+90])
-      landing_bracket_a(twod=twod);
-  push_bc_brackets=23;
-  translate([-push_bc_brackets*cos(60),-71+push_bc_brackets*sin(60),0])
-    rotate([0,0,180])
-      translate([104, 0, 0])
-        rotate([0,0,180])
-          landing_bracket_b(twod=twod);
-  translate([104+push_bc_brackets*cos(60), -71+push_bc_brackets*sin(60), 0])
-    landing_bracket_c(twod=twod);
-}
-
 //placed_line_verticalizer();
-module placed_line_verticalizer(angs=[0, 180+30,180,180-30]){
+module placed_line_verticalizer(angs=[45,-45,45,-45]){
   center_it = 0;
-  three = [0,120,240];
+  four = [0,90,180,270];
 
   color(color1, color1_alpha)
-  for(k=[0:2])
-    rotate([0,0,-30+three[k]])
+  translate([0,0,0])
+  for(k=[0:3])
+    rotate([0,0,-45+four[k]])
       translate([-Sidelength/sqrt(3)-Move_d_bearings_inwards,0,0])
         rotate([0,0,angs[k]])
           translate([center_it,0,0])
@@ -187,25 +173,25 @@ module placed_line_verticalizer(angs=[0, 180+30,180,180-30]){
               translate([-b623_big_ugroove_small_r,0,0])
                 line_verticalizer(twod=twod);
             }
-    translate([lx0-b623_big_ugroove_small_r,
-               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
-               0])
-      line_deflector(-67, center=true);
-    translate([lxm1, 79, 0])
-      rotate([0,0,90])
+  translate([lx0-b623_big_ugroove_small_r,
+             Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
+             0])
+    line_deflector(-67, center=true);
+  translate([lxm1, 233, 0])
+    rotate([0,0,90])
       if(stls && !twod){
         import("../stl/line_roller_wire_rewinder.stl");
       } else {
         line_roller_wire_rewinder(twod=twod);
       }
-    translate([lx1+b623_big_ugroove_small_r,
-               Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
-               0])
-      line_deflector(67, center=true);
-    translate([lx2+b623_big_ugroove_small_r, ly2-b623_big_ugroove_small_r,0])
-      line_deflector(63, center=true);
-    translate([-b623_big_ugroove_small_r+b623_width/2+1,ly2-b623_big_ugroove_small_r,0])
-      line_deflector(-90-90-90, center=true);
+  translate([lx1+b623_big_ugroove_small_r,
+             Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
+             0])
+    line_deflector(67, center=true);
+  translate([lx2+b623_big_ugroove_small_r, ly2-b623_big_ugroove_small_r,0])
+    line_deflector(63, center=true);
+  translate([-b623_big_ugroove_small_r+b623_width/2+1+3*Spool_height,ly2-b623_big_ugroove_small_r,0])
+    line_deflector(-90-90-90, center=true);
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
@@ -247,8 +233,8 @@ module sandwich_D(){
   }
 }
 
-//!placed_sandwich_D();
-module placed_sandwich_D(){
+//!placed_sandwich_I();
+module placed_sandwich_I(){
     translate([0,
         -1-Spool_height - GT2_gear_height/2,
         Sep_disc_radius+Gap_between_sandwich_and_plate])
@@ -257,8 +243,8 @@ module placed_sandwich_D(){
 }
 
 //translate([0,0,Gap_between_sandwich_and_plate])
-//!sandwich_ABC();
-module sandwich_ABC(){
+//!sandwich_ABCD();
+module sandwich_ABCD(){
   translate([0,0, 1 + Spool_height]){
     color(color2, color2_alpha)
       if(stls) import("../stl/GT2_spool_gear.stl");
@@ -296,11 +282,12 @@ module belt_roller_bearings(){
             b623_flanged();
 }
 
-//!sandwich_and_motor_D();
-module sandwich_and_motor_D(){
+//!sandwich_and_motor_I();
+module sandwich_and_motor_I(){
   if(!twod){
-    placed_sandwich_D();
+    placed_sandwich_I();
   }
+
   translate([Belt_roller_bearing_xpos,0,0]){
     rotate([0,0,90])
       render_motor_and_bracket(D=true);
@@ -310,18 +297,16 @@ module sandwich_and_motor_D(){
   if(!twod) {
     // Smooth rod
     color("grey")
-      translate([0,-Smooth_rod_length_D,Sep_disc_radius + Gap_between_sandwich_and_plate])
+      translate([0,Smooth_rod_length_I-7, Sep_disc_radius + Gap_between_sandwich_and_plate])
         rotate([90,0,0])
-          translate([0,0,(Sandwich_ABC_width - Sandwich_D_width)/2])
-            cylinder(d=8, h=Smooth_rod_length_D, center=true);
-
+          translate([0,0,(Sandwich_ABCD_width - Sandwich_I_width)/2])
+            cylinder(d=8, h=Smooth_rod_length_I, center=true);
     belt();
   }
-
 }
 
 //!render_motor_and_bracket();
-module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=false){
+module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=false, I=false){
   if (stls && !twod) {
     if(A)
       import("../stl/motor_bracket_A.stl");
@@ -329,8 +314,10 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
       import("../stl/motor_bracket_B.stl");
     else if (C)
       import("../stl/motor_bracket_C.stl");
-    else // use D as default...
+    else if (D)
       import("../stl/motor_bracket_D.stl");
+    else // use I as default...
+      import("../stl/motor_bracket_I.stl");
   } else {
     if(A)
       motor_bracket_A(twod=twod);
@@ -338,8 +325,10 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
       motor_bracket_B(twod=twod);
     else if (C)
       motor_bracket_C(twod=twod);
-    else // use D as default...
+    else if (D)
       motor_bracket_D(twod=twod);
+    else // use I as default...
+      motor_bracket_I(twod=twod);
   }
 
   module motor(ang=0) {
@@ -443,27 +432,31 @@ module belt(){
       }
 }
 
-//!sandwich_and_motor_ABC();
-module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
+//!sandwich_and_motor_ABCD();
+module sandwich_and_motor_ABCD(leftHanded=false, A=false, B=false, C=false, D=false){
   cover_adj=Spool_core_cover_adj;
   if(!twod)
     translate([0,
-        Sandwich_ABC_width/2,
+        Sandwich_ABCD_width/2,
         Sep_disc_radius+Gap_between_sandwich_and_plate])
       rotate([90,0,0])
-        sandwich_ABC();
+        sandwich_ABCD();
   translate([Belt_roller_bearing_xpos,0,0])
     rotate([0,0,90])
-      render_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=false);
+      render_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=D, I=false);
   translate([Belt_roller_bearing_xpos,0,0])
     belt_roller_bearings();
 
   if(!twod) {
     // Smooth rod
     color("grey")
-      translate([0,0,Sep_disc_radius + Gap_between_sandwich_and_plate])
+      translate([0,-Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
         rotate([90,0,0])
-          cylinder(d=8, h=Smooth_rod_length_ABC, center=true);
+          cylinder(d=8, h=Smooth_rod_length_ABCD, center=true);
+    color("grey")
+      translate([0,Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
+        rotate([90,0,0])
+          cylinder(d=8, h=Smooth_rod_length_ABCD, center=true);
     // Belt
     belt();
   }
@@ -471,7 +464,7 @@ module sandwich_and_motor_ABC(leftHanded=false, A=false, B=false, C=false){
 
 //!sandwich_and_motor_A();
 module sandwich_and_motor_A(){
-  sandwich_and_motor_ABC(A=true);
+  sandwich_and_motor_ABCD(A=true);
   translate([move_BC_deflectors+spd/sqrt(3)+1, GT2_gear_height/2 + Spool_height/2,0])
     rotate([0,0,180])
       tilted_line_deflector_for_layout();
@@ -486,7 +479,7 @@ module line_guides_BC(){
 
 //!sandwich_and_motor_B();
 module sandwich_and_motor_B(){
-  sandwich_and_motor_ABC(B=true);
+  sandwich_and_motor_ABCD(B=true);
   mirror([0,1,0])
     line_guides_BC();
 }
@@ -494,40 +487,22 @@ module sandwich_and_motor_B(){
 
 //!sandwich_and_motor_C();
 module sandwich_and_motor_C(){
-  sandwich_and_motor_ABC(C=true);
+  sandwich_and_motor_ABCD(C=true);
   line_guides_BC();
 }
 
-
-cx = 452.17+sqrt(12)*Move_d_bearings_inwards/2;
-cy = 450.02+Move_d_bearings_inwards/2;
-bc_x_pos = cx/2-GT2_gear_height/2-Spool_cover_tot_height-Spool_core_halve_width-2;
-
-module odrive_2d(){
-  difference(){
-    square([140, 50]);
-    translate([140-2.5, 50-2.5])
-      circle(d=3);
-    translate([2.5, 50-2.5])
-      circle(d=3);
-    translate([140-2.5, 4])
-      circle(d=3);
-    translate([2.5, 4])
-      circle(d=3);
-    translate([47,18])
-      text("ODrive");
-  }
+//!sandwich_and_motor_D();
+module sandwich_and_motor_D(){
+  sandwich_and_motor_ABCD(D=true);
+  translate([move_BC_deflectors+spd/sqrt(3)+1, GT2_gear_height/2 + Spool_height/2,0])
+    rotate([0,0,180])
+      tilted_line_deflector_for_layout();
 }
 
-module odrive(){
-  if (!twod) {
-    color([0.1,0.1,0.1])
-      linear_extrude(height=2) odrive_2d();
-  } else {
-    odrive_2d();
-  }
-}
 
+cx = 475+Move_d_bearings_inwards/2;
+cy = 475+Move_d_bearings_inwards/2;
+bc_x_pos = 200;
 
 if(mounted_in_ceiling && !twod && !mover){
   translate(anchors[I]  + [0,0,33])
@@ -537,152 +512,44 @@ if(mounted_in_ceiling && !twod && !mover){
   full_winch();
 }
 module full_winch(){
-  sep = abc_sep;
-  y = bcspool_y;
 
-  translate([lx3+spd/2,aspool_y,0])
+  translate([lx3,aspool_y,0])
     rotate([0,0,-90])
     sandwich_and_motor_A();
 
-  translate([-bc_x_pos,y,0])
-    rotate([0,0,90])
-    sandwich_and_motor_C();
-
-  translate([bc_x_pos,y,0])
+  translate([bc_x_pos, bcspool_y,0])
     rotate([0,0,90])
     sandwich_and_motor_B();
 
-  translate([-sep/2-extra_space_in_middle,dspool_y,0])
-    rotate([0,0,-90])
+  translate([-bc_x_pos, bcspool_y,0])
+    rotate([0,0,90])
+    sandwich_and_motor_C();
+
+  translate([-lx3+0, dspool_y,0])
+    rotate([0,0,90])
     sandwich_and_motor_D();
 
+  translate([0,ispool_y,0])
+    rotate([0,0,-90])
+    sandwich_and_motor_I();
+
   placed_line_verticalizer();
-  placed_landing_brackets();
 
   echo("Top plate width: ", cx);
   echo(cy);
   mvy = Yshift_top_plate;
   top_plate(cx, cy, mvy);
-
-  translate([188, -208.4, 0])
-    rotate([0,0,180])
-      odrive();
-  translate([-48, -208.4, 0])
-    rotate([0,0,180])
-      odrive();
 }
 
 
 //mover();
-module mover(pos = [0,0,0]){
-  translate(pos + [0,0,length_of_toolhead]){
-    for(k=[0,120,240])
-      rotate([180,0,k+180]){
-        translate([-beam_length/2,-(Sidelength+10.5)/sqrt(12)-sqrt(3), 0]){
-          color(color_carbon)
-            cube([beam_length, Beam_width, Beam_width]);
-          marker_shift = beam_length/3;
-          marker_d = 32;
-          for(l=[0,1])
-            translate([marker_shift + l*(-marker_shift*2 + beam_length), Beam_width/2,2]){
-              color([0.9,0.9,0.9])
-                translate([0,0,-marker_d/2+7]) {
-                  if (k==0)
-                    translate([26*l,0,0]){
-                      cylinder(d=90);
-                      color(color_carbon, color1_alpha){
-                        translate([-5,-10,4])
-                          cube([10,20,20]);
-                        translate([0,0,1])
-                          cylinder(d=3, h=8, center=true);
-                      }
-                    }
-                  if (k==120)
-                    translate([-21+78*l,0,0]){
-                      cylinder(d=90);
-                      color(color_carbon, color1_alpha){
-                        translate([-5,-10,4])
-                          cube([10,20,20]);
-                        translate([0,0,1])
-                          cylinder(d=3, h=8, center=true);
-                      }
-                    }
-                  if (k==240)
-                    translate([76*l-50,0,0]){
-                      cylinder(d=90);
-                      color(color_carbon, color1_alpha){
-                        translate([-5,-10,4])
-                          cube([10,20,20]);
-                        translate([0,0,1])
-                          cylinder(d=3, h=8, center=true);
-                      }
-                    }
-                }
-            }
-        }
-        translate([0,Sidelength/sqrt(3) - Cc_action_point_from_mid,-Wall_th])
-          color(color1, color1_alpha)
-            if(stls){
-              import("../stl/corner_clamp.stl");
-            } else {
-              corner_clamp();
-            }
-
-      }
-    if (!ram_1000_3dpotter) {
-      sidelength_frac = 1.5;
-      shorter_beam = Sidelength/sidelength_frac;
-      offcenter_frac = 25;
-      translate([-shorter_beam/2,Sidelength/offcenter_frac,0]){
-        color(color_carbon)
-          cube([shorter_beam, Beam_width, Beam_width]);
-        rotate([90,0,90])
-          translate([-2*Wall_th,
-                     0,
-                     shorter_beam/2-(Nema17_cube_width+0.54*2+2*Wall_th)/2])
-            color(color1, color1_alpha)
-              if(stls && !twod){
-                import("../stl/extruder_holder.stl");
-              } else {
-                extruder_holder();
-              }
-      }
-      color("red")
-        translate([0,0,-length_of_toolhead+10]){
-          cylinder(d=10, h=length_of_toolhead);
-          translate([0,0,-10])
-            cylinder(d1=1, d2=10, h=10);
-        }
-      color([0.1,0.1,0.1])
-        translate([-20, -15, -40])
-          cube([40,25,40]);
-    } else {
-      translate([0,0,-ram_1000_3dpotter_height_diff-76])
-        if (stls && !twod) {
-          import("../stl/for_render/ram_1000_3dpotter.stl");
-        } else {
-          ram_1000_3dpotter();
-        }
-        color([0.2,0.2,0.2])
-          translate([0,0,-364])
-            if (stls && !twod) {
-              ram_1000_3dpotter_holder();
-            } else {
-              import("../stl/ram_1000_3dpotter_holder.stl");
-            }
-        color([0.2,0.2,0.2])
-          translate([0,0,322])
-            if (stls && !twod) {
-              ram_1000_3dpotter_top_holder();
-            } else {
-              import("../stl/ram_1000_3dpotter_top_holder.stl");
-            }
-    }
-  }
+module mover(pos = [0,0,0]) {
+  translate(pos)
+    cube(Sidelength, center=true);
 }
 
-//d_lines();
-module d_lines(pos=[0,0,0]){
+//i_lines();
+module i_lines(pos=[0,0,0]){
   color("pink"){
     line_from_to(pos + [0,Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [0,Sidelength/sqrt(3),0]);
     line_from_to(pos + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
@@ -781,21 +648,21 @@ module ceiling_unit_internal_lines_v4p1(){
       }
 
     line_from_to([lx0, bcspool_y, hz],
-                 [lx0, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
-    line_from_to([lx0, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
-                 [-Sidelength/2, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+                 [lx0, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+    line_from_to([lx0, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
+                 [-Sidelength/2, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
 
     line_from_to([lx1, bcspool_y, hz],
-                 [lx1, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
-    line_from_to([lx1, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
-                 [Sidelength/2, Sidelength/sqrt(12)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+                 [lx1, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+    line_from_to([lx1, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
+                 [Sidelength/2, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
 
-    line_from_to([lx2, bcspool_y, hz],
-                 [lx2, ly2, hz]);
-    line_from_to([lx2, ly2, hz],
-                 [b623_width/2+1, ly2, hz]);
-    line_from_to([b623_width/2+1, ly2, hz],
-                 [b623_width/2+1, -Sidelength/sqrt(3)-Move_d_bearings_inwards, hz]);
+    line_from_to([spd + lx2, bcspool_y, hz],
+                 [spd + lx2, ly2, hz]);
+    line_from_to([spd + lx2, ly2, hz],
+                 [spd , ly2, hz]);
+    line_from_to([spd , ly2, hz],
+                 [spd , -Sidelength/sqrt(3)-Move_d_bearings_inwards, hz]);
 
     for(k=[0,spd]){
       ydiff = 0;
@@ -912,7 +779,7 @@ if(mounted_in_ceiling && mover && !twod){
 }
 module render_full_position(pos = [100,0,0]) {
   mover(pos);
-  d_lines(pos);
+  i_lines(pos);
   translate(anchors[I]  + [0,0,33])
     rotate([180,0,0])
       full_winch();
