@@ -596,7 +596,7 @@ module chamfer45(v0, h){
     square(v0, center=true);
 }
 
-module line_from_to(v0, v1, r = 1.0){
+module line_from_to(v0, v1, r = Cable_r){
   v2 = v1 - v0;
   color("yellow")
     if(len(v2) == 3){

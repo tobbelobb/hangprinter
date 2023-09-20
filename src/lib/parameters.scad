@@ -46,7 +46,7 @@ Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
                        - (Cc_action_point_from_mid/2)*(Cc_action_point_from_mid/2));
 Eyelet_extra_dist = 0.75;
 Eyelet_diameter = 4.30;
-Move_d_bearings_inwards = -2;
+Move_i_bearings_inwards = -2;
 
 // The distance between the two action points on the mover
 Sidelength = Beam_length + 2*Cc_plastic_length;
@@ -98,7 +98,7 @@ Screw_h = 2;
 Screw_head_h = 2;
 M3_screw_head_d = 5.8;
 Spool_center_bearing_wall_th = 5;
-Corner_clamp_bearings_center_to_center = max(15, (b623_big_ugroove_big_r + b623_ugroove_room_to_grow_r)*2 + 5);
+Corner_clamp_bearings_center_to_center = max(45, (b623_big_ugroove_big_r + b623_ugroove_room_to_grow_r)*2 + 5);
 
 //// Lineroller anchor parameters /////
 
@@ -109,7 +109,7 @@ Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
 
 //// Cable Clamp parameters /////
 Bit_width = 12;
-Cable_r=2.5;
+Cable_r=4.5;
 
 // Belt drive parameters
 GT2_belt_width = 6.5;

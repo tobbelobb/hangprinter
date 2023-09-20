@@ -45,8 +45,8 @@ stls = true;
 twod = false;
 
 
-//mounted_in_ceiling = true;
-mounted_in_ceiling = false;
+mounted_in_ceiling = true;
+//mounted_in_ceiling = false;
 
 // Render the mover
 mover = true;
@@ -55,7 +55,7 @@ mover = true;
 bottom_triangle = false;
 //bottom_triangle = true;
 
-ram_1000_3dpotter = false;
+ram_1000_3dpotter = true;
 
 A = 0;
 B = 1;
@@ -163,7 +163,7 @@ module placed_line_verticalizer(angs=[45,-45,45,-45]){
   translate([0,0,0])
   for(k=[0:3])
     rotate([0,0,-45+four[k]])
-      translate([-Sidelength/sqrt(3)-Move_d_bearings_inwards,0,0])
+      translate([-Sidelength/sqrt(2)-Move_i_bearings_inwards,0,0])
         rotate([0,0,angs[k]])
           translate([center_it,0,0])
             if(stls && !twod){
@@ -174,7 +174,7 @@ module placed_line_verticalizer(angs=[45,-45,45,-45]){
                 line_verticalizer(twod=twod);
             }
   translate([lx0-b623_big_ugroove_small_r,
-             Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
+             Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
              0])
     line_deflector(-67, center=true);
   translate([lxm1, 233, 0])
@@ -185,7 +185,7 @@ module placed_line_verticalizer(angs=[45,-45,45,-45]){
         line_roller_wire_rewinder(twod=twod);
       }
   translate([lx1+b623_big_ugroove_small_r,
-             Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
+             Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
              0])
     line_deflector(67, center=true);
   translate([lx2+b623_big_ugroove_small_r, ly2-b623_big_ugroove_small_r,0])
@@ -500,8 +500,8 @@ module sandwich_and_motor_D(){
 }
 
 
-cx = 475+Move_d_bearings_inwards/2;
-cy = 475+Move_d_bearings_inwards/2;
+cx = 475+Move_i_bearings_inwards/2;
+cy = 475+Move_i_bearings_inwards/2;
 bc_x_pos = 200;
 
 if(mounted_in_ceiling && !twod && !mover){
@@ -545,15 +545,18 @@ module full_winch(){
 //mover();
 module mover(pos = [0,0,0]) {
   translate(pos)
-    cube(Sidelength, center=true);
+    translate([-Sidelength/2, -Sidelength/2, 35])
+      %cube([Sidelength, Sidelength, 64]);
 }
 
 //i_lines();
 module i_lines(pos=[0,0,0]){
+  l = Sidelength/2;
   color("pink"){
-    line_from_to(pos + [0,Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [0,Sidelength/sqrt(3),0]);
-    line_from_to(pos + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
-    line_from_to(pos + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
+    line_from_to(pos + [l,l, length_of_toolhead], anchors[I] + [l,l,0]);
+    line_from_to(pos + [-l,l, length_of_toolhead], anchors[I] + [-l,l,0]);
+    line_from_to(pos + [l,-l, length_of_toolhead], anchors[I] + [l,-l,0]);
+    line_from_to(pos + [-l,-l, length_of_toolhead], anchors[I] + [-l,-l,0]);
   }
 }
 
@@ -572,26 +575,27 @@ module bottom_triangle(){
       }
 }
 
-//ABC_anchor();
-module ABC_anchor(){
+//ABCD_anchor();
+module ABCD_anchor(){
   Ext_sidelength = 500;
   translate([0, -Ext_sidelength/2, -8])
     cube([50,Ext_sidelength, 8]);
   color(color1,0.6)
     for(k=[0,1]) mirror([0,k,0])
       translate([26,Ext_sidelength/2-27.91,0])
-        if(stls){
+        if(false){
           rotate([0,0,-90])
           import("../stl/line_roller_anchor.stl");
         } else {
-          line_roller_anchor();
+          rotate([0,0,-90])
+            newer_line_roller_anchor();
         }
 }
 
 function rotation(v, ang) = [v[0]*cos(ang)-v[1]*sin(ang), v[0]*sin(ang)+v[1]*cos(ang), v[2]];
 
 module ABCD_anchors(pos = [0,0,0]){
-  a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead-2];
+  a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead+21];
   a_low_left = a_high_left - [0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_big_r];
   a_high_right = a_high_left + [Sidelength,0,0];
   a_low_right = a_low_left + [Sidelength,0,0];
@@ -600,7 +604,7 @@ module ABCD_anchors(pos = [0,0,0]){
       rotate([0,0,i*90])
         translate([0,-Sidelength/sqrt(8)+5,length_of_toolhead-50])
           rotate([0,0,-90])
-            ABC_anchor();
+            ABCD_anchor();
     action_high_left = rotation(a_high_left, i*90);
     action_low_left = rotation(a_low_left, i*90);
     action_high_right = rotation(a_high_right, i*90);
@@ -648,21 +652,21 @@ module ceiling_unit_internal_lines_v4p1(){
       }
 
     line_from_to([lx0, bcspool_y, hz],
-                 [lx0, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
-    line_from_to([lx0, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
-                 [-Sidelength/2, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+                 [lx0, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
+    line_from_to([lx0, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz],
+                 [-Sidelength/2, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
 
     line_from_to([lx1, bcspool_y, hz],
-                 [lx1, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
-    line_from_to([lx1, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz],
-                 [Sidelength/2, Sidelength/sqrt(6)+Move_d_bearings_inwards/2-b623_width/2-1, hz]);
+                 [lx1, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
+    line_from_to([lx1, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz],
+                 [Sidelength/2, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
 
     line_from_to([spd + lx2, bcspool_y, hz],
                  [spd + lx2, ly2, hz]);
     line_from_to([spd + lx2, ly2, hz],
                  [spd , ly2, hz]);
     line_from_to([spd , ly2, hz],
-                 [spd , -Sidelength/sqrt(3)-Move_d_bearings_inwards, hz]);
+                 [spd , -Sidelength/sqrt(3)-Move_i_bearings_inwards, hz]);
 
     for(k=[0,spd]){
       ydiff = 0;
