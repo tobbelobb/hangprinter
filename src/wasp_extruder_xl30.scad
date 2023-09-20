@@ -88,24 +88,25 @@ module wasp_extruder_xl30(){
 
 //translate([0,0,-194])
 //  color("black")
-//    wasp_extruder_xl30_bottom_holder();
+    wasp_extruder_xl30_bottom_holder();
 module wasp_extruder_xl30_bottom_holder() {
   wall_th = 3;
+  hook_th = 5;
   difference() {
     union() {
       translate([0,0,0.05])
         cylinder(d1=Wasp_xl30_funnel_d1+2*wall_th, d2=Wasp_xl30_funnel_d2+2*wall_th, h=Wasp_xl30_funnel_h-0.1);
       for(ang = [0, 120, 240]) rotate([0,0,ang])
-      translate([Wasp_xl30_funnel_d2/2 + 10/2, 0, Wasp_xl30_funnel_h])
+      translate([Wasp_xl30_funnel_d2/2 + 11/2, 0, Wasp_xl30_funnel_h])
         rotate([90,0,0]) {
           difference(){
             union(){
-              cylinder(h=wall_th, d=10, center=true);
-              rotate([0,0,-90-atan((Wasp_xl30_funnel_d2/2 - Wasp_xl30_funnel_d1/2) / Wasp_xl30_funnel_h) - 19])
-              translate([0,-6/2,-wall_th/2])
-                cube([21, 8, wall_th]);
+              cylinder(h=hook_th, d=11, center=true);
+              rotate([0,0,-90-atan((Wasp_xl30_funnel_d2/2 - Wasp_xl30_funnel_d1/2) / Wasp_xl30_funnel_h) - 21])
+                translate([0,-5/2,-hook_th/2])
+                  cube([21, 8, hook_th]);
             }
-            cylinder(h=wall_th+2, d=4, center=true);
+            cylinder(h=hook_th+2, d=3.5, center=true);
           }
         }
     }
@@ -158,8 +159,9 @@ module wasp_extruder_xl30_top_holder() {
 }
 
 thrust_outer_dia = 24.3;
-thrust_inner_dia = 10.3;
+thrust_inner_dia = 10.0;
 thrust_h = 4;
+wasp_tip_dia = 5.3;
 //translate([0,0,-204])
   //thrust_bearing();
 module thrust_bearing() {
@@ -185,87 +187,97 @@ module big_bearing(){
 }
 
 
-bottom_th = 4;
+bottom_th = 3;
 wall_th = 3;
 //translate([0,0,-191.6])
 //rotate([180,0,0])
-  bottom_holder2();
-module bottom_holder2() {
+//  bottom_holder2(top=true);
+module bottom_holder2(top = false, bottom = false) {
   $fn=12*4;
-  //difference() {
-  //  union(){
-  //    cylinder(d=thrust_outer_dia + 2*wall_th, h=24);
-  //    translate([0,0,-11])
-  //      cylinder(d=thrust_inner_dia-0.25, h=12);
-  //  }
-  //  translate([0,0,-13])
-  //    cylinder(d=5, h=14);
-  //  translate([0,0,-0.01])
-  //  cylinder(d1=5, d2=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
-  //  translate([0,0,Wasp_xl30_funnel_h-0.02])
-  //    cylinder(d=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
-  //}
+  pushdown = 4.75;
+  if (top) {
+    difference() {
+      cylinder(d=thrust_outer_dia + 2*wall_th, h=24);
+      translate([0,0,-7])
+        cylinder(d=thrust_inner_dia, h=14);
+      difference() {
+        union(){
+          translate([0,0,-pushdown])
+            cylinder(d1=wasp_tip_dia, d2=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
+          translate([0,0,Wasp_xl30_funnel_h-pushdown-0.02])
+            cylinder(d=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
+        }
+        for (k = [0, 1]) mirror([k, 0, 0])
+          translate([24/2, -20/2, 0])
+            cube([20, 20, 30]);
+      }
+      rotate_extrude() {
+        translate([(thrust_outer_dia + 2*wall_th)/2+5*sqrt(2)-wall_th, -5*sqrt(2), 0])
+          rotate([0,0,45])
+            square(10);
+      }
+    }
+  }
   //color("grey")
   //  translate([0,0,-thrust_h])
   //    thrust_bearing();
 
-  translate([0,0,-thrust_h - bottom_th])
+  if (bottom){
+    center_h = bottom_th + thrust_h;
     difference(){
       union(){
-        cylinder(d=thrust_outer_dia + 2*wall_th, h=thrust_h + bottom_th - 0.25);
+        translate([0,0,-center_h])
+          cylinder(d=thrust_outer_dia + 2*wall_th, h=center_h - 0.25);
         for(ang = [0, 120, 240]) rotate([0,0,ang])
-          translate([0,0,thrust_h + bottom_th])
-          translate([Wasp_xl30_funnel_d2/2 + 5/2, 0, -4.25])
+          translate([Wasp_xl30_funnel_d2/2 + 2.7, 0, -3.57])
             rotate([90,0,0]) {
               difference(){
                 union(){
-                  cylinder(h=wall_th, d=7.5, center=true);
+                  cylinder(h=wall_th, d=6.7, center=true);
                 }
-                cylinder(h=wall_th+2, d=2, center=true);
+                translate([0,-1.2,0])
+                  cylinder(h=wall_th+2, d=2.7, center=true);
               }
             }
       }
-      translate([0,0,bottom_th])
-        cylinder(d=thrust_outer_dia, h=thrust_h+bottom_th);
-      translate([0,0,bottom_th + 1])
-        cylinder(d=thrust_outer_dia, h=thrust_h+bottom_th);
-      translate([0,0,-1])
-        cylinder(d=thrust_inner_dia, h=bottom_th+2);
+      difference() {
+        translate([0,0,-thrust_h])
+          cylinder(d=thrust_outer_dia, h=thrust_h+bottom_th);
+        translate([0,0,-center_h])
+          cylinder(d=thrust_inner_dia-0.25, h=center_h - 0.25);
+      }
+      translate([0,0,-pushdown-0.25])
+        cylinder(d1=wasp_tip_dia, d2=Wasp_xl30_funnel_d2, h=Wasp_xl30_funnel_h);
+      translate([0,0,-center_h-1])
+        cylinder(d=wasp_tip_dia, h=center_h+2);
     }
-
+  }
 }
 
-//translate([0,0,88])
-//!rotate([180,0,0])
-  //!top_holder2();
+//translate([0,0,81])
+//rotate([0,0,60])
+//  top_holder2();
 module top_holder2(){
-  //translate([0,0,bottom_th])
-  //  thrust_bearing();
-  cylinder(d=thrust_inner_dia-0.3, h=bottom_th+thrust_h-0.3);
+  top_th = 27;
+  //thrust_bearing();
   difference(){
-    union(){
-      cylinder(d=thrust_outer_dia + 7, h=bottom_th+thrust_h/2 - 0.25);
-      for (ang = [45:90:359]) rotate([0,0,ang])
-      translate([0,-7/2,0])
-        right_rounded_cube2([27, 7, 5.75], 7/2, $fn=4*4);
-    }
-    translate([0,0,bottom_th])
-      cylinder(d=thrust_outer_dia, h=17);
-    translate([0,0,-1])
-    Nema17_screw_holes(d=3.2, h=10);
-
+    translate([0,0,0.5])
+      cylinder(d=thrust_outer_dia + 7, h=thrust_h - 0.5 + top_th);
+    cylinder(d=thrust_outer_dia+0.1, h=thrust_h);
+    for (ang=[0, 120, 240]) rotate([0,0,-30+ang])
+      translate([0,thrust_outer_dia/2-6, thrust_h + top_th])
+        rotate([64,0,0]) {
+          M3_screw(h=150,center=true);
+          translate([0,0,1])
+            cylinder(d=8,h=12, center=true);
+        }
+    cylinder(d=5.3, h=100);
+    translate([0,0,top_th-3])
+      cylinder(d=9.3, h=100, $fn=6);
   }
-  //difference(){
-  //  translate([0,0,bottom_th+thrust_h/2 +0.25])
-  //    cylinder(d=thrust_outer_dia + 7, h=bottom_th+thrust_h/2 + 16);
-  //  translate([0,0,-17 + bottom_th + thrust_h])
-  //    cylinder(d=thrust_outer_dia, h=17);
-  //  for (ang=[0, 120, 240]) rotate([0,0,60+ang])
-  //    translate([thrust_outer_dia-5-2, 0, bottom_th+thrust_h/2+16+7])
-  //      rotate([90,0,0])
-  //        rotate_extrude() {
-  //          translate([7, 0, 0])
-  //            circle(r=2);
-  //        }
-  //}
+  difference(){
+    translate([0,0,0.5])
+      cylinder(d=thrust_inner_dia, h=thrust_h+1);
+    cylinder(d=5.3, h=100);
+  }
 }

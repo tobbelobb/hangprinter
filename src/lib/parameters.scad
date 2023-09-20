@@ -177,6 +177,12 @@ Ram_1000_3dpotter_tube_inner_d = 70;
 Ram_1000_3dpotter_tube_outer_d = Ram_1000_3dpotter_tube_inner_d + 2*3.3;
 Ram_1000_3dpotter_top_square_width = 31.7;
 
-Wasp_xl30_funnel_d1 = 7.2;
-Wasp_xl30_funnel_d2 = 26.3;
-Wasp_xl30_funnel_h = 18.59;;
+// 6 mm nozzle
+// Wasp_xl30_funnel_d1 = 7.2;
+// Wasp_xl30_funnel_d2 = 26.3;
+// Wasp_xl30_funnel_h = 18.59;
+
+// 4 mm nozzle
+Wasp_xl30_funnel_d1 = 5.2;
+Wasp_xl30_funnel_d2 = 26.0;
+Wasp_xl30_funnel_h = 17.7;
