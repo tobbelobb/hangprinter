@@ -54,26 +54,28 @@ mover = true;
 bottom_triangle = false;
 //bottom_triangle = true;
 
-ram_1000_3dpotter = true;
+ram_1000_3dpotter = false;
 
 A = 0;
 B = 1;
 C = 2;
 D = 3;
+I = 4;
 X = 0;
 Y = 1;
 Z = 2;
 
 ram_1000_3dpotter_height_diff = 350;
 
-anchors = [[16.83, -1584.86, -113.17-ram_1000_3dpotter_height_diff],
-           [1290.18, 1229.19, -157.45-ram_1000_3dpotter_height_diff],
-           [-1409.88, 742.61, -151.80-ram_1000_3dpotter_height_diff],
+anchors = [[16.83, -1384.86, -113.17-ram_1000_3dpotter_height_diff],
+           [1390.18, 129.19, -157.45-ram_1000_3dpotter_height_diff],
+           [-149.88, 1242.61, -151.80-ram_1000_3dpotter_height_diff],
+           [-1290.18, 19.19, -157.45-ram_1000_3dpotter_height_diff],
            [21.85, -0.16, 2343.67-ram_1000_3dpotter_height_diff]];
 
-between_action_points_z = anchors[D][Z]-Higher_bearing_z -3 - 175;
+between_action_points_z = anchors[I][Z]-Higher_bearing_z -3 - 175;
 length_of_toolhead = 77;
-//length_of_toolhead = anchors[D][Z]-300;
+//length_of_toolhead = anchors[I][Z]-300;
 
 dspool_y = -50+30;
 bcspool_y = -40;
@@ -168,7 +170,7 @@ module placed_landing_brackets(){
 }
 
 //placed_line_verticalizer();
-module placed_line_verticalizer(angs=[180+30,180,180-30]){
+module placed_line_verticalizer(angs=[0, 180+30,180,180-30]){
   center_it = 0;
   three = [0,120,240];
 
@@ -528,7 +530,7 @@ module odrive(){
 
 
 if(mounted_in_ceiling && !twod && !mover){
-  translate(anchors[D]  + [0,0,33])
+  translate(anchors[I]  + [0,0,33])
     rotate([180,0,0])
       full_winch();
 } else if (!mounted_in_ceiling) {
@@ -682,9 +684,9 @@ module mover(pos = [0,0,0]){
 //d_lines();
 module d_lines(pos=[0,0,0]){
   color("pink"){
-    line_from_to(pos + [0,Sidelength/sqrt(3), length_of_toolhead], anchors[D] + [0,Sidelength/sqrt(3),0]);
-    line_from_to(pos + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[D] + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
-    line_from_to(pos + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[D] + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
+    line_from_to(pos + [0,Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [0,Sidelength/sqrt(3),0]);
+    line_from_to(pos + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
+    line_from_to(pos + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3), length_of_toolhead], anchors[I] + [-cos(30)*Sidelength/sqrt(3),-sin(30)*Sidelength/sqrt(3),0]);
   }
 }
 
@@ -721,21 +723,21 @@ module ABC_anchor(){
 
 function rotation(v, ang) = [v[0]*cos(ang)-v[1]*sin(ang), v[0]*sin(ang)+v[1]*cos(ang), v[2]];
 
-module ABC_anchors(pos = [0,0,0]){
+module ABCD_anchors(pos = [0,0,0]){
   a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead-2];
   a_low_left = a_high_left - [0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_big_r];
   a_high_right = a_high_left + [Sidelength,0,0];
   a_low_right = a_low_left + [Sidelength,0,0];
-  for(i = [A, B, C]){
+  for(i = [A, B, C, D]){
     translate(anchors[i])
-      rotate([0,0,i*120])
+      rotate([0,0,i*90])
         translate([0,-Sidelength/sqrt(8)+5,length_of_toolhead-50])
           rotate([0,0,-90])
             ABC_anchor();
-    action_high_left = rotation(a_high_left, i*120);
-    action_low_left = rotation(a_low_left, i*120);
-    action_high_right = rotation(a_high_right, i*120);
-    action_low_right = rotation(a_low_right, i*120);
+    action_high_left = rotation(a_high_left, i*90);
+    action_low_left = rotation(a_low_left, i*90);
+    action_high_right = rotation(a_high_right, i*90);
+    action_low_right = rotation(a_low_right, i*90);
     color("pink"){
       line_from_to(pos + action_high_left, action_high_left + anchors[i]);
       line_from_to(pos + action_low_left, action_low_left + anchors[i]);
@@ -748,7 +750,7 @@ module ABC_anchors(pos = [0,0,0]){
 
 color(color_line){
   if(mounted_in_ceiling && !twod){
-    translate([0,0,43+anchors[D][Z]])
+    translate([0,0,43+anchors[I][Z]])
       rotate([180,0,0])
       ceiling_unit_internal_lines_v4p1();
   } else {
@@ -911,10 +913,10 @@ if(mounted_in_ceiling && mover && !twod){
 module render_full_position(pos = [100,0,0]) {
   mover(pos);
   d_lines(pos);
-  translate(anchors[D]  + [0,0,33])
+  translate(anchors[I]  + [0,0,33])
     rotate([180,0,0])
       full_winch();
-  ABC_anchors(pos);
+  ABCD_anchors(pos);
 }
 
 
