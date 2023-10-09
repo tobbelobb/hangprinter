@@ -567,7 +567,7 @@ motor_bracket_ypos = -33;
 module base_hull_2d(isD = false){
   $fn=4*6;
   pos0 = [73.5,53,0];
-  pos0D = [73.5 + (Sandwich_D_width - Sandwich_ABC_width) - (Spool_height+1),53,0];
+  pos0D = [73.5 + (Sandwich_I_width - Sandwich_ABCD_width) - (Spool_height+1),53,0];
   pos1 = [32-1.5-15+3,53,0];
   pos1D = pos1 - [Spool_height+1, 0, 0];
   pos2 = [-16,0,0];
@@ -633,26 +633,26 @@ module spool_legs(isD = false, twod=false){
   translate([0,Belt_roller_bearing_xpos,0])
     rotate([0,0,90])
       if (isD) {
-        translate([0,-(Sandwich_D_width - Sandwich_ABC_width)/2+Spool_height+1, 0])
-          spool_cores(twod=twod, between=Sandwich_D_width + 2*Spool_core_cover_adj);
+        translate([0,-(Sandwich_I_width - Sandwich_ABCD_width)/2+Spool_height+1, 0])
+          spool_cores(twod=twod, between=Sandwich_I_width + 2*Spool_core_cover_adj);
       } else {
-        spool_cores(twod=twod, between=Sandwich_ABC_width + 2*Spool_core_cover_adj);
+        spool_cores(twod=twod, between=Sandwich_ABCD_width + 2*Spool_core_cover_adj);
       }
 
-  translate([-(Sandwich_ABC_width +2*Spool_core_cover_adj+6)/2,154.35,0])
+  translate([-(Sandwich_ABCD_width +2*Spool_core_cover_adj+6)/2,154.35,0])
     if (isD) {
       if (twod){
         translate([-Spool_height-1,0,0])
-          square([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2]);
+          square([Sandwich_I_width + 2*Spool_core_cover_adj+6, 2]);
       } else {
         translate([-Spool_height-1,0,0])
-          cube([Sandwich_D_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+          cube([Sandwich_I_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
       }
     } else {
       if (twod) {
-        square([Sandwich_ABC_width + 2*Spool_core_cover_adj+6, 2]);
+        square([Sandwich_ABCD_width + 2*Spool_core_cover_adj+6, 2]);
       } else {
-        cube([Sandwich_ABC_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
+        cube([Sandwich_ABCD_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
       }
     }
 }
@@ -682,12 +682,12 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
             translate([-2.5+33,0,0])
               rotate([0,90,0])
                 motor_bracket(leftHanded);
-            %translate([33,0,0])
-              if(leftHanded)
-                rotate([180,0,0])
-                  import("../../stl/for_render/whitelabel_motor.stl");
-              else
-                import("../../stl/for_render/whitelabel_motor.stl");
+            //%translate([33,0,0])
+            //  if(leftHanded)
+            //    rotate([180,0,0])
+            //      import("../../stl/for_render/whitelabel_motor.stl");
+            //  else
+            //    import("../../stl/for_render/whitelabel_motor.stl");
             translate([4.5-0.7,0,0])
               rotate([0,0,2*90]){
                 translate([11.45,0,0])
