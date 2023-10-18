@@ -18,12 +18,12 @@ endif
 # Then use Ghostscript to glue together the pdf
 # Then clean up
 make_layout_pdf_ = \
-               $(OPENSCAD_BIN) -D page=1 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p1.svg $(SRC_DIR)/lib/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=2 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p2.svg $(SRC_DIR)/lib/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=3 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p3.svg $(SRC_DIR)/lib/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=4 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p4.svg $(SRC_DIR)/lib/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=5 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p5.svg $(SRC_DIR)/lib/layout_slicer.scad; \
-               $(OPENSCAD_BIN) -D page=6 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p6.svg $(SRC_DIR)/lib/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=1 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p1.svg $(SRC_DIR)/layout/lib/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=2 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p2.svg $(SRC_DIR)/layout/lib/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=3 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p3.svg $(SRC_DIR)/layout/lib/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=4 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p4.svg $(SRC_DIR)/layout/lib/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=5 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p5.svg $(SRC_DIR)/layout/lib/layout_slicer.scad; \
+               $(OPENSCAD_BIN) -D page=6 -D 'layout_file=$(1)' -D a4_width=$(3) -D a4_length=$(4) -o p6.svg $(SRC_DIR)/layout/lib/layout_slicer.scad; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p1.svg > p1_sed.svg; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p2.svg > p2_sed.svg; \
                sed -e "s/<svg width=\"$(3)\" height=\"$(4)\"/<svg width=\"$(3)mm\" height=\"$(4)mm\"/" p3.svg > p3_sed.svg; \
@@ -79,13 +79,13 @@ make_layout_pdf_a4 = $(call make_layout_pdf_,$(1),$(2),210,297)
 make_layout_pdf_letter = $(call make_layout_pdf_,$(1),$(2),216,279)
 
 layout_letter.pdf: layout.dxf
-	$(call make_layout_pdf_letter,"../../layout.dxf",$@)
+	$(call make_layout_pdf_letter,"../../../layout.dxf",$@)
 
 layout.dxf: $(SRC_DIR)/lib/whitelabel_motor.scad \
-	$(SRC_DIR)/lib/layout_slicer.scad \
+	$(SRC_DIR)/layout/lib/layout_slicer.scad \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
 	$(SRC_DIR)/new_tilted_line_deflector.scad \
-	$(SRC_DIR)/layout.scad \
+	$(SRC_DIR)/layout/layout.scad \
 	$(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/landing_brackets.scad \
@@ -97,20 +97,20 @@ layout.dxf: $(SRC_DIR)/lib/whitelabel_motor.scad \
 		-D mover=false \
 		-D mounted_in_ceiling=false \
 		-D bottom_triangle=false \
-		-o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+		-o $@ $(SRC_DIR)/layout/$(basename $(notdir $@)).scad
 
 layout_a4.pdf: layout.dxf \
 	$(SRC_DIR)/lib/whitelabel_motor.scad \
 	$(SRC_DIR)/lib/util.scad \
 	$(SRC_DIR)/lib/parameters.scad \
-	$(SRC_DIR)/lib/layout_slicer.scad \
+	$(SRC_DIR)/layout/lib/layout_slicer.scad \
 	$(SRC_DIR)/horizontal_line_deflector.scad \
-	$(SRC_DIR)/layout.scad \
+	$(SRC_DIR)/layout/layout.scad \
 	$(SRC_DIR)/line_roller_wire_rewinder.scad \
 	$(SRC_DIR)/line_verticalizer.scad \
 	$(SRC_DIR)/lib/spool_core.scad \
 	$(SRC_DIR)/new_tilted_line_deflector.scad
-	$(call make_layout_pdf_a4,"../../layout.dxf",$@)
+	$(call make_layout_pdf_a4,"../../../layout.dxf",$@)
 
 $(STL_DIR)/1XD_holder.stl: $(SRC_DIR)/1XD_holder.scad \
 	$(SRC_DIR)/lib/util.scad

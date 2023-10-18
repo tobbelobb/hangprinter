@@ -46,7 +46,6 @@ Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
                        - (Cc_action_point_from_mid/2)*(Cc_action_point_from_mid/2));
 Eyelet_extra_dist = 0.75;
 Eyelet_diameter = 4.30;
-Move_i_bearings_inwards = -2;
 
 // The distance between the two action points on the mover
 Sidelength = Beam_length + 2*Cc_plastic_length;
@@ -161,8 +160,6 @@ Horizontal_deflector_cube_y_size = (2/sqrt(3))*spd;
 Belt_roller_bearing_xpos = Sep_disc_radius + b623_outer_dia/2+Belt_thickness;
 
 
-// Top plate parameters needed for layout slicer
-Yshift_top_plate = -263.8;
 
 Pen_holder_w = 55;
 Pen_holder_rail_w = 36;

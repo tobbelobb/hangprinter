@@ -1,113 +1,43 @@
-include <lib/parameters.scad>
-use <lib/gear_util.scad>
-use <lib/util.scad>
-use <lib/whitelabel_motor.scad>
-use <lib/spool_core.scad>
+include <../lib/parameters.scad>
+include <lib/layout_params.scad>
+use <../lib/gear_util.scad>
+use <../lib/util.scad>
+use <../lib/whitelabel_motor.scad>
+use <../lib/spool_core.scad>
+use <lib/layout_lib.scad>
 
-use <GT2_spool_gear.scad>
-use <corner_clamp.scad>
-use <dleft_spool.scad>
-use <dleft_spool_cover.scad>
-use <dright_spool_top.scad>
-use <dright_spool_bottom.scad>
-use <dright_spool_cover.scad>
-use <horizontal_line_deflector.scad>
-use <landing_brackets.scad>
-use <line_roller_anchor.scad>
-use <line_roller_wire_rewinder.scad>
-use <line_verticalizer.scad>
-use <motor_bracket_A.scad>
-use <motor_bracket_B.scad>
-use <motor_bracket_C.scad>
-use <motor_bracket_D.scad>
-use <motor_bracket_I.scad>
-use <sep_disc.scad>
-use <spool.scad>
-use <spool_mirrored.scad>
-use <spool_cover.scad>
-use <spool_cover_mirrored.scad>
-use <new_tilted_line_deflector.scad>
-use <ziptie_tensioner_wedge.scad>
-use <ram_1000_3dpotter_holder.scad>
-use <ram_1000_3dpotter_top_holder.scad>
-use <ram_1000_3dpotter.scad>
-use <winch_unit_A.scad>
+use <../GT2_spool_gear.scad>
+use <../corner_clamp.scad>
+use <../dleft_spool.scad>
+use <../dleft_spool_cover.scad>
+use <../dright_spool_top.scad>
+use <../dright_spool_bottom.scad>
+use <../dright_spool_cover.scad>
+use <../horizontal_line_deflector.scad>
+use <../landing_brackets.scad>
+use <../line_roller_anchor.scad>
+use <../line_roller_wire_rewinder.scad>
+use <../line_verticalizer.scad>
+use <../motor_bracket_A.scad>
+use <../motor_bracket_B.scad>
+use <../motor_bracket_C.scad>
+use <../motor_bracket_D.scad>
+use <../motor_bracket_I.scad>
+use <../sep_disc.scad>
+use <../spool.scad>
+use <../spool_mirrored.scad>
+use <../spool_cover.scad>
+use <../spool_cover_mirrored.scad>
+use <../ziptie_tensioner_wedge.scad>
+use <../ram_1000_3dpotter_holder.scad>
+use <../ram_1000_3dpotter_top_holder.scad>
+use <../ram_1000_3dpotter.scad>
+use <placed_winch_unit_A.scad>
+use <placed_winch_unit_B.scad>
+use <placed_winch_unit_C.scad>
+use <placed_winch_unit_D.scad>
+use <placed_winch_unit_I.scad>
 
-
-beam_length = 400;
-
-// Viewing STLs is faster when just looking at the model
-// Non-stls are faster for previews when changing design
-stls = true;
-//stls = false;
-
-// Viewing 2d
-//twod = true;
-twod = false;
-
-//mounted_in_ceiling = true;
-mounted_in_ceiling = false;
-
-// Render the mover
-//mover = true;
-mover = false;
-
-bottom_triangle = false;
-//bottom_triangle = true;
-
-ram_1000_3dpotter = true;
-//ram_1000_3dpotter = false;
-
-A = 0;
-B = 1;
-C = 2;
-D = 3;
-I = 4;
-X = 0;
-Y = 1;
-Z = 2;
-
-ram_1000_3dpotter_height_diff = 350;
-
-anchors = [[16.83, -1384.86, -113.17-ram_1000_3dpotter_height_diff],
-           [1390.18, 129.19, -157.45-ram_1000_3dpotter_height_diff],
-           [-149.88, 1242.61, -151.80-ram_1000_3dpotter_height_diff],
-           [-1290.18, 19.19, -157.45-ram_1000_3dpotter_height_diff],
-           [21.85, -0.16, 2343.67-ram_1000_3dpotter_height_diff]];
-
-between_action_points_z = anchors[I][Z]-Higher_bearing_z -3 - 175;
-length_of_toolhead = 77;
-//length_of_toolhead = anchors[I][Z]-300;
-
-aspool_y = 42;
-bcspool_y = -23;
-dspool_y = 19;
-ispool_y = -72;
-aspool_lineroller_y = -110;
-move_BC_deflectors = -113;
-
-lxm1 = -spd/2 - 1 - Spool_height;
-lx0 = -spd/2;
-lx1 = spd/2;
-lx2 = spd/2 + 1 + 32;
-lx3 = -spd/2 + 106;
-ly2 = 126;
-
-color0 = "sandybrown";
-color0_alpha = 0.55;
-color1 = [0.81,0.73,0.05];
-color1_alpha = 0.9;
-color2 = [0.99,0.99,0.99];
-color2_alpha = 0.8;
-spool_cover_alpha = 0.8;
-
-color_carbon = [0.2,0.2,0.2];
-//color_line = [0.9,0.35,0.35];
-color_line=[1.0,0.2,0.2];
-
-// Sometimes, Nema17_cube_width will have another value,
-// so that a different motor can fit
-_motor_ang = ((Nema17_cube_width-42.43)/(sqrt(2)*Spool_outer_radius))*(180/PI);
 
 
 //top_plate();
@@ -122,18 +52,6 @@ module top_plate(cx, cy, mvy){
   }
 }
 
-//tilted_line_deflector_for_layout();
-module tilted_line_deflector_for_layout(ang){
-  translate([-10, 0,0])
-    if(false && !twod){
-      rotate([0,0,-90])
-        import("../stl/new_tilted_line_deflector.stl");
-    } else {
-      rotate([0,0,-90])
-        new_tilted_line_deflector(twod=twod, for_render=true, ang=ang);
-    }
-}
-
 
 //line_deflector(9,false);
 module line_deflector(rot_around_center=0, center=false){
@@ -142,7 +60,7 @@ module line_deflector(rot_around_center=0, center=false){
       translate([0,b623_big_ugroove_small_r-3,0])
       if(stls && !twod){
         rotate([-90,0,0])
-          import("../stl/horizontal_line_deflector.stl");
+          import("../../stl/horizontal_line_deflector.stl");
       } else {
         horizontal_line_deflector(twod=twod);
       }
@@ -169,7 +87,7 @@ module placed_line_verticalizer(angs=[45,-45,45,-45]){
           translate([center_it,0,0])
             if(stls && !twod){
               rotate([0,-90,0])
-              import("../stl/line_verticalizer.stl");
+              import("../../stl/line_verticalizer.stl");
             } else {
               translate([-b623_big_ugroove_small_r,0,0])
                 line_verticalizer(twod=twod);
@@ -181,7 +99,7 @@ module placed_line_verticalizer(angs=[45,-45,45,-45]){
   translate([lxm1, 233, 0])
     rotate([0,0,90])
       if(stls && !twod){
-        import("../stl/line_roller_wire_rewinder.stl");
+        import("../../stl/line_roller_wire_rewinder.stl");
       } else {
         line_roller_wire_rewinder(twod=twod);
       }
@@ -195,316 +113,6 @@ module placed_line_verticalizer(angs=[45,-45,45,-45]){
     line_deflector(-90-90-90, center=true);
 }
 
-//translate([0,0,Gap_between_sandwich_and_plate])
-//!sandwich_D();
-module sandwich_D(){
-  translate([0,0, (1 + Spool_height)]){
-    color(color2, color2_alpha)
-      if(stls) import("../stl/GT2_spool_gear.stl");
-      else GT2_spool_gear();
-    translate([0,0,Torx_depth + 2*(1 + Spool_height) + GT2_gear_height/2])
-      rotate([0,180,0]){
-        color(color1, color1_alpha)
-          if(stls){
-            import("../stl/dleft_spool.stl");
-            translate([0,0,1+Spool_height])
-              import("../stl/sep_disc.stl");
-          } else {
-            dleft_spool();
-            translate([0,0,1+Spool_height])
-              sep_disc();
-          }
-        color(color1, spool_cover_alpha)
-          translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
-            rotate([0,0,90])
-              if (stls) import("../stl/dleft_spool_cover.stl");
-              else dleft_spool_cover();
-      }
-  }
-  color(color1, color1_alpha){
-    if(stls) import("../stl/dright_spool_top.stl");
-    else dright_spool_top();
-    translate([0,0,-Spool_height-1])
-    if(stls) import("../stl/dright_spool_bottom.stl");
-    else dright_spool_bottom();
-    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder - Spool_height - 1])
-      rotate([0,0,-90])
-        if (stls) import("../stl/dright_spool_cover.stl");
-        else dright_spool_cover();
-  }
-}
-
-//!placed_sandwich_I();
-module placed_sandwich_I(){
-    translate([0,
-        -1-Spool_height - GT2_gear_height/2,
-        Sep_disc_radius+Gap_between_sandwich_and_plate])
-      rotate([90,0,180])
-      sandwich_D();
-}
-
-//translate([0,0,Gap_between_sandwich_and_plate])
-//!sandwich_ABCD();
-module sandwich_ABCD(){
-  translate([0,0, 1 + Spool_height]){
-    color(color2, color2_alpha)
-      if(stls) import("../stl/GT2_spool_gear.stl");
-      else GT2_spool_gear();
-    translate([0,0,Torx_depth + 1 + Spool_height + GT2_gear_height/2])
-      rotate([0,180,0]){
-        color(color1, color1_alpha)
-          if(stls) import("../stl/spool_mirrored.stl");
-          else spool_mirrored();
-        color(color1, spool_cover_alpha)
-          translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
-            rotate([0,0,-90])
-              if (stls) import("../stl/spool_cover.stl");
-              else spool_cover();
-      }
-  }
-  color(color1, color1_alpha)
-    if(stls) import("../stl/spool.stl");
-    else spool();
-  color(color1, spool_cover_alpha)
-    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
-      rotate([0,0,90])
-        if (stls) import("../stl/spool_cover_mirrored.stl");
-        else spool_cover_mirrored();
-}
-
-//!belt_roller_bearings();
-module belt_roller_bearings(){
-  belt_roller_bearing_center_z = Belt_roller_h - Depth_of_roller_base/2;
-  if (!twod)
-    for(rot=[90,-90])
-      translate([0,0,belt_roller_bearing_center_z])
-        rotate([rot,0,0])
-          translate([0,0,-b623_width-0.1])
-            b623_flanged();
-}
-
-//!sandwich_and_motor_I();
-module sandwich_and_motor_I(){
-  if(!twod){
-    placed_sandwich_I();
-  }
-
-  translate([Belt_roller_bearing_xpos,0,0]){
-    rotate([0,0,90])
-      render_motor_and_bracket(D=true);
-    belt_roller_bearings();
-  }
-
-  if(!twod) {
-    // Smooth rod
-    color("grey")
-      translate([0,Smooth_rod_length_I-7, Sep_disc_radius + Gap_between_sandwich_and_plate])
-        rotate([90,0,0])
-          translate([0,0,(Sandwich_ABCD_width - Sandwich_I_width)/2])
-            cylinder(d=8, h=Smooth_rod_length_I, center=true);
-    belt();
-  }
-}
-
-//!render_motor_and_bracket();
-module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=false, I=false){
-  if (stls && !twod) {
-    if(A)
-      import("../stl/motor_bracket_A.stl");
-    else if (B)
-      import("../stl/motor_bracket_B.stl");
-    else if (C)
-      import("../stl/motor_bracket_C.stl");
-    else if (D)
-      import("../stl/motor_bracket_D.stl");
-    else // use I as default...
-      import("../stl/motor_bracket_I.stl");
-  } else {
-    if(A)
-      motor_bracket_A(twod=twod);
-    else if (B)
-      motor_bracket_B(twod=twod);
-    else if (C)
-      motor_bracket_C(twod=twod);
-    else if (D)
-      motor_bracket_D(twod=twod);
-    else // use I as default...
-      motor_bracket_I(twod=twod);
-  }
-
-  module motor(ang=0) {
-    if (!twod)
-      translate([-13.5,-33,35])
-        rotate([ang,0,0])
-          import("../stl/for_render/whitelabel_motor.stl");
-          //whitelabel_motor_render();
-  }
-
-  module gear(){
-    if(!twod)
-      translate([-GT2_motor_gear_height+1.5+(GT2_motor_gear_height-7.4-1.5)/2,0,0]){
-        color([0.75,0.75,0.75])
-          translate([0,-33,35]) // Up to motor shaft center
-            rotate([0,90,0])
-              //GT2_motor_gear(5.02);
-              import("../stl/for_render/GT2_motor_gear.stl");
-      }
-  }
-
-  color([0.5,0.4,0.9])
-    if(A)
-      mirror([1,0,0])
-        motor();
-    else if(B)
-      mirror([1,0,0])
-        motor();
-    else if(C)
-      motor();
-    else if(D)
-      motor();
-
-  if (A || B)
-    mirror([1,0,0])
-      gear();
-  else
-    gear();
-
-}
-
-//!union() {
-//  belt();
-//
-//  translate([ -13.5, -33, 35 ]) rotate([ 180, 0, 0 ])
-//      import("../stl/for_render/whitelabel_motor.stl");
-//
-//   translate([-GT2_motor_gear_height+1.5+(GT2_motor_gear_height-7.4-1.5)/2,0,0])
-//     color([0.75,0.75,0.75])
-//       translate([0,-33,35]) // Up to motor shaft center
-//         rotate([0,90,0])
-//           import("../stl/for_render/GT2_motor_gear.stl");
-//}
-module belt(){
-  module motor_belt_shape(){
-    motor_gear_to_belt_idler = 35.5;
-    rotate([0,90,0])
-      difference(){
-        cylinder(d=GT2_motor_gear_outer_dia + 2*Belt_thickness, h=GT2_belt_width);
-        translate([0,0,-1])
-          cylinder(d=GT2_motor_gear_outer_dia, h=GT2_belt_width + 2);
-        translate([-8,0,-GT2_belt_width])
-          rotate([0,0,-4])
-            cube([15,15,2*GT2_belt_width+2]);
-        translate([-7.0,0.8,-GT2_belt_width])
-          rotate([0,0,-11.1])
-            cube([15,15,2*GT2_belt_width+2]);
-      }
-    rotate([-11.1,0,0])
-      translate([0,0,-GT2_motor_gear_outer_dia/2 - Belt_thickness])
-        cube([GT2_belt_width, 120, Belt_thickness]);
-    rotate([-3,0,0])
-      translate([0,0,GT2_motor_gear_outer_dia/2])
-        cube([GT2_belt_width, 35, Belt_thickness]);
-    translate([0,motor_gear_to_belt_idler+b623_outer_dia+Belt_thickness,b623_outer_dia])
-      rotate([88,0,0])
-        translate([0,0,GT2_motor_gear_outer_dia/2])
-          cube([GT2_belt_width, 45, Belt_thickness]);
-  }
-
-    color([0.30,0.30,0.30], 0.8){
-      translate([Belt_roller_bearing_xpos,0,0])
-        rotate([0,0,90])
-          translate([-GT2_belt_width/2,0,0])
-            color([0.75,0.75,0.75])
-              translate([0,-33,35]) // Up to motor shaft center
-                 motor_belt_shape();
-
-        spool_gear_outer_dia = 161.83;
-        translate([0,0,Gap_between_sandwich_and_plate + Sep_disc_radius])
-          rotate([0,90,90])
-            difference(){
-              cylinder(d=spool_gear_outer_dia + 2*Belt_thickness, h=GT2_belt_width, center=true, $fn=12*5);
-              cylinder(d=spool_gear_outer_dia, h=GT2_belt_width + 2, center=true, $fn=12*5);
-              rotate([0,0,-11.1])
-                translate([0,-spool_gear_outer_dia/2+10,-GT2_belt_width])
-                  cube([spool_gear_outer_dia/2,spool_gear_outer_dia/2-10,2*GT2_belt_width]);
-              rotate([0,0,-1])
-                translate([-4,-spool_gear_outer_dia/2+0.1,-GT2_belt_width])
-                  cube([spool_gear_outer_dia/3,spool_gear_outer_dia/2,2*GT2_belt_width]);
-            }
-      }
-}
-
-//!sandwich_and_motor_ABCD();
-module sandwich_and_motor_ABCD(leftHanded=false, A=false, B=false, C=false, D=false){
-  cover_adj=Spool_core_cover_adj;
-  if(!twod)
-    translate([0,
-        Sandwich_ABCD_width/2,
-        Sep_disc_radius+Gap_between_sandwich_and_plate])
-      rotate([90,0,0])
-        sandwich_ABCD();
-  translate([Belt_roller_bearing_xpos,0,0])
-    rotate([0,0,90])
-      render_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=D, I=false);
-  translate([Belt_roller_bearing_xpos,0,0])
-    belt_roller_bearings();
-
-  if(!twod) {
-    // Smooth rod
-    color("grey")
-      translate([0,-Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
-        rotate([90,0,0])
-          cylinder(d=8, h=Smooth_rod_length_ABCD, center=true);
-    color("grey")
-      translate([0,Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
-        rotate([90,0,0])
-          cylinder(d=8, h=Smooth_rod_length_ABCD, center=true);
-    // Belt
-    belt();
-  }
-}
-
-//sandwich_and_motor_A();
-module sandwich_and_motor_A(){
-  sandwich_and_motor_ABCD(A=true);
-  translate([move_BC_deflectors+spd/sqrt(3)+1, GT2_gear_height/2 + Spool_height/2,0])
-    rotate([0,0,180])
-      tilted_line_deflector_for_layout(-90);
-}
-
-//!line_guides_BC();
-module line_guides_BC(){
-  translate([move_BC_deflectors+spd/sqrt(3)+1,spd/2,0])
-    rotate([0,0,180])
-      tilted_line_deflector_for_layout(-55);
-}
-
-//!sandwich_and_motor_B();
-module sandwich_and_motor_B(){
-  sandwich_and_motor_ABCD(B=true);
-  mirror([0,1,0])
-    line_guides_BC();
-}
-
-
-//!sandwich_and_motor_C();
-module sandwich_and_motor_C(){
-  sandwich_and_motor_ABCD(C=true);
-  line_guides_BC();
-}
-
-//!sandwich_and_motor_D();
-module sandwich_and_motor_D(){
-  sandwich_and_motor_ABCD(D=true);
-  translate([move_BC_deflectors+spd/sqrt(3)+1, GT2_gear_height/2 + Spool_height/2,0])
-    rotate([0,0,180])
-      tilted_line_deflector_for_layout(-90);
-}
-
-
-cx = 475+Move_i_bearings_inwards/2;
-cy = 475+Move_i_bearings_inwards/2;
-bc_x_pos = 200;
 
 if(mounted_in_ceiling && !twod && !mover){
   translate(anchors[I]  + [0,0,33])
@@ -514,26 +122,11 @@ if(mounted_in_ceiling && !twod && !mover){
   full_winch();
 }
 module full_winch(){
-
-  translate([lx3,aspool_y,0])
-    rotate([0,0,-90])
-    sandwich_and_motor_A();
-
-  translate([bc_x_pos, bcspool_y,0])
-    rotate([0,0,90])
-    sandwich_and_motor_B();
-
-  translate([-bc_x_pos, bcspool_y,0])
-    rotate([0,0,90])
-    sandwich_and_motor_C();
-
-  translate([-lx3+0, dspool_y,0])
-    rotate([0,0,90])
-    sandwich_and_motor_D();
-
-  translate([0,ispool_y,0])
-    rotate([0,0,-90])
-    sandwich_and_motor_I();
+  placed_winch_unit_A();
+  placed_winch_unit_B();
+  placed_winch_unit_C();
+  placed_winch_unit_D();
+  placed_winch_unit_I();
 
   placed_line_verticalizer();
 
@@ -587,7 +180,7 @@ module ABCD_anchor(){
       translate([26,Ext_sidelength/2-27.91,0])
         if(false){
           rotate([0,0,-90])
-          import("../stl/line_roller_anchor.stl");
+          import("../../stl/line_roller_anchor.stl");
         } else {
           rotate([0,0,-90])
             newer_line_roller_anchor();
@@ -611,7 +204,7 @@ module ABCD_anchors(pos = [0,0,0]){
     action_low_left = rotation(a_low_left, i*90);
     action_high_right = rotation(a_high_right, i*90);
     action_low_right = rotation(a_low_right, i*90);
-    color("pink"){
+    color(color_line){
       line_from_to(pos + action_high_left, action_high_left + anchors[i]);
       line_from_to(pos + action_low_left, action_low_left + anchors[i]);
       line_from_to(pos + action_high_right, action_high_right + anchors[i]);
@@ -670,13 +263,6 @@ module ceiling_unit_internal_lines_v4p1(){
     line_from_to([spd , ly2, hz],
                  [spd , -Sidelength/sqrt(3)-Move_i_bearings_inwards, hz]);
 
-    for(k=[0,spd]){
-      ydiff = 0;
-      line_from_to([lx3+k, aspool_y, hz],
-                   [lx3+k, ydiff+aspool_y-aspool_lineroller_y+7, hz]);
-      line_from_to([lx3+k, ydiff+aspool_y-aspool_lineroller_y+7, hz],
-                   [lx3+k+(k-spd/2), ydiff+aspool_y+190, 100+hz]);
-    }
   }
 }
 
