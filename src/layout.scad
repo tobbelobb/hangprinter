@@ -31,6 +31,7 @@ use <ziptie_tensioner_wedge.scad>
 use <ram_1000_3dpotter_holder.scad>
 use <ram_1000_3dpotter_top_holder.scad>
 use <ram_1000_3dpotter.scad>
+use <winch_unit_A.scad>
 
 
 beam_length = 400;
@@ -44,18 +45,18 @@ stls = true;
 //twod = true;
 twod = false;
 
-
-mounted_in_ceiling = true;
-//mounted_in_ceiling = false;
+//mounted_in_ceiling = true;
+mounted_in_ceiling = false;
 
 // Render the mover
-mover = true;
-//mover = false;
+//mover = true;
+mover = false;
 
 bottom_triangle = false;
 //bottom_triangle = true;
 
 ram_1000_3dpotter = true;
+//ram_1000_3dpotter = false;
 
 A = 0;
 B = 1;
@@ -102,7 +103,7 @@ spool_cover_alpha = 0.8;
 
 color_carbon = [0.2,0.2,0.2];
 //color_line = [0.9,0.35,0.35];
-color_line="green";
+color_line=[1.0,0.2,0.2];
 
 // Sometimes, Nema17_cube_width will have another value,
 // so that a different motor can fit
@@ -122,14 +123,14 @@ module top_plate(cx, cy, mvy){
 }
 
 //tilted_line_deflector_for_layout();
-module tilted_line_deflector_for_layout(){
+module tilted_line_deflector_for_layout(ang){
   translate([-10, 0,0])
-    if(stls && !twod){
+    if(false && !twod){
       rotate([0,0,-90])
         import("../stl/new_tilted_line_deflector.stl");
     } else {
       rotate([0,0,-90])
-        new_tilted_line_deflector(twod=twod);
+        new_tilted_line_deflector(twod=twod, for_render=true, ang=ang);
     }
 }
 
@@ -336,6 +337,7 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
       translate([-13.5,-33,35])
         rotate([ang,0,0])
           import("../stl/for_render/whitelabel_motor.stl");
+          //whitelabel_motor_render();
   }
 
   module gear(){
@@ -462,19 +464,19 @@ module sandwich_and_motor_ABCD(leftHanded=false, A=false, B=false, C=false, D=fa
   }
 }
 
-//!sandwich_and_motor_A();
+//sandwich_and_motor_A();
 module sandwich_and_motor_A(){
   sandwich_and_motor_ABCD(A=true);
   translate([move_BC_deflectors+spd/sqrt(3)+1, GT2_gear_height/2 + Spool_height/2,0])
     rotate([0,0,180])
-      tilted_line_deflector_for_layout();
+      tilted_line_deflector_for_layout(-90);
 }
 
 //!line_guides_BC();
 module line_guides_BC(){
   translate([move_BC_deflectors+spd/sqrt(3)+1,spd/2,0])
     rotate([0,0,180])
-      tilted_line_deflector_for_layout();
+      tilted_line_deflector_for_layout(-55);
 }
 
 //!sandwich_and_motor_B();
@@ -496,7 +498,7 @@ module sandwich_and_motor_D(){
   sandwich_and_motor_ABCD(D=true);
   translate([move_BC_deflectors+spd/sqrt(3)+1, GT2_gear_height/2 + Spool_height/2,0])
     rotate([0,0,180])
-      tilted_line_deflector_for_layout();
+      tilted_line_deflector_for_layout(-90);
 }
 
 
@@ -546,7 +548,7 @@ module full_winch(){
 module mover(pos = [0,0,0]) {
   translate(pos)
     translate([-Sidelength/2, -Sidelength/2, 35])
-      %cube([Sidelength, Sidelength, 64]);
+      cube([Sidelength, Sidelength, 64]);
 }
 
 //i_lines();

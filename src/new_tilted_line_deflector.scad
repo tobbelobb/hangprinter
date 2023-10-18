@@ -13,12 +13,19 @@ slit_w = 2;
 bz = Gap_between_sandwich_and_plate + Sep_disc_radius - Spool_r;
 
 new_tilted_line_deflector();
-module new_tilted_line_deflector(twod = false){
-  if(!twod) {
+module new_tilted_line_deflector(twod = false, for_render = false, ang = -55){
+  if(!twod && for_render) {
+    translate([-16.5,0,9.9])
+      rotate([-90,ang,0])
+      bearing_holder(backwall=false, for_render=for_render);
+    translate([0,0,9.9])
+      rotate([-90,ang,0])
+      bearing_holder(backwall=false, for_render=for_render);
+  } else if (!twod) {
     translate([30,30,0])
-      bearing_holder();
+       bearing_holder(backwall=false, for_render=for_render);
     translate([30,0,0])
-      bearing_holder();
+       bearing_holder(backwall=false, for_render=for_render);
   }
   translate([0,0,bz]){
     bearing_holder_holder(twod=twod);
@@ -37,10 +44,11 @@ module new_tilted_line_deflector(twod = false){
 
 
 //bearing_holder();
-module bearing_holder(backwall = false){
-  //%translate([b623_big_ugroove_small_r+1.2, 0, b_z])
-  //  rotate([90,0,0])
-  //    bearing_u_big_623();
+module bearing_holder(backwall = false, for_render = false){
+  if (for_render)
+    translate([b623_big_ugroove_small_r+1.2, 0, b_z])
+      rotate([90,0,0])
+        bearing_u_big_623();
   difference(){
     union(){
       if (!backwall) {

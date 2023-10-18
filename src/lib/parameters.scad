@@ -109,7 +109,7 @@ Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
 
 //// Cable Clamp parameters /////
 Bit_width = 12;
-Cable_r=4.5;
+Cable_r=1.5;
 
 // Belt drive parameters
 GT2_belt_width = 6.5;
