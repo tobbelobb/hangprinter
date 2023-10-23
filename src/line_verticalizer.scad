@@ -36,7 +36,7 @@ module u_roller_wall_pair(space_between_walls, wall_th, height, rot_nut=0, base_
 
 
 space_between_walls = 2*b623_width + 0.8 + 2;
-tower_h = Line_roller_ABC_winch_h - b608_vgroove_small_r + b623_big_ugroove_small_r - 0.5 + 3;
+tower_h = Line_roller_ABCD_winch_h - b608_vgroove_small_r + b623_big_ugroove_small_r - 0.5 + 3;
 
 //rotate([0,-90,0])
 //%import("../stl/line_verticalizer.stl");

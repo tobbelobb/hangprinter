@@ -3,7 +3,7 @@ use <lib/util.scad>
 
 bearing_lift = b608_vgroove_small_r+Gap_between_sandwich_and_plate + Sep_disc_radius - Spool_r;
 
-//walls(b608_width+0.8, Line_roller_wall_th, Line_roller_ABC_winch_h, with_bearing=false);
+//walls(b608_width+0.8, Line_roller_wall_th, Line_roller_ABCD_winch_h, with_bearing=false);
 module walls(space_between_walls, wall_th, height, rot_nut=0, bearing_screw=true, with_bearing=true){
   d = 2*b608_vgroove_big_r;
 
@@ -83,7 +83,7 @@ module base(){
 
 line_roller_wire_rewinder(with_bearings=false, twod=false);
 module line_roller_wire_rewinder(twod=false,
-                          tower_h = Line_roller_ABC_winch_h,
+                          tower_h = Line_roller_ABCD_winch_h,
                           with_bearings=false){
 
   s = b608_width + 0.8;

@@ -4,8 +4,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-//twod = true;
-twod = false;
+twod = true;
+//twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -47,13 +47,11 @@ length_of_toolhead = 77;
 aspool_y = 42;
 bcspool_y = -23;
 dspool_y = 19;
-ispool_y = -72;
 aspool_lineroller_y = -110;
 move_BC_deflectors = -113;
 
 lxm1 = -spd/2 - 1 - Spool_height;
 lx0 = -spd/2;
-lx1 = spd/2;
 lx2 = spd/2 + 1 + 32;
 lx3 = -spd/2 + 106;
 ly2 = 126;
@@ -66,4 +64,4 @@ Move_i_bearings_inwards = -2;
 cx = 500+Move_i_bearings_inwards/2;
 cy = 500+Move_i_bearings_inwards/2;
 // Top plate parameters needed for layout slicer
-Yshift_top_plate = -250;
+Yshift_top_plate = -cy/2;
