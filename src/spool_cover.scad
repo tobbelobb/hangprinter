@@ -94,7 +94,7 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
               translate([0,-2*Sep_disc_radius,0])
                 cube([5,2*Sep_disc_radius, slit_height]);
         }
-        // Create a line slit for dright spool cover
+        // Create a line slit for iright spool cover
         if (!second_hole) {
           translate([Sep_disc_radius-10, 38.0, bottom_th+Spool_height/2+2.5])
             cube([50, 1.0, 2*Spool_height-3]);

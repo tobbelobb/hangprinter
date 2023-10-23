@@ -8,11 +8,11 @@ use <lib/layout_lib.scad>
 
 use <../GT2_spool_gear.scad>
 use <../corner_clamp.scad>
-use <../dleft_spool.scad>
-use <../dleft_spool_cover.scad>
-use <../dright_spool_top.scad>
-use <../dright_spool_bottom.scad>
-use <../dright_spool_cover.scad>
+use <../ileft_spool.scad>
+use <../ileft_spool_cover.scad>
+use <../iright_spool_top.scad>
+use <../iright_spool_bottom.scad>
+use <../iright_spool_cover.scad>
 use <../horizontal_line_deflector.scad>
 use <../landing_brackets.scad>
 use <../line_roller_anchor.scad>
@@ -43,7 +43,7 @@ use <placed_winch_unit_I.scad>
 //top_plate();
 module top_plate(cx, cy, mvy){
   if(!twod){
-    color(color0, color0_alpha)
+    color(Color0, Color0_alpha)
       translate([-cx/2,mvy,-12])
       cube([cx, cy, 12]); // Top plate
   //} else {
@@ -78,7 +78,7 @@ module placed_line_verticalizer(angs=[45,-45,45,-45]){
   center_it = 0;
   four = [0,90,180,270];
 
-  color(color1, color1_alpha)
+  color(Color1, Color1_alpha)
   translate([0,0,0])
   for(k=[0:3])
     rotate([0,0,-45+four[k]])
@@ -175,7 +175,7 @@ module ABCD_anchor(){
   Ext_sidelength = 500;
   translate([0, -Ext_sidelength/2, -8])
     cube([50,Ext_sidelength, 8]);
-  color(color1,0.6)
+  color(Color1,0.6)
     for(k=[0,1]) mirror([0,k,0])
       translate([26,Ext_sidelength/2-27.91,0])
         if(false){
@@ -204,24 +204,21 @@ module ABCD_anchors(pos = [0,0,0]){
     action_low_left = rotation(a_low_left, i*90);
     action_high_right = rotation(a_high_right, i*90);
     action_low_right = rotation(a_low_right, i*90);
-    color(color_line){
-      line_from_to(pos + action_high_left, action_high_left + anchors[i]);
-      line_from_to(pos + action_low_left, action_low_left + anchors[i]);
-      line_from_to(pos + action_high_right, action_high_right + anchors[i]);
-      line_from_to(pos + action_low_right, action_low_right + anchors[i]);
-    }
+
+    line_from_to(pos + action_high_left, action_high_left + anchors[i]);
+    line_from_to(pos + action_low_left, action_low_left + anchors[i]);
+    line_from_to(pos + action_high_right, action_high_right + anchors[i]);
+    line_from_to(pos + action_low_right, action_low_right + anchors[i]);
   }
 }
 
 
-color(color_line){
-  if(mounted_in_ceiling && !twod){
-    translate([0,0,43+anchors[I][Z]])
-      rotate([180,0,0])
-      ceiling_unit_internal_lines_v4p1();
-  } else {
+if(mounted_in_ceiling && !twod){
+  translate([0,0,43+anchors[I][Z]])
+    rotate([180,0,0])
     ceiling_unit_internal_lines_v4p1();
-  }
+} else {
+  ceiling_unit_internal_lines_v4p1();
 }
 module ceiling_unit_internal_lines_v4p1(){
   hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;

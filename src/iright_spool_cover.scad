@@ -6,14 +6,14 @@ use <spool_cover.scad>
 
 
 //intersection(){
-//  dright_spool_cover();
+//  iright_spool_cover();
 //  translate([64,15,6])
 //    cube([23, 62, 20]);
 //}
-dright_spool_cover();
-module dright_spool_cover(){
+iright_spool_cover();
+module iright_spool_cover(){
     difference(){
-      spool_cover(tot_height=Spool_cover_D_left_tot_height, second_hole=false);
+      spool_cover(tot_height=Spool_cover_I_left_tot_height, second_hole=false);
       translate([72.5,0,Spool_cover_bottom_th+Spool_cover_shoulder+1+Spool_height+1])
         cube([Spool_cover_outer_r-74,100,Spool_height]);
 

@@ -6,38 +6,38 @@ include <lib/layout_params.scad>
 //!sandwich_I();
 module sandwich_I(){
   translate([0,0, (1 + Spool_height)]){
-    color(color2, color2_alpha)
+    color(Color2, Color2_alpha)
       if(stls) import("../../stl/GT2_spool_gear.stl");
       else GT2_spool_gear();
     translate([0,0,Torx_depth + 2*(1 + Spool_height) + GT2_gear_height/2])
       rotate([0,180,0]){
-        color(color1, color1_alpha)
+        color(Color1, Color1_alpha)
           if(stls){
-            import("../../stl/dleft_spool.stl");
+            import("../../stl/ileft_spool.stl");
             translate([0,0,1+Spool_height])
               import("../../stl/sep_disc.stl");
           } else {
-            dleft_spool();
+            ileft_spool();
             translate([0,0,1+Spool_height])
               sep_disc();
           }
-        color(color1, spool_cover_alpha)
+        color(Color1, Spool_cover_alpha)
           translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
             rotate([0,0,90])
-              if (stls) import("../../stl/dleft_spool_cover.stl");
-              else dleft_spool_cover();
+              if (stls) import("../../stl/ileft_spool_cover.stl");
+              else ileft_spool_cover();
       }
   }
-  color(color1, color1_alpha){
-    if(stls) import("../../stl/dright_spool_top.stl");
-    else dright_spool_top();
+  color(Color1, Color1_alpha){
+    if(stls) import("../../stl/iright_spool_top.stl");
+    else iright_spool_top();
     translate([0,0,-Spool_height-1])
-    if(stls) import("../../stl/dright_spool_bottom.stl");
-    else dright_spool_bottom();
+    if(stls) import("../../stl/iright_spool_bottom.stl");
+    else iright_spool_bottom();
     translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder - Spool_height - 1])
       rotate([0,0,-90])
-        if (stls) import("../../stl/dright_spool_cover.stl");
-        else dright_spool_cover();
+        if (stls) import("../../stl/iright_spool_cover.stl");
+        else iright_spool_cover();
   }
 }
 

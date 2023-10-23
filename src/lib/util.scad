@@ -596,9 +596,11 @@ module chamfer45(v0, h){
     square(v0, center=true);
 }
 
-module line_from_to(v0, v1, r = Cable_r){
+//line_from_to([10, 0, 0], [9, 10, 0], twod=true);
+module line_from_to(v0, v1, r = Cable_r, twod = false){
   v2 = v1 - v0;
-  color("yellow")
+  color(Color_line)
+  if (!twod) {
     if(len(v2) == 3){
       v2l = sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
       v2n = v2/v2l;
@@ -627,6 +629,32 @@ module line_from_to(v0, v1, r = Cable_r){
             cylinder(r=r, h=v2l);
         }
     }
+  } else {
+    v2l = sqrt(v2[0]*v2[0] + v2[1]*v2[1]);
+    phi   = acos(v2[0]/v2l);
+    translate([v0[0], v0[1]])
+    if (v2[0] <= 0) {
+      if (v2[1] <= 0) {
+        rotate([0,0,-phi])
+          translate([0,-r])
+          square([v2l, 2*r]);
+      } else {
+        rotate([0,0,phi])
+          translate([0,-r])
+          square([v2l, 2*r]);
+      }
+    } else {
+      if (v2[1] <= 0) {
+        rotate([0,0,-phi])
+          translate([0,-r])
+          square([v2l, 2*r]);
+      } else {
+        rotate([0,0,phi])
+          translate([0,-r])
+          square([v2l, 2*r]);
+      }
+    }
+  }
 }
 
 module b623_big_ugroove(){

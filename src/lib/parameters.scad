@@ -147,7 +147,7 @@ echo("Smooth_rod_length_ABCD", Smooth_rod_length_ABCD);
 echo("Smooth_rod_length_I", Smooth_rod_length_I);
 
 Spool_cover_tot_height = Spool_cover_bottom_th+Spool_cover_shoulder+1+Spool_height;
-Spool_cover_D_left_tot_height = Spool_cover_shoulder+Spool_cover_bottom_th+1+Spool_height+1+Spool_height;
+Spool_cover_I_left_tot_height = Spool_cover_shoulder+Spool_cover_bottom_th+1+Spool_height+1+Spool_height;
 
 spd = Spool_height+GT2_gear_height;
 // Horizontal_deflector_cube_y_size must be exact this number
@@ -183,3 +183,17 @@ Ram_1000_3dpotter_top_square_width = 31.7;
 Wasp_xl30_funnel_d1 = 5.2;
 Wasp_xl30_funnel_d2 = 26.0;
 Wasp_xl30_funnel_h = 17.7;
+
+
+
+// Colors
+Color0 = "sandybrown";
+Color0_alpha = 0.55;
+Color1 = [0.81,0.73,0.05];
+Color1_alpha = 0.9;
+Color2 = [0.99,0.99,0.99];
+Color2_alpha = 0.8;
+Spool_cover_alpha = 0.2;
+Color_carbon = [0.2,0.2,0.2];
+//Color_line = [0.9,0.35,0.35];
+Color_line=[1.0,0.2,0.2];

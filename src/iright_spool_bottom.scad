@@ -32,12 +32,12 @@ module spool_outer_small(){
 
 
 //intersection(){
-//  dright_spool_bottom();
+//  iright_spool_bottom();
 //  translate([0,0,6])
 //    cylinder(r=Spool_r/2, h=10);
 //}
-dright_spool_bottom();
-module dright_spool_bottom(){
+iright_spool_bottom();
+module iright_spool_bottom(){
   difference(){
     spool_outer_small();
     translate([0,0,Spool_height+1])

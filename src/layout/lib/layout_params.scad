@@ -43,18 +43,6 @@ between_action_points_z = anchors[I][Z]-Higher_bearing_z -3 - 175;
 length_of_toolhead = 77;
 //length_of_toolhead = anchors[I][Z]-300;
 
-color0 = "sandybrown";
-color0_alpha = 0.55;
-color1 = [0.81,0.73,0.05];
-color1_alpha = 0.9;
-color2 = [0.99,0.99,0.99];
-color2_alpha = 0.8;
-spool_cover_alpha = 0.2;
-
-color_carbon = [0.2,0.2,0.2];
-//color_line = [0.9,0.35,0.35];
-color_line=[1.0,0.2,0.2];
-
 
 aspool_y = 42;
 bcspool_y = -23;

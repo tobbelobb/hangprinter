@@ -4,12 +4,12 @@ use <lib/gear_util.scad>
 use <spool.scad>
 
 //intersection(){
-//  dright_spool_top();
+//  iright_spool_top();
 //  translate([0,0,-6])
 //    cylinder(r=Spool_r/3, h=9);
 //}
-dright_spool_top();
-module dright_spool_top(){
+iright_spool_top();
+module iright_spool_top(){
   mirror([1,0,0]) {
     spool_outer(1);
     difference(){

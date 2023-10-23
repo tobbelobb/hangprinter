@@ -1,8 +1,13 @@
 include <../../lib/parameters.scad>
-include <../../lib/util.scad>
 include <layout_params.scad>
 
+use <../../lib/util.scad>
 use <../../new_tilted_line_deflector.scad>
+use <../../motor_bracket_A.scad>
+use <../../motor_bracket_B.scad>
+use <../../motor_bracket_C.scad>
+use <../../motor_bracket_D.scad>
+use <../../motor_bracket_I.scad>
 
 //tilted_line_deflector_for_layout();
 module tilted_line_deflector_for_layout(ang){
@@ -162,25 +167,25 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
 //!sandwich_ABCD();
 module sandwich_ABCD(){
   translate([0,0, 1 + Spool_height]){
-    color(color2, color2_alpha)
+    color(Color2, Color2_alpha)
       if(stls) import("../../stl/GT2_spool_gear.stl");
       else GT2_spool_gear();
     translate([0,0,Torx_depth + 1 + Spool_height + GT2_gear_height/2])
       rotate([0,180,0]){
-        color(color1, color1_alpha)
+        color(Color1, Color1_alpha)
           if(stls) import("../../stl/spool_mirrored.stl");
           else spool_mirrored();
-        color(color1, spool_cover_alpha)
+        color(Color1, Spool_cover_alpha)
           translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
             rotate([0,0,-90])
               if (stls) import("../../stl/spool_cover.stl");
               else spool_cover();
       }
   }
-  color(color1, color1_alpha)
+  color(Color1, Color1_alpha)
     if(stls) import("../../stl/spool.stl");
     else spool();
-  color(color1, spool_cover_alpha)
+  color(Color1, Spool_cover_alpha)
     translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder])
       rotate([0,0,90])
         if (stls) import("../../stl/spool_cover_mirrored.stl");
