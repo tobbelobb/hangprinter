@@ -198,3 +198,4 @@ Spool_cover_alpha = 0.5;
 Color_carbon = [0.2,0.2,0.2];
 //Color_line = [0.9,0.35,0.35];
 Color_line=[1.0,0.2,0.2];
+Color_motor=[0.5,0.4,0.9];

@@ -13,3 +13,5 @@ module ileft_spool_cover(){
         cube([Spool_cover_outer_r-74,100,Spool_height]);
     }
 }
+
+//import("../stl/ileft_spool_cover.stl");

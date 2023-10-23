@@ -298,7 +298,7 @@ module whitelabel_motor_render(){
 //translate([-2.5,0,0])
 //rotate([0,90,0])
 //!motor_bracket(true);
-module motor_bracket(leftHanded=false){
+module motor_bracket(){
   cubesize_x = 60.8+6;
   yextra=8.6;
   cubesize_y = cubesize_x+yextra;
@@ -340,16 +340,9 @@ module motor_bracket(leftHanded=false){
           cylinder(d=GT2_motor_gear_outer_dia+2.5, h=52, $fn=100);
         }
       }
-      if (leftHanded) {
-        rotate([0,0,180])
-          mirror([1,0,0])
-            translate([0,0,-7+2.5])
-              stationary_part();
-      } else {
-        mirror([1,0,0])
-          translate([0,0,-7+2.5])
-            stationary_part();
-      }
+      mirror([1,0,0])
+        translate([0,0,-7+2.5])
+          stationary_part();
       translate([0,0,-7+2.5])
         cylinder(d=55, h=7);
 
@@ -357,20 +350,10 @@ module motor_bracket(leftHanded=false){
       erasor_cubes(cubesize_x, yextra);
 
       // Remove overhang for ease of printing upright
-      if (leftHanded) {
-        translate([7.075,-29.720,-0.5])
-          rotate([0,0,38])
+      translate([8.555,29.285,-0.5])
+        rotate([0,0,38])
+          translate([-3, -3, 0])
             cube(3);
-        translate([8.555,29.285,-0.5])
-          rotate([0,0,-19])
-            translate([-3, -3, 0])
-              cube(3);
-      } else {
-        translate([8.555,29.285,-0.5])
-          rotate([0,0,38])
-            translate([-3, -3, 0])
-              cube(3);
-      }
 
 
       // Screw holes
@@ -560,20 +543,6 @@ module encoder_bracket() {
 motor_bracket_xpos = -46.5;
 motor_bracket_ypos = -33;
 
-// Four different brackets are needed
-// All combinations of the two options
-// |      leftHanded |     mirrored | C
-// |      leftHanded | not mirrored | B
-// |  not leftHanded |     mirrored | A
-// |  not leftHanded | not mirrored | D
-// It's recommended to use the named files
-// motor_bracket_A.scad
-// motor_bracket_B.scad
-// motor_bracket_C.scad
-// motor_bracket_D.scad
-// or some kind of build system when compiling
-// those stls. Doing it by hand easily leads to mistakes.
-
 module base_hull_2d(isI = false){
   $fn=4*6;
   pos0 = [73.5,53,0];
@@ -668,8 +637,8 @@ module spool_legs(isI = false, twod=false){
 }
 
 //mirror([1,0,0])
-  motor_bracket_extreme(leftHanded=false, twod=false);
-module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
+  motor_bracket_extreme(twod=false);
+module motor_bracket_extreme(twod=false, text="A") {
   module placed_text(){
     translate([13,5,0])
       rotate([0,0,-90])
@@ -691,13 +660,9 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
           translate([0,0,35]){
             translate([-2.5+33,0,0])
               rotate([0,90,0])
-                motor_bracket(leftHanded);
+                motor_bracket();
             //%translate([33,0,0])
-            //  if(leftHanded)
-            //    rotate([180,0,0])
-            //      import("../../stl/for_render/whitelabel_motor.stl");
-            //  else
-            //    import("../../stl/for_render/whitelabel_motor.stl");
+            //  import("../../stl/for_render/whitelabel_motor.stl");
             translate([4.5-0.7,0,0])
               rotate([0,0,2*90]){
                 translate([11.45,0,0])

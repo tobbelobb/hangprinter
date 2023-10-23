@@ -53,67 +53,6 @@ module top_plate(cx, cy, mvy){
 }
 
 
-//line_deflector(9,false);
-module line_deflector(rot_around_center=0, center=false){
-  module line_deflector_always_center(){
-      rotate([0,0,rot_around_center]) // Rotate around bearing center
-      translate([0,b623_big_ugroove_small_r-3,0])
-      if(stls && !twod){
-        rotate([-90,0,0])
-          import("../../stl/horizontal_line_deflector.stl");
-      } else {
-        horizontal_line_deflector(twod=twod);
-      }
-  }
-  if(center){
-    line_deflector_always_center();
-  } else {
-    translate([0,-b623_big_ugroove_small_r,0])
-      line_deflector_always_center();
-  }
-}
-
-//placed_line_verticalizer();
-module placed_line_verticalizer(angs=[45,-45,45,-45]){
-  center_it = 0;
-  four = [0,90,180,270];
-
-  color(Color1, Color1_alpha)
-  translate([0,0,0])
-  for(k=[0:3])
-    rotate([0,0,-45+four[k]])
-      translate([-Sidelength/sqrt(2)-Move_i_bearings_inwards,0,0])
-        rotate([0,0,angs[k]])
-          translate([center_it,0,0])
-            if(stls && !twod){
-              rotate([0,-90,0])
-              import("../../stl/line_verticalizer.stl");
-            } else {
-              translate([-b623_big_ugroove_small_r,0,0])
-                line_verticalizer(twod=twod);
-            }
-  translate([lx0-b623_big_ugroove_small_r,
-             Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
-             0])
-    line_deflector(-67, center=true);
-  translate([lxm1, 233, 0])
-    rotate([0,0,90])
-      if(stls && !twod){
-        import("../../stl/line_roller_wire_rewinder.stl");
-      } else {
-        line_roller_wire_rewinder(twod=twod);
-      }
-  translate([lx1+b623_big_ugroove_small_r,
-             Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_big_ugroove_small_r-b623_width/2-1,
-             0])
-    line_deflector(67, center=true);
-  translate([lx2+b623_big_ugroove_small_r, ly2-b623_big_ugroove_small_r,0])
-    line_deflector(63, center=true);
-  translate([-b623_big_ugroove_small_r+b623_width/2+1+3*Spool_height,ly2-b623_big_ugroove_small_r,0])
-    line_deflector(-90-90-90, center=true);
-}
-
-
 if(mounted_in_ceiling && !twod && !mover){
   translate(anchors[I]  + [0,0,33])
     rotate([180,0,0])
@@ -128,10 +67,8 @@ module full_winch(){
   placed_winch_unit_D();
   placed_winch_unit_I();
 
-  placed_line_verticalizer();
-
   echo("Top plate width: ", cx);
-  echo(cy);
+  echo("Top plate depth: ", cy);
   mvy = Yshift_top_plate;
   top_plate(cx, cy, mvy);
 }
@@ -147,7 +84,7 @@ module mover(pos = [0,0,0]) {
 //i_lines();
 module i_lines(pos=[0,0,0]){
   l = Sidelength/2;
-  color("pink"){
+  color(Color_line){
     line_from_to(pos + [l,l, length_of_toolhead], anchors[I] + [l,l,0]);
     line_from_to(pos + [-l,l, length_of_toolhead], anchors[I] + [-l,l,0]);
     line_from_to(pos + [l,-l, length_of_toolhead], anchors[I] + [l,-l,0]);
@@ -212,56 +149,6 @@ module ABCD_anchors(pos = [0,0,0]){
   }
 }
 
-
-if(mounted_in_ceiling && !twod){
-  translate([0,0,43+anchors[I][Z]])
-    rotate([180,0,0])
-    ceiling_unit_internal_lines_v4p1();
-} else {
-  ceiling_unit_internal_lines_v4p1();
-}
-module ceiling_unit_internal_lines_v4p1(){
-  hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
-
-  module one_b_line(e=0, e2=30){
-    bbc = e2+5;
-    a = -bc_x_pos-spd/2;
-    b = bcspool_y+move_BC_deflectors+e;
-    c = cos(60)*b623_big_ugroove_small_r;
-    d = sin(60)*b623_big_ugroove_small_r;
-    line_from_to([a, bcspool_y, hz],
-                 [a-0.5, b+10, hz]);
-    line_from_to([a-c+0.5, b+d-0.7, hz+2],
-                 [a-c-cos(30)*100, b+d-sin(30)*100, hz+150]);
-  }
-
-  if(!twod){
-    for(k=[0,1])
-      mirror([k,0,0]){
-        one_b_line();
-        translate([spd,0,0])
-          one_b_line();
-      }
-
-    line_from_to([lx0, bcspool_y, hz],
-                 [lx0, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
-    line_from_to([lx0, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz],
-                 [-Sidelength/2, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
-
-    line_from_to([lx1, bcspool_y, hz],
-                 [lx1, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
-    line_from_to([lx1, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz],
-                 [Sidelength/2, Sidelength/sqrt(6)+Move_i_bearings_inwards/2-b623_width/2-1, hz]);
-
-    line_from_to([spd + lx2, bcspool_y, hz],
-                 [spd + lx2, ly2, hz]);
-    line_from_to([spd + lx2, ly2, hz],
-                 [spd , ly2, hz]);
-    line_from_to([spd , ly2, hz],
-                 [spd , -Sidelength/sqrt(3)-Move_i_bearings_inwards, hz]);
-
-  }
-}
 
 data_collection_positions_standard = [[  -0.527094,   -0.634946,    0.      ],
                                       [-266.144   , -284.39    ,    0.      ],

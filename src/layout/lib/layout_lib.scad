@@ -96,9 +96,29 @@ module belt_roller_bearings(){
             b623_flanged();
 }
 
+module motor(ang=0) {
+  if (!twod)
+    color(Color_motor)
+      translate([-13.5,-33,35])
+        rotate([ang,0,0])
+          import("../../stl/for_render/whitelabel_motor.stl");
+          //whitelabel_motor_render();
+}
+
+module gear(){
+  if(!twod)
+    translate([-GT2_motor_gear_height+1.5+(GT2_motor_gear_height-7.4-1.5)/2,0,0]){
+      color([0.75,0.75,0.75])
+        translate([0,-33,35]) // Up to motor shaft center
+          rotate([0,90,0])
+            //GT2_motor_gear(5.02);
+            import("../../stl/for_render/GT2_motor_gear.stl");
+    }
+}
+
 
 //!render_motor_and_bracket();
-module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=false, I=false){
+module render_motor_and_bracket(A=false, B=false, C=false, D=false){
   if (stls && !twod) {
     if(A)
       import("../../stl/motor_bracket_A.stl");
@@ -108,8 +128,6 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
       import("../../stl/motor_bracket_C.stl");
     else if (D)
       import("../../stl/motor_bracket_D.stl");
-    else // use I as default...
-      import("../../stl/motor_bracket_I.stl");
   } else {
     if(A)
       motor_bracket_A(twod=twod);
@@ -119,30 +137,9 @@ module render_motor_and_bracket(leftHanded=false, A=false, B=false, C=false, D=f
       motor_bracket_C(twod=twod);
     else if (D)
       motor_bracket_D(twod=twod);
-    else // use I as default...
-      motor_bracket_I(twod=twod);
   }
 
-  module motor(ang=0) {
-    if (!twod)
-      translate([-13.5,-33,35])
-        rotate([ang,0,0])
-          import("../../stl/for_render/whitelabel_motor.stl");
-          //whitelabel_motor_render();
-  }
-
-  module gear(){
-    if(!twod)
-      translate([-GT2_motor_gear_height+1.5+(GT2_motor_gear_height-7.4-1.5)/2,0,0]){
-        color([0.75,0.75,0.75])
-          translate([0,-33,35]) // Up to motor shaft center
-            rotate([0,90,0])
-              //GT2_motor_gear(5.02);
-              import("../../stl/for_render/GT2_motor_gear.stl");
-      }
-  }
-
-  color([0.5,0.4,0.9])
+  color(Color_motor)
     if(A)
       mirror([1,0,0])
         motor();
@@ -193,7 +190,7 @@ module sandwich_ABCD(){
 }
 
 //!sandwich_and_motor_ABCD();
-module sandwich_and_motor_ABCD(leftHanded=false, A=false, B=false, C=false, D=false){
+module sandwich_and_motor_ABCD(A=false, B=false, C=false, D=false){
   cover_adj=Spool_core_cover_adj;
   if(!twod)
     translate([0,
@@ -203,7 +200,7 @@ module sandwich_and_motor_ABCD(leftHanded=false, A=false, B=false, C=false, D=fa
         sandwich_ABCD();
   translate([Belt_roller_bearing_xpos,0,0])
     rotate([0,0,90])
-      render_motor_and_bracket(leftHanded, A=A, B=B, C=C, D=D, I=false);
+      render_motor_and_bracket(A=A, B=B, C=C, D=D);
   translate([Belt_roller_bearing_xpos,0,0])
     belt_roller_bearings();
 
