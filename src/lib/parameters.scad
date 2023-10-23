@@ -131,7 +131,7 @@ Belt_roller_containing_cube_xwidth = 14;
 Belt_roller_insert_h = 18;
 
 Sandwich_ABCD_width = 2*(1+Spool_height) + GT2_gear_height;
-Sandwich_I_width = 4*(1+Spool_height) + GT2_gear_height;
+Sandwich_I_width = 5*(1+Spool_height) + GT2_gear_height;
 Spool_core_halve_width = 14.3;
 Spool_core_impression_in_spool_cover = 0;
 Spool_cover_bottom_th = 1.5;
@@ -147,7 +147,8 @@ echo("Smooth_rod_length_ABCD", Smooth_rod_length_ABCD);
 echo("Smooth_rod_length_I", Smooth_rod_length_I);
 
 Spool_cover_tot_height = Spool_cover_bottom_th+Spool_cover_shoulder+1+Spool_height;
-Spool_cover_I_left_tot_height = Spool_cover_shoulder+Spool_cover_bottom_th+1+Spool_height+1+Spool_height;
+Spool_cover_I_left_tot_height = Spool_cover_shoulder+Spool_cover_bottom_th+2*(Spool_height+1);
+Spool_cover_I_right_tot_height = Spool_cover_shoulder+Spool_cover_bottom_th+3*(Spool_height+1);
 
 spd = Spool_height+GT2_gear_height;
 // Horizontal_deflector_cube_y_size must be exact this number
@@ -193,7 +194,7 @@ Color1 = [0.81,0.73,0.05];
 Color1_alpha = 0.9;
 Color2 = [0.99,0.99,0.99];
 Color2_alpha = 0.8;
-Spool_cover_alpha = 0.2;
+Spool_cover_alpha = 0.5;
 Color_carbon = [0.2,0.2,0.2];
 //Color_line = [0.9,0.35,0.35];
 Color_line=[1.0,0.2,0.2];

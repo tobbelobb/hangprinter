@@ -574,12 +574,12 @@ motor_bracket_ypos = -33;
 // or some kind of build system when compiling
 // those stls. Doing it by hand easily leads to mistakes.
 
-module base_hull_2d(isD = false){
+module base_hull_2d(isI = false){
   $fn=4*6;
   pos0 = [73.5,53,0];
-  pos0D = [73.5 + (Sandwich_I_width - Sandwich_ABCD_width) - (Spool_height+1),53,0];
+  pos0I = [73.5 + (Sandwich_I_width - Sandwich_ABCD_width) - 2*(Spool_height+1),53,0];
   pos1 = [32-1.5-15+3,53,0];
-  pos1D = pos1 - [Spool_height+1, 0, 0];
+  pos1I = pos1 - [2*(Spool_height+1), 0, 0];
   pos2 = [-16,0,0];
   pos2p5 = [-16,-32,0];
   pos3 = [36-1.5,53,0];
@@ -601,8 +601,8 @@ module base_hull_2d(isD = false){
       circle(r=4);
   }
   hull(){
-    if (isD)
-      translate(pos0D)
+    if (isI)
+      translate(pos0I)
         circle(r=4, $fn=40);
     else
       translate(pos0)
@@ -611,8 +611,8 @@ module base_hull_2d(isD = false){
       circle(r=4);
     translate(pos7)
       circle(r=4);
-    if (isD)
-      translate(pos1D)
+    if (isI)
+      translate(pos1I)
         circle(r=4, $fn=40);
     else
       translate(pos1)
@@ -625,8 +625,8 @@ module base_hull_2d(isD = false){
       circle(r=4);
     translate(pos3)
       circle(r=4);
-    if (isD)
-      translate(pos1D)
+    if (isI)
+      translate(pos1I)
         circle(r=4, $fn=40);
     else
       translate(pos1)
@@ -639,23 +639,23 @@ module base_hull_2d(isD = false){
 }
 
 //spool_legs();
-module spool_legs(isD = false, twod=false){
+module spool_legs(isI = false, twod=false){
   translate([0,Belt_roller_bearing_xpos,0])
     rotate([0,0,90])
-      if (isD) {
-        translate([0,-(Sandwich_I_width - Sandwich_ABCD_width)/2+Spool_height+1, 0])
+      if (isI) {
+        translate([0,-(Sandwich_I_width - Sandwich_ABCD_width)/2+2*(Spool_height+1), 0])
           spool_cores(twod=twod, between=Sandwich_I_width + 2*Spool_core_cover_adj);
       } else {
         spool_cores(twod=twod, between=Sandwich_ABCD_width + 2*Spool_core_cover_adj);
       }
 
   translate([-(Sandwich_ABCD_width +2*Spool_core_cover_adj+6)/2,154.35,0])
-    if (isD) {
+    if (isI) {
       if (twod){
-        translate([-Spool_height-1,0,0])
+        translate([-2*(Spool_height+1),0,0])
           square([Sandwich_I_width + 2*Spool_core_cover_adj+6, 2]);
       } else {
-        translate([-Spool_height-1,0,0])
+        translate([-2*(Spool_height+1),0,0])
           cube([Sandwich_I_width + 2*Spool_core_cover_adj+6, 2, Base_th]);
       }
     } else {
@@ -685,7 +685,7 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
     if(!twod) {
       difference(){
         union(){
-          linear_extrude(height=Base_th) base_hull_2d(text == "D");
+          linear_extrude(height=Base_th) base_hull_2d(text == "I");
           translate([36-1.5, 36, 0])
             cube([6, 6, Base_th]);
           translate([0,0,35]){
@@ -734,7 +734,7 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
     } else {
       // twod below here
       difference(){
-        base_hull_2d(text=="D");
+        base_hull_2d(text=="I");
         translate([-15,0,0])
           Mounting_screw(twod=twod); // use motor_bracket_extreme(..., twod=true) to see this one
         translate([-15,-32,0])
@@ -758,5 +758,5 @@ module motor_bracket_extreme(leftHanded=false, twod=false, text="A") {
 
   rotate([0,0,-90])
     belt_roller(twod=twod);
-  spool_legs(text == "D", twod=twod);
+  spool_legs(text == "I", twod=twod);
 }

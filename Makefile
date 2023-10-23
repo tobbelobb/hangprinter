@@ -245,6 +245,12 @@ $(STL_DIR)/motor_bracket_D.stl: $(SRC_DIR)/motor_bracket_D.scad \
 	$(SRC_DIR)/lib/whitelabel_motor.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
 
+$(STL_DIR)/motor_bracket_I.stl: $(SRC_DIR)/motor_bracket_I.scad \
+	$(SRC_DIR)/lib/parameters.scad \
+	$(SRC_DIR)/lib/util.scad \
+	$(SRC_DIR)/lib/whitelabel_motor.scad
+	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
+
 $(STL_DIR)/pen_fly_brace.stl: $(SRC_DIR)/pen_fly_brace.scad \
 	$(SRC_DIR)/lib/util.scad
 	$(OPENSCAD_BIN) -o $@ $(SRC_DIR)/$(basename $(notdir $@)).scad
@@ -348,6 +354,7 @@ all: | $(STL_DIR) \
 	$(STL_DIR)/motor_bracket_B.stl \
 	$(STL_DIR)/motor_bracket_C.stl \
 	$(STL_DIR)/motor_bracket_D.stl \
+	$(STL_DIR)/motor_bracket_I.stl \
 	$(STL_DIR)/pen_fly_brace.stl \
 	$(STL_DIR)/pen_holder_nut_head.stl \
 	$(STL_DIR)/pi_mount.stl \

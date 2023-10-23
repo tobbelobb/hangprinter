@@ -12,7 +12,7 @@ use <../../motor_bracket_I.scad>
 //tilted_line_deflector_for_layout();
 module tilted_line_deflector_for_layout(ang){
   translate([-10, 0,0])
-    if(false && !twod){
+    if(stls && !twod){
       rotate([0,0,-90])
         import("../../stl/new_tilted_line_deflector.stl");
     } else {

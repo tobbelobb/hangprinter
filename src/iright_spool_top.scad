@@ -11,7 +11,7 @@ use <spool.scad>
 iright_spool_top();
 module iright_spool_top(){
   mirror([1,0,0]) {
-    spool_outer(1);
+    spool_outer(2);
     difference(){
       union(){
         spool_center();

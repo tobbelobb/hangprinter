@@ -39,7 +39,7 @@ module rail(l, rightside=true, leftside=true){
 //}
 
 spool_cover();
-module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_bottom_th, second_hole=true){
+module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_bottom_th, second_hole=true, shift_up=0){
   opening_width = 42;
   rot = 150 - opening_width;
   outer_r = Spool_cover_outer_r;
@@ -72,30 +72,36 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
         }
         // Cut away space for belt to enter
         rotate([0,0,-79])
-          translate([outer_r-1.5,0,tot_height+0.01])
+          translate([outer_r-1.5,0,tot_height+0.1])
             rotate([0,0,-8])
               translate([0,-4,0])
                 cube([3, 13, 10]);
         rotate([0,0,-24])
-          translate([outer_r-1.5,0,tot_height+0.01])
+          translate([outer_r-1.5,0,tot_height+0.1])
             rotate([0,0,8])
               translate([0,-9,0])
                 cube([2,11,4]);
         // Slit for line entry from below
-        if (second_hole) {
-          translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z])
+        if (second_hole && shift_up!=0) {
+          translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + shift_up*(Spool_height+1)])
             rotate([slit_rot,0,0])
               translate([0,-2*Sep_disc_radius,0])
                 cube([5,2*Sep_disc_radius, slit_height]);
         }
+
+        if (tot_height > 2*Spool_height && shift_up == 0)
+          translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z])
+            rotate([slit_rot,0,0])
+              translate([0,-2*Sep_disc_radius,0])
+                cube([5,2*Sep_disc_radius, slit_height]);
         if (tot_height > 2*Spool_height) {
-          translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + Spool_height + 1])
+          translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + (1+shift_up) * (Spool_height + 1)])
             rotate([slit_rot,0,0])
               translate([0,-2*Sep_disc_radius,0])
                 cube([5,2*Sep_disc_radius, slit_height]);
         }
         // Create a line slit for iright spool cover
-        if (!second_hole) {
+        if (second_hole && shift_up != 0) {
           translate([Sep_disc_radius-10, 38.0, bottom_th+Spool_height/2+2.5])
             cube([50, 1.0, 2*Spool_height-3]);
           translate([Sep_disc_radius/2, 38.0, bottom_th+Spool_height/2+2.5])
@@ -103,7 +109,7 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
         }
         translate([0,0,bottom_th])
           cylinder(r = Sep_disc_radius + Gap_between_sep_disc_and_spool_cover, h=tot_height, $fn=150);
-        if (second_hole){
+        if (second_hole && shift_up==0){
           translate([72.5,0,bottom_th + Spool_cover_shoulder + 1])
             cube([outer_r-74,100,Spool_height]);
           translate([69.5,0,bottom_th + Spool_cover_shoulder + 1])
@@ -121,18 +127,18 @@ module spool_cover(tot_height=Spool_cover_tot_height+0.2, bottom_th=Spool_cover_
 
       // Fill up slit for line entry from below
       if (second_hole) {
-        translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z])
+        translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + shift_up*(Spool_height+1)])
           rotate([slit_rot,0,0])
-            translate([0.5,-(tot_height)/sin(-slit_rot)+5-0.3,(slit_height-rail_height)/2])
-              rail((tot_height)/sin(-slit_rot)-5);
+            translate([0.5,-(tot_height-shift_up*(Spool_height+1))/sin(-slit_rot)+5-0.3,(slit_height-rail_height)/2])
+              rail((tot_height-shift_up*(Spool_height+1))/sin(-slit_rot)-5);
       }
       if (tot_height > 2*Spool_height) {
-        translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + Spool_height + 1])
+        translate([Sep_disc_radius, (Spool_core_tot_length - space_for_belt_roller)/2, slit_z + (1+shift_up)*(Spool_height + 1)])
           rotate([slit_rot,0,0])
-            translate([0.5,-(tot_height-Spool_height-1)/sin(-slit_rot)+5-0.3, (slit_height-rail_height)/2])
-              rail((tot_height-Spool_height-1)/sin(-slit_rot)-5);
+            translate([0.5,-(tot_height-(1+shift_up)*(Spool_height+1))/sin(-slit_rot)+5-0.3, (slit_height-rail_height)/2])
+              rail((tot_height-(1+shift_up)*(Spool_height+1))/sin(-slit_rot)-5);
       }
-      if (!second_hole) {
+      if (second_hole && shift_up!=0) {
           translate([Sep_disc_radius, Sep_disc_radius*sin(28.5), bottom_th+Spool_height/2+2.5+(slit_height-rail_height)/2]) {
             translate([0.5,0,0])
               rail(23, true, false);

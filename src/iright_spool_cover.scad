@@ -13,10 +13,11 @@ use <spool_cover.scad>
 iright_spool_cover();
 module iright_spool_cover(){
     difference(){
-      spool_cover(tot_height=Spool_cover_I_left_tot_height, second_hole=false);
+      spool_cover(tot_height=Spool_cover_I_right_tot_height, second_hole=true, shift_up=1);
       translate([72.5,0,Spool_cover_bottom_th+Spool_cover_shoulder+1+Spool_height+1])
         cube([Spool_cover_outer_r-74,100,Spool_height]);
-
+      translate([72.5,0,Spool_cover_bottom_th+Spool_cover_shoulder+2*(Spool_height+1)+1])
+        cube([Spool_cover_outer_r-74,100,Spool_height]);
       hull()
         for(ang=[-37, -12])
           rotate([0,0,ang])

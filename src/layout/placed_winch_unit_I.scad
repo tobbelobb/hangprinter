@@ -2,6 +2,14 @@ include <../lib/parameters.scad>
 include <lib/layout_lib.scad>
 include <lib/layout_params.scad>
 
+use <../sep_disc.scad>
+use <../iright_spool_top.scad>
+use <../iright_spool_cover.scad>
+use <../iright_spool_bottom.scad>
+use <../ileft_spool.scad>
+use <../ileft_spool_cover.scad>
+use <../GT2_spool_gear.scad>
+
 //translate([0,0,Gap_between_sandwich_and_plate])
 //!sandwich_I();
 module sandwich_I(){
@@ -29,12 +37,21 @@ module sandwich_I(){
       }
   }
   color(Color1, Color1_alpha){
-    if(stls) import("../../stl/iright_spool_top.stl");
-    else iright_spool_top();
-    translate([0,0,-Spool_height-1])
+    translate([0,0,-(Spool_height + 1)])
+    if(stls) {
+      import("../../stl/iright_spool_top.stl");
+      translate([0,0,Spool_height + 1])
+        import("../../stl/sep_disc.stl");
+    }
+    else {
+      iright_spool_top();
+      translate([0,0,Spool_height + 1])
+        sep_disc();
+    }
+    translate([0,0,-2*(Spool_height + 1)])
     if(stls) import("../../stl/iright_spool_bottom.stl");
     else iright_spool_bottom();
-    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder - Spool_height - 1])
+    translate([0,0,-Spool_cover_bottom_th-Spool_cover_shoulder - 2*(Spool_height + 1)])
       rotate([0,0,-90])
         if (stls) import("../../stl/iright_spool_cover.stl");
         else iright_spool_cover();
@@ -61,7 +78,7 @@ module placed_winch_unit_I(){
       }
       translate([Belt_roller_bearing_xpos,0,0]){
         rotate([0,0,90])
-          render_motor_and_bracket(D=true);
+          render_motor_and_bracket(I=true);
         belt_roller_bearings();
       }
       if(!twod) {
