@@ -41,10 +41,10 @@ use <placed_winch_unit_I.scad>
 
 
 //top_plate();
-module top_plate(cx, cy, mvy){
+module top_plate(cx, cy){
   if(!twod){
     color(Color0, Color0_alpha)
-      translate([-cx/2,mvy,-12])
+      translate([-cx/2, Yshift_top_plate, -12])
       cube([cx, cy, 12]); // Top plate
   //} else {
   //  translate([-cx/2,mvy])
@@ -69,8 +69,7 @@ module full_winch(){
 
   echo("Top plate width: ", cx);
   echo("Top plate depth: ", cy);
-  mvy = Yshift_top_plate;
-  top_plate(cx, cy, mvy);
+  top_plate(cx, cy);
 }
 
 

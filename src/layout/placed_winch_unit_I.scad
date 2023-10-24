@@ -104,8 +104,6 @@ module line_deflector(rot_around_center=0, center=false){
 }
 
 
-ispool_y = -63;
-
 //placed_I_line_deflectors();
 module placed_I_line_deflectors(angs=[45,-45,45,-45]){
   r = b623_big_ugroove_small_r;
@@ -113,11 +111,14 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
 
   l0_x = GT2_gear_height/2 + Spool_height + 1 + Spool_height/2;
   l0_y = 100;
-  diff0_x = 33;
+  diff0_x = 21.5;
+  offs0_y = -15;
 
   l1_x = Spool_height/2 + GT2_gear_height/2;
   l1_y = 140;
-  diff1_x = 63;
+  diff1_x = 40.6;
+
+  squeeze = 0.75;
 
   l2_x = -l1_x;
 
@@ -147,43 +148,43 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
 
   // Line 0
   line_from_to([l0_x , ispool_y, hz],
-               [l0_x , l0_y, hz]);
+               [l0_x , l0_y, hz], twod=twod);
   line_from_to([l0_x + r, l0_y + r, hz],
-               [l0_x + diff0_x , l0_y + r, hz]);
-  line_from_to([l0_x + diff0_x + r, l0_y, hz],
-               [l0_x + diff0_x + r, -half_pivot_w + r, hz]);
+               [l0_x + diff0_x , l0_y + r, hz], twod=twod);
+  line_from_to([l0_x + diff0_x + r, l0_y + offs0_y, hz],
+               [l0_x + diff0_x + r, -half_pivot_w + r, hz], twod=twod);
   line_from_to([l0_x + diff0_x, -half_pivot_w, hz],
-               [-half_pivot_w, -half_pivot_w, hz]);
+               [-half_pivot_w, -half_pivot_w, hz], twod=twod);
   translate([l0_x + r, l0_y, 0])
-    line_deflector(-90-90-90, center=true);
-  translate([l0_x + diff0_x, l0_y, 0])
-    line_deflector(63, center=true);
-  translate([l0_x + Spool_height/2 + 1 + diff0_x - r,
-    -half_pivot_w + r,0])
     line_deflector(45, center=true);
+  translate([l0_x + diff0_x, l0_y+offs0_y, 0])
+    line_deflector(-90-45, center=true);
+  translate([l0_x + Spool_height/2 + 2 + diff0_x - r + squeeze,
+    -half_pivot_w + r,0])
+    line_deflector(2*45, center=true);
 
   // Line 1
   line_from_to([l1_x, ispool_y, hz],
-               [l1_x, l1_y, hz]);
+               [l1_x, l1_y, hz], twod=twod);
   line_from_to([l1_x + r, l1_y + r, hz],
-               [l1_x + diff1_x, l1_y + r, hz]);
+               [l1_x + diff1_x, l1_y + r, hz], twod=twod);
   line_from_to([l1_x + diff1_x + r, l1_y, hz],
-               [l1_x + diff1_x + r, -half_pivot_w + r, hz]);
+               [l1_x + diff1_x + r, -half_pivot_w + r, hz], twod=twod);
   line_from_to([l1_x + diff1_x + 2*r, -half_pivot_w, hz],
-               [half_pivot_w, -half_pivot_w, hz]);
+               [half_pivot_w, -half_pivot_w, hz], twod=twod);
   translate([l1_x + r, l1_y, 0])
-    line_deflector(67, center=true);
+    line_deflector(45, center=true);
   translate([l1_x + diff1_x, l1_y, 0])
-    line_deflector(-67, center=true);
-  translate([l1_x + Spool_height/2 + 2 + diff1_x + r,
-    -half_pivot_w + r,0])
     line_deflector(-45, center=true);
+  translate([l1_x + Spool_height/2 + 2 + diff1_x + r - squeeze,
+    -half_pivot_w + r,0])
+    line_deflector(-2*45, center=true);
 
   // Line 2
   line_from_to([l2_x , ispool_y, hz],
-               [l2_x , half_pivot_w-r, hz]);
+               [l2_x , half_pivot_w-r, hz], twod=twod);
   line_from_to([l2_x + r, half_pivot_w, hz],
-               [half_pivot_w, half_pivot_w, hz]);
+               [half_pivot_w, half_pivot_w, hz], twod=twod);
   translate([l2_x + r,
              half_pivot_w - r,
              0])
@@ -191,16 +192,14 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
 
   // Line 3
   line_from_to([l3_x , ispool_y, hz],
-               [l3_x , half_pivot_w-r, hz]);
+               [l3_x , half_pivot_w-r, hz], twod=twod);
   line_from_to([l3_x - r, half_pivot_w, hz],
-               [-half_pivot_w, half_pivot_w, hz]);
+               [-half_pivot_w, half_pivot_w, hz], twod=twod);
   translate([l3_x - r,
              half_pivot_w - r,
              0])
     line_deflector(90, center=true);
 }
-
-
 
 
 
@@ -218,10 +217,14 @@ module placed_winch_unit_I(){
       }
       if(!twod) {
         // Smooth rod
-        color("grey")
-          translate([0,-4.5, Sep_disc_radius + Gap_between_sandwich_and_plate])
+        color("grey"){
+          translate([0,-4.5 + Smooth_rod_length_I, Sep_disc_radius + Gap_between_sandwich_and_plate])
             rotate([90,0,0])
               cylinder(d=8, h=Smooth_rod_length_I, center=true);
+          translate([0,-4.5 - Smooth_rod_length_I, Sep_disc_radius + Gap_between_sandwich_and_plate])
+            rotate([90,0,0])
+              cylinder(d=8, h=Smooth_rod_length_I, center=true);
+        }
         belt();
       }
 

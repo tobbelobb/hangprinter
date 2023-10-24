@@ -5,19 +5,19 @@ include <layout_params.scad>
 a4_width = 210;
 a4_length = 297;
 margin = 5;
-y_overlap = 40;
-x_overlap = 40;
+y_overlap = 30;
+x_overlap = 30;
 page = 1; // To be defined in call via Makefile
 //all = true; // Used only for quick visual double-checking
 all = false;
-layout_file = "../../layout.dxf";
+layout_file = "../../../layout.dxf";
 
-x0 = -a4_width*2 + x_overlap;
-x1 = -a4_width;
-x2 = -x_overlap;
-x3 = a4_width - 2*x_overlap;
-y0 = a4_length-y_overlap/2;
-y1 = -0*a4_length + y_overlap/2;
+x_shift = -71;
+x1 = -a4_width + x_shift;
+x2 = -x_overlap + x_shift;
+x3 = a4_width - 2*x_overlap + x_shift;
+y0 = -y_overlap/2;
+y1 = -a4_length + y_overlap/2;
 
 module crosshairs(){
   translate([-0.05+x_overlap/2, 0])
@@ -39,45 +39,45 @@ module page(){
 
 module page_tr(){
   if(page==1 || all)
-    translate([x1, y0+Yshift_top_plate])
+    translate([x1, y0])
       difference(){
         children(0);
-        translate([30,a4_length-40])
+        translate([30,a4_length-y_overlap])
           text("Top left", size=15);
       }
   if(page==2 || all)
-    translate([x2, y0+Yshift_top_plate])
+    translate([x2, y0])
       difference(){
         children(0);
-        translate([58,a4_length-40])
+        translate([58,a4_length-y_overlap])
           text("Top center", size=15);
       }
   if(page==3 || all)
-    translate([x3, y0+Yshift_top_plate])
+    translate([x3, y0])
       difference(){
         children(0);
-        translate([103,a4_length-40])
+        translate([103,a4_length-y_overlap])
           text("Top right", size=15);
       }
   if(page==4 || all)
-    translate([x1, y1+Yshift_top_plate])
+    translate([x1, y1])
       difference(){
         children(0);
-        translate([30,30])
+        translate([30,20])
           text("Bottom left", size=15);
       }
   if(page==5 || all)
-    translate([x2, y1+Yshift_top_plate])
+    translate([x2, y1])
       difference(){
         children(0);
-        translate([43,30])
+        translate([43,20])
           text("Bottom center", size=15);
       }
   if(page==6 || all)
-    translate([x3, y1+Yshift_top_plate])
+    translate([x3, y1])
       difference(){
         children(0);
-        translate([73,30])
+        translate([73,20])
           text("Bottom right", size=15);
       }
 }

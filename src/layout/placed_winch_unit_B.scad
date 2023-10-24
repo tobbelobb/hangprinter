@@ -13,8 +13,8 @@ module placed_winch_unit_B(){
         line_from_to([0, -Spool_height, hz],
                      [move_BC_deflectors+6, -Spool_height, hz], twod=twod);
         if (!twod)
-          line_from_to([move_BC_deflectors+2, -Spool_height, hz],
-                       [-210, -Spool_height-78+20*k, 100+hz], twod=false);
+          line_from_to([move_BC_deflectors - 2, -Spool_height, hz],
+                       [move_BC_deflectors - 2 - 5*(1 - 2*k), -Spool_height-78+20*k, 100+hz], twod=false);
       }
   }
 }

@@ -4,8 +4,8 @@ stls = true;
 //stls = false;
 
 // Viewing 2d
-twod = true;
-//twod = false;
+//twod = true;
+twod = false;
 
 //mounted_in_ceiling = true;
 mounted_in_ceiling = false;
@@ -44,21 +44,22 @@ length_of_toolhead = 77;
 //length_of_toolhead = anchors[I][Z]-300;
 
 
-aspool_y = 42;
-bcspool_y = -23;
-dspool_y = 19;
-aspool_lineroller_y = -110;
-move_BC_deflectors = -113;
+aspool_y = 42 + 6;
+bcspool_y = -47 + 6.8;
+dspool_y = aspool_y;
+ispool_y = -47 - 5;
+move_BC_deflectors = -124;
+move_AD_deflectors = -124;
+
+ad_x_pos = 100;
+bc_x_pos = 210;
 
 lxm1 = -spd/2 - 1 - Spool_height;
 lx0 = -spd/2;
-lx2 = spd/2 + 1 + 32;
-lx3 = -spd/2 + 106;
 ly2 = 126;
 
 hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
 
-bc_x_pos = 200;
 
 Move_i_bearings_inwards = -2;
 cx = 500+Move_i_bearings_inwards/2;
