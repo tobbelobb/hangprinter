@@ -13,9 +13,12 @@ module placed_winch_unit_D(){
       for(k=[0, 1]) mirror([0,k,0]){
         line_from_to([0, -Spool_height, hz],
                      [move_AD_deflectors, -Spool_height, hz], twod=twod);
-        if (!twod)
+        if (!twod && k==0)
           line_from_to([move_AD_deflectors - 7, -Spool_height, hz],
-                       [-210, -Spool_height-9, 100+hz], twod=twod);
+                       [anchors[D][X] - 185, -anchors[D][Y] - 131, anchors[I][Z] - anchors[D][Z] - 16], twod=false);
+        if (!twod && k==1)
+          line_from_to([move_AD_deflectors - 7, -Spool_height, hz],
+                       [anchors[D][X] - 186, -anchors[D][Y] + 169 - Sidelength,  anchors[I][Z] - anchors[D][Z] - 16], twod=false);
       }
   }
 }

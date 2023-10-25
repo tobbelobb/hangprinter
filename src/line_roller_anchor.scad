@@ -39,11 +39,11 @@ module bullet(for_print=false) {
   if (!for_print) {
     translate([0, slide_in_bullet, line_action_lower_z])
       rotate([0,-90,-90])
-        bearing_holder(backwall=true);
+        bearing_holder(backwall=true, for_render=!for_print);
   } else {
     translate([0,23,0])
       rotate([0,0,90])
-      bearing_holder(backwall=true);
+      bearing_holder(backwall=true, for_render=!for_print);
   }
 }
 

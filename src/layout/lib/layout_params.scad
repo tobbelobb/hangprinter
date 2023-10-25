@@ -7,12 +7,12 @@ stls = true;
 //twod = true;
 twod = false;
 
-//mounted_in_ceiling = true;
-mounted_in_ceiling = false;
+mounted_in_ceiling = true;
+//mounted_in_ceiling = false;
 
 // Render the mover
-//mover = true;
-mover = false;
+mover = true;
+//mover = false;
 
 bottom_triangle = false;
 //bottom_triangle = true;
@@ -37,12 +37,11 @@ anchors = [[16.83, -1384.86, -113.17-ram_1000_3dpotter_height_diff],
            [1390.18, 129.19, -157.45-ram_1000_3dpotter_height_diff],
            [-149.88, 1242.61, -151.80-ram_1000_3dpotter_height_diff],
            [-1290.18, 19.19, -157.45-ram_1000_3dpotter_height_diff],
-           [21.85, -0.16, 2343.67-ram_1000_3dpotter_height_diff]];
+           [21.85, -0.16, 2643.67-ram_1000_3dpotter_height_diff]];
 
 between_action_points_z = anchors[I][Z]-Higher_bearing_z -3 - 175;
 length_of_toolhead = 77;
 //length_of_toolhead = anchors[I][Z]-300;
-
 
 aspool_y = 42 + 6;
 bcspool_y = -47 + 6.8;
@@ -59,7 +58,6 @@ lx0 = -spd/2;
 ly2 = 126;
 
 hz = Gap_between_sandwich_and_plate+Sep_disc_radius-Spool_r;
-
 
 Move_i_bearings_inwards = -2;
 cx = 500+Move_i_bearings_inwards/2;

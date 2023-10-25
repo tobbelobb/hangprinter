@@ -111,7 +111,7 @@ module ABCD_anchor(){
   Ext_sidelength = 500;
   translate([0, -Ext_sidelength/2, -8])
     cube([50,Ext_sidelength, 8]);
-  color(Color1,0.6)
+  color(Color1, Color1_alpha)
     for(k=[0,1]) mirror([0,k,0])
       translate([26,Ext_sidelength/2-27.91,0])
         if(false){
@@ -126,8 +126,8 @@ module ABCD_anchor(){
 function rotation(v, ang) = [v[0]*cos(ang)-v[1]*sin(ang), v[0]*sin(ang)+v[1]*cos(ang), v[2]];
 
 module ABCD_anchors(pos = [0,0,0]){
-  a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead+21];
-  a_low_left = a_high_left - [0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_big_r];
+  a_high_left = [-Sidelength/2, -Sidelength/sqrt(8)+5, length_of_toolhead+19];
+  a_low_left = a_high_left - [0,0,Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r];
   a_high_right = a_high_left + [Sidelength,0,0];
   a_low_right = a_low_left + [Sidelength,0,0];
   for(i = [A, B, C, D]){

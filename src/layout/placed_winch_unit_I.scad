@@ -147,6 +147,7 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
       }
 
   // Line 0
+  translate([0,0,0]){
   line_from_to([l0_x , ispool_y, hz],
                [l0_x , l0_y, hz], twod=twod);
   line_from_to([l0_x + r, l0_y + r, hz],
@@ -155,6 +156,7 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
                [l0_x + diff0_x + r, -half_pivot_w + r, hz], twod=twod);
   line_from_to([l0_x + diff0_x, -half_pivot_w, hz],
                [-half_pivot_w, -half_pivot_w, hz], twod=twod);
+  }
   translate([l0_x + r, l0_y, 0])
     line_deflector(45, center=true);
   translate([l0_x + diff0_x, l0_y+offs0_y, 0])
@@ -164,6 +166,7 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
     line_deflector(2*45, center=true);
 
   // Line 1
+  translate([0,0,0]){
   line_from_to([l1_x, ispool_y, hz],
                [l1_x, l1_y, hz], twod=twod);
   line_from_to([l1_x + r, l1_y + r, hz],
@@ -172,6 +175,7 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
                [l1_x + diff1_x + r, -half_pivot_w + r, hz], twod=twod);
   line_from_to([l1_x + diff1_x + 2*r, -half_pivot_w, hz],
                [half_pivot_w, -half_pivot_w, hz], twod=twod);
+  }
   translate([l1_x + r, l1_y, 0])
     line_deflector(45, center=true);
   translate([l1_x + diff1_x, l1_y, 0])
@@ -181,20 +185,24 @@ module placed_I_line_deflectors(angs=[45,-45,45,-45]){
     line_deflector(-2*45, center=true);
 
   // Line 2
+  translate([0,0,0]){
   line_from_to([l2_x , ispool_y, hz],
                [l2_x , half_pivot_w-r, hz], twod=twod);
   line_from_to([l2_x + r, half_pivot_w, hz],
                [half_pivot_w, half_pivot_w, hz], twod=twod);
+  }
   translate([l2_x + r,
              half_pivot_w - r,
              0])
     line_deflector(-90, center=true);
 
   // Line 3
+  translate([0,0,0]){
   line_from_to([l3_x , ispool_y, hz],
                [l3_x , half_pivot_w-r, hz], twod=twod);
   line_from_to([l3_x - r, half_pivot_w, hz],
                [-half_pivot_w, half_pivot_w, hz], twod=twod);
+  }
   translate([l3_x - r,
              half_pivot_w - r,
              0])
