@@ -226,10 +226,10 @@ module placed_winch_unit_I(){
       if(!twod) {
         // Smooth rod
         color("grey"){
-          translate([0,-4.5 + Smooth_rod_length_I, Sep_disc_radius + Gap_between_sandwich_and_plate])
-            rotate([90,0,0])
-              cylinder(d=8, h=Smooth_rod_length_I, center=true);
-          translate([0,-4.5 - Smooth_rod_length_I, Sep_disc_radius + Gap_between_sandwich_and_plate])
+          //translate([0,-4.5 + Smooth_rod_length_I, Sep_disc_radius + Gap_between_sandwich_and_plate])
+          //  rotate([90,0,0])
+          //    cylinder(d=8, h=Smooth_rod_length_I, center=true);
+          translate([0,-4.5 - 0*Smooth_rod_length_I, Sep_disc_radius + Gap_between_sandwich_and_plate])
             rotate([90,0,0])
               cylinder(d=8, h=Smooth_rod_length_I, center=true);
         }

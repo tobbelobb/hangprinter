@@ -39,6 +39,7 @@ module bullet(for_print=false) {
   if (!for_print) {
     translate([0, slide_in_bullet, line_action_lower_z])
       rotate([0,-90,-90])
+        rotate([0,0,3])
         bearing_holder(backwall=true, for_render=!for_print);
   } else {
     translate([0,23,0])
@@ -208,7 +209,6 @@ module newer_line_roller_anchor(){
       cutoff_cube();
     vertical_screws();
 
-
     slit_core();
     translate([0, slide_in_bullet+move_back, line_action_lower_z])
       rotate([0,-90,-90])
@@ -219,14 +219,14 @@ module newer_line_roller_anchor(){
           inner_round_corner(r=11, h=20, $fn=4*9);
   }
 
-  bullet(for_print=true);
+  bullet(for_print=false);
 
 
-  translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_big_ugroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])
+  //translate([-22, 0,-Corner_clamp_bearings_center_to_center-2*b623_big_ugroove_small_r - 2*Eyelet_extra_dist - line_action_lower_z])
     top();
 
-  translate([-22, -40.5, Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + line_action_lower_z])
-    rotate([180,0,0])
+  //translate([-22, -40.5, Corner_clamp_bearings_center_to_center + 2*b623_big_ugroove_small_r + 2*Eyelet_extra_dist + line_action_lower_z])
+    //rotate([180,0,0])
       top2();
 
   //slit_w = 0.79;

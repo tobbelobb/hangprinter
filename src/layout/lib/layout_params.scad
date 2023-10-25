@@ -20,6 +20,9 @@ bottom_triangle = false;
 ram_1000_3dpotter = true;
 //ram_1000_3dpotter = false;
 
+guy_wires = false;
+//guy_wires = true;
+
 A = 0;
 B = 1;
 C = 2;
@@ -33,10 +36,11 @@ beam_length = 400;
 
 ram_1000_3dpotter_height_diff = 350;
 
-anchors = [[16.83, -1384.86, -113.17-ram_1000_3dpotter_height_diff],
-           [1390.18, 129.19, -157.45-ram_1000_3dpotter_height_diff],
-           [-149.88, 1242.61, -151.80-ram_1000_3dpotter_height_diff],
-           [-1290.18, 19.19, -157.45-ram_1000_3dpotter_height_diff],
+z = -492;
+anchors = [[16.83, -1384.86, z],
+           [1390.18, 129.19, z],
+           [-149.88, 1242.61, z],
+           [-1290.18, 19.19, z],
            [21.85, -0.16, 2643.67-ram_1000_3dpotter_height_diff]];
 
 between_action_points_z = anchors[I][Z]-Higher_bearing_z -3 - 175;

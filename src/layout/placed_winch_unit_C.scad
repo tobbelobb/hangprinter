@@ -11,12 +11,12 @@ module placed_winch_unit_C(){
       for(k=[0, 1]) translate([0,k*2*Spool_height, 0]){
         line_from_to([0, -Spool_height, hz],
                      [move_BC_deflectors+6, -Spool_height, hz], twod=twod);
-        if (!twod && k==0)
+        if (!twod && k==0 && guy_wires)
           line_from_to([move_BC_deflectors - 2, -Spool_height, hz],
-                       [-anchors[C][X] + 93, anchors[C][Y] + 43, anchors[I][Z] - anchors[C][Z] - 9], twod=false);
-        if (!twod && k==1)
+                       [-anchors[C][X] + 93, anchors[C][Y] + 43 + 64, anchors[I][Z] - anchors[C][Z] - 9], twod=false);
+        if (!twod && k==1 && guy_wires)
           line_from_to([move_BC_deflectors - 2, -Spool_height, hz],
-                       [-anchors[C][X] + 93 - Sidelength, anchors[C][Y] + 28,  anchors[I][Z] - anchors[C][Z] - 9], twod=false);
+                       [-anchors[C][X] + 93 - Sidelength, anchors[C][Y] + 28 + 64,  anchors[I][Z] - anchors[C][Z] - 9], twod=false);
       }
   }
 }

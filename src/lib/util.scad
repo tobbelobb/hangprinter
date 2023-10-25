@@ -1,5 +1,5 @@
 include <parameters.scad>
-
+use <sweep.scad>
 
 //spectri_2d(10);
 module spectri_2d(hyp){
@@ -655,6 +655,53 @@ module line_from_to(v0, v1, r = Cable_r, twod = false){
       }
     }
   }
+}
+
+function cosh(x) = (1 +  exp(-2 * x)) / (2 * exp( -x));
+
+module spring_from_to(v0, v1, r = Cable_r, twist_factor = 1) {
+  v2 = v1 - v0;
+  v2l = sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
+  v2n = v2/v2l;
+  theta = acos(v2n[2]);
+  phi   = acos(v2n[1]/sqrt(v2n[1]*v2n[1] + v2n[0]*v2n[0]));
+  a = 150; // out7 had a = 30 and v2l*0.06*twist_factor
+  catenary_len = v2l*0.13*twist_factor;
+  //echo(catenary_len/a);
+
+  function f(t) = [
+      v2[0]*t,
+      v2[1]*t,
+      v2[2]*t + a*cosh(catenary_len*(t-0.5)/a) - a*cosh(catenary_len*0.5/a)
+  ];
+  function circle(ang) = [cos(ang), sin(ang)];
+  step = 0.005;
+  function shape() = [
+    for (t=[0:5:359]) Cable_r*circle(t)
+      ];
+  path = [for (t=[0:step:1]) f(t)];
+  //echo(path);
+  path_transforms = construct_transform_path(path);
+
+
+  color(Color_line)
+    translate(v0)
+      if(v2n[0] < 0){
+        sweep(shape(), path_transforms);
+          //rotate([-theta,0,phi])
+          //translate([-offcenter, 0])
+          //linear_extrude(height=v2l, twist=tw)
+          //  translate([r+offcenter, 0])
+          //    circle(r=r);
+          //cylinder(r=r, h=v2l);
+      } else {
+        sweep(shape(), path_transforms);
+          //rotate([-theta,0,-phi])
+          //translate([-offcenter, 0])
+          //linear_extrude(height=v2l, twist=tw)
+          //  translate([r+offcenter, 0])
+          //    circle(r=r);
+      }
 }
 
 module b623_big_ugroove(){

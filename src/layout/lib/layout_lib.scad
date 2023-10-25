@@ -12,7 +12,8 @@ use <../../motor_bracket_I.scad>
 //tilted_line_deflector_for_layout();
 module tilted_line_deflector_for_layout(ang){
   translate([-10, 0,0])
-    if(stls && !twod){
+    //if(stls && !twod){
+    if(false && !twod){
       rotate([0,0,-90])
         import("../../stl/new_tilted_line_deflector.stl");
     } else {
@@ -156,7 +157,6 @@ module render_motor_and_bracket(A=false, B=false, C=false, D=false){
       gear();
   else
     gear();
-
 }
 
 
@@ -206,12 +206,12 @@ module sandwich_and_motor_ABCD(A=false, B=false, C=false, D=false){
 
   if(!twod) {
     // Smooth rod
+    //color("grey")
+    //  translate([0,-Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
+    //    rotate([90,0,0])
+    //      cylinder(d=8, h=Smooth_rod_length_ABCD, center=true);
     color("grey")
-      translate([0,-Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
-        rotate([90,0,0])
-          cylinder(d=8, h=Smooth_rod_length_ABCD, center=true);
-    color("grey")
-      translate([0,Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
+      translate([0,0*Smooth_rod_length_ABCD,Sep_disc_radius + Gap_between_sandwich_and_plate])
         rotate([90,0,0])
           cylinder(d=8, h=Smooth_rod_length_ABCD, center=true);
     // Belt

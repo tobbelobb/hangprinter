@@ -108,7 +108,7 @@ Higher_bearing_z = Lower_bearing_z + Corner_clamp_bearings_center_to_center;
 
 //// Cable Clamp parameters /////
 Bit_width = 12;
-Cable_r=1.5;
+Cable_r=3.5;
 
 // Belt drive parameters
 GT2_belt_width = 6.5;
@@ -191,7 +191,7 @@ Wasp_xl30_funnel_h = 17.7;
 Color0 = "sandybrown";
 Color0_alpha = 0.55;
 Color1 = [0.81,0.73,0.05];
-Color1_alpha = 0.9;
+Color1_alpha = 1.0;
 Color2 = [0.99,0.99,0.99];
 Color2_alpha = 0.8;
 Spool_cover_alpha = 0.5;
