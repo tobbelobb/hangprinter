@@ -111,7 +111,7 @@ M950 H1 C"out1" T1                           ; create nozzle heater output on ou
 M307 H1 B0 S1.00                             ; disable bang-bang mode for nozzle heater and set PWM limit
 M307 H1 A1271.9 C432.5 D8.2 V24              ; Set heater parameters (for Super Volcano 80W. You probably want to tune this yourself with M303.)
 M143 H1 S280                                 ; set temp limit for nozzle heater to 280C
-M570 S180                                    ; Hot end may be a little slow to heat up so allow it 180 seconds
+M570 H1 S180                                 ; Hot end may be a little slow to heat up so allow it 180 seconds
 
 ; Fans
 M950 F1 C"out7"
