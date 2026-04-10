@@ -1,14 +1,14 @@
-==== M569.4: Set Motor Driver Torque Mode ====
+==== M569.4: Set Motor Driver Force Mode ====
 {{Firmware Support | fived={{no}} | teacup={{no}} | sprinter={{no}} | marlin={{no}} | prusa={{no}} | repetier={{no}} | smoothie={{no}} | reprapfirmware={{yes}}<sup>1</sup> | bfb={{no}} | grbl={{no}} | makerbot={{no}} | machinekit={{no}} | redeem={{no}} | mk4duo={{no}} | yaskawa={{no}} }}
 
-Tell one or more motor drivers to apply a specified torque regardless of position.
+Tell one or more motor drivers to apply a specified force regardless of position.
 
 ;Parameters
 :<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Can also be a colon separated list of driver numbers.
-:<code>Tn</code> Where n is the mode/torque to apply in units of Nm.
+:<code>Tn</code> Where n is the mode/force to apply in units of Newtons.
 
 If <code>P</code> or <code>T</code> parameter is missing, then no action is taken.
-The driver is put back into position mode by requesting a torque smaller than 0.0001 Nm.
+The driver is put back into position mode by requesting a force smaller than 0.0001 N.
 
 ;Examples
  M569.4
@@ -21,8 +21,6 @@ The driver is put back into position mode by requesting a torque smaller than 0.
 <tt>pos_mode, pos_mode,</tt>
 
 ;Notes
-Hangprinter's "torque mode" is implemented as a ReprapFirmware macro that depends on M569.4.
+Hangprinter's "force mode" is implemented as a ReprapFirmware macro that depends on M569.4.
 
-Practical torques for tightening lines in daily use tend to lie between 0.1 Nm and 0.001 Nm for a Hangprinter.
-
-<sup>1</sup> Planned for RepRapFirmware 3.4.
+Practical forces for tightening lines in daily use tend to lie between 15 N and 25 N for a Hangprinter.
