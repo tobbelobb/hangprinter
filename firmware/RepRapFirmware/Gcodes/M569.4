@@ -5,7 +5,9 @@ Tell one or more motor drivers to apply a specified force regardless of position
 
 ;Parameters
 :<code>Pn</code> or <code>Pn.n</code> Motor driver number, or board address and driver number. Can also be a colon separated list of driver numbers.
-:<code>Tn</code> Where n is the mode/force to apply in units of Newtons.
+:<code>Tn</code> Where n is the mode/force to apply in units of Newtons. Can be a colon separated list.
+::If one <code>T</code> value is provided with multiple <code>P</code> entries, that force is applied to all specified drivers.
+::If multiple <code>T</code> values are provided, there must be one value per <code>P</code> entry.
 
 If <code>P</code> or <code>T</code> parameter is missing, then no action is taken.
 The driver is put back into position mode by requesting a force smaller than 0.0001 N.
