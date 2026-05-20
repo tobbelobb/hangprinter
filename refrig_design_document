@@ -1,0 +1,180 @@
+Goal and Purpose (why do we make refrig?)
+-----------------------------------------
+
+RefRig is step 2 in the Hangprinter bootstrapping hierarchy:
+
+ 0. Simulator
+ 1. Standardized winch module
+ 2. Verified reference build (HP RefRig)
+ 3. Motion system
+ 4. Tool
+
+Its main purpose is to be a milestone.
+Everybody's first physical build.
+The canonical reference Hangprinter, the Hangprinter v5 aka HP5.
+
+Since it's a scaled-down, reproducible, known-good step towards any full-size Hangprinter,
+it's also a support and documentation category.
+
+Up until and including the RefRig step we can have:
+ * Versioned BOM
+ * Known-good config
+ * Build instructions that include everything
+ * Acceptance tests
+ * Ready-built digital twin
+ * A hardware platform where autocal or other special software featere are definitely expected to work
+
+Having it is supposed to make our community's physical builds
+ - more standardized
+ - testable
+ - step-wise
+ - documented
+ - manageable
+
+RefRig represents all the boring things users should do before they start
+ - scaling up and/or
+ - chasing their own use case and/or
+ - improvement ideas.
+
+
+Stakeholders & User Stories (who do we design for and what do they want?)
+-------------------------------------------------------------------------
+
+ - Me (Torbjørn) as a developer want
+   * Somewhere to mount and test RefWinches, who are designed in a separate project, but almost always used together with RefRig.
+   * A malleable, configurable, small and cheap frame for a cable driven robot, that captures the physical phenomena we see in full scale Hangprinters and other CDPRs.
+   * A minimal but realistic end-to-end physical test rig for debug, diagnostics, experiments, etc.
+   * Support for a wide range of firmwares, motor types, electronics boards etc
+   * Support a wide range of sensors that are easily attached, cable routed, removed.
+
+ - Me (Torbjørn) as a maintainer want
+   * Clear bounds for what's supported and what's not, and
+   * Easy to understand questions with easily interpretable data attached.
+
+ - Newcomers to Cable Driven Robotics want
+   * Something cheap, structured, and well thought out.
+   * An experience with emphasis on basic principles.
+   * A path from "I don't understand" to "I can build, test, calibrate, and reason about this machine."
+   * Early wins and clear failure modes.
+   * Not to have to buy private consulting hours just to get something moving.
+
+ - Builders / testers / field techs want
+   * Repeatable assembly steps.
+   * Clear pass/fail tests.
+   * Known-good configs and diagnostics.
+   * Problem categorization (mechanical, electrical, firmware, calibration, documentation, etc).
+
+ - Doc writers / teachers / workshop organizers want
+   * A stable reference object to teach from.
+   * Exercises, tests, diagrams, and failure examples that do not change every week.
+   * A machine that can be used in makerspaces and schools as demonstration.
+
+ - Kit makers / suppliers
+   * Want a versioned BOM and standard interfaces.
+   * Want to know which parts matter and which parts can vary.
+   * Want a way to say "this kit/build/module passes the RefRig tests", including for individual parts (within tolerance and so on).
+
+ - Salespeople/funding hunters want
+   * Something that looks clean, is easy to travel with, easy to understand, easy to show quickly.
+   * Physical proof that Hangprinter is not just an idea.
+   * A machine that supports the basic pitch: open, cheap, reliable precision motion over large volumes.
+
+
+Requirements (what exactly must the refrig be able to do?)
+----------------------------------------------------------
+
+ - It must be a real working 3D printer.
+ - Run ReprapFirmware and Klipper, including all features, such as
+   * Extruder
+   * Bed probe
+   * Accelerometer/input shaping
+ - Support all the physical configurations that firmware supports:
+   * HP3 (three low anchors, one central high anchor, no gearing)
+   * HP4 (same anchor placements, lots of gearing)
+   * Skycam (four high anchors)
+   * Cubecorners (eight anchors)
+   * Slideprinter (three or four low anchors, no high anchors).
+ - Run hp-sim5's autocal succesfully
+ - Have known anchor positions so autocal results can be quality controlled.
+ - Compatibility with both buildup and no-buildup versions of refwinch, (including the same amount of line capacity? People will need longer lines for full builds and maybe don't want to cut their expensive lines?)
+ - Fit on a desktop
+ - Rigid and robust with no experimental solutions, ie as standard a frame as possible.
+ - Feel "minimal", "natural", cheap and easily sourced so as to not tempt users to add their own changes.
+ - Be rigid enough to not deform in event of being knocked over, or if all motors pull with all their power for a few seconds.
+
+
+Functional requirements/solutions (how do we want it to achieve that?)
+----------------------------------------------------------------------
+
+ - Square aluminum beams such as OpenBeams. Preferrably a ready-made skeleton of another 3d printer such as RatRig, Voron, Bambulabs or similar. This lets us piggy-back on accessories such as
+   * spool hoders,
+   * LED lights,
+   * enclosures,
+   * electronics mounting racks
+   * etc.
+
+ - Standardized winch module
+   * Define mechanical mounting.
+   * Define line/spool interface.
+   * Define electrical interface.
+   * Define firmware/control interface.
+   * Define standalone winch tests before full-machine tests.
+   * Make the winch module reusable in larger HP5-compatible machines.
+
+ - Documentation as part of the machine
+   * RefRig is not finished unless its instructions, tests, and troubleshooting docs are finished.
+   * Docs should explain not only how to build it, but how to know which subsystem failed.
+   * Support questions should be routed through the test ladder where possible.
+
+ - Stepwise build and test ladder
+   * Test electronics alone.
+   * Test one winch alone.
+   * Test all winches without full machine load.
+   * Test geometry/anchor measurements.
+   * Test basic motion.
+   * Test calibration.
+   * Test repeatability.
+   * Test edge cases and failure modes.
+
+ - Simulator-to-physical workflow
+   * Define the RefRig in hp-sim5.
+   * Run simulated conformance tests.
+   * Run the same or equivalent firmware/motion commands on physical RefRig.
+   * Compare logs and measured behavior.
+   * Use differences to improve simulator, firmware, calibration, and hardware.
+   * ROS2 is a stretch goal.
+   * Data collection could be rosbags and we could piggyback on the ROS2 ecosystem, but that's not a requirement.
+   * sim-real connection/orchestration could also be handled by ROS2.
+
+ - RefRig does not specify what electronics of firmware to use, but data collection (log interfaces and structure) are defined as part of the RefRig.
+   * Make it easy to collect calibration data.
+   * Make it easy to run active calibration experiments.
+   * Store diagnostic logs in a predictable format.
+   * Prefer tests that produce numbers, plots, logs, or pass/fail results.
+   * ROS2 is a stretch goal here as well. The whole autocal procedure might go via some ROS2 interface?
+   * RefRig should suggest a standard camera and standard camera placements for video debugging, so we have the opportunity to easily create videos where we can know what we're looking at, from what angle, in all support requests.
+
+ - Stage and Quest split
+   * The RefRig docs define the reliable stage.
+   * Extra experiments are quests.
+   * Quests are encouraged, but they should not blur the reference promise.
+
+
+Validation (how to know if we got what we wanted?)
+--------------------------------------------------
+
+ - It works. Prints Benchys and stuff.
+ - It works measurably similar to its simulated twin.
+ - It's not avoided or postponed by builders or learners.
+ - Builders build RefRig faster and cheaper than they would have built a full machine.
+ - Builders get knowledge, learning, understanding that affects their full build.
+ - Its pass/fail tests are used and actually catches hw/assembly bugs.
+ - Builders go ahead with the full build afterwards (if that was their plan/goal).
+ - It's fun.
+ - It's not annoying.
+
+ - It gets new people in the door.
+ - Ultimately: Does RefRig enable builders that would otherwise not build? ie, quantitatively:
+ - Do we see an increase in the number of Hangprinter builds (counting just full builds)? and qualitatively:
+ - Are the full builds we see better in terms of print quality, and uptime? and even more qualitatively:
+ - Are the builders happier than before? Are they prouder? Do we see them post more on Discord and other places?
