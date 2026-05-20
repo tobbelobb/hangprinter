@@ -1,7 +1,9 @@
 Goal and Purpose (why do we make refrig?)
 -----------------------------------------
 
-RefRig is step 2 in the Hangprinter bootstrapping hierarchy:
+RefRig is a Reference Rig for the Hangprinter Project.
+
+It's step 2 in the Hangprinter Bootstrapping Hierarchy:
 
  0. Simulator
  1. Standardized winch module
@@ -9,12 +11,12 @@ RefRig is step 2 in the Hangprinter bootstrapping hierarchy:
  3. Motion system
  4. Tool
 
-Its main purpose is to be a milestone.
-Everybody's first physical build.
-The canonical reference Hangprinter, the Hangprinter v5 aka HP5.
+It's everybody's first physical build and the place where new features get added first.
+It's therefore also the most documented build and the place where all features are expected to work.
 
-Since it's a scaled-down, reproducible, known-good step towards any full-size Hangprinter,
-it's also a support and documentation category.
+It's not a full-size Hangprinter, CDPR, or the best 3D printer in general.
+But for the Hangprinter Project it's both the minimal viable machine and every larger machine's pre-flight test bed.
+That makes it our biggest support, verification, and documentation category.
 
 Up until and including the RefRig step we can have:
  * Versioned BOM
@@ -22,7 +24,7 @@ Up until and including the RefRig step we can have:
  * Build instructions that include everything
  * Acceptance tests
  * Ready-built digital twin
- * A hardware platform where autocal or other special software featere are definitely expected to work
+ * A hardware platform where autocal or other special software features are expected to work first
 
 Having it is supposed to make our community's physical builds
  - more standardized
@@ -31,10 +33,7 @@ Having it is supposed to make our community's physical builds
  - documented
  - manageable
 
-RefRig represents all the boring things users should do before they start
- - scaling up and/or
- - chasing their own use case and/or
- - improvement ideas.
+RefRig represents all the things users should do before they start scaling, improving, etc.
 
 
 Stakeholders & User Stories (who do we design for and what do they want?)
@@ -83,24 +82,14 @@ Stakeholders & User Stories (who do we design for and what do they want?)
 Requirements (what exactly must the refrig be able to do?)
 ----------------------------------------------------------
 
+ - Fit on a desktop.
  - It must be a real working 3D printer.
- - Run ReprapFirmware and Klipper, including all features, such as
-   * Extruder
-   * Bed probe
-   * Accelerometer/input shaping
- - Support all the physical configurations that firmware supports:
-   * HP3 (three low anchors, one central high anchor, no gearing)
-   * HP4 (same anchor placements, lots of gearing)
-   * Skycam (four high anchors)
-   * Cubecorners (eight anchors)
-   * Slideprinter (three or four low anchors, no high anchors).
- - Run hp-sim5's autocal succesfully
  - Have known anchor positions so autocal results can be quality controlled.
- - Compatibility with both buildup and no-buildup versions of refwinch, (including the same amount of line capacity? People will need longer lines for full builds and maybe don't want to cut their expensive lines?)
- - Fit on a desktop
+ - Compatibility with both buildup and no-buildup versions of RefWinch
  - Rigid and robust with no experimental solutions, ie as standard a frame as possible.
  - Feel "minimal", "natural", cheap and easily sourced so as to not tempt users to add their own changes.
  - Be rigid enough to not deform in event of being knocked over, or if all motors pull with all their power for a few seconds.
+ - Give us debugging data enough for verification and coparison with hp-sim5 digital twin.
 
 
 Functional requirements/solutions (how do we want it to achieve that?)
@@ -113,7 +102,7 @@ Functional requirements/solutions (how do we want it to achieve that?)
    * electronics mounting racks
    * etc.
 
- - Standardized winch module
+ - Use RefWinch, the standardized winch module
    * Define mechanical mounting.
    * Define line/spool interface.
    * Define electrical interface.
@@ -136,6 +125,22 @@ Functional requirements/solutions (how do we want it to achieve that?)
    * Test repeatability.
    * Test edge cases and failure modes.
 
+ - RefRig does not specify what electronics of firmware to use, but data collection (log interfaces and structure) are defined as part of the RefRig.
+
+
+Expected Developments but Not Part of RefRig v1
+-----------------------------------------------
+ - Run both ReprapFirmware and Klipper, including all features, such as
+   * Extruder
+   * Bed probe
+   * Accelerometer/input shaping
+ - Support all the physical configurations that firmware supports:
+   * HP3 (three low anchors, one central high anchor, no gearing)
+   * HP4 (same anchor placements, lots of gearing)
+   * Skycam (four high anchors)
+   * Cubecorners (eight anchors)
+   * Slideprinter (three or four low anchors, no high anchors).
+ - Run hp-sim5's autocal succesfully
  - Simulator-to-physical workflow
    * Define the RefRig in hp-sim5.
    * Run simulated conformance tests.
@@ -145,8 +150,7 @@ Functional requirements/solutions (how do we want it to achieve that?)
    * ROS2 is a stretch goal.
    * Data collection could be rosbags and we could piggyback on the ROS2 ecosystem, but that's not a requirement.
    * sim-real connection/orchestration could also be handled by ROS2.
-
- - RefRig does not specify what electronics of firmware to use, but data collection (log interfaces and structure) are defined as part of the RefRig.
+  - Logging and diagnostics
    * Make it easy to collect calibration data.
    * Make it easy to run active calibration experiments.
    * Store diagnostic logs in a predictable format.
@@ -154,16 +158,16 @@ Functional requirements/solutions (how do we want it to achieve that?)
    * ROS2 is a stretch goal here as well. The whole autocal procedure might go via some ROS2 interface?
    * RefRig should suggest a standard camera and standard camera placements for video debugging, so we have the opportunity to easily create videos where we can know what we're looking at, from what angle, in all support requests.
 
- - Stage and Quest split
-   * The RefRig docs define the reliable stage.
-   * Extra experiments are quests.
-   * Quests are encouraged, but they should not blur the reference promise.
 
 
 Validation (how to know if we got what we wanted?)
 --------------------------------------------------
 
+Primary:
  - It works. Prints Benchys and stuff.
+ - It is considered the reference.
+
+Secondary:
  - It works measurably similar to its simulated twin.
  - It's not avoided or postponed by builders or learners.
  - Builders build RefRig faster and cheaper than they would have built a full machine.
@@ -173,8 +177,9 @@ Validation (how to know if we got what we wanted?)
  - It's fun.
  - It's not annoying.
 
+Harder to know but relevant if we could:
  - It gets new people in the door.
- - Ultimately: Does RefRig enable builders that would otherwise not build? ie, quantitatively:
+ - Does RefRig enable builders that would otherwise not build? ie, quantitatively:
  - Do we see an increase in the number of Hangprinter builds (counting just full builds)? and qualitatively:
  - Are the full builds we see better in terms of print quality, and uptime? and even more qualitatively:
  - Are the builders happier than before? Are they prouder? Do we see them post more on Discord and other places?
