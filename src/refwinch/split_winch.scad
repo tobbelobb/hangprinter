@@ -31,6 +31,8 @@ module spool(){
 // rotate([0,90,0])
 //center_axis();
 module center_axis() {
+  thread_d_tolerance = 1;
+
   difference() {
     union(){
       cylinder(r=10, h=130, center=false);
@@ -38,7 +40,7 @@ module center_axis() {
       cylinder(r1=10, r2=30-1.5, h=hdiff, center=false);
       up(130/(3*2) + hdiff)
       trapezoidal_threaded_rod(
-          d = 60,             // outer diameter
+          d = 60 - thread_d_tolerance,     // outer diameter
           l = 130/3,            // axial length of threaded part
           pitch = 2,          // distance between turns
           thread_depth = 1.5, // radial tooth height/depth
