@@ -1,5 +1,6 @@
 include <../lib/BOSL2/std.scad>
 include <../lib/BOSL2/screws.scad>
+include <../lib/parameters.scad>
 
 leg_dist = 90;
 rod_th = 40;
@@ -55,6 +56,17 @@ module spool(){
 
 !motor_drive_capstan_0();
 module motor_drive_capstan_0(){
-  //rotate_extrude()
-    polygon([[10,3], [1,1], [0,1], [0,0]]);
+  r = 12;
+  h = 28;
+  track_depth = 2;
+  track_height = 3;
+  shaft_dia = Nema17_shaft_radius*2;
+  rotate_extrude()
+    difference(){
+      right(shaft_dia/2) square([r-shaft_dia/2, h]);
+      for(k = [1:7]) {
+        l = track_height*k;
+        polygon([[r,l], [r-track_depth, l+track_height/2], [r, l+track_height], [r+1,l+track_height], [r+1,l], [r,l]]);
+      }
+    }
 }
