@@ -4,7 +4,7 @@ include <../lib/parameters.scad>
 
 include <../lib/util.scad>;
 
-leg_dist = 30;
+leg_dist = Nema17_cube_height + 10;
 rod_th = 40;
 THREAD_RADIAL_GAP = 0.50;
 male_d   = rod_th;
@@ -25,16 +25,46 @@ module legs(){
   up(5/2)
     cube([leg_dist + 2*leg_th, leg_depth, leg_th], center=true);
   difference() {
-    for(k=[0,1]) mirror([k,0,0])
+    union() {
+      mirror([1,0,0])
+        left(leg_dist/2)
+          rotate([0,-90,0])
+            linear_extrude(height = leg_th)
+              hull() {
+                right(leg_depth/2 + leg_th)
+                  circle(d=leg_depth);
+                fwd(leg_depth/2)
+                  square([leg_th, leg_depth]);
+              }
       left(leg_dist/2)
         rotate([0,-90,0])
           linear_extrude(height = leg_th)
-            hull() {
-              right(leg_depth/2 + leg_th)
-                circle(d=leg_depth);
-              fwd(leg_depth/2)
-                square([leg_th, leg_depth]);
+            difference(){
+              hull() {
+                right(leg_depth/2 + leg_th)
+                  circle(d=leg_depth);
+                fwd(leg_depth/2)
+                  square([leg_th, leg_depth]);
+                // Something to mount motor on
+                back(63)
+                  square([leg_depth+leg_th, leg_th]);
+              }
+              back(Nema17_cube_width + separation/2)
+                right(leg_depth/2 + leg_th) {
+                  Nema17_screw_translate() circle(d=3.3);
+                    circle(max(motor_drive_capstan_r+1,Nema17_ring_diameter/2+2));
+                }
             }
+      up(leg_depth/2+leg_th+motor_drive_capstan_r+6)
+      back(Nema17_cube_width + separation/2 - (Eyelet_diameter + 2)/2 - (motor_drive_capstan_r - motor_drive_capstan_track_depth))
+        left(Eyelet_diameter+2 + leg_dist/2 + leg_th)
+        difference() {
+        cube([Eyelet_diameter+3, Eyelet_diameter + 2, 4]);
+        translate([Eyelet_diameter/2 + 1, Eyelet_diameter/2 + 1, -1])
+          cylinder(d=Eyelet_diameter, h=6);
+        }
+
+    }
     up(leg_depth/2 + leg_th)
     rotate([0,90,0])
     trapezoidal_threaded_rod(
@@ -88,16 +118,16 @@ module motor_drive_capstan_0(){
 separation = 2;
 d = motor_drive_capstan_r + 3;
 offset = asin((motor_drive_capstan_r-motor_drive_capstan_track_depth) / d);
-translate([Nema17_cube_height + leg_dist/2 + leg_th,Nema17_cube_width/2 + separation/2,0])
+translate([Nema17_cube_height - leg_dist/2, Nema17_cube_width/2 + separation/2,0])
   rotate([0,-90,0]) {
     Nema17();
-    up(Nema17_cube_height + Nema17_ring_height + 0.2)
+    up(Nema17_cube_height + Nema17_ring_height + 3.2)
       motor_drive_capstan_0();
-    rotate([0,0,90+90-offset])
-      up(Nema17_cube_height + Nema17_ring_height + 0.2 + motor_drive_capstan_track_height*1)
-        left(d)
-          rotate([0,-90,offset])
-            eyelet();
+    //rotate([0,0,90+90-offset])
+    //  up(Nema17_cube_height + Nema17_ring_height + 3.2 + motor_drive_capstan_track_height*1)
+    //    left(d)
+    //      rotate([0,-90,offset])
+    //        eyelet();
   }
 
 fwd(male_d/2 + separation/2) {
