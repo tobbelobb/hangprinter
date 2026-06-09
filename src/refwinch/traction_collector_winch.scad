@@ -19,7 +19,7 @@ threaded_rod_length = 120;
 // ((threaded_rod_length - (motor_drive_capstan_tracks+1)*motor_drive_capstan_track_height)/motor_drive_capstan_track_height) * pi * rod_th
 
 motor_drive_capstan_r = 12;
-motor_drive_capstan_track_depth = 2;
+motor_drive_capstan_track_depth = 1.75;
 motor_drive_capstan_track_height = 3;
 motor_drive_capstan_tracks = 7;
 
@@ -156,7 +156,7 @@ module spool(l=threaded_rod_length){
     }
 }
 
-//motor_drive_capstan_0();
+motor_drive_capstan_0();
 module motor_drive_capstan_0(){
   r = motor_drive_capstan_r;
   h = 28;
@@ -164,17 +164,21 @@ module motor_drive_capstan_0(){
   track_height = motor_drive_capstan_track_height;
   shaft_dia_tol = 0.5;
   shaft_dia = Nema17_shaft_radius*2 + shaft_dia_tol;
-  union(){
-    rotate_extrude()
-      difference(){
-        right(shaft_dia/2) square([r-shaft_dia/2, h]);
-        for(k = [1:motor_drive_capstan_tracks]) {
-          l = track_height*k;
-          polygon([[r,l], [r-track_depth, l+track_height/2], [r, l+track_height], [r+1,l+track_height], [r+1,l], [r,l]]);
+  difference() {
+    union(){
+      rotate_extrude()
+        difference(){
+          right(shaft_dia/2) square([r-shaft_dia/2, h]);
+          for(k = [1:motor_drive_capstan_tracks]) {
+            l = track_height*k;
+            polygon([[r,l], [r-track_depth, l+track_height/2], [r, l+track_height], [r+1,l+track_height], [r+1,l], [r,l]]);
+          }
         }
-      }
-    translate([shaft_dia/2 - 0.6, -shaft_dia/2, 0])
-      cube([2, shaft_dia, h]);
+      translate([shaft_dia/2 - 0.6, -shaft_dia/2, 0])
+        cube([2, shaft_dia, h]);
+    }
+    translate([0,0,-1])
+      cylinder(d1=shaft_dia + 2, d2 = shaft_dia-2, h = 6);
   }
 }
 
@@ -183,7 +187,7 @@ separation = 2;
 d = motor_drive_capstan_r + 3;
 offset = asin((motor_drive_capstan_r-motor_drive_capstan_track_depth) / d);
 
-assembly();
+//assembly();
 module assembly() {
   translate([Nema17_cube_height - leg_dist/2, Nema17_cube_width/2 + separation/2,0])
     rotate([0,-90,0]) {
