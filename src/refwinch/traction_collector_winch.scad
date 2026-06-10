@@ -47,6 +47,47 @@ module shaft_rotated_eyelet_holder(turn=eyelet_holder_turn){
         eyelet_holder();
 }
 
+module eyelet_transform(turn=eyelet_holder_turn){
+  shaft_y = Nema17_cube_width + separation/2;
+  shaft_z = leg_depth/2 + leg_th;
+  holder_x = -(Eyelet_diameter+2 + leg_dist/2 + leg_th);
+  holder_y = shaft_y - (Eyelet_diameter + 2)/2
+             - (motor_drive_capstan_r - motor_drive_capstan_track_depth);
+  holder_z = shaft_z + motor_drive_capstan_r + 14;
+
+  translate([0, shaft_y, shaft_z])
+    rotate([turn, 0, 0])
+      translate([holder_x, holder_y - shaft_y, holder_z - shaft_z])
+        children();
+}
+
+//!rotate([0,90,0]) shaft_rotated_eyelet_holder2();
+module shaft_rotated_eyelet_holder2(){
+  tol = 0.2;
+  difference() {
+    for(ang=[17:10:37])
+      eyelet_transform(ang)
+        translate([0, tol/2, tol/2]) {
+          if (ang < 37) {
+            rounded_cube2([Eyelet_diameter+10, Eyelet_diameter + 2 - tol, 4 - tol], 1, $fn=4*5);
+            translate([11.4,0,0])
+              right_rounded_cube2([2.9, Eyelet_diameter + 2 - tol, 4 + 4 - tol], 1, $fn=4*5);
+          } else {
+            rounded_cube2([Eyelet_diameter+10, Eyelet_diameter + 2 - tol, 4 - tol], 1, $fn=4*5);
+          }
+        }
+    for(ang=[17:10:37])
+      eyelet_transform(ang)
+        translate([Eyelet_diameter/2 + 1, Eyelet_diameter/2 + 1, -1]) {
+          cylinder(d=Eyelet_diameter, h=6);
+          translate([0,0,4.91])
+            cylinder(d=Eyelet_flange_diameter+0.2, h=6);
+        }
+  }
+}
+
+
+
 //rotate([0,-90,0])
 //legs();
 module legs(){
@@ -99,24 +140,34 @@ module legs(){
                 }
               }
       left(leg_dist/2)
-        rotate([0,-90,0])
-          linear_extrude(height = leg_th)
-            difference(){
-              hull() {
-                right(leg_depth/2 + leg_th)
-                  circle(d=leg_depth);
-                fwd(leg_depth/2)
-                  square([leg_th, leg_depth]);
-                // Something to mount motor on
-                back(63)
-                  rounded_cube2_2d([leg_depth+leg_th, leg_th], 2);
-              }
-              back(Nema17_cube_width + separation/2)
-                right(leg_depth/2 + leg_th) {
-                  Nema17_screw_translate() circle(d=3.3);
-                    circle(max(motor_drive_capstan_r+1,Nema17_ring_diameter/2+2));
+        rotate([0,-90,0]) {
+          difference(){
+            linear_extrude(height = leg_th)
+              difference(){
+                hull() {
+                  right(leg_depth/2 + leg_th)
+                    circle(d=leg_depth);
+                  fwd(leg_depth/2)
+                    square([leg_th, leg_depth]);
+                  // Something to mount motor on
+                  back(63)
+                    rounded_cube2_2d([leg_depth+leg_th, leg_th], 2);
                 }
-            }
+                back(Nema17_cube_width + separation/2)
+                  right(leg_depth/2 + leg_th) {
+                    Nema17_screw_translate() circle(d=3.3);
+                      circle(max(motor_drive_capstan_r+1,Nema17_ring_diameter/2+2));
+                  }
+              }
+
+            up(leg_th-3)
+              linear_extrude(height = leg_th)
+                back(Nema17_cube_width + separation/2)
+                  right(leg_depth/2 + leg_th) {
+                    Nema17_screw_translate() circle(r=5.3/2);
+                  }
+          }
+        }
 
     }
     for(ang=[17:10:37])
@@ -132,7 +183,9 @@ module legs(){
       $fn = 128
     );
   }
+  shaft_rotated_eyelet_holder2();
 }
+
 
 //rotate([0,-90,0])
 //spool();
@@ -194,7 +247,7 @@ module assembly() {
   translate([Nema17_cube_height - leg_dist/2, Nema17_cube_width/2 + separation/2,0])
     rotate([0,-90,0]) {
       Nema17();
-      up(Nema17_cube_height + Nema17_ring_height + 3.2)
+      up(Nema17_cube_height + Nema17_ring_height + 1.2)
         motor_drive_capstan_0();
       //rotate([0,0,90+90-offset])
       //  up(Nema17_cube_height + Nema17_ring_height + 3.2 + motor_drive_capstan_track_height*1)

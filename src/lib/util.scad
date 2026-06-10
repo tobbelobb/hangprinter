@@ -543,6 +543,12 @@ module eyelet(h, center=false, d=Eyelet_diameter, fn=10){
   cylinder(d=d, h=h, center=center, $fn=fn);
 }
 
+module teardrop_2d(r=10){
+  circle(r=r);
+  rotate([0,0,45])
+    square([r,r]);
+}
+
 module teardrop(r=10, h=10){
   cylinder(r=r, h=h);
   rotate([0,0,45])

@@ -46,6 +46,7 @@ Cc_plastic_length = sqrt(Cc_action_point_from_mid*Cc_action_point_from_mid
                        - (Cc_action_point_from_mid/2)*(Cc_action_point_from_mid/2));
 Eyelet_extra_dist = 0.75;
 Eyelet_diameter = 4.30;
+Eyelet_flange_diameter = 5.93;
 
 // The distance between the two action points on the mover
 Sidelength = Beam_length + 2*Cc_plastic_length;
