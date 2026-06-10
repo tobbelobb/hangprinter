@@ -16,12 +16,12 @@ threaded_rod_length = 120;
 // Usable rod length = l = full length - capstan part.
 // Number of turns = l / pitch
 // Length per turn ~ rod thickness * pi
-// ((threaded_rod_length - (motor_drive_capstan_tracks+1)*motor_drive_capstan_track_height)/motor_drive_capstan_track_height) * pi * rod_th
+// ((threaded_rod_length - (capstan_tracks+1)*capstan_track_height)/capstan_track_height) * pi * rod_th
 
-motor_drive_capstan_r = 12;
-motor_drive_capstan_track_depth = 1.75;
-motor_drive_capstan_track_height = 3;
-motor_drive_capstan_tracks = 7;
+capstan_r = 12;
+capstan_track_depth = 1.75;
+capstan_track_height = 3;
+capstan_tracks = 7;
 
 eyelet_holder_turn = 43;
 
@@ -38,8 +38,8 @@ module shaft_rotated_eyelet_holder(turn=eyelet_holder_turn){
   shaft_z = leg_depth/2 + leg_th;
   holder_x = -(Eyelet_diameter+2 + leg_dist/2 + leg_th);
   holder_y = shaft_y - (Eyelet_diameter + 2)/2
-             - (motor_drive_capstan_r - motor_drive_capstan_track_depth);
-  holder_z = shaft_z + motor_drive_capstan_r + 14;
+             - (capstan_r - capstan_track_depth);
+  holder_z = shaft_z + capstan_r + 14;
 
   translate([0, shaft_y, shaft_z])
     rotate([turn, 0, 0])
@@ -52,8 +52,8 @@ module eyelet_transform(turn=eyelet_holder_turn){
   shaft_z = leg_depth/2 + leg_th;
   holder_x = -(Eyelet_diameter+2 + leg_dist/2 + leg_th);
   holder_y = shaft_y - (Eyelet_diameter + 2)/2
-             - (motor_drive_capstan_r - motor_drive_capstan_track_depth);
-  holder_z = shaft_z + motor_drive_capstan_r + 14;
+             - (capstan_r - capstan_track_depth);
+  holder_z = shaft_z + capstan_r + 14;
 
   translate([0, shaft_y, shaft_z])
     rotate([turn, 0, 0])
@@ -135,7 +135,7 @@ module legs(){
                 back(Nema17_cube_width + separation/2) {
                   right(leg_depth/2 + leg_th) {
                     Nema17_screw_translate() circle(d=3.3);
-                      circle(max(motor_drive_capstan_r+1,Nema17_ring_diameter/2+2));
+                      circle(max(capstan_r+1,Nema17_ring_diameter/2+2));
                   }
                 }
               }
@@ -156,7 +156,7 @@ module legs(){
                 back(Nema17_cube_width + separation/2)
                   right(leg_depth/2 + leg_th) {
                     Nema17_screw_translate() circle(d=3.3);
-                      circle(max(motor_drive_capstan_r+1,Nema17_ring_diameter/2+2));
+                      circle(max(capstan_r+1,Nema17_ring_diameter/2+2));
                   }
               }
 
@@ -177,7 +177,7 @@ module legs(){
     trapezoidal_threaded_rod(
       d = female_d,
       l = max(2*leg_dist, threaded_rod_length+2),
-      pitch = motor_drive_capstan_track_height,
+      pitch = capstan_track_height,
       thread_depth = 1.5,
       thread_angle = 60,
       $fn = 128
@@ -195,7 +195,7 @@ module spool(l=threaded_rod_length){
         trapezoidal_threaded_rod(
           d = male_d,
           l = l,
-          pitch = motor_drive_capstan_track_height,
+          pitch = capstan_track_height,
           thread_depth = 1.5,
           thread_angle = 60,
           $fn = 128
@@ -209,12 +209,12 @@ module spool(l=threaded_rod_length){
     }
 }
 
-//motor_drive_capstan_0();
-module motor_drive_capstan_0(){
-  r = motor_drive_capstan_r;
+//capstan();
+module capstan(){
+  r = capstan_r;
   h = 28;
-  track_depth = motor_drive_capstan_track_depth;
-  track_height = motor_drive_capstan_track_height;
+  track_depth = capstan_track_depth;
+  track_height = capstan_track_height;
   shaft_dia_tol = 0.25;
   shaft_dia = Nema17_shaft_radius*2 + shaft_dia_tol;
   difference() {
@@ -222,7 +222,7 @@ module motor_drive_capstan_0(){
       rotate_extrude()
         difference(){
           right(shaft_dia/2) square([r-shaft_dia/2, h]);
-          for(k = [1:motor_drive_capstan_tracks]) {
+          for(k = [1:capstan_tracks]) {
             l = track_height*k+2;
             polygon([[r,l], [r-track_depth, l+track_height/2], [r, l+track_height], [r+1,l+track_height], [r+1,l], [r,l]]);
           }
@@ -239,8 +239,8 @@ module motor_drive_capstan_0(){
 
 
 separation = 2;
-d = motor_drive_capstan_r + 3;
-offset = asin((motor_drive_capstan_r-motor_drive_capstan_track_depth) / d);
+d = capstan_r + 3;
+offset = asin((capstan_r-capstan_track_depth) / d);
 
 assembly();
 module assembly() {
@@ -248,9 +248,9 @@ module assembly() {
     rotate([0,-90,0]) {
       Nema17();
       up(Nema17_cube_height + Nema17_ring_height + 1.2)
-        motor_drive_capstan_0();
+        capstan();
       //rotate([0,0,90+90-offset])
-      //  up(Nema17_cube_height + Nema17_ring_height + 3.2 + motor_drive_capstan_track_height*1)
+      //  up(Nema17_cube_height + Nema17_ring_height + 3.2 + capstan_track_height*1)
       //    left(d)
       //      rotate([0,-90,offset])
       //        eyelet();
