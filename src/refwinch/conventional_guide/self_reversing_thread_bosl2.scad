@@ -78,6 +78,67 @@ function sr_halfstroke_normals(
         sr_cyl_normal(a)
     ];
 
+function sr_halfstroke_segment_steps(
+    turns_per_stroke,
+    q_start,
+    q_end,
+    samples_per_turn=24
+) =
+    max(2, ceil(abs(q_end-q_start) * abs(turns_per_stroke) * samples_per_turn));
+
+function sr_halfstroke_segment_path(
+    r,
+    stroke,
+    turns_per_stroke,
+    half_index=0,
+    q_start=0,
+    q_end=1,
+    samples_per_turn=24,
+    reversal_frac=0.08,
+    phase=0
+) =
+    let(
+        q0 = sr_clamp(q_start, 0, 1),
+        q1 = sr_clamp(q_end, 0, 1),
+        steps = sr_halfstroke_segment_steps(turns_per_stroke, q0, q1, samples_per_turn),
+        up = (half_index % 2) == 0,
+        start_turn = half_index * turns_per_stroke
+    )
+    [
+        for (i = [0:steps])
+        let(
+            q = q0 + (q1-q0) * i / steps,
+            qe = sr_end_eased01(q, reversal_frac),
+            pos = up ? qe : 1-qe,
+            a = phase + 360 * (start_turn + q * turns_per_stroke),
+            z = -stroke/2 + stroke * pos
+        )
+        sr_cyl_point(r, a, z)
+    ];
+
+function sr_halfstroke_segment_normals(
+    turns_per_stroke,
+    half_index=0,
+    q_start=0,
+    q_end=1,
+    samples_per_turn=24,
+    phase=0
+) =
+    let(
+        q0 = sr_clamp(q_start, 0, 1),
+        q1 = sr_clamp(q_end, 0, 1),
+        steps = sr_halfstroke_segment_steps(turns_per_stroke, q0, q1, samples_per_turn),
+        start_turn = half_index * turns_per_stroke
+    )
+    [
+        for (i = [0:steps])
+        let(
+            q = q0 + (q1-q0) * i / steps,
+            a = phase + 360 * (start_turn + q * turns_per_stroke)
+        )
+        sr_cyl_normal(a)
+    ];
+
 // Returns a circular cutter path suitable for path_sweep().
 function sr_circle_profile(d=2, fn=16) = circle(d=d, $fn=fn);
 
@@ -140,6 +201,55 @@ module sr_halfstroke_sweep(
     );
 }
 
+// Sweep only a local q interval of one half-stroke.
+// q_start/q_end are local half-stroke positions in [0, 1].
+module sr_halfstroke_sweep_segment(
+    shape,
+    r,
+    stroke,
+    turns_per_stroke,
+    half_index=0,
+    q_start=0,
+    q_end=1,
+    samples_per_turn=24,
+    reversal_frac=0.08,
+    phase=0,
+    caps=true,
+    convexity=10
+) {
+    path = sr_halfstroke_segment_path(
+        r=r,
+        stroke=stroke,
+        turns_per_stroke=turns_per_stroke,
+        half_index=half_index,
+        q_start=q_start,
+        q_end=q_end,
+        samples_per_turn=samples_per_turn,
+        reversal_frac=reversal_frac,
+        phase=phase
+    );
+    normals = sr_halfstroke_segment_normals(
+        turns_per_stroke=turns_per_stroke,
+        half_index=half_index,
+        q_start=q_start,
+        q_end=q_end,
+        samples_per_turn=samples_per_turn,
+        phase=phase
+    );
+
+    path_sweep(
+        shape,
+        path,
+        method="manual",
+        normal=normals,
+        caps=caps,
+        convexity=convexity
+    );
+}
+
+function sr_angular_span_to_q_span(turns_per_stroke, angular_span) =
+    abs(angular_span) / (360 * max(abs(turns_per_stroke), 0.000001));
+
 // A union of swept cutters that can be subtracted from a cylinder.
 // groove_depth controls how far the circular cutter intrudes into the cylinder.
 // For a circular cutter: path radius = rod_r + cutter_r - groove_depth.
@@ -178,6 +288,53 @@ module self_reversing_groove_mask(
             );
         }
     }
+}
+
+// Positive follower/pawl tooth matching the trapezoid cutter used by
+// self_reversing_groove_mask().  It is intentionally just the swept tooth;
+// union it with a larger carrier body to make the complete follower.
+module self_reversing_follower_pawl(
+    rod_d=16,
+    stroke=40,
+    turns_per_stroke=4,
+    groove_d=2.2,
+    groove_depth=1.25,
+    half_index=0,
+    q_center=0.5,
+    angular_span=8,
+    clearance=0,
+    samples_per_turn=120,
+    reversal_frac=0.08,
+    phase=0,
+    caps=true,
+    convexity=20
+) {
+    cutter_r = groove_d/2;
+    path_r = rod_d/2 + cutter_r - groove_depth;
+    q_span = sr_angular_span_to_q_span(turns_per_stroke, angular_span);
+    q0 = sr_clamp(q_center - q_span/2, 0, 1);
+    q1 = sr_clamp(q_center + q_span/2, 0, 1);
+
+    shape = sr_trapezoid_ridge_profile(
+        width=max(0.01, groove_d/4 - 2*clearance),
+        top_width=max(0.01, groove_d*2 - 2*clearance),
+        height=max(0.01, groove_d - 2*clearance)
+    );
+
+    sr_halfstroke_sweep_segment(
+        shape=shape,
+        r=path_r,
+        stroke=stroke,
+        turns_per_stroke=turns_per_stroke,
+        half_index=half_index,
+        q_start=q0,
+        q_end=q1,
+        samples_per_turn=samples_per_turn,
+        reversal_frac=reversal_frac,
+        phase=phase,
+        caps=caps,
+        convexity=convexity
+    );
 }
 
 // A subtractive barrel-cam style self-reversing groove.
