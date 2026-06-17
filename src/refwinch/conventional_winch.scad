@@ -23,33 +23,28 @@ module grooved_rod(){
 //pawl();
 module pawl(){
   intersection(){
-  mirror([0,0,1])
-  translate([0,0,stroke/2-0.0])
-  for(k=[0,1]) mirror([0,k,0])
   color("orange")
     self_reversing_follower_pawl(
         rod_d=rod_d,
         stroke=stroke,
         turns_per_stroke=4,
-        groove_d=2.2,
-        groove_depth=1.35,
+        groove_d=1.8,
+        groove_depth=1.75,
         half_index=0,
-        q_center=0.0,
-        angular_span=200,
+        q_center=0.5,
+        angular_span=125,
         samples_per_turn=120,
         reversal_frac=0.50
     );
-  translate([0,0,stroke/2-0.0])
-  for(k=[0,1]) mirror([0,k,0])
-  color("orange")
+  rotate([53,0,0])
     self_reversing_follower_pawl(
         rod_d=rod_d,
         stroke=stroke,
         turns_per_stroke=4,
-        groove_d=2.2,
-        groove_depth=1.35,
-        half_index=0,
-        q_center=0.0,
+        groove_d=1.8,
+        groove_depth=1.75,
+        half_index=1,
+        q_center=0.5,
         angular_span=125,
         samples_per_turn=120,
         reversal_frac=0.50
@@ -57,8 +52,13 @@ module pawl(){
   }
 }
 
+//%translate([0,0,2.835])
+//   rotate([0,0,90])
+//   grooved_rod();
+
 
 //full_shaft();
+// Full shaft is still missing its torx part for push-on gear to snap fit onto
 module full_shaft(){
   union(){
     grooved_rod();
@@ -73,17 +73,15 @@ module full_shaft(){
 
 cut_pawl();
 module cut_pawl(){
-  rotate([180,0,0]){
-    intersection(){
-      translate([0,0,rod_d/2])
-      rotate([0,90,0])
-        pawl();
-      translate([0,0,-5])
-        cylinder(d=rod_d+2, h=12);
-    }
-    translate([0,0,-5-3])
-      cylinder(d=8, h=5);
+  intersection(){
+    translate([0,0,rod_d/2])
+    rotate([0,90,0])
+      pawl();
+    translate([0,0,-5])
+      cylinder(d=rod_d+2, h=12);
   }
+  translate([0,0,-5-2])
+    cylinder(d=8, h=5);
 }
 
 //translate([6,0,0])
