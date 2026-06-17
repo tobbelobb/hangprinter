@@ -3,20 +3,20 @@ include <../lib/parameters.scad>
 include <../lib/util.scad>
 
 stroke = 42;
-rod_l = 42 + 2*4 + 2*b608_width;
+rod_l = stroke + 2*4 + 2*b608_width;
 rod_d = 11;
 
 module grooved_rod(){
     self_reversing_grooved_rod(
       rod_d=rod_d,
       rod_l= stroke+5,
-      stroke=42,
+      stroke=stroke,
       turns_per_stroke=4,
       cycles=1,
       groove_d=1.8,
       groove_depth=1.75,
       samples_per_turn=120,
-      reversal_frac=0.50
+      reversal_frac=0.250
   );
 }
 
@@ -34,7 +34,7 @@ module pawl(){
         q_center=0.5,
         angular_span=125,
         samples_per_turn=120,
-        reversal_frac=0.50
+        reversal_frac=0.250
     );
   rotate([53,0,0])
     self_reversing_follower_pawl(
@@ -47,7 +47,7 @@ module pawl(){
         q_center=0.5,
         angular_span=125,
         samples_per_turn=120,
-        reversal_frac=0.50
+        reversal_frac=0.250
     );
   }
 }
@@ -57,7 +57,7 @@ module pawl(){
 //   grooved_rod();
 
 
-//full_shaft();
+full_shaft();
 // Full shaft is still missing its torx part for push-on gear to snap fit onto
 module full_shaft(){
   union(){
@@ -71,7 +71,7 @@ module full_shaft(){
   }
 }
 
-cut_pawl();
+//cut_pawl();
 module cut_pawl(){
   intersection(){
     translate([0,0,rod_d/2])
