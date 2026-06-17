@@ -28,34 +28,58 @@ module pawl(half_index = 0){
         groove_d=2.2,
         groove_depth=1.35,
         half_index=half_index,
-        q_center=0.5,
-        angular_span=45,
+        q_center=0.0,
+        angular_span=200,
         samples_per_turn=120,
         reversal_frac=0.50
     );
 }
 
 
-//union(){
-//  grooved_rod();
-//  for(k=[0,1]) mirror([0,0,k]) {
-//    translate([0,0,-rod_l/2])
-//      cylinder(d=8, h=b608_width);
-//    translate([0,0,-rod_l/2 + b608_width])
-//      cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2);
-//  }
-//}
-
-//// Follower/pawl tooth building block preview.  Uncomment to inspect the
-//// positive insert that matches the groove cutter profile.
-difference(){
-  //rotate([60,0,0])
-  difference() {
-     rotate([138,0,0])
-       pawl();
-    translate([0,0,-2.8])
-     rotate([0,0,90])
-     grooved_rod();
+full_shaft();
+module full_shaft(){
+  union(){
+    grooved_rod();
+    for(k=[0,1]) mirror([0,0,k]) {
+      translate([0,0,-rod_l/2])
+        cylinder(d=8, h=b608_width);
+      translate([0,0,-rod_l/2 + b608_width])
+        cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2);
+    }
   }
-  //#grooved_rod();
 }
+
+//cut_pawl();
+module cut_pawl(){
+  rotate([180,0,0]){
+    intersection(){
+      rotate([0,0,0])
+        rotate([0,-90,0])
+          translate([-rod_d/2,0,0])
+          rotate([0,0,-101.56/2])
+          translate([0,0,stroke/2])
+          pawl();
+      rotate([0,0,10])
+        rotate([0,-90,0])
+          translate([-rod_d/2,0,0])
+          rotate([0,0,-101.56/2])
+          translate([0,0,stroke/2])
+          pawl();
+      rotate([0,0,-10])
+        rotate([0,-90,0])
+          translate([-rod_d/2,0,0])
+          rotate([0,0,-101.56/2])
+          translate([0,0,stroke/2])
+          pawl();
+      translate([0,0,-5])
+        cylinder(d=6.7, h=7);
+    }
+    translate([0,0,0.2])
+      cylinder(d=6.7, h=1.5+2);
+  }
+}
+
+//translate([6,0,0])
+//  rotate([0,90,0])
+//  cut_pawl();
+//full_shaft();
