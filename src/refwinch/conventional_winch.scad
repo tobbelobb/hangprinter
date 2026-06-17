@@ -57,7 +57,7 @@ module pawl(){
 //   grooved_rod();
 
 
-full_shaft();
+//full_shaft();
 // Full shaft is still missing its torx part for push-on gear to snap fit onto
 module full_shaft(){
   union(){
@@ -71,14 +71,14 @@ module full_shaft(){
   }
 }
 
-//cut_pawl();
+cut_pawl();
 module cut_pawl(){
   intersection(){
     translate([0,0,rod_d/2])
     rotate([0,90,0])
       pawl();
     translate([0,0,-5])
-      cylinder(d=rod_d+2, h=12);
+      cylinder(d=rod_d, h=12);
     down(4)
       cube(13, center=true);
   }
