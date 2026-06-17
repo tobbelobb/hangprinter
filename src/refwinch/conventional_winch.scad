@@ -3,7 +3,7 @@ include <../lib/parameters.scad>
 
 stroke = 42;
 rod_l = 42 + 2*4 + 2*b608_width;
-rod_d = 10;
+rod_d = 11;
 
 module grooved_rod(){
     self_reversing_grooved_rod(
@@ -12,8 +12,8 @@ module grooved_rod(){
       stroke=42,
       turns_per_stroke=4,
       cycles=1,
-      groove_d=2.2,
-      groove_depth=1.35,
+      groove_d=1.8,
+      groove_depth=1.75,
       samples_per_turn=120,
       reversal_frac=0.50
   );
