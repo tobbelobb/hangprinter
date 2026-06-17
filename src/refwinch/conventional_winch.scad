@@ -37,7 +37,7 @@ module pawl(half_index = 0){
 }
 
 
-full_shaft();
+//full_shaft();
 module full_shaft(){
   union(){
     grooved_rod();
@@ -77,15 +77,15 @@ module cut_pawl(){
     }
     translate([0,0,0.5])
       cylinder(d=7.7, h=1.5+2);
-    ang=40;
+    ang=27;
     for(k=[0,1])
       down(.45)
-      rotate([0,0,k*180-ang/2+90+(1-k)*7.5])
+      rotate([0,0,k*180-ang/2+90+(1-k)*8])
       linear_extrude(height=3) polygon(circle_sector(ang,0,7.7/2));
   }
 }
 
 //translate([6,0,0])
 //  rotate([0,90,0])
-//  cut_pawl();
-full_shaft();
+cut_pawl();
+//full_shaft();
