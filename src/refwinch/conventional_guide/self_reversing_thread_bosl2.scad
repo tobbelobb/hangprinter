@@ -151,6 +151,15 @@ function sr_trapezoid_ridge_profile(width=2.4, top_width=0.8, height=1.0) = [
     [ width/2, -height/2]
 ];
 
+function sr_trapezoid_ridge_profile2(width=2.4, top_width=0.8, height=1.0) = [
+    [-width/2, -height/2],
+    [-top_width/2, height/2],
+    [-top_width/2, height/2+3],
+    [ top_width/2, height/2+3],
+    [ top_width/2, height/2],
+    [ width/2, -height/2],
+];
+
 // A cutter profile for a flat-bottom-ish groove. The path point is at the cutter center.
 // For most prototypes, a circle cutter is safer because it avoids profile orientation surprises.
 function sr_rounded_slot_cutter_profile(width=2.4, depth=1.2) = [
@@ -315,7 +324,7 @@ module self_reversing_follower_pawl(
     q0 = sr_clamp(q_center - q_span/2, 0, 1);
     q1 = sr_clamp(q_center + q_span/2, 0, 1);
 
-    shape = sr_trapezoid_ridge_profile(
+    shape = sr_trapezoid_ridge_profile2(
         width=max(0.01, groove_d/4 - 2*clearance),
         top_width=max(0.01, groove_d*1.5 - 2*clearance),
         height=max(0.01, groove_d - 2*clearance)

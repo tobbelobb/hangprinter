@@ -20,7 +20,12 @@ module grooved_rod(){
   );
 }
 
-module pawl(half_index = 0){
+//pawl();
+module pawl(){
+  intersection(){
+  mirror([0,0,1])
+  translate([0,0,stroke/2-0.0])
+  for(k=[0,1]) mirror([0,k,0])
   color("orange")
     self_reversing_follower_pawl(
         rod_d=rod_d,
@@ -28,12 +33,28 @@ module pawl(half_index = 0){
         turns_per_stroke=4,
         groove_d=2.2,
         groove_depth=1.35,
-        half_index=half_index,
+        half_index=0,
         q_center=0.0,
         angular_span=200,
         samples_per_turn=120,
         reversal_frac=0.50
     );
+  translate([0,0,stroke/2-0.0])
+  for(k=[0,1]) mirror([0,k,0])
+  color("orange")
+    self_reversing_follower_pawl(
+        rod_d=rod_d,
+        stroke=stroke,
+        turns_per_stroke=4,
+        groove_d=2.2,
+        groove_depth=1.35,
+        half_index=0,
+        q_center=0.0,
+        angular_span=125,
+        samples_per_turn=120,
+        reversal_frac=0.50
+    );
+  }
 }
 
 
@@ -50,42 +71,22 @@ module full_shaft(){
   }
 }
 
-//cut_pawl();
+cut_pawl();
 module cut_pawl(){
   rotate([180,0,0]){
     intersection(){
-      rotate([0,0,0])
-        rotate([0,-90,0])
-          translate([-rod_d/2,0,0])
-          rotate([0,0,-101.56/2])
-          translate([0,0,stroke/2])
-          pawl();
-      rotate([0,0,10])
-        rotate([0,-90,0])
-          translate([-rod_d/2,0,0])
-          rotate([0,0,-101.56/2])
-          translate([0,0,stroke/2])
-          pawl();
-      rotate([0,0,-10])
-        rotate([0,-90,0])
-          translate([-rod_d/2,0,0])
-          rotate([0,0,-101.56/2])
-          translate([0,0,stroke/2])
-          pawl();
+      translate([0,0,rod_d/2])
+      rotate([0,90,0])
+        pawl();
       translate([0,0,-5])
-        cylinder(d=7.7, h=7);
+        cylinder(d=rod_d+2, h=12);
     }
-    translate([0,0,0.5])
-      cylinder(d=7.7, h=1.5+2);
-    ang=27;
-    for(k=[0,1])
-      down(.45)
-      rotate([0,0,k*180-ang/2+90+(1-k)*8])
-      linear_extrude(height=3) polygon(circle_sector(ang,0,7.7/2));
+    translate([0,0,-5-3])
+      cylinder(d=8, h=5);
   }
 }
 
 //translate([6,0,0])
 //  rotate([0,90,0])
-cut_pawl();
+//cut_pawl();
 //full_shaft();
