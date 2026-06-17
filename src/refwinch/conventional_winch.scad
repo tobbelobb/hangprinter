@@ -79,8 +79,10 @@ module cut_pawl(){
       pawl();
     translate([0,0,-5])
       cylinder(d=rod_d+2, h=12);
+    down(4)
+      cube(13, center=true);
   }
-  translate([0,0,-5-2])
+  translate([0,0,-5-1])
     cylinder(d=8, h=5);
 }
 
