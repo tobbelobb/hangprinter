@@ -269,7 +269,7 @@ module self_reversing_groove_mask(
     cutter_r = groove_d/2;
     path_r = rod_d/2 + cutter_r - groove_depth;
 
-    shape = sr_trapezoid_ridge_profile(width=groove_d/4, top_width=groove_d*2, height=groove_d);
+    shape = sr_trapezoid_ridge_profile(width=groove_d/4, top_width=groove_d*1.5, height=groove_d);
     //shape = sr_circle_profile(d=groove_d, fn=cutter_fn);
 
     union() {
@@ -317,7 +317,7 @@ module self_reversing_follower_pawl(
 
     shape = sr_trapezoid_ridge_profile(
         width=max(0.01, groove_d/4 - 2*clearance),
-        top_width=max(0.01, groove_d*2 - 2*clearance),
+        top_width=max(0.01, groove_d*1.5 - 2*clearance),
         height=max(0.01, groove_d - 2*clearance)
     );
 

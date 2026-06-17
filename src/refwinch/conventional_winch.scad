@@ -1,5 +1,6 @@
 include <conventional_guide/self_reversing_thread_bosl2.scad>
 include <../lib/parameters.scad>
+include <../lib/util.scad>
 
 stroke = 42;
 rod_l = 42 + 2*4 + 2*b608_width;
@@ -72,14 +73,19 @@ module cut_pawl(){
           translate([0,0,stroke/2])
           pawl();
       translate([0,0,-5])
-        cylinder(d=6.7, h=7);
+        cylinder(d=7.7, h=7);
     }
-    translate([0,0,0.2])
-      cylinder(d=6.7, h=1.5+2);
+    translate([0,0,0.5])
+      cylinder(d=7.7, h=1.5+2);
+    ang=40;
+    for(k=[0,1])
+      down(.45)
+      rotate([0,0,k*180-ang/2+90+(1-k)*7.5])
+      linear_extrude(height=3) polygon(circle_sector(ang,0,7.7/2));
   }
 }
 
 //translate([6,0,0])
 //  rotate([0,90,0])
 //  cut_pawl();
-//full_shaft();
+full_shaft();
