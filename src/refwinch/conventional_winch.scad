@@ -57,21 +57,31 @@ module pawl(){
 //   grooved_rod();
 
 
-//full_shaft();
-// Full shaft is still missing its torx part for push-on gear to snap fit onto
+full_shaft();
 module full_shaft(){
   union(){
     grooved_rod();
     for(k=[0,1]) mirror([0,0,k]) {
-      translate([0,0,-rod_l/2])
-        cylinder(d=8, h=b608_width);
+      translate([0,0,-rod_l/2-1])
+        cylinder(d=8, h=b608_width+1);
       translate([0,0,-rod_l/2 + b608_width])
         cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2);
     }
+    gear_th=8;
+    intersection(){
+      for(ang=[0:360/5:359])
+        rotate([0,0,ang])
+        translate([3,0,-rod_l/2-gear_th])
+          cylinder(d=3.6,h=gear_th);
+        translate([0,0,-rod_l/2-gear_th])
+          cylinder(d=8,h=gear_th);
+    }
+    translate([0,0,-rod_l/2-gear_th])
+      cylinder(d=6.4,h=gear_th);
   }
 }
 
-cut_pawl();
+//cut_pawl();
 module cut_pawl(){
   intersection(){
     translate([0,0,rod_d/2])
@@ -86,7 +96,9 @@ module cut_pawl(){
     cylinder(d=8, h=5);
 }
 
-//translate([6,0,0])
-//  rotate([0,90,0])
-//cut_pawl();
-//full_shaft();
+//rotate([90,0,0]) {
+//  translate([6,0,0])
+//    rotate([0,-90,0])
+//    cut_pawl();
+//  full_shaft();
+//}
