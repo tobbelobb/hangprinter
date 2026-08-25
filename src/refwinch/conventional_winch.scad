@@ -82,8 +82,8 @@ module full_shaft(){
       translate([0,0,-rod_l/2 + b608_width])
         cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2);
     }
-    translate([0,0,-rod_l/2-gear_th-1-1])
-    torx_thing(gear_th+0.5);
+    translate([0,0,-rod_l/2-gear_th-1-1-2])
+    torx_thing(gear_th+2.5);
   }
 
   //for(k=[0,1]) mirror([0,0,k])
@@ -94,7 +94,7 @@ module full_shaft(){
 //helix_gear_big();
 module helix_gear_big(
   modul=1,
-  tooth_number=60,
+  tooth_number=63, // (2/10.5)*63. 2 is max line width. 10.5 is diamond groove pitch. 63 is the number of teeth needed to match the small gears' 12 teeth.
   width=8,
   bore=12,
   pressure_angle=20,
@@ -119,6 +119,27 @@ module helix_gear_big(
     scale([s,s,1])
     torx_thing(width+2);
   }
+}
+
+//helix_gear_small();
+module helix_gear_small(
+  modul=1.0,
+  tooth_number=12,
+  width=8,
+  bore=0,
+  pressure_angle=20,
+  helix_angle=45
+){
+  for(k=[0,1]) mirror([0,0,k])
+  spur_gear(
+    modul=modul,
+    tooth_number=tooth_number,
+    width=width/2,
+    bore=bore,
+    pressure_angle=pressure_angle,
+    helix_angle=helix_angle,
+    optimized=false
+  );
 }
 
 //guide_rods();
@@ -167,7 +188,7 @@ module cut_pawl(){
 leg_depth = b608_outer_dia + 2*3;
 push_legs_up = 3; // base thickness (=3) is max
 leg_height = 50;
-base();
+//base();
 module base(){
   difference(){
     for(k=[0,1]) mirror([k,0,0])
@@ -218,30 +239,35 @@ module base(){
     }
 }
 
-module to_side() {
-  translate([0,0,-21.1])
-    rotate([-20,0,0])
-    children(0);
-
-}
-
-drive_train_assembly();
-module drive_train_assembly(){
-  rotate([0,-90,0]) {
-    rotate([0,0,180]){
-    to_side()
-      translate([6,0,0])
-        rotate([0,-90,0])
-        cut_pawl();
-      full_shaft();
-    }
-    translate([0,0,-rod_l/2-gear_th/2-1-1])
-      helix_gear_big();
+//base_sides();
+module base_sides(){
+  skirt = 2;
+  difference(){
+    translate([rod_l/2-8,-leg_depth/2,-leg_height+leg_depth/2+2])
+      translate([0,0,push_legs_up])
+        difference(){
+          translate([0,-1.5,-2 + skirt])
+            top2_rounded_cube2([b608_width+4, leg_depth+3, leg_height-skirt],3);
+          translate([2-0.5,0,-2 - 1])
+            top2_rounded_cube2([b608_width+0.5, leg_depth, leg_height+5],3);
+          translate([2-5,1,-2-1])
+            top2_rounded_cube2([b608_width+5, leg_depth-2, leg_height+5],3);
+        }
+    rotate([0,90,0])
+      hull() {
+        cylinder(d=13, h=50);
+        translate([-7,0,0])
+          cylinder(d=2, h=50);
+      }
+    for(k=[0,1]) mirror([0,k,0])
+      translate([rod_l/2-8,-leg_depth/2-0.25,push_legs_up-leg_height+leg_depth/2-1])
+      rotate([0,0,45])
+      cube([3,3,leg_height+10]);
   }
 }
 
 //translate([21.1,0,0])
-//!sock();
+//sock();
 module sock(){
   difference(){
     translate([0,0,-pawl_cylinder_h-7-2])
@@ -251,5 +277,46 @@ module sock(){
       cylinder(d=pawl_cylinder_d+0.5, h=pawl_cylinder_h);
     guide_rods(tol=0.25);
     line_entry();
+  }
+}
+
+gear_backlash_tol = 0.2;
+translate([0,37.5 + gear_backlash_tol,0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+drive_train_assembly();
+module drive_train_assembly(){
+  rotate([0,-90,0]) {
+    rotate([0,0,180]){
+      translate([0,0,-21.1])
+      rotate([-20,0,0])
+      translate([6,0,0])
+      rotate([0,-90,0])
+        cut_pawl();
+      full_shaft();
+    }
+    translate([0,0,-rod_l/2-gear_th/2-1-1-2])
+      helix_gear_big();
+  }
+  base();
+  translate([21.1,0,0])
+    sock();
+  for(k=[0,1]) mirror([k,0,0])
+    base_sides();
+}
+
+
+
+drum();
+module drum(){
+  // 22.7 gives four layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
+  //r_drum = 22.7;
+  // However to get an effective radius of 22.7 over this range of wind in we need a smaller base radius.
+  r_drum = 20;
+  // 30.315 gives three layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
+  //r_drum = 30.315;
+  rotate([0,90,0]) {
+    cylinder(r=r_drum, h=stroke + 2*5, center=true);
+    translate([0,0,43])
+    rotate([0,0,7])
+    helix_gear_small();
   }
 }
