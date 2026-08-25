@@ -161,6 +161,14 @@ module top_rounded_cube2(v, r){
     ydir_rounded_cube2_2d([v[0],v[2]], r);
 }
 
+//top2_rounded_cube2([20,2,30], 7);
+module top2_rounded_cube2(v, r){
+  translate([0,0,0])
+  rotate([90,0,90])
+  linear_extrude(height=v[0], convexity=2)
+    ydir_rounded_cube2_2d([v[1],v[2]], r);
+}
+
 //ymdir_rounded_cube2([20,30,2], 2);
 module ymdir_rounded_cube2(v, r){
   $fs = 1;

@@ -4,7 +4,8 @@ include <../lib/util.scad>
 include <../lib/gears.scad>
 
 stroke = 42;
-rod_l = stroke + 2*4 + 2*b608_width;
+rod_l = stroke + 2*7 + 2*b608_width;
+echo("rod_l", rod_l);
 rod_d = 11;
 
 module grooved_rod(){
@@ -70,23 +71,24 @@ module torx_thing(gear_th=8){
 
 }
 
+//!rotate([180,0,0])
 //full_shaft();
 module full_shaft(){
   union(){
     grooved_rod();
     for(k=[0,1]) mirror([0,0,k]) {
-      translate([0,0,-rod_l/2-1])
-        cylinder(d=8, h=b608_width+1);
+      translate([0,0,-rod_l/2-1-0.5])
+        cylinder(d=8, h=b608_width+1+0.5);
       translate([0,0,-rod_l/2 + b608_width])
         cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2);
     }
-    translate([0,0,-rod_l/2-gear_th-1])
-    torx_thing(gear_th);
+    translate([0,0,-rod_l/2-gear_th-1-1])
+    torx_thing(gear_th+0.5);
   }
 
-  for(k=[0,1]) mirror([0,0,k])
-    translate([0,0,-rod_l/2-0.5])
-    b608();
+  //for(k=[0,1]) mirror([0,0,k])
+  //  translate([0,0,-rod_l/2-0.5])
+  //  b608();
 }
 
 //helix_gear_big();
@@ -119,26 +121,135 @@ module helix_gear_big(
   }
 }
 
+//guide_rods();
+module guide_rods(tol=0.1){
+  rod_d = 3.2;
+  for (dist=[0,10])
+    translate([0,0,-14-dist])
+    rotate([0,90,0])
+    color("gray") {
+    cylinder(d=rod_d+tol, h=rod_l+3, center=true);
+  }
+}
+
+module line_entry(){
+  translate([0,0,-19])
+    rotate([90,0,0])
+    cylinder(d=Eyelet_diameter, h=30, center=true);
+}
+
+pawl_cylinder_d=9;
+pawl_cylinder_h=20;
 //cut_pawl();
 module cut_pawl(){
   intersection(){
     translate([0,0,rod_d/2])
-    rotate([0,90,0])
+    rotate([0,90,26.5])
       pawl();
     translate([0,0,-5])
       cylinder(d=rod_d, h=12);
     down(4)
       cube(13, center=true);
   }
-  translate([0,0,-5-1])
-    cylinder(d=8, h=5);
+  difference() {
+    translate([0,0,-pawl_cylinder_h-1])
+      cylinder(d=pawl_cylinder_d, h=pawl_cylinder_h);
+    for(ang=[-26.5:3:26.5]) rotate([0,0,ang]) {
+      translate([0,0,6]){
+        line_entry();
+        guide_rods(tol=0.5);
+      }
+    }
+  }
 }
 
-rotate([0,90,0]) {
-  translate([6,0,0])
+
+leg_depth = b608_outer_dia + 2*3;
+push_legs_up = 3; // base thickness (=3) is max
+leg_height = 50;
+base();
+module base(){
+  difference(){
+    for(k=[0,1]) mirror([k,0,0])
+      translate([-rod_l/2-0.51,-leg_depth/2,-leg_height+leg_depth/2])
+      difference(){
+        translate([0,0,push_legs_up])
+          top2_rounded_cube2([b608_width, leg_depth, leg_height],3);
+        translate([(b608_width)/2, leg_depth/2,leg_height-leg_depth/2])
+          rotate([0,90,0])
+          hull(){
+            cylinder(d=b608_outer_dia+0.2, h=b608_width+10, center=true);
+            translate([-(b608_outer_dia+0.2)/2,0,0])
+              cylinder(d=4, h=b608_width+10, center=true);
+          }
+      }
+    guide_rods();
+  }
+  translate([-80/2,-60/2,-leg_height+leg_depth/2])
+    rounded_cube2([80, 60, 3], 5);
+  for(k=[0,1]) for(l=[0,1]) mirror([k, 0, 0]) mirror([0,l,0])
+    translate([rod_l/2+0.51,leg_depth/2,-leg_height+leg_depth/2+3])
     rotate([0,-90,0])
-    cut_pawl();
-  full_shaft();
-  translate([0,0,-rod_l/2-gear_th/2-1])
-  helix_gear_big();
+    translate([0,0,-2])
+    difference(){
+      inner_round_corner(r=2, h=b608_width+4);
+      translate([-1,0,2])
+        rotate([-45,0,0])
+        translate([0,-1,-10])
+        cube(10);
+      translate([-1,0,b608_width+2])
+        rotate([45,0,0])
+        cube(10);
+    }
+    for(l=[0,1]) mirror([l,0,0])
+    translate([-(rod_l/2+0.51),leg_depth/2,-leg_height+leg_depth/2+3])
+    for(k=[0,1]) translate([k*b608_width,0,0]) mirror([k,0,0])
+    rotate([90,-90,0])
+    translate([0,0,-2])
+    difference(){
+      inner_round_corner(r=2, h=leg_depth+4);
+      translate([-1,0,2])
+        rotate([-45,0,0])
+        translate([0,-1,-10])
+        cube(10);
+      translate([-1,0,leg_depth+2])
+        rotate([45,0,0])
+        cube(10);
+    }
+}
+
+module to_side() {
+  translate([0,0,-21.1])
+    rotate([-20,0,0])
+    children(0);
+
+}
+
+drive_train_assembly();
+module drive_train_assembly(){
+  rotate([0,-90,0]) {
+    rotate([0,0,180]){
+    to_side()
+      translate([6,0,0])
+        rotate([0,-90,0])
+        cut_pawl();
+      full_shaft();
+    }
+    translate([0,0,-rod_l/2-gear_th/2-1-1])
+      helix_gear_big();
+  }
+}
+
+//translate([21.1,0,0])
+//!sock();
+module sock(){
+  difference(){
+    translate([0,0,-pawl_cylinder_h-7-2])
+      cylinder(d=pawl_cylinder_d + 5, h=pawl_cylinder_h);
+    translate([0,0,-pawl_cylinder_h-7-2])
+      translate([0,0,2])
+      cylinder(d=pawl_cylinder_d+0.5, h=pawl_cylinder_h);
+    guide_rods(tol=0.25);
+    line_entry();
+  }
 }
