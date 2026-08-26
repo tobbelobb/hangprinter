@@ -329,35 +329,60 @@ module drive_train_assembly(){
   translate([57.1,0,0])
     translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
     drum_shaft();
+  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+  rotate([0,90,0])
+    translate([0,0,stroke/2+6.4])
+    rotate([0,0,12])
+    sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
 }
 
 
 
+//!sep_disc();
+module sep_disc(dia=60, r_drum=20, depth=0.8, tooth_width_ang=9, height = 1, center=false){
+  difference(){
+    cylinder(d = dia, h = height, $fn=64, center=center);
+    translate([0,0,-1]){
+      cylinder(r = r_drum - depth, h = 3, $fn=100);
+      for(v=[0:30:359])
+        rotate([0,0,v]) {
+          p = circle_sector(r0=1, r1=r_drum+0.2, max_ang=30-tooth_width_ang);
+          rotate([0,0,+tooth_width_ang/2+15])
+          linear_extrude(height=3) polygon(points=p);
+          for(a=[tooth_width_ang/2,-tooth_width_ang/2])
+            rotate([0,0,15+a])
+            translate([-0.5/2,0,0])
+              cube([0.5,(r_drum+dia/2)/2,3]);
+        }
+    }
+  }
+}
+
+
+// 22.7 gives four layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
+//r_drum = 22.7;
+// However to get an effective radius of 22.7 over this range of wind in we need a smaller base radius.
+r_drum = 20;
+// 30.315 gives three layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
+//r_drum = 30.315;
 //rotate([0,-90,0])
 //drum();
 module drum(){
-  // 22.7 gives four layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
-  //r_drum = 22.7;
-  // However to get an effective radius of 22.7 over this range of wind in we need a smaller base radius.
-  r_drum = 20;
-  // 30.315 gives three layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
-  //r_drum = 30.315;
   difference(){
   difference(){
     rotate([0,90,0]) {
       union(){
-        cylinder(r=r_drum, h=stroke + 2*7, center=true);
+        cylinder(r=r_drum, h=stroke + 2*7, center=true, $fn=64);
         // GT2 pulley, mounted immediately outboard of the small helical gear.
-        translate([0,0,(stroke+2*5)/2 + 0])
-          GT2_2mm_pulley_extrusion(GT2_belt_width+6, 66);
+        translate([0,0,(stroke+2*7)/2 + 0])
+          GT2_2mm_pulley_extrusion(GT2_belt_width+2, 63);
       }
       translate([0,0,43])
         rotate([0,0,7])
         helix_gear_small();
       cylinder(d=14, h=38.5, $fn=64);
-      for(flange_x_pos=[-(stroke/2+6)])
-        translate([0,0,flange_x_pos])
-        cylinder(d=60, h=2, center=true);
+      translate([0,0,-(stroke/2+6.5)])
+        cylinder(d=60, h=1, center=true, $fn=64);
     }
     rotate([0,90,0])
     translate([0,0,11])
@@ -368,10 +393,17 @@ module drum(){
     rotate([0,90,0])
     translate([0,0,-stroke/2-3+50])
       cylinder(r2=8/2, r1=r_drum-2, h=10, $fn=64, center=false);
+    rotate([0,90,0])
+      translate([0,0,stroke/2+6.4])
+      rotate([0,0,12])
+      sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
   }
   //translate([-50,-100,-50])
   //  cube(100);
+
   }
+  translate([50,0,0]) rotate([0,90,0]) b608();
+  translate([-35.55,0,0]) rotate([0,90,0]) b608();
 }
 
 //drum_shaft();
