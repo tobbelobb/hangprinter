@@ -2,6 +2,7 @@ include <conventional_guide/self_reversing_thread_bosl2.scad>
 include <../lib/parameters.scad>
 include <../lib/util.scad>
 include <../lib/gears.scad>
+include <../lib/gear_util.scad>
 
 stroke = 42;
 rod_l = stroke + 2*7 + 2*b608_width;
@@ -79,8 +80,8 @@ module full_shaft(){
     for(k=[0,1]) mirror([0,0,k]) {
       translate([0,0,-rod_l/2-1-0.5])
         cylinder(d=8, h=b608_width+1+0.5);
-      translate([0,0,-rod_l/2 + b608_width])
-        cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2);
+      translate([0,0,-rod_l/2 + b608_width-0.5])
+        cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2 + 0.5);
     }
     translate([0,0,-rod_l/2-gear_th-1-1-2])
     torx_thing(gear_th+2.5);
@@ -125,7 +126,7 @@ module helix_gear_big(
 module helix_gear_small(
   modul=1.0,
   tooth_number=12,
-  width=8,
+  width=8+1,
   bore=0,
   pressure_angle=20,
   helix_angle=45
@@ -206,42 +207,59 @@ module base(){
       }
     guide_rods();
   }
-  translate([-80/2,-60/2,-leg_height+leg_depth/2])
-    rounded_cube2([80, 60, 3], 5);
-  for(k=[0,1]) for(l=[0,1]) mirror([k, 0, 0]) mirror([0,l,0])
-    translate([rod_l/2+0.51,leg_depth/2,-leg_height+leg_depth/2+3])
-    rotate([0,-90,0])
-    translate([0,0,-2])
+  translate([-76/2,-60+2*3.4,-leg_height+leg_depth/2])
+    rounded_cube2([76, 75.6-2*3.4, 3], 0);
+  translate([-76/2,-60+2*3.35,-leg_height+leg_depth/2])
+    rounded_cube2([97.1, 31.2, 3], 0);
+  // Inner rounded corners
+  //for(k=[0,1]) for(l=[0,1]) mirror([k, 0, 0]) mirror([0,l,0])
+  //  translate([rod_l/2+0.51,leg_depth/2,-leg_height+leg_depth/2+3])
+  //  rotate([0,-90,0])
+  //  translate([0,0,-2])
+  //  difference(){
+  //    inner_round_corner(r=2, h=b608_width+4);
+  //    translate([-1,0,2])
+  //      rotate([-45,0,0])
+  //      translate([0,-1,-10])
+  //      cube(10);
+  //    translate([-1,0,b608_width+2])
+  //      rotate([45,0,0])
+  //      cube(10);
+  //  }
+  //  for(l=[0,1]) mirror([l,0,0])
+  //  translate([-(rod_l/2+0.51),leg_depth/2,-leg_height+leg_depth/2+3])
+  //  for(k=[0,1]) translate([k*b608_width,0,0]) mirror([k,0,0])
+  //  rotate([90,-90,0])
+  //  translate([0,0,-2])
+  //  difference(){
+  //    inner_round_corner(r=2, h=leg_depth+4);
+  //    translate([-1,0,2])
+  //      rotate([-45,0,0])
+  //      translate([0,-1,-10])
+  //      cube(10);
+  //    translate([-1,0,leg_depth+2])
+  //      rotate([45,0,0])
+  //      cube(10);
+  //  }
+
+  for(xs=[-rod_l/2-0.51, 43+5+2])
+    translate([xs,-leg_depth/2 - (37.5 + gear_backlash_tol),-leg_height+leg_depth/2])
     difference(){
-      inner_round_corner(r=2, h=b608_width+4);
-      translate([-1,0,2])
-        rotate([-45,0,0])
-        translate([0,-1,-10])
-        cube(10);
-      translate([-1,0,b608_width+2])
-        rotate([45,0,0])
-        cube(10);
-    }
-    for(l=[0,1]) mirror([l,0,0])
-    translate([-(rod_l/2+0.51),leg_depth/2,-leg_height+leg_depth/2+3])
-    for(k=[0,1]) translate([k*b608_width,0,0]) mirror([k,0,0])
-    rotate([90,-90,0])
-    translate([0,0,-2])
-    difference(){
-      inner_round_corner(r=2, h=leg_depth+4);
-      translate([-1,0,2])
-        rotate([-45,0,0])
-        translate([0,-1,-10])
-        cube(10);
-      translate([-1,0,leg_depth+2])
-        rotate([45,0,0])
-        cube(10);
+      translate([0,0,push_legs_up])
+        top2_rounded_cube2([b608_width, leg_depth, leg_height],3);
+      translate([(b608_width)/2, leg_depth/2,leg_height-leg_depth/2])
+        rotate([0,90,0])
+        hull(){
+          cylinder(d=b608_outer_dia+0.2, h=b608_width+10, center=true);
+          translate([-(b608_outer_dia+0.2)/2,0,0])
+            cylinder(d=4, h=b608_width+10, center=true);
+        }
     }
 }
 
 //base_sides();
 module base_sides(){
-  skirt = 2;
+  skirt = 0;
   difference(){
     translate([rod_l/2-8,-leg_depth/2,-leg_height+leg_depth/2+2])
       translate([0,0,push_legs_up])
@@ -299,13 +317,24 @@ module drive_train_assembly(){
   base();
   translate([21.1,0,0])
     sock();
-  for(k=[0,1]) mirror([k,0,0])
-    base_sides();
+  //for(k=[0,1]) mirror([k,0,0])
+  //  base_sides();
+  //translate([21,-37.5 - gear_backlash_tol])
+  //  base_sides();
+  //mirror([1,0,0])
+  //  translate([0,-37.5 - gear_backlash_tol])
+  //  base_sides();
+  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+  drum();
+  translate([57.1,0,0])
+    translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+    drum_shaft();
 }
 
 
 
-drum();
+//rotate([0,-90,0])
+//drum();
 module drum(){
   // 22.7 gives four layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
   //r_drum = 22.7;
@@ -313,10 +342,43 @@ module drum(){
   r_drum = 20;
   // 30.315 gives three layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
   //r_drum = 30.315;
-  rotate([0,90,0]) {
-    cylinder(r=r_drum, h=stroke + 2*5, center=true);
-    translate([0,0,43])
-    rotate([0,0,7])
-    helix_gear_small();
+  difference(){
+  difference(){
+
+    rotate([0,90,0]) {
+      union(){
+        cylinder(r=r_drum, h=stroke + 2*5, center=true);
+        // GT2 pulley, mounted immediately outboard of the small helical gear.
+        translate([0,0,(stroke+2*5)/2 + 0])
+          GT2_2mm_pulley_extrusion(GT2_belt_width+6, 66);
+      }
+      translate([0,0,43])
+        rotate([0,0,7])
+        helix_gear_small();
+      cylinder(d=14, h=38.5, $fn=64);
+    }
+    rotate([0,90,0])
+    translate([0,0,11])
+      cylinder(d=8, h=75, $fn=64, center=true);
+    rotate([0,90,0])
+    translate([0,0,-stroke/2-3])
+      cylinder(r=r_drum-2, h=50, $fn=64, center=false);
+    rotate([0,90,0])
+    translate([0,0,-stroke/2-3+50])
+      cylinder(r2=8/2, r1=r_drum-2, h=10, $fn=64, center=false);
   }
+  //translate([-50,-100,-50])
+  //  cube(100);
+  }
+}
+
+//drum_shaft();
+module drum_shaft(){
+  rotate([-90,0,0])
+  rotate([0,-90,0])
+    difference(){
+      cylinder(d=7.9, h=92.6);
+      translate([-50,3.3,0])
+        cube(100);
+    }
 }
