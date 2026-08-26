@@ -344,10 +344,9 @@ module drum(){
   //r_drum = 30.315;
   difference(){
   difference(){
-
     rotate([0,90,0]) {
       union(){
-        cylinder(r=r_drum, h=stroke + 2*5, center=true);
+        cylinder(r=r_drum, h=stroke + 2*7, center=true);
         // GT2 pulley, mounted immediately outboard of the small helical gear.
         translate([0,0,(stroke+2*5)/2 + 0])
           GT2_2mm_pulley_extrusion(GT2_belt_width+6, 66);
@@ -356,6 +355,9 @@ module drum(){
         rotate([0,0,7])
         helix_gear_small();
       cylinder(d=14, h=38.5, $fn=64);
+      for(flange_x_pos=[-(stroke/2+6)])
+        translate([0,0,flange_x_pos])
+        cylinder(d=60, h=2, center=true);
     }
     rotate([0,90,0])
     translate([0,0,11])
