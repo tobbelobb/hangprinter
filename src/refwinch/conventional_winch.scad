@@ -92,7 +92,7 @@ module full_shaft(){
   //  b608();
 }
 
-//helix_gear_big();
+!helix_gear_big();
 module helix_gear_big(
   modul=1,
   tooth_number=63, // (2/10.5)*63. 2 is max line width. 10.5 is diamond groove pitch. 63 is the number of teeth needed to match the small gears' 12 teeth.
@@ -101,17 +101,23 @@ module helix_gear_big(
   pressure_angle=20,
   helix_angle=45
 ){
-  for(k=[0,1]) mirror([0,0,k])
-  spur_gear(
-    modul=modul,
-    tooth_number=tooth_number,
-    width=width/2,
-    bore=bore,
-    pressure_angle=pressure_angle,
-    helix_angle=helix_angle,
-    optimized=true
-  );
-  tol = 0.3;
+  mirror([1,0,0])
+  difference(){
+    for(k=[0,1]) mirror([0,0,k])
+      spur_gear(
+        modul=modul,
+        tooth_number=tooth_number,
+        width=width/2,
+        bore=bore,
+        pressure_angle=pressure_angle,
+        helix_angle=helix_angle,
+        optimized= k == 0
+      );
+    for(ang=[0:60:359]) rotate([0,0,ang])
+      translate([18.17,0,0])
+      cylinder(d=12.2, h=10, center=true);
+  }
+  tol = 0.2;
   torx_thing_w = 6.4;
   s = (torx_thing_w+tol)/torx_thing_w;
   difference() {
@@ -312,6 +318,7 @@ module drive_train_assembly(){
       full_shaft();
     }
     translate([0,0,-rod_l/2-gear_th/2-1-1-2])
+      rotate([180,0,0])
       helix_gear_big();
   }
   base();
