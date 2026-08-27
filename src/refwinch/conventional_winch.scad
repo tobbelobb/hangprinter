@@ -352,7 +352,7 @@ module drum(){
     translate([0,0,-stroke/2-3+50])
       cylinder(r2=8/2, r1=r_drum-2, h=10, $fn=64, center=false);
     rotate([0,90,0])
-      translate([0,0,stroke/2+4.9])
+      translate([0,0,stroke/2+5.0])
       rotate([0,0,12])
       sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
   }
@@ -406,9 +406,9 @@ module drive_train_assembly(){
   translate([57.1,0,0])
     translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
     drum_shaft();
-  //translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-  //rotate([0,90,0])
-  //  translate([0,0,stroke/2+5.0])
-  //  rotate([0,0,12])
-  //  sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
+  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+    rotate([0,90,0])
+    translate([0,0,stroke/2+5.0])
+    rotate([0,0,12])
+    sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1, center=true, $fn=64);
 }
