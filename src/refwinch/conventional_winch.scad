@@ -92,7 +92,7 @@ module full_shaft(){
   //  b608();
 }
 
-!helix_gear_big();
+//!helix_gear_big();
 module helix_gear_big(
   modul=1,
   tooth_number=63, // (2/10.5)*63. 2 is max line width. 10.5 is diamond groove pitch. 63 is the number of teeth needed to match the small gears' 12 teeth.
@@ -195,6 +195,8 @@ module cut_pawl(){
 leg_depth = b608_outer_dia + 2*3;
 push_legs_up = 3; // base thickness (=3) is max
 leg_height = 50;
+distance_between_towers = 0;
+base_y_length = 75.6-2*3.4;
 //base();
 module base(){
   difference(){
@@ -211,42 +213,19 @@ module base(){
               cylinder(d=4, h=b608_width+10, center=true);
           }
       }
-    guide_rods();
+    #guide_rods();
   }
-  translate([-76/2,-60+2*3.4,-leg_height+leg_depth/2])
-    rounded_cube2([76, 75.6-2*3.4, 3], 0);
+  translate([-76/2,-60+2*3.4,-leg_height+leg_depth/2]){
+    rounded_cube2([76, base_y_length, 3], 0);
+    // Bend strength bars
+    for(xs=[15:(76-2-15)/4:76-2-1])
+    translate([xs,0,0])
+      cube([2, base_y_length, 4]);
+    translate([76-2,0,0])
+      cube([2, base_y_length - leg_depth-2*2, 4]);
+  }
   translate([-76/2,-60+2*3.35,-leg_height+leg_depth/2])
     rounded_cube2([97.1, 31.2, 3], 0);
-  // Inner rounded corners
-  //for(k=[0,1]) for(l=[0,1]) mirror([k, 0, 0]) mirror([0,l,0])
-  //  translate([rod_l/2+0.51,leg_depth/2,-leg_height+leg_depth/2+3])
-  //  rotate([0,-90,0])
-  //  translate([0,0,-2])
-  //  difference(){
-  //    inner_round_corner(r=2, h=b608_width+4);
-  //    translate([-1,0,2])
-  //      rotate([-45,0,0])
-  //      translate([0,-1,-10])
-  //      cube(10);
-  //    translate([-1,0,b608_width+2])
-  //      rotate([45,0,0])
-  //      cube(10);
-  //  }
-  //  for(l=[0,1]) mirror([l,0,0])
-  //  translate([-(rod_l/2+0.51),leg_depth/2,-leg_height+leg_depth/2+3])
-  //  for(k=[0,1]) translate([k*b608_width,0,0]) mirror([k,0,0])
-  //  rotate([90,-90,0])
-  //  translate([0,0,-2])
-  //  difference(){
-  //    inner_round_corner(r=2, h=leg_depth+4);
-  //    translate([-1,0,2])
-  //      rotate([-45,0,0])
-  //      translate([0,-1,-10])
-  //      cube(10);
-  //    translate([-1,0,leg_depth+2])
-  //      rotate([45,0,0])
-  //      cube(10);
-  //  }
 
   for(xs=[-rod_l/2-0.51, 43+5+2])
     translate([xs,-leg_depth/2 - (37.5 + gear_backlash_tol),-leg_height+leg_depth/2])
@@ -261,6 +240,7 @@ module base(){
             cylinder(d=4, h=b608_width+10, center=true);
         }
     }
+
 }
 
 //base_sides();
@@ -305,43 +285,6 @@ module sock(){
 }
 
 gear_backlash_tol = 0.2;
-translate([0,37.5 + gear_backlash_tol,0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-drive_train_assembly();
-module drive_train_assembly(){
-  rotate([0,-90,0]) {
-    rotate([0,0,180]){
-      translate([0,0,-21.1])
-      rotate([-20,0,0])
-      translate([6,0,0])
-      rotate([0,-90,0])
-        cut_pawl();
-      full_shaft();
-    }
-    translate([0,0,-rod_l/2-gear_th/2-1-1-2])
-      rotate([180,0,0])
-      helix_gear_big();
-  }
-  base();
-  translate([21.1,0,0])
-    sock();
-  //for(k=[0,1]) mirror([k,0,0])
-  //  base_sides();
-  //translate([21,-37.5 - gear_backlash_tol])
-  //  base_sides();
-  //mirror([1,0,0])
-  //  translate([0,-37.5 - gear_backlash_tol])
-  //  base_sides();
-  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-  drum();
-  translate([57.1,0,0])
-    translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-    drum_shaft();
-  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-  rotate([0,90,0])
-    translate([0,0,stroke/2+6.4])
-    rotate([0,0,12])
-    sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
-}
 
 
 
@@ -422,4 +365,42 @@ module drum_shaft(){
       translate([-50,3.3,0])
         cube(100);
     }
+}
+
+translate([0,37.5 + gear_backlash_tol,0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+drive_train_assembly();
+module drive_train_assembly(){
+  rotate([0,-90,0]) {
+    rotate([0,0,180]){
+      translate([0,0,-21.1])
+      rotate([-20,0,0])
+      translate([6,0,0])
+      rotate([0,-90,0])
+        cut_pawl();
+      full_shaft();
+    }
+    translate([0,0,-rod_l/2-gear_th/2-1-1-2])
+      rotate([180,0,0])
+      helix_gear_big();
+  }
+  translate([21.1,0,0])
+    sock();
+  base();
+  for(k=[0,1]) mirror([k,0,0])
+    base_sides();
+  translate([21,-37.5 - gear_backlash_tol])
+    base_sides();
+  mirror([1,0,0])
+    translate([0,-37.5 - gear_backlash_tol])
+    base_sides();
+  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+  drum();
+  translate([57.1,0,0])
+    translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+    drum_shaft();
+  //translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+  //rotate([0,90,0])
+  //  translate([0,0,stroke/2+6.4])
+  //  rotate([0,0,12])
+  //  sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
 }
