@@ -83,8 +83,8 @@ module full_shaft(){
       translate([0,0,-rod_l/2 + b608_width-0.5])
         cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2 + 0.5);
     }
-    translate([0,0,-rod_l/2-gear_th-1-1-2])
-    torx_thing(gear_th+2.5);
+    translate([0,0,-rod_l/2-gear_th-1-1-2-2])
+      torx_thing(gear_th+2.5+2);
   }
 
   //for(k=[0,1]) mirror([0,0,k])
@@ -322,16 +322,24 @@ module drum(){
   difference(){
     rotate([0,90,0]) {
       union(){
-        cylinder(r=r_drum, h=stroke + 2*7, center=true, $fn=64);
+        translate([0,0,1.3/2])
+        cylinder(r=r_drum, h=stroke + 2*5.5+1.3, center=true, $fn=64);
         // GT2 pulley, mounted immediately outboard of the small helical gear.
-        translate([0,0,(stroke+2*7)/2 + 0])
-          GT2_2mm_pulley_extrusion(GT2_belt_width+2, 63);
+        belt_flange_h = 1.25;
+        translate([0,0,(stroke+2*5.5)/2+1.3]){
+          GT2_2mm_pulley_extrusion(GT2_belt_width+2, 62);
+          cylinder(d1=40, d2=39, h=belt_flange_h);
+          translate([0,0,belt_flange_h+6])
+            cylinder(d1=39, d2=40, h=belt_flange_h);
+          translate([0,0,2*belt_flange_h+6])
+            cylinder(d=40, h=1.3);
+        }
       }
       translate([0,0,43])
         rotate([0,0,7])
         helix_gear_small();
       cylinder(d=14, h=38.5, $fn=64);
-      translate([0,0,-(stroke/2+6.5)])
+      translate([0,0,-(stroke/2+5)])
         cylinder(d=60, h=1, center=true, $fn=64);
     }
     rotate([0,90,0])
@@ -344,7 +352,7 @@ module drum(){
     translate([0,0,-stroke/2-3+50])
       cylinder(r2=8/2, r1=r_drum-2, h=10, $fn=64, center=false);
     rotate([0,90,0])
-      translate([0,0,stroke/2+6.4])
+      translate([0,0,stroke/2+4.9])
       rotate([0,0,12])
       sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
   }
@@ -394,13 +402,13 @@ module drive_train_assembly(){
     translate([0,-37.5 - gear_backlash_tol])
     base_sides();
   translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-  drum();
+    drum();
   translate([57.1,0,0])
     translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
     drum_shaft();
   //translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
   //rotate([0,90,0])
-  //  translate([0,0,stroke/2+6.4])
+  //  translate([0,0,stroke/2+5.0])
   //  rotate([0,0,12])
   //  sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
 }
