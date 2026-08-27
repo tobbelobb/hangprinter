@@ -197,6 +197,8 @@ push_legs_up = 3; // base thickness (=3) is max
 leg_height = 50;
 distance_between_towers = 0;
 base_y_length = 75.6-2*3.4;
+drum_w = stroke+6*2;
+drum_d = 60;
 //base();
 module base(){
   difference(){
@@ -224,6 +226,30 @@ module base(){
     translate([76-2,0,0])
       cube([2, base_y_length - leg_depth-2*2, 4]);
   }
+  translate([0,-(37.5 + gear_backlash_tol),0])
+    rotate([0,90,0])
+    color("yellow")
+    difference(){
+      hull() {
+        cylinder(d=drum_d+4, h=drum_w, center=true);
+        rotate([0,0,90])
+          translate([-(drum_d+4)/2+16.4, -(drum_d+4)/2-1.4-2.5, -drum_w/2]) cube([drum_d/2, 1, drum_w]);
+        translate([-1,-(drum_d+15)/2,-drum_w/2])
+          cube([3, 7, drum_w]);
+      }
+      cylinder(d=drum_d+0.5, h=drum_w+2, center=true, $fn=128);
+      translate([0,10,-100/2])
+        cube([drum_w+2, drum_w+2, 100]);
+      translate([-(drum_w+2)/1,-(drum_d+20)/2,-100/2])
+        cube([drum_w+2, drum_d+20, 100]);
+      for(screw_x = [drum_w/5, -drum_w/5])
+      translate([-1, -drum_d/2-9/2, screw_x])
+        rotate([0,90,0]) {
+          M3_screw(h=100);
+        translate([0,0,3])
+          M3_nut(h=100);
+        }
+    }
   translate([-76/2,-60+2*3.35,-leg_height+leg_depth/2])
     rounded_cube2([97.1, 31.2, 3], 0);
 
@@ -241,6 +267,36 @@ module base(){
         }
     }
 
+}
+
+//top_shell();
+module top_shell() {
+    rotate([0,180+90,0])
+    color("silver")
+    difference(){
+      hull() {
+        cylinder(d=drum_d+5, h=drum_w, center=true);
+        //rotate([0,0,90])
+        //  translate([-(drum_d+4)/2+16.4, -(drum_d+4)/2-1.4-2.5, -drum_w/2]) cube([drum_d/2, 1, drum_w]);
+        // For screw holes
+        translate([-1,-(drum_d+15)/2,-drum_w/2])
+          cube([3, 7, drum_w]);
+      }
+      cylinder(d=drum_d+0.5, h=drum_w+2, center=true, $fn=128);
+      translate([0,34,-100/2]) // lower y to cut away more of the shell
+        cube([drum_w+2, drum_w+2, 100]);
+      translate([-(drum_w+2)/1,-(drum_d+20),-100/2])
+        cube([drum_w+2, drum_d+20, 100]);
+      translate([-(drum_w+16),0,-100/2]) // lower x to cut away more shell
+        cube([drum_w+2, drum_d+20, 100]);
+      for(screw_x = [drum_w/5, -drum_w/5])
+      translate([-1, -drum_d/2-9/2, screw_x])
+        rotate([0,90,0]) {
+          M3_screw(h=100);
+        translate([0,0,3])
+          M3_nut(h=100);
+        }
+    }
 }
 
 //base_sides();
@@ -375,8 +431,8 @@ module drum_shaft(){
     }
 }
 
-translate([0,37.5 + gear_backlash_tol,0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-drive_train_assembly();
+//translate([0,37.5 + gear_backlash_tol,0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+//drive_train_assembly();
 module drive_train_assembly(){
   rotate([0,-90,0]) {
     rotate([0,0,180]){
@@ -411,4 +467,6 @@ module drive_train_assembly(){
     translate([0,0,stroke/2+5.0])
     rotate([0,0,12])
     sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1, center=true, $fn=64);
+  translate([0,-37.5 - gear_backlash_tol])
+    top_shell();
 }
