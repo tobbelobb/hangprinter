@@ -210,15 +210,15 @@ module base(){
         translate([(b608_width)/2, leg_depth/2,leg_height-leg_depth/2])
           rotate([0,90,0])
           hull(){
-            cylinder(d=b608_outer_dia+0.2, h=b608_width+10, center=true);
+            cylinder(d=b608_outer_dia+0.2, h=b608_width+10, center=true); // hole for 608 bearing
             translate([-(b608_outer_dia+0.2)/2,0,0])
-              cylinder(d=4, h=b608_width+10, center=true);
+              cylinder(d=4, h=b608_width+10, center=true); // Make upwards pointing teardrop shape so it's easier to print
           }
       }
     #guide_rods();
   }
   translate([-76/2,-60+2*3.4,-leg_height+leg_depth/2]){
-    rounded_cube2([76, base_y_length, 3], 0);
+    rounded_cube2([76, base_y_length, 3], 0); // Biggest flat bottom part
     // Bend strength bars
     for(xs=[15:(76-2-15)/4:76-2-1])
     translate([xs,0,0])
@@ -269,6 +269,7 @@ module base(){
 
 }
 
+//!rotate([0,90,0])
 //top_shell();
 module top_shell() {
     rotate([0,180+90,0])
@@ -416,8 +417,8 @@ module drum(){
   //  cube(100);
 
   }
-  translate([50,0,0]) rotate([0,90,0]) b608();
-  translate([-35.55,0,0]) rotate([0,90,0]) b608();
+  //translate([50,0,0]) rotate([0,90,0]) b608();
+  //translate([-35.55,0,0]) rotate([0,90,0]) b608();
 }
 
 //drum_shaft();
@@ -432,7 +433,7 @@ module drum_shaft(){
 }
 
 //translate([0,37.5 + gear_backlash_tol,0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-//drive_train_assembly();
+drive_train_assembly();
 module drive_train_assembly(){
   rotate([0,-90,0]) {
     rotate([0,0,180]){
