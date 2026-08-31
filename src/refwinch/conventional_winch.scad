@@ -4,103 +4,241 @@ include <../lib/util.scad>
 include <../lib/gears.scad>
 include <../lib/gear_util.scad>
 
-stroke = 42;
-rod_l = stroke + 2*7 + 2*b608_width;
-echo("rod_l", rod_l);
-rod_d = 11;
+// Open the Customizer panel to select an output part and adjust these controls.
+/* [Output] */
+
+part = "Assembly"; // [Assembly, Base, Base side, Top shell, Drum, Drum shaft, Separator disc, Traverse shaft, Follower pawl, Pawl socket, Large gear, Small gear]
+
+/* [Traverse screw] */
+
+traverse_stroke = 42; // [20:1:100]
+traverse_rod_diameter = 11; // [8:0.1:16]
+groove_turns_per_stroke = 4; // [1:0.25:10]
+groove_diameter = 1.8; // [0.5:0.1:4]
+groove_depth = 1.75; // [0.5:0.05:4]
+groove_reversal_fraction = 0.250; // [0:0.01:0.49]
+groove_samples_per_turn = 120; // [24:12:240]
+
+/* [Drum] */
+
+drum_core_radius = 20; // [10:0.5:35]
+drum_envelope_diameter = 60; // [40:1:90]
+drum_body_end_margin = 5.5; // [2:0.5:12]
+drum_housing_end_margin = 6; // [2:0.5:12]
+separator_disc_depth = 1.5; // [0.5:0.1:3]
+separator_tooth_width_angle = 10; // [2:0.5:20]
+
+/* [Gear train] */
+
+gear_module = 1; // [0.5:0.1:2]
+large_gear_tooth_count = 63; // [24:1:100]
+small_gear_tooth_count = 12; // [8:1:40]
+gear_width = 8; // [4:0.5:16]
+gear_pressure_angle = 20; // [14.5, 20, 25]
+gear_helix_angle = 45; // [0:1:60]
+gear_backlash_tolerance = 0.2; // [0:0.05:1]
+
+/* [Fit and fabrication] */
+
+bearing_hole_diametral_clearance = 0.2; // [0:0.05:0.8]
+drum_shell_diametral_clearance = 0.5; // [0:0.1:2]
+torx_fit_diametral_clearance = 0.2; // [0:0.05:0.8]
+
+/* [Hidden] */
+
+// Axial allowances on each end of the traverse screw.
+traverse_rod_end_length = 7;
+grooved_section_extra_length = 5;
+traverse_rod_length = traverse_stroke + 2*traverse_rod_end_length + 2*b608_width;
+
+// The pitch-circle distance is shared by every drum-axis placement.
+gear_pitch_center_distance = gear_module*(large_gear_tooth_count + small_gear_tooth_count)/2;
+drum_axis_spacing = gear_pitch_center_distance + gear_backlash_tolerance;
+
+drum_width = traverse_stroke + 2*drum_housing_end_margin;
+separator_disc_end_margin = 5;
+separator_disc_axial_offset = traverse_stroke/2 + separator_disc_end_margin;
+
+base_thickness = 3;
+bearing_tower_wall_thickness = 3;
+bearing_tower_depth = b608_outer_dia + 2*bearing_tower_wall_thickness;
+bearing_tower_height = 50;
+bearing_hole_diameter = b608_outer_dia + bearing_hole_diametral_clearance;
+bearing_tower_corner_radius = 3;
+bearing_tower_axial_clearance = 0.51;
+bearing_cut_length_allowance = 10;
+bearing_teardrop_tip_diameter = 4;
+
+base_plate_x_length = 76;
+base_front_edge_y = 15.6;
+base_rear_inset = 3.4;
+base_rear_edge_y = -drum_envelope_diameter + 2*base_rear_inset;
+base_y_length = base_front_edge_y - base_rear_edge_y;
+base_extension_overlap = 0.1;
+base_extension_x_length = 97.1;
+base_extension_y_length = 31.2;
+base_rib_thickness = 2;
+base_rib_height = 4;
+drum_right_bearing_tower_x = 50;
+left_bearing_tower_x = -traverse_rod_length/2-bearing_tower_axial_clearance;
+drum_shaft_right_end_clearance = 0.05;
+drum_shaft_left_end_clearance = 0.06;
+drum_shaft_right_end_x = drum_right_bearing_tower_x + b608_width + drum_shaft_right_end_clearance;
+drum_shaft_left_end_x = left_bearing_tower_x + drum_shaft_left_end_clearance;
+drum_shaft_length = drum_shaft_right_end_x - drum_shaft_left_end_x;
+
+lower_shell_radial_wall = 2;
+top_shell_radial_wall = 2.5;
+shell_screw_row_radial_offset = 4.5;
+shell_screw_x_fraction = 1/5;
+shell_screw_nut_offset = 3;
+shell_screw_support_diameter_allowance = 15;
+shell_screw_boss_x = -1;
+shell_screw_boss_thickness = 3;
+shell_screw_boss_length = 7;
+shell_axial_boolean_clearance = 2;
+shell_radial_boolean_allowance = 20;
+
+separator_disc_phase = 12;
+separator_disc_height = 1;
+separator_disc_cut_height = 1.2;
+
+pawl_tilt_angle = 20;
+pawl_radial_offset = 6;
+drum_right_side_cover_shift = 21;
+
+pawl_cylinder_diameter = 9;
+pawl_cylinder_height = 20;
+pawl_contact_angle = 26.5;
+pawl_angular_span = 125;
+pawl_path_center = 0.5;
+pawl_axis_x = 21.1;
+pawl_socket_end_offset = 9;
+pawl_socket_floor_thickness = 2;
+pawl_socket_wall_thickness = 2.5;
+
+guide_rod_diameter = 3.2;
+upper_guide_rod_z = -14;
+guide_rod_spacing = 10;
+guide_rod_length_allowance = 3;
+line_entry_z = -19;
+line_entry_length = 30;
+pawl_guide_sweep_clearance = 0.5;
+socket_guide_rod_clearance = 0.25;
+pawl_socket_bore_clearance = 0.5;
+
+torx_drive_diameter = 6.4;
+large_gear_axial_gap = 4;
+large_gear_center_z = -traverse_rod_length/2 - large_gear_axial_gap - gear_width/2;
+torx_outer_overlap = 2;
+torx_inner_overlap = 2.5;
+boolean_cut_length = 100;
+round_fn = 64;
+shell_round_fn = 128;
+separator_inner_fn = 100;
+
+echo("traverse_rod_length", traverse_rod_length);
 
 module grooved_rod(){
-    self_reversing_grooved_rod(
-      rod_d=rod_d,
-      rod_l= stroke+5,
-      stroke=stroke,
-      turns_per_stroke=4,
-      cycles=1,
-      groove_d=1.8,
-      groove_depth=1.75,
-      samples_per_turn=120,
-      reversal_frac=0.250
+  self_reversing_grooved_rod(
+    rod_d=traverse_rod_diameter,
+    rod_l=traverse_stroke + grooved_section_extra_length,
+    stroke=traverse_stroke,
+    turns_per_stroke=groove_turns_per_stroke,
+    cycles=1,
+    groove_d=groove_diameter,
+    groove_depth=groove_depth,
+    samples_per_turn=groove_samples_per_turn,
+    reversal_frac=groove_reversal_fraction
   );
 }
 
-//pawl();
-module pawl(){
+module raw_follower_pawl(){
   intersection(){
-  color("orange")
-    self_reversing_follower_pawl(
-        rod_d=rod_d,
-        stroke=stroke,
-        turns_per_stroke=4,
-        groove_d=1.8,
-        groove_depth=1.75,
+    color("orange")
+      self_reversing_follower_pawl(
+        rod_d=traverse_rod_diameter,
+        stroke=traverse_stroke,
+        turns_per_stroke=groove_turns_per_stroke,
+        groove_d=groove_diameter,
+        groove_depth=groove_depth,
         half_index=0,
-        q_center=0.5,
-        angular_span=125,
-        samples_per_turn=120,
-        reversal_frac=0.250
-    );
-  rotate([53,0,0])
-    self_reversing_follower_pawl(
-        rod_d=rod_d,
-        stroke=stroke,
-        turns_per_stroke=4,
-        groove_d=1.8,
-        groove_depth=1.75,
+        q_center=pawl_path_center,
+        angular_span=pawl_angular_span,
+        samples_per_turn=groove_samples_per_turn,
+        reversal_frac=groove_reversal_fraction
+      );
+    rotate([2*pawl_contact_angle,0,0])
+      self_reversing_follower_pawl(
+        rod_d=traverse_rod_diameter,
+        stroke=traverse_stroke,
+        turns_per_stroke=groove_turns_per_stroke,
+        groove_d=groove_diameter,
+        groove_depth=groove_depth,
         half_index=1,
-        q_center=0.5,
-        angular_span=125,
-        samples_per_turn=120,
-        reversal_frac=0.250
-    );
+        q_center=pawl_path_center,
+        angular_span=pawl_angular_span,
+        samples_per_turn=groove_samples_per_turn,
+        reversal_frac=groove_reversal_fraction
+      );
   }
 }
 
-//%translate([0,0,2.835])
-//   rotate([0,0,90])
-//   grooved_rod();
+module torx_drive_profile(length=gear_width){
+  lobe_count = 6;
+  lobe_center_radius = 3;
+  lobe_diameter = 3.2;
+  lobe_envelope_diameter = 8;
 
-gear_th = 8;
-module torx_thing(gear_th=8){
   intersection(){
-    for(ang=[0:360/6:359])
+    for(ang=[0:360/lobe_count:359])
       rotate([0,0,ang])
-        translate([3,0,0])
-        cylinder(d=3.2,h=gear_th);
-      cylinder(d=8,h=gear_th);
+        translate([lobe_center_radius,0,0])
+        cylinder(d=lobe_diameter, h=length);
+      cylinder(d=lobe_envelope_diameter, h=length);
   }
-  cylinder(d=6.4,h=gear_th);
-
+  cylinder(d=torx_drive_diameter, h=length);
 }
 
-//!rotate([180,0,0])
-//full_shaft();
-module full_shaft(){
+module traverse_shaft(){
+  bearing_seat_diameter = 2*b608_bore_r;
+  bearing_seat_end_extension = 1;
+  shaft_boolean_overlap = 0.5;
+
   union(){
     grooved_rod();
     for(k=[0,1]) mirror([0,0,k]) {
-      translate([0,0,-rod_l/2-1-0.5])
-        cylinder(d=8, h=b608_width+1+0.5);
-      translate([0,0,-rod_l/2 + b608_width-0.5])
-        cylinder(d1=8, d2 = rod_d, h=rod_l/2 - b608_width - (stroke+5)/2 + 0.5);
+      translate([0,0,-traverse_rod_length/2-bearing_seat_end_extension-shaft_boolean_overlap])
+        cylinder(
+          d=bearing_seat_diameter,
+          h=b608_width + bearing_seat_end_extension + shaft_boolean_overlap
+        );
+      translate([0,0,-traverse_rod_length/2 + b608_width-shaft_boolean_overlap])
+        cylinder(
+          d1=bearing_seat_diameter,
+          d2=traverse_rod_diameter,
+          h=traverse_rod_length/2 - b608_width - (traverse_stroke + grooved_section_extra_length)/2 + shaft_boolean_overlap
+        );
     }
-    translate([0,0,-rod_l/2-gear_th-1-1-2-2])
-      torx_thing(gear_th+2.5+2);
+    translate([0,0,large_gear_center_z - gear_width/2 - torx_outer_overlap])
+      torx_drive_profile(gear_width + torx_outer_overlap + torx_inner_overlap);
   }
-
-  //for(k=[0,1]) mirror([0,0,k])
-  //  translate([0,0,-rod_l/2-0.5])
-  //  b608();
 }
 
-//!helix_gear_big();
-module helix_gear_big(
-  modul=1,
-  tooth_number=63, // (2/10.5)*63. 2 is max line width. 10.5 is diamond groove pitch. 63 is the number of teeth needed to match the small gears' 12 teeth.
-  width=8,
+module large_herringbone_gear(
+  modul=gear_module,
+  tooth_number=large_gear_tooth_count, // (2/10.5)*63. 2 is max line width. 10.5 is diamond groove pitch. 63 is the number of teeth needed to match the small gears' 12 teeth.
+  width=gear_width,
   bore=12,
-  pressure_angle=20,
-  helix_angle=45
+  pressure_angle=gear_pressure_angle,
+  helix_angle=gear_helix_angle
 ){
+  lightening_hole_count = 6;
+  lightening_hole_radius = 18.17;
+  lightening_hole_diameter = 12.2;
+  gear_hub_diameter = 13;
+  torx_scale = (torx_drive_diameter + torx_fit_diametral_clearance)/torx_drive_diameter;
+
   mirror([1,0,0])
   difference(){
     for(k=[0,1]) mirror([0,0,k])
@@ -113,29 +251,25 @@ module helix_gear_big(
         helix_angle=helix_angle,
         optimized= k == 0
       );
-    for(ang=[0:60:359]) rotate([0,0,ang])
-      translate([18.17,0,0])
-      cylinder(d=12.2, h=10, center=true);
+    for(ang=[0:360/lightening_hole_count:359]) rotate([0,0,ang])
+      translate([lightening_hole_radius,0,0])
+      cylinder(d=lightening_hole_diameter, h=width+2, center=true);
   }
-  tol = 0.2;
-  torx_thing_w = 6.4;
-  s = (torx_thing_w+tol)/torx_thing_w;
   difference() {
-    cylinder(d=13, h=width, center=true);
+    cylinder(d=gear_hub_diameter, h=width, center=true);
     translate([0,0,-(width+2)/2])
-    scale([s,s,1])
-    torx_thing(width+2);
+    scale([torx_scale,torx_scale,1])
+    torx_drive_profile(width+2);
   }
 }
 
-//helix_gear_small();
-module helix_gear_small(
-  modul=1.0,
-  tooth_number=12,
-  width=8+1,
+module small_herringbone_gear(
+  modul=gear_module,
+  tooth_number=small_gear_tooth_count,
+  width=gear_width+1,
   bore=0,
-  pressure_angle=20,
-  helix_angle=45
+  pressure_angle=gear_pressure_angle,
+  helix_angle=gear_helix_angle
 ){
   for(k=[0,1]) mirror([0,0,k])
   spur_gear(
@@ -149,217 +283,327 @@ module helix_gear_small(
   );
 }
 
-//guide_rods();
 module guide_rods(tol=0.1){
-  rod_d = 3.2;
-  for (dist=[0,10])
-    translate([0,0,-14-dist])
+  for (dist=[0,guide_rod_spacing])
+    translate([0,0,upper_guide_rod_z-dist])
     rotate([0,90,0])
     color("gray") {
-    cylinder(d=rod_d+tol, h=rod_l+3, center=true);
+    cylinder(d=guide_rod_diameter+tol, h=traverse_rod_length+guide_rod_length_allowance, center=true);
   }
 }
 
 module line_entry(){
-  translate([0,0,-19])
+  translate([0,0,line_entry_z])
     rotate([90,0,0])
-    cylinder(d=Eyelet_diameter, h=30, center=true);
+    cylinder(d=Eyelet_diameter, h=line_entry_length, center=true);
 }
 
-pawl_cylinder_d=9;
-pawl_cylinder_h=20;
-//cut_pawl();
-module cut_pawl(){
+module follower_pawl(){
+  pawl_clip_z = -5;
+  pawl_clip_height = 12;
+  pawl_clip_cube_size = 13;
+  pawl_clip_cube_z = -4;
+  clearance_sweep_step = 3;
+  clearance_sweep_z = 6;
+
   intersection(){
-    translate([0,0,rod_d/2])
-    rotate([0,90,26.5])
-      pawl();
-    translate([0,0,-5])
-      cylinder(d=rod_d, h=12);
-    down(4)
-      cube(13, center=true);
+    translate([0,0,traverse_rod_diameter/2])
+    rotate([0,90,pawl_contact_angle])
+      raw_follower_pawl();
+    translate([0,0,pawl_clip_z])
+      cylinder(d=traverse_rod_diameter, h=pawl_clip_height);
+    translate([0,0,pawl_clip_cube_z])
+      cube(pawl_clip_cube_size, center=true);
   }
   difference() {
-    translate([0,0,-pawl_cylinder_h-1])
-      cylinder(d=pawl_cylinder_d, h=pawl_cylinder_h);
-    for(ang=[-26.5:3:26.5]) rotate([0,0,ang]) {
-      translate([0,0,6]){
+    translate([0,0,-pawl_cylinder_height-1])
+      cylinder(d=pawl_cylinder_diameter, h=pawl_cylinder_height);
+    for(ang=[-pawl_contact_angle:clearance_sweep_step:pawl_contact_angle]) rotate([0,0,ang]) {
+      translate([0,0,clearance_sweep_z]){
         line_entry();
-        guide_rods(tol=0.5);
+        guide_rods(tol=pawl_guide_sweep_clearance);
       }
     }
   }
 }
 
 
-leg_depth = b608_outer_dia + 2*3;
-push_legs_up = 3; // base thickness (=3) is max
-leg_height = 50;
-distance_between_towers = 0;
-base_y_length = 75.6-2*3.4;
-drum_w = stroke+6*2;
-drum_d = 60;
-//base();
+module bearing_tower(){
+  difference(){
+    translate([0,0,base_thickness])
+      top2_rounded_cube2(
+        [b608_width, bearing_tower_depth, bearing_tower_height],
+        bearing_tower_corner_radius
+      );
+    translate([
+      b608_width/2,
+      bearing_tower_depth/2,
+      bearing_tower_height-bearing_tower_depth/2
+    ])
+      rotate([0,90,0])
+      hull(){
+        cylinder(
+          d=bearing_hole_diameter,
+          h=b608_width+bearing_cut_length_allowance,
+          center=true
+        );
+        translate([-bearing_hole_diameter/2,0,0])
+          cylinder(
+            d=bearing_teardrop_tip_diameter,
+            h=b608_width+bearing_cut_length_allowance,
+            center=true
+          );
+      }
+  }
+}
+
+module shell_fastener_holes(){
+  for(screw_x = [drum_width*shell_screw_x_fraction, -drum_width*shell_screw_x_fraction])
+    translate([shell_screw_boss_x, -drum_envelope_diameter/2-shell_screw_row_radial_offset, screw_x])
+      rotate([0,90,0]) {
+        M3_screw(h=boolean_cut_length);
+        translate([0,0,shell_screw_nut_offset])
+          M3_nut(h=boolean_cut_length);
+      }
+}
+
 module base(){
+  tower_base_z = -bearing_tower_height+bearing_tower_depth/2;
+  first_rib_x = 15;
+  rib_interval_count = 4;
+  last_rib_end_clearance = 1;
+  shell_support_tangent_offset = 16.4;
+  shell_support_radial_offset = 1.4;
+  shell_support_clearance = 2.5;
+  lower_shell_cut_y = 10;
+
   difference(){
     for(k=[0,1]) mirror([k,0,0])
-      translate([-rod_l/2-0.51,-leg_depth/2,-leg_height+leg_depth/2])
-      difference(){
-        translate([0,0,push_legs_up])
-          top2_rounded_cube2([b608_width, leg_depth, leg_height],3);
-        translate([(b608_width)/2, leg_depth/2,leg_height-leg_depth/2])
-          rotate([0,90,0])
-          hull(){
-            cylinder(d=b608_outer_dia+0.2, h=b608_width+10, center=true); // hole for 608 bearing
-            translate([-(b608_outer_dia+0.2)/2,0,0])
-              cylinder(d=4, h=b608_width+10, center=true); // Make upwards pointing teardrop shape so it's easier to print
-          }
-      }
-    #guide_rods();
+      translate([left_bearing_tower_x,-bearing_tower_depth/2,tower_base_z])
+        bearing_tower();
+    guide_rods();
   }
-  translate([-76/2,-60+2*3.4,-leg_height+leg_depth/2]){
-    rounded_cube2([76, base_y_length, 3], 0); // Biggest flat bottom part
+  translate([-base_plate_x_length/2,base_rear_edge_y,tower_base_z]){
+    rounded_cube2([base_plate_x_length, base_y_length, base_thickness], 0); // Biggest flat bottom part
     // Bend strength bars
-    for(xs=[15:(76-2-15)/4:76-2-1])
-    translate([xs,0,0])
-      cube([2, base_y_length, 4]);
-    translate([76-2,0,0])
-      cube([2, base_y_length - leg_depth-2*2, 4]);
+    for(xs=[
+      first_rib_x:
+      (base_plate_x_length-base_rib_thickness-first_rib_x)/rib_interval_count:
+      base_plate_x_length-base_rib_thickness-last_rib_end_clearance
+    ])
+      translate([xs,0,0])
+        cube([base_rib_thickness, base_y_length, base_rib_height]);
+    translate([base_plate_x_length-base_rib_thickness,0,0])
+      cube([
+        base_rib_thickness,
+        base_y_length-bearing_tower_depth-2*base_rib_thickness,
+        base_rib_height
+      ]);
   }
-  translate([0,-(37.5 + gear_backlash_tol),0])
+  translate([0,-drum_axis_spacing,0])
     rotate([0,90,0])
     color("yellow")
     difference(){
       hull() {
-        cylinder(d=drum_d+4, h=drum_w, center=true);
+        cylinder(d=drum_envelope_diameter+2*lower_shell_radial_wall, h=drum_width, center=true);
         rotate([0,0,90])
-          translate([-(drum_d+4)/2+16.4, -(drum_d+4)/2-1.4-2.5, -drum_w/2]) cube([drum_d/2, 1, drum_w]);
-        translate([-1,-(drum_d+15)/2,-drum_w/2])
-          cube([3, 7, drum_w]);
+          translate([
+            -(drum_envelope_diameter+2*lower_shell_radial_wall)/2+shell_support_tangent_offset,
+            -(drum_envelope_diameter+2*lower_shell_radial_wall)/2-shell_support_radial_offset-shell_support_clearance,
+            -drum_width/2
+          ])
+            cube([drum_envelope_diameter/2, 1, drum_width]);
+        translate([
+          shell_screw_boss_x,
+          -(drum_envelope_diameter+shell_screw_support_diameter_allowance)/2,
+          -drum_width/2
+        ])
+          cube([shell_screw_boss_thickness, shell_screw_boss_length, drum_width]);
       }
-      cylinder(d=drum_d+0.5, h=drum_w+2, center=true, $fn=128);
-      translate([0,10,-100/2])
-        cube([drum_w+2, drum_w+2, 100]);
-      translate([-(drum_w+2)/1,-(drum_d+20)/2,-100/2])
-        cube([drum_w+2, drum_d+20, 100]);
-      for(screw_x = [drum_w/5, -drum_w/5])
-      translate([-1, -drum_d/2-9/2, screw_x])
-        rotate([0,90,0]) {
-          M3_screw(h=100);
-        translate([0,0,3])
-          M3_nut(h=100);
-        }
+      cylinder(
+        d=drum_envelope_diameter+drum_shell_diametral_clearance,
+        h=drum_width+shell_axial_boolean_clearance,
+        center=true,
+        $fn=shell_round_fn
+      );
+      translate([0,lower_shell_cut_y,-boolean_cut_length/2])
+        cube([drum_width+shell_axial_boolean_clearance, drum_width+shell_axial_boolean_clearance, boolean_cut_length]);
+      translate([
+        -(drum_width+shell_axial_boolean_clearance),
+        -(drum_envelope_diameter+shell_radial_boolean_allowance)/2,
+        -boolean_cut_length/2
+      ])
+        cube([
+          drum_width+shell_axial_boolean_clearance,
+          drum_envelope_diameter+shell_radial_boolean_allowance,
+          boolean_cut_length
+        ]);
+      shell_fastener_holes();
     }
-  translate([-76/2,-60+2*3.35,-leg_height+leg_depth/2])
-    rounded_cube2([97.1, 31.2, 3], 0);
+  translate([
+    -base_plate_x_length/2,
+    base_rear_edge_y-base_extension_overlap,
+    tower_base_z
+  ])
+    rounded_cube2([base_extension_x_length, base_extension_y_length, base_thickness], 0);
 
-  for(xs=[-rod_l/2-0.51, 43+5+2])
-    translate([xs,-leg_depth/2 - (37.5 + gear_backlash_tol),-leg_height+leg_depth/2])
-    difference(){
-      translate([0,0,push_legs_up])
-        top2_rounded_cube2([b608_width, leg_depth, leg_height],3);
-      translate([(b608_width)/2, leg_depth/2,leg_height-leg_depth/2])
-        rotate([0,90,0])
-        hull(){
-          cylinder(d=b608_outer_dia+0.2, h=b608_width+10, center=true);
-          translate([-(b608_outer_dia+0.2)/2,0,0])
-            cylinder(d=4, h=b608_width+10, center=true);
-        }
-    }
+  for(xs=[left_bearing_tower_x, drum_right_bearing_tower_x])
+    translate([xs,-bearing_tower_depth/2-drum_axis_spacing,tower_base_z])
+      bearing_tower();
 
 }
 
-//!rotate([0,90,0])
-//top_shell();
 module top_shell() {
-    rotate([0,180+90,0])
-    color("silver")
-    difference(){
-      hull() {
-        cylinder(d=drum_d+5, h=drum_w, center=true);
-        //rotate([0,0,90])
-        //  translate([-(drum_d+4)/2+16.4, -(drum_d+4)/2-1.4-2.5, -drum_w/2]) cube([drum_d/2, 1, drum_w]);
-        // For screw holes
-        translate([-1,-(drum_d+15)/2,-drum_w/2])
-          cube([3, 7, drum_w]);
-      }
-      cylinder(d=drum_d+0.5, h=drum_w+2, center=true, $fn=128);
-      translate([0,34,-100/2]) // lower y to cut away more of the shell
-        cube([drum_w+2, drum_w+2, 100]);
-      translate([-(drum_w+2)/1,-(drum_d+20),-100/2])
-        cube([drum_w+2, drum_d+20, 100]);
-      translate([-(drum_w+16),0,-100/2]) // lower x to cut away more shell
-        cube([drum_w+2, drum_d+20, 100]);
-      for(screw_x = [drum_w/5, -drum_w/5])
-      translate([-1, -drum_d/2-9/2, screw_x])
-        rotate([0,90,0]) {
-          M3_screw(h=100);
-        translate([0,0,3])
-          M3_nut(h=100);
-        }
-    }
-}
+  top_shell_cut_y = 34;
+  side_cut_axial_allowance = 16;
 
-//base_sides();
-module base_sides(){
-  skirt = 0;
+  rotate([0,270,0])
+  color("silver")
   difference(){
-    translate([rod_l/2-8,-leg_depth/2,-leg_height+leg_depth/2+2])
-      translate([0,0,push_legs_up])
-        difference(){
-          translate([0,-1.5,-2 + skirt])
-            top2_rounded_cube2([b608_width+4, leg_depth+3, leg_height-skirt],3);
-          translate([2-0.5,0,-2 - 1])
-            top2_rounded_cube2([b608_width+0.5, leg_depth, leg_height+5],3);
-          translate([2-5,1,-2-1])
-            top2_rounded_cube2([b608_width+5, leg_depth-2, leg_height+5],3);
-        }
-    rotate([0,90,0])
-      hull() {
-        cylinder(d=13, h=50);
-        translate([-7,0,0])
-          cylinder(d=2, h=50);
-      }
-    for(k=[0,1]) mirror([0,k,0])
-      translate([rod_l/2-8,-leg_depth/2-0.25,push_legs_up-leg_height+leg_depth/2-1])
-      rotate([0,0,45])
-      cube([3,3,leg_height+10]);
+    hull() {
+      cylinder(d=drum_envelope_diameter+2*top_shell_radial_wall, h=drum_width, center=true);
+      translate([
+        shell_screw_boss_x,
+        -(drum_envelope_diameter+shell_screw_support_diameter_allowance)/2,
+        -drum_width/2
+      ])
+        cube([shell_screw_boss_thickness, shell_screw_boss_length, drum_width]);
+    }
+    cylinder(
+      d=drum_envelope_diameter+drum_shell_diametral_clearance,
+      h=drum_width+shell_axial_boolean_clearance,
+      center=true,
+      $fn=shell_round_fn
+    );
+    translate([0,top_shell_cut_y,-boolean_cut_length/2])
+      cube([drum_width+shell_axial_boolean_clearance, drum_width+shell_axial_boolean_clearance, boolean_cut_length]);
+    translate([
+      -(drum_width+shell_axial_boolean_clearance),
+      -(drum_envelope_diameter+shell_radial_boolean_allowance),
+      -boolean_cut_length/2
+    ])
+      cube([
+        drum_width+shell_axial_boolean_clearance,
+        drum_envelope_diameter+shell_radial_boolean_allowance,
+        boolean_cut_length
+      ]);
+    translate([-(drum_width+side_cut_axial_allowance),0,-boolean_cut_length/2])
+      cube([
+        drum_width+shell_axial_boolean_clearance,
+        drum_envelope_diameter+shell_radial_boolean_allowance,
+        boolean_cut_length
+      ]);
+    shell_fastener_holes();
   }
 }
 
-//translate([21.1,0,0])
-//sock();
-module sock(){
+module bearing_tower_cover(){
+  skirt = 0;
+  cover_axial_inset = 8;
+  cover_x = traverse_rod_length/2-cover_axial_inset;
+  cover_outer_width_allowance = 4;
+  cover_outer_depth_allowance = 3;
+  shaft_relief_diameter = 13;
+  shaft_relief_length = 50;
+  print_relief_offset = 7;
+  print_relief_tip_diameter = 2;
+  cover_fit_clearance = 0.5;
+  cover_boolean_height_allowance = 10;
+  corner_relief_size = 3;
+  corner_relief_overlap = 0.25;
+
   difference(){
-    translate([0,0,-pawl_cylinder_h-7-2])
-      cylinder(d=pawl_cylinder_d + 5, h=pawl_cylinder_h);
-    translate([0,0,-pawl_cylinder_h-7-2])
-      translate([0,0,2])
-      cylinder(d=pawl_cylinder_d+0.5, h=pawl_cylinder_h);
-    guide_rods(tol=0.25);
+    translate([
+      cover_x,
+      -bearing_tower_depth/2,
+      -bearing_tower_height+bearing_tower_depth/2+2
+    ])
+      translate([0,0,base_thickness])
+        difference(){
+          translate([0,-1.5,-2 + skirt])
+            top2_rounded_cube2([
+              b608_width+cover_outer_width_allowance,
+              bearing_tower_depth+cover_outer_depth_allowance,
+              bearing_tower_height-skirt
+            ], bearing_tower_corner_radius);
+          translate([2-cover_fit_clearance,0,-2 - 1])
+            top2_rounded_cube2([
+              b608_width+cover_fit_clearance,
+              bearing_tower_depth,
+              bearing_tower_height+5
+            ], bearing_tower_corner_radius);
+          translate([2-5,1,-2-1])
+            top2_rounded_cube2([
+              b608_width+5,
+              bearing_tower_depth-2,
+              bearing_tower_height+5
+            ], bearing_tower_corner_radius);
+        }
+    rotate([0,90,0])
+      hull() {
+        cylinder(d=shaft_relief_diameter, h=shaft_relief_length);
+        translate([-print_relief_offset,0,0])
+          cylinder(d=print_relief_tip_diameter, h=shaft_relief_length);
+      }
+    for(k=[0,1]) mirror([0,k,0])
+      translate([
+        cover_x,
+        -bearing_tower_depth/2-corner_relief_overlap,
+        base_thickness-bearing_tower_height+bearing_tower_depth/2-1
+      ])
+      rotate([0,0,45])
+      cube([corner_relief_size,corner_relief_size,bearing_tower_height+cover_boolean_height_allowance]);
+  }
+}
+
+module pawl_socket(){
+  socket_z = -pawl_cylinder_height-pawl_socket_end_offset;
+
+  difference(){
+    translate([0,0,socket_z])
+      cylinder(
+        d=pawl_cylinder_diameter + 2*pawl_socket_wall_thickness,
+        h=pawl_cylinder_height
+      );
+    translate([0,0,socket_z+pawl_socket_floor_thickness])
+      cylinder(d=pawl_cylinder_diameter+pawl_socket_bore_clearance, h=pawl_cylinder_height);
+    guide_rods(tol=socket_guide_rod_clearance);
     line_entry();
   }
 }
 
-gear_backlash_tol = 0.2;
+module separator_disc(
+  diameter=drum_envelope_diameter,
+  drum_radius=drum_core_radius,
+  depth=separator_disc_depth,
+  tooth_width_angle=separator_tooth_width_angle,
+  height=separator_disc_height,
+  center=false
+){
+  tooth_pitch_angle = 30;
+  half_tooth_pitch_angle = tooth_pitch_angle/2;
+  cutter_height = 3;
+  cutter_z = -1;
+  tooth_radial_clearance = 0.2;
+  slit_width = 0.5;
 
-
-
-//!sep_disc();
-module sep_disc(dia=60, r_drum=20, depth=0.8, tooth_width_ang=9, height = 1, center=false){
   difference(){
-    cylinder(d = dia, h = height, $fn=64, center=center);
-    translate([0,0,-1]){
-      cylinder(r = r_drum - depth, h = 3, $fn=100);
-      for(v=[0:30:359])
+    cylinder(d=diameter, h=height, $fn=round_fn, center=center);
+    translate([0,0,cutter_z]){
+      cylinder(r=drum_radius-depth, h=cutter_height, $fn=separator_inner_fn);
+      for(v=[0:tooth_pitch_angle:359])
         rotate([0,0,v]) {
-          p = circle_sector(r0=1, r1=r_drum+0.2, max_ang=30-tooth_width_ang);
-          rotate([0,0,+tooth_width_ang/2+15])
-          linear_extrude(height=3) polygon(points=p);
-          for(a=[tooth_width_ang/2,-tooth_width_ang/2])
-            rotate([0,0,15+a])
-            translate([-0.5/2,0,0])
-              cube([0.5,(r_drum+dia/2)/2,3]);
+          p = circle_sector(
+            r0=1,
+            r1=drum_radius+tooth_radial_clearance,
+            max_ang=tooth_pitch_angle-tooth_width_angle
+          );
+          rotate([0,0,tooth_width_angle/2+half_tooth_pitch_angle])
+            linear_extrude(height=cutter_height) polygon(points=p);
+          for(a=[tooth_width_angle/2,-tooth_width_angle/2])
+            rotate([0,0,half_tooth_pitch_angle+a])
+            translate([-slit_width/2,0,0])
+              cube([slit_width,(drum_radius+diameter/2)/2,cutter_height]);
         }
     }
   }
@@ -367,107 +611,168 @@ module sep_disc(dia=60, r_drum=20, depth=0.8, tooth_width_ang=9, height = 1, cen
 
 
 // 22.7 gives four layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
-//r_drum = 22.7;
+//drum_core_radius = 22.7;
 // However to get an effective radius of 22.7 over this range of wind in we need a smaller base radius.
-r_drum = 20;
 // 30.315 gives three layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
-//r_drum = 30.315;
-//rotate([0,-90,0])
-//drum();
+//drum_core_radius = 30.315;
 module drum(){
+  drum_end_disc_thickness = 1.3;
+  pulley_tooth_count = 62;
+  pulley_width_allowance = 2;
+  pulley_flange_height = 1.25;
+  pulley_flange_outer_diameter = 40;
+  pulley_flange_inner_diameter = 39;
+  pulley_tooth_width = 6;
+  small_gear_axial_position = 43;
+  small_gear_phase = 7;
+  hub_diameter = 14;
+  hub_length = 38.5;
+  shaft_bore_diameter = 8;
+  shaft_bore_length = 75;
+  shaft_bore_center_z = 11;
+  inner_wall_thickness = 2;
+  cavity_start_margin = 3;
+  cavity_length = 50;
+  cavity_taper_length = 10;
+
   difference(){
   difference(){
     rotate([0,90,0]) {
       union(){
-        translate([0,0,1.3/2])
-        cylinder(r=r_drum, h=stroke + 2*5.5+1.3, center=true, $fn=64);
+        translate([0,0,drum_end_disc_thickness/2])
+        cylinder(
+          r=drum_core_radius,
+          h=traverse_stroke + 2*drum_body_end_margin+drum_end_disc_thickness,
+          center=true,
+          $fn=round_fn
+        );
         // GT2 pulley, mounted immediately outboard of the small helical gear.
-        belt_flange_h = 1.25;
-        translate([0,0,(stroke+2*5.5)/2+1.3]){
-          GT2_2mm_pulley_extrusion(GT2_belt_width+2, 62);
-          cylinder(d1=40, d2=39, h=belt_flange_h);
-          translate([0,0,belt_flange_h+6])
-            cylinder(d1=39, d2=40, h=belt_flange_h);
-          translate([0,0,2*belt_flange_h+6])
-            cylinder(d=40, h=1.3);
+        translate([0,0,(traverse_stroke+2*drum_body_end_margin)/2+drum_end_disc_thickness]){
+          GT2_2mm_pulley_extrusion(GT2_belt_width+pulley_width_allowance, pulley_tooth_count);
+          cylinder(
+            d1=pulley_flange_outer_diameter,
+            d2=pulley_flange_inner_diameter,
+            h=pulley_flange_height
+          );
+          translate([0,0,pulley_flange_height+pulley_tooth_width])
+            cylinder(
+              d1=pulley_flange_inner_diameter,
+              d2=pulley_flange_outer_diameter,
+              h=pulley_flange_height
+            );
+          translate([0,0,2*pulley_flange_height+pulley_tooth_width])
+            cylinder(d=pulley_flange_outer_diameter, h=drum_end_disc_thickness);
         }
       }
-      translate([0,0,43])
-        rotate([0,0,7])
-        helix_gear_small();
-      cylinder(d=14, h=38.5, $fn=64);
-      translate([0,0,-(stroke/2+5)])
-        cylinder(d=60, h=1, center=true, $fn=64);
+      translate([0,0,small_gear_axial_position])
+        rotate([0,0,small_gear_phase])
+        small_herringbone_gear();
+      cylinder(d=hub_diameter, h=hub_length, $fn=round_fn);
+      translate([0,0,-separator_disc_axial_offset])
+        cylinder(d=drum_envelope_diameter, h=separator_disc_height, center=true, $fn=round_fn);
     }
     rotate([0,90,0])
-    translate([0,0,11])
-      cylinder(d=8, h=75, $fn=64, center=true);
+    translate([0,0,shaft_bore_center_z])
+      cylinder(d=shaft_bore_diameter, h=shaft_bore_length, $fn=round_fn, center=true);
     rotate([0,90,0])
-    translate([0,0,-stroke/2-3])
-      cylinder(r=r_drum-2, h=50, $fn=64, center=false);
+    translate([0,0,-traverse_stroke/2-cavity_start_margin])
+      cylinder(
+        r=drum_core_radius-inner_wall_thickness,
+        h=cavity_length,
+        $fn=round_fn,
+        center=false
+      );
     rotate([0,90,0])
-    translate([0,0,-stroke/2-3+50])
-      cylinder(r2=8/2, r1=r_drum-2, h=10, $fn=64, center=false);
+    translate([0,0,-traverse_stroke/2-cavity_start_margin+cavity_length])
+      cylinder(
+        r2=shaft_bore_diameter/2,
+        r1=drum_core_radius-inner_wall_thickness,
+        h=cavity_taper_length,
+        $fn=round_fn,
+        center=false
+      );
     rotate([0,90,0])
-      translate([0,0,stroke/2+5.0])
-      rotate([0,0,12])
-      sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1.2, center=true, $fn=64);
+      translate([0,0,separator_disc_axial_offset])
+      rotate([0,0,separator_disc_phase])
+      separator_disc(height=separator_disc_cut_height, center=true, $fn=round_fn);
   }
-  //translate([-50,-100,-50])
-  //  cube(100);
-
   }
-  //translate([50,0,0]) rotate([0,90,0]) b608();
-  //translate([-35.55,0,0]) rotate([0,90,0]) b608();
 }
 
-//drum_shaft();
 module drum_shaft(){
+  shaft_diameter = 7.9;
+  flat_cutter_x = -50;
+  flat_cutter_y = 3.3;
+
   rotate([-90,0,0])
   rotate([0,-90,0])
     difference(){
-      cylinder(d=7.9, h=92.6);
-      translate([-50,3.3,0])
-        cube(100);
+      cylinder(d=shaft_diameter, h=drum_shaft_length);
+      translate([flat_cutter_x,flat_cutter_y,0])
+        cube(boolean_cut_length);
     }
 }
 
-//translate([0,37.5 + gear_backlash_tol,0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
-drive_train_assembly();
 module drive_train_assembly(){
   rotate([0,-90,0]) {
     rotate([0,0,180]){
-      translate([0,0,-21.1])
-      rotate([-20,0,0])
-      translate([6,0,0])
-      rotate([0,-90,0])
-        cut_pawl();
-      full_shaft();
+      translate([0,0,-pawl_axis_x])
+        rotate([-pawl_tilt_angle,0,0])
+        translate([pawl_radial_offset,0,0])
+        rotate([0,-90,0])
+          follower_pawl();
+      traverse_shaft();
     }
-    translate([0,0,-rod_l/2-gear_th/2-1-1-2])
+    translate([0,0,large_gear_center_z])
       rotate([180,0,0])
-      helix_gear_big();
+      large_herringbone_gear();
   }
-  translate([21.1,0,0])
-    sock();
+  translate([pawl_axis_x,0,0])
+    pawl_socket();
   base();
   for(k=[0,1]) mirror([k,0,0])
-    base_sides();
-  translate([21,-37.5 - gear_backlash_tol])
-    base_sides();
+    bearing_tower_cover();
+  translate([drum_right_side_cover_shift,-drum_axis_spacing])
+    bearing_tower_cover();
   mirror([1,0,0])
-    translate([0,-37.5 - gear_backlash_tol])
-    base_sides();
-  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+    translate([0,-drum_axis_spacing])
+    bearing_tower_cover();
+  translate([0,-drum_axis_spacing,0])
     drum();
-  translate([57.1,0,0])
-    translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+  translate([drum_shaft_right_end_x,0,0])
+    translate([0,-drum_axis_spacing,0])
     drum_shaft();
-  translate([0,-(37.5 + gear_backlash_tol),0]) // Big gear pitch = 63/2, Small gear pitch = 12/2. Total pitch = 37.5
+  translate([0,-drum_axis_spacing,0])
     rotate([0,90,0])
-    translate([0,0,stroke/2+5.0])
-    rotate([0,0,12])
-    sep_disc(dia=60, r_drum=r_drum, depth=1.5, tooth_width_ang=10, height=1, center=true, $fn=64);
-  translate([0,-37.5 - gear_backlash_tol])
+    translate([0,0,separator_disc_axial_offset])
+    rotate([0,0,separator_disc_phase])
+    separator_disc(center=true, $fn=round_fn);
+  translate([0,-drum_axis_spacing])
     top_shell();
+}
+
+if (part == "Assembly") {
+  drive_train_assembly();
+} else if (part == "Base") {
+  base();
+} else if (part == "Base side") {
+  bearing_tower_cover();
+} else if (part == "Top shell") {
+  rotate([0,90,0]) top_shell();
+} else if (part == "Drum") {
+  rotate([0,-90,0]) drum();
+} else if (part == "Drum shaft") {
+  drum_shaft();
+} else if (part == "Separator disc") {
+  separator_disc();
+} else if (part == "Traverse shaft") {
+  rotate([180,0,0]) traverse_shaft();
+} else if (part == "Follower pawl") {
+  follower_pawl();
+} else if (part == "Pawl socket") {
+  pawl_socket();
+} else if (part == "Large gear") {
+  large_herringbone_gear();
+} else if (part == "Small gear") {
+  small_herringbone_gear();
 }
