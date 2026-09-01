@@ -779,12 +779,12 @@ module elong_b608_vgroove(elong=10, extra_height=0){
 
 }
 
-module b623(){
+module b623(center=false){
   color("purple")
   difference(){
-    cylinder(d = b623_outer_dia, h = b623_width, $fn=32);
+    cylinder(d = b623_outer_dia, h = b623_width, $fn=32, center=center);
     translate([0,0,-1])
-      cylinder(r = b623_bore_r, h = b623_width + 2);
+      cylinder(r = b623_bore_r, h = b623_width + 3, center=center);
   }
 }
 

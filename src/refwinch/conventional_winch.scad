@@ -69,6 +69,8 @@ bearing_tower_axial_clearance = 0.51;
 bearing_cut_length_allowance = 10;
 bearing_teardrop_tip_diameter = 4;
 
+drum_z = bearing_tower_height - bearing_tower_depth/2;
+
 base_plate_x_length = 76;
 base_front_edge_y = 15.6;
 base_rear_inset = 3.4;
@@ -121,7 +123,7 @@ guide_rod_diameter = 3.2;
 upper_guide_rod_z = -14;
 guide_rod_spacing = 10;
 guide_rod_length_allowance = 3;
-line_entry_z = -19;
+line_entry_z = 19;
 line_entry_length = 30;
 pawl_guide_sweep_clearance = 0.5;
 socket_guide_rod_clearance = 0.25;
@@ -293,7 +295,7 @@ module guide_rods(tol=0.1){
 }
 
 module line_entry(){
-  translate([0,0,line_entry_z])
+  translate([0,0,-line_entry_z])
     rotate([90,0,0])
     cylinder(d=Eyelet_diameter, h=line_entry_length, center=true);
 }
@@ -338,7 +340,7 @@ module bearing_tower(){
     translate([
       b608_width/2,
       bearing_tower_depth/2,
-      bearing_tower_height-bearing_tower_depth/2
+      drum_z
     ])
       rotate([0,90,0])
       hull(){
@@ -368,7 +370,7 @@ module shell_fastener_holes(){
 }
 
 module base(){
-  tower_base_z = -bearing_tower_height+bearing_tower_depth/2;
+  tower_base_z = -drum_z;
   first_rib_x = 15;
   rib_interval_count = 4;
   last_rib_end_clearance = 1;
@@ -516,7 +518,7 @@ module bearing_tower_cover(){
     translate([
       cover_x,
       -bearing_tower_depth/2,
-      -bearing_tower_height+bearing_tower_depth/2+2
+      -drum_z + 2
     ])
       translate([0,0,base_thickness])
         difference(){
@@ -549,7 +551,7 @@ module bearing_tower_cover(){
       translate([
         cover_x,
         -bearing_tower_depth/2-corner_relief_overlap,
-        base_thickness-bearing_tower_height+bearing_tower_depth/2-1
+        base_thickness- drum_z - 1
       ])
       rotate([0,0,45])
       cube([corner_relief_size,corner_relief_size,bearing_tower_height+cover_boolean_height_allowance]);
@@ -776,3 +778,113 @@ if (part == "Assembly") {
 } else if (part == "Small gear") {
   small_herringbone_gear();
 }
+
+urethane_roller_outer_diameter = 25;
+urethane_roller_inner_diameter = 10.5;
+urethane_roller_thickness = 5;
+module urethane_roller(){
+  rotate([0,90,0]) {
+    color("darkgray")
+    difference(){
+      cylinder(d=urethane_roller_outer_diameter, h=urethane_roller_thickness, center=true);
+      cylinder(d=urethane_roller_inner_diameter, h=urethane_roller_thickness+2, center=true);
+    }
+    b623(center=true);
+  }
+}
+
+line_diameter = 2;
+roller_gap = 1;
+
+high_roller_z = (urethane_roller_outer_diameter+line_diameter)/2 - line_entry_z;
+low_roller_z = urethane_roller_outer_diameter/2 - drum_z + 1;
+a_diff = high_roller_z - low_roller_z;
+hypot_dist = urethane_roller_outer_diameter + roller_gap;
+ydiff = sqrt(hypot_dist^2 - a_diff^2);
+
+roller_tower_height = line_entry_z + urethane_roller_outer_diameter;
+roller_tower_depth = urethane_roller_outer_diameter+ydiff;
+roller_tower_thickness = 5;
+
+y_offset = 40;
+
+module hub_and_spokes() {
+  difference() {
+    cylinder(d = urethane_roller_outer_diameter+5, h=urethane_roller_thickness*10, center=true);
+    difference() {
+      cylinder(d = urethane_roller_outer_diameter-5, h=urethane_roller_thickness*10, center=true);
+      difference() {
+        for(ang = [-45,45]) rotate([0,0, ang])
+          cube([urethane_roller_outer_diameter, 5, urethane_roller_thickness*10], center=true);
+        cylinder(d=3.1, h=urethane_roller_thickness*11, center=true);
+      }
+    }
+  }
+}
+
+
+measurement_roller();
+module measurement_roller(){
+  translate([0,y_offset, high_roller_z])
+    urethane_roller();
+  translate([0,y_offset + ydiff, low_roller_z])
+    urethane_roller();
+  difference() {
+    for(k=[0,1]) mirror([k,0,0])
+      translate([urethane_roller_thickness/2+0.1, -urethane_roller_outer_diameter/2 + y_offset, -drum_z])
+        top2_rounded_cube2(
+          [roller_tower_thickness, roller_tower_depth, roller_tower_height],
+          bearing_tower_corner_radius
+        );
+    difference() {
+      hull() {
+        translate([0,y_offset-b623_outer_dia/2-5/2,roller_tower_height - drum_z - 5/2 - 2.5])
+          rotate([0,90,0])
+          cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
+        translate([0,y_offset-b623_outer_dia/2-5/2,-drum_z+5/2+2.5])
+          rotate([0,90,0])
+          cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
+        translate([0,y_offset-urethane_roller_outer_diameter/2 + roller_tower_depth - 5/2 - 2.5,-drum_z+5/2+2.5])
+          rotate([0,90,0])
+          cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
+        translate([0,y_offset-urethane_roller_outer_diameter/2 + roller_tower_depth - 5/2 - 2.5, roller_tower_height - drum_z - 5/2 - 2.5])
+          rotate([0,90,0])
+          cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
+      }
+      translate([0,y_offset, high_roller_z])
+        rotate([0,90,0])
+        hub_and_spokes();
+      translate([0,y_offset+ydiff, low_roller_z])
+        rotate([0,90,0])
+        hub_and_spokes();
+      translate([-urethane_roller_outer_diameter/2,y_offset-5/2, -drum_z])
+        for(ang = [-8.5,8.5]) rotate([ang,0, 0])
+        cube([urethane_roller_outer_diameter, 5, roller_tower_height-urethane_roller_outer_diameter]);
+    }
+  }
+  difference() {
+    translate([0,y_offset+ydiff,low_roller_z + urethane_roller_outer_diameter/2 + line_diameter/2])
+      translate([-(urethane_roller_thickness + 2)/2, urethane_roller_outer_diameter/2-2.5, -(Eyelet_diameter + 5)/2])
+      cube([urethane_roller_thickness + 2, 2.5, Eyelet_diameter + 5]);
+    translate([0,y_offset+ydiff, low_roller_z + urethane_roller_outer_diameter/2 + line_diameter/2])
+      rotate([-90,0,0])
+      cylinder(d=Eyelet_diameter, h=20);
+    translate([0,y_offset + ydiff, low_roller_z])
+      scale((urethane_roller_outer_diameter + 4)/urethane_roller_outer_diameter)
+      urethane_roller();
+  }
+  difference() {
+    translate([0, y_offset, high_roller_z - (urethane_roller_outer_diameter/2 + line_diameter/2)])
+      translate([-(urethane_roller_thickness + 2)/2, -urethane_roller_outer_diameter/2, -(Eyelet_diameter + 5)/2])
+      cube([urethane_roller_thickness + 2, 2.5, Eyelet_diameter + 5]);
+    translate([0, y_offset, high_roller_z - urethane_roller_outer_diameter/2 - line_diameter/2])
+      rotate([90,0,0])
+      cylinder(d=Eyelet_diameter, h=20);
+    translate([0,y_offset, high_roller_z])
+      scale((urethane_roller_outer_diameter + 4)/urethane_roller_outer_diameter)
+      urethane_roller();
+  }
+}
+
+//translate([0,80,0])
+//  measurement_roller()
