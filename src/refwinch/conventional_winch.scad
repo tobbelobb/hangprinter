@@ -793,11 +793,24 @@ module urethane_roller(){
   }
 }
 
+module urethane_roller2(){
+  rotate([0,90,0]) {
+    color("darkgray")
+    difference(){
+      cylinder(d=urethane_roller_outer_diameter, h=urethane_roller_thickness, center=true);
+      cylinder(d=urethane_roller_inner_diameter, h=urethane_roller_thickness+2, center=true);
+    }
+    for(k=[0,1]) mirror([0,0,k])
+      translate([0,0,urethane_roller_thickness/2 + 0.2])
+      b623(center=false);
+  }
+}
+
 line_diameter = 2;
 roller_gap = 1;
 
-high_roller_z = (urethane_roller_outer_diameter+line_diameter)/2 - line_entry_z;
-low_roller_z = urethane_roller_outer_diameter/2 - drum_z + 1;
+high_roller_z = (urethane_roller_outer_diameter+line_diameter)/2 - line_entry_z + drum_z;
+low_roller_z = urethane_roller_outer_diameter/2 + 1;
 a_diff = high_roller_z - low_roller_z;
 hypot_dist = urethane_roller_outer_diameter + roller_gap;
 ydiff = sqrt(hypot_dist^2 - a_diff^2);
@@ -805,8 +818,122 @@ ydiff = sqrt(hypot_dist^2 - a_diff^2);
 roller_tower_height = line_entry_z + urethane_roller_outer_diameter;
 roller_tower_depth = urethane_roller_outer_diameter+ydiff;
 roller_tower_thickness = 5;
+roller_tower_thickness2 = b623_width + 1; // b623_width  = 4;
 
 y_offset = 40;
+// high_roller_y = 0;
+low_roller_y = ydiff; // + high_roller_y
+
+shift_entry_corner = [0,-9];
+shift_exit_corner = [0,-6];
+
+//translate([-8,80+y_offset,-drum_z])
+translate([0,80+y_offset,-drum_z])
+odometer2();
+module odometer2(){
+  translate([0, 0, high_roller_z]){
+    urethane_roller2();
+    translate([-13,0,0])
+      rotate([0,90,0])
+      magnet();
+  }
+  translate([0,low_roller_y, low_roller_z])
+    urethane_roller2();
+  for(k=[0,1]) mirror([k,0,0])
+    translate([urethane_roller_thickness/2+0.1, 0, 0]) {
+      difference() {
+        rotate([90,0,90])
+        linear_extrude(height=roller_tower_thickness2)
+          difference(){
+            translate([-urethane_roller_outer_diameter/2,0])
+              hull(){
+                square([roller_tower_depth, 1]);
+                translate([roller_tower_depth-bearing_tower_corner_radius+shift_entry_corner[0],roller_tower_height-bearing_tower_corner_radius+shift_entry_corner[1]])
+                  circle(r=bearing_tower_corner_radius);
+                translate([bearing_tower_corner_radius+shift_exit_corner[0],roller_tower_height-bearing_tower_corner_radius+shift_exit_corner[1]])
+                  circle(r=bearing_tower_corner_radius);
+              }
+            difference(){
+              translate([2.5-urethane_roller_outer_diameter/2, 2.5]){
+                hull(){
+                  translate([2.5,2.5]) circle(r=2.5);
+                  translate([roller_tower_depth-5-2.5,2.5]) circle(r=2.5);
+                  translate([roller_tower_depth-5-2.5+shift_entry_corner[0],roller_tower_height-5-2.5+shift_entry_corner[1]]) circle(r=2.5);
+                  translate([2.5+shift_exit_corner[0],roller_tower_height-5-2.5+shift_exit_corner[1]]) circle(r=2.5);
+                }
+              }
+              translate([0,high_roller_z])
+                difference(){
+                  hull(){
+                    circle(d=b623_outer_dia + 3);
+                    translate([-14,-18-high_roller_z])
+                      circle(d=4);
+                  }
+                  circle(d=3.2);
+                }
+              translate([low_roller_y, low_roller_z]){
+                difference(){
+                  hull(){
+                    circle(d=b623_outer_dia + 3);
+                    translate([0,-18-low_roller_z])
+                      circle(d=1);
+                  }
+                  circle(d=3.2);
+                }
+                difference(){
+                  hull(){
+                    circle(d=b623_outer_dia + 3);
+                    rotate([0,0,-26])
+                      translate([0,18+low_roller_z])
+                      circle(d=1);
+                  }
+                  circle(d=3.2);
+                }
+                difference(){
+                  hull(){
+                    circle(d=b623_outer_dia + 3);
+                    translate([-low_roller_y,-low_roller_z+high_roller_z])
+                      circle(d=b623_outer_dia+3);
+                  }
+                  circle(d=3.2);
+                  translate([-low_roller_y,-low_roller_z+high_roller_z])
+                    circle(d=3.2);
+                }
+              }
+            }
+          }
+
+      for(pos = [[b623_width, 0,high_roller_z], [b623_width, low_roller_y, low_roller_z]]) translate(pos)
+        rotate([0,-90,0])
+        cylinder(d=b623_outer_dia+0.1, h=roller_tower_thickness2);
+    }
+
+  }
+  // Line entry
+  difference() {
+    translate([0,low_roller_y,low_roller_z + urethane_roller_outer_diameter/2 + line_diameter/2])
+      translate([-(urethane_roller_thickness + 2)/2, urethane_roller_outer_diameter/2-2.5, -(Eyelet_diameter + 5)/2])
+      cube([urethane_roller_thickness + 2, 2.5, Eyelet_diameter + 5]);
+    translate([0,low_roller_y, low_roller_z + urethane_roller_outer_diameter/2 + line_diameter/2])
+      rotate([-90,0,0])
+      cylinder(d=Eyelet_diameter, h=20);
+    translate([0,low_roller_y, low_roller_z])
+      scale((urethane_roller_outer_diameter + 4)/urethane_roller_outer_diameter)
+      urethane_roller();
+  }
+  // Line exit
+  difference() {
+    translate([0, 0, high_roller_z - (urethane_roller_outer_diameter/2 + line_diameter/2)])
+      translate([-(urethane_roller_thickness + 2)/2, -urethane_roller_outer_diameter/2, -(Eyelet_diameter + 5)/2])
+      cube([urethane_roller_thickness + 2, 2.5, Eyelet_diameter + 5]);
+    translate([0, 0, high_roller_z - urethane_roller_outer_diameter/2 - line_diameter/2])
+      rotate([90,0,0])
+      cylinder(d=Eyelet_diameter, h=20);
+    translate([0,0, high_roller_z])
+      scale((urethane_roller_outer_diameter + 4)/urethane_roller_outer_diameter)
+      urethane_roller();
+  }
+}
 
 module hub_and_spokes() {
   difference() {
@@ -822,32 +949,55 @@ module hub_and_spokes() {
   }
 }
 
+module magnet(){
+  // From CLN17 V2's components list: https://hackaday.io/project/192759/components
+  color("lightgray")
+    cylinder(d=5, h=2);
+}
 
-measurement_roller();
-module measurement_roller(){
-  translate([0,y_offset, high_roller_z])
+
+//translate([8,80,-drum_z])
+//odometer1();
+module odometer1(){
+  translate([0,y_offset, high_roller_z]){
     urethane_roller();
+    translate([-2-urethane_roller_thickness/2,(3+5)/2 + 0.1,0])
+    rotate([0,90,0])
+      magnet();
+    //rotate([0,90,0])
+    //  %cylinder(d=3, h=urethane_roller_thickness + roller_tower_thickness + 0.5 +5, center=true);
+  }
   translate([0,y_offset + ydiff, low_roller_z])
     urethane_roller();
   difference() {
-    for(k=[0,1]) mirror([k,0,0])
-      translate([urethane_roller_thickness/2+0.1, -urethane_roller_outer_diameter/2 + y_offset, -drum_z])
+    //for(k=[0,1]) mirror([k,0,0])
+    union(){
+      translate([urethane_roller_thickness/2+0.1, -urethane_roller_outer_diameter/2 + y_offset, 0])
         top2_rounded_cube2(
           [roller_tower_thickness, roller_tower_depth, roller_tower_height],
           bearing_tower_corner_radius
         );
+      translate([-(urethane_roller_thickness/2+0.1+roller_tower_thickness-3.1+1), -urethane_roller_outer_diameter/2 + y_offset, 0])
+        top2_rounded_cube2(
+          [roller_tower_thickness-3.1+1, roller_tower_depth, roller_tower_height],
+          bearing_tower_corner_radius
+        );
+    }
+    translate([-4.5,y_offset, high_roller_z])
+      rotate([0,90,0])
+      cylinder(r = 1.5+5+0.2, h=5, center=false);
     difference() {
       hull() {
-        translate([0,y_offset-b623_outer_dia/2-5/2,roller_tower_height - drum_z - 5/2 - 2.5])
+        translate([0,y_offset-b623_outer_dia/2-5/2,roller_tower_height - 5/2 - 2.5])
           rotate([0,90,0])
           cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
-        translate([0,y_offset-b623_outer_dia/2-5/2,-drum_z+5/2+2.5])
+        translate([0,y_offset-b623_outer_dia/2-5/2,5/2+2.5])
           rotate([0,90,0])
           cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
-        translate([0,y_offset-urethane_roller_outer_diameter/2 + roller_tower_depth - 5/2 - 2.5,-drum_z+5/2+2.5])
+        translate([0,y_offset-urethane_roller_outer_diameter/2 + roller_tower_depth - 5/2 - 2.5,5/2+2.5])
           rotate([0,90,0])
           cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
-        translate([0,y_offset-urethane_roller_outer_diameter/2 + roller_tower_depth - 5/2 - 2.5, roller_tower_height - drum_z - 5/2 - 2.5])
+        translate([0,y_offset-urethane_roller_outer_diameter/2 + roller_tower_depth - 5/2 - 2.5, roller_tower_height - 5/2 - 2.5])
           rotate([0,90,0])
           cylinder(d = 5, h=urethane_roller_thickness*10, center=true);
       }
@@ -857,7 +1007,7 @@ module measurement_roller(){
       translate([0,y_offset+ydiff, low_roller_z])
         rotate([0,90,0])
         hub_and_spokes();
-      translate([-urethane_roller_outer_diameter/2,y_offset-5/2, -drum_z])
+      translate([-urethane_roller_outer_diameter/2,y_offset-5/2, 0])
         for(ang = [-8.5,8.5]) rotate([ang,0, 0])
         cube([urethane_roller_outer_diameter, 5, roller_tower_height-urethane_roller_outer_diameter]);
     }
@@ -885,6 +1035,3 @@ module measurement_roller(){
       urethane_roller();
   }
 }
-
-//translate([0,80,0])
-//  measurement_roller()
