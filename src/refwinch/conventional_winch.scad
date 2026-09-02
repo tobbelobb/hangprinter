@@ -38,6 +38,10 @@ gear_pressure_angle = 20; // [14.5, 20, 25]
 gear_helix_angle = 45; // [0:1:60]
 gear_backlash_tolerance = 0.2; // [0:0.05:1]
 
+/* [Belt drive] */
+
+gt2_belt_loop_length = 200; // [150:1:300]
+
 /* [Fit and fabrication] */
 
 bearing_hole_diametral_clearance = 0.2; // [0:0.05:0.8]
@@ -58,6 +62,107 @@ drum_axis_spacing = gear_pitch_center_distance + gear_backlash_tolerance;
 drum_width = traverse_stroke + 2*drum_housing_end_margin;
 separator_disc_end_margin = 5;
 separator_disc_axial_offset = traverse_stroke/2 + separator_disc_end_margin;
+
+gt2_tooth_pitch = 2;
+drum_pulley_tooth_count = 62;
+motor_pulley_tooth_count = 20;
+motor_belt_direction_angle = 8;
+motor_clocking_angle = -58;
+drum_end_disc_thickness = 1.3;
+drum_pulley_width_allowance = 2;
+drum_pulley_flange_height = 1.25;
+drum_pulley_flange_outer_diameter = 40;
+drum_pulley_flange_inner_diameter = 39;
+drum_pulley_tooth_width = 6;
+motor_pulley_hub_height = 7.4;
+motor_pulley_top_flange_height = 1.5;
+motor_pulley_to_motor_gap = 1;
+motor_rear_magnet_gap = 0.2;
+magnet_to_encoder_gap = 0.2;
+cln17_magnet_diameter = 6;
+cln17_magnet_height = 2.5;
+cln17_v3_board_size = 38;
+cln17_v3_mount_spacing = 31;
+cln17_v3_mount_hole_diameter = 3.2;
+cln17_v3_pcb_thickness = 1;
+cln17_v3_encoder_height = 0.8;
+
+function gt2_pitch_radius(tooth_count) =
+  tooth_count*gt2_tooth_pitch/(2*PI);
+
+function open_belt_length(center_distance, large_radius, small_radius) =
+  let(
+    radius_difference = large_radius-small_radius,
+    tangent_angle = asin(radius_difference/center_distance),
+    straight_length = sqrt(center_distance^2-radius_difference^2)
+  )
+  2*straight_length
+  + PI*(large_radius+small_radius)
+  + 2*tangent_angle*PI/180*radius_difference;
+
+function solve_open_belt_center_distance(
+  belt_length,
+  large_radius,
+  small_radius,
+  lower_bound=undef,
+  upper_bound=undef,
+  iterations=40
+) =
+  let(
+    low = is_undef(lower_bound) ? large_radius-small_radius+0.001 : lower_bound,
+    high = is_undef(upper_bound) ? belt_length/2 : upper_bound,
+    midpoint = (low+high)/2,
+    midpoint_length = open_belt_length(midpoint, large_radius, small_radius)
+  )
+  iterations <= 0 ? midpoint :
+  midpoint_length < belt_length ?
+    solve_open_belt_center_distance(
+      belt_length,
+      large_radius,
+      small_radius,
+      midpoint,
+      high,
+      iterations-1
+    ) :
+    solve_open_belt_center_distance(
+      belt_length,
+      large_radius,
+      small_radius,
+      low,
+      midpoint,
+      iterations-1
+    );
+
+drum_pulley_pitch_radius = gt2_pitch_radius(drum_pulley_tooth_count);
+motor_pulley_pitch_radius = gt2_pitch_radius(motor_pulley_tooth_count);
+motor_pulley_center_distance = solve_open_belt_center_distance(
+  gt2_belt_loop_length,
+  drum_pulley_pitch_radius,
+  motor_pulley_pitch_radius
+);
+motor_axis_y = -drum_axis_spacing
+               - motor_pulley_center_distance*cos(motor_belt_direction_angle);
+motor_axis_z = -motor_pulley_center_distance*sin(motor_belt_direction_angle);
+
+drum_pulley_axial_start =
+  (traverse_stroke+2*drum_body_end_margin)/2 + drum_end_disc_thickness;
+gt2_belt_center_x = drum_pulley_axial_start
+                    + drum_pulley_flange_height
+                    + GT2_belt_width/2;
+motor_pulley_belt_center_from_base =
+  (motor_pulley_hub_height
+   + GT2_motor_gear_height-motor_pulley_top_flange_height)/2;
+motor_pulley_base_x = gt2_belt_center_x + motor_pulley_belt_center_from_base;
+motor_front_face_x = motor_pulley_base_x
+                     + Nema17_ring_height
+                     + motor_pulley_to_motor_gap;
+motor_rear_face_x = motor_front_face_x + Nema17_cube_height;
+magnet_base_x = motor_rear_face_x + motor_rear_magnet_gap;
+cln17_v3_board_center_x = magnet_base_x
+                          + cln17_magnet_height
+                          + magnet_to_encoder_gap
+                          + cln17_v3_pcb_thickness/2
+                          + cln17_v3_encoder_height;
 
 base_thickness = 3;
 bearing_tower_wall_thickness = 3;
@@ -618,13 +723,6 @@ module separator_disc(
 // 30.315 gives three layers of 2 mm thick line on a 42 mm drum fits 12000 mm of line.
 //drum_core_radius = 30.315;
 module drum(){
-  drum_end_disc_thickness = 1.3;
-  pulley_tooth_count = 62;
-  pulley_width_allowance = 2;
-  pulley_flange_height = 1.25;
-  pulley_flange_outer_diameter = 40;
-  pulley_flange_inner_diameter = 39;
-  pulley_tooth_width = 6;
   small_gear_axial_position = 43;
   small_gear_phase = 7;
   hub_diameter = 14;
@@ -649,21 +747,27 @@ module drum(){
           $fn=round_fn
         );
         // GT2 pulley, mounted immediately outboard of the small helical gear.
-        translate([0,0,(traverse_stroke+2*drum_body_end_margin)/2+drum_end_disc_thickness]){
-          GT2_2mm_pulley_extrusion(GT2_belt_width+pulley_width_allowance, pulley_tooth_count);
-          cylinder(
-            d1=pulley_flange_outer_diameter,
-            d2=pulley_flange_inner_diameter,
-            h=pulley_flange_height
+        translate([0,0,drum_pulley_axial_start]){
+          GT2_2mm_pulley_extrusion(
+            GT2_belt_width+drum_pulley_width_allowance,
+            drum_pulley_tooth_count
           );
-          translate([0,0,pulley_flange_height+pulley_tooth_width])
+          cylinder(
+            d1=drum_pulley_flange_outer_diameter,
+            d2=drum_pulley_flange_inner_diameter,
+            h=drum_pulley_flange_height
+          );
+          translate([0,0,drum_pulley_flange_height+drum_pulley_tooth_width])
             cylinder(
-              d1=pulley_flange_inner_diameter,
-              d2=pulley_flange_outer_diameter,
-              h=pulley_flange_height
+              d1=drum_pulley_flange_inner_diameter,
+              d2=drum_pulley_flange_outer_diameter,
+              h=drum_pulley_flange_height
             );
-          translate([0,0,2*pulley_flange_height+pulley_tooth_width])
-            cylinder(d=pulley_flange_outer_diameter, h=drum_end_disc_thickness);
+          translate([0,0,2*drum_pulley_flange_height+drum_pulley_tooth_width])
+            cylinder(
+              d=drum_pulley_flange_outer_diameter,
+              h=drum_end_disc_thickness
+            );
         }
       }
       translate([0,0,small_gear_axial_position])
@@ -751,6 +855,7 @@ module drive_train_assembly(){
     separator_disc(center=true, $fn=round_fn);
   translate([0,-drum_axis_spacing])
     top_shell();
+  odometer_drive_motor_assembly();
 }
 
 if (part == "Assembly") {
@@ -832,11 +937,6 @@ shift_exit_corner = [0,-6];
 // NEMA17 mounting pattern, 3.2 mm screw clearance and 1 mm board thickness
 // come from the released CLN17 KiCad designs. Connector/component locations
 // and envelopes follow the official orthographic V3 product render.
-cln17_v3_board_size = 38;
-cln17_v3_mount_spacing = 31;
-cln17_v3_mount_hole_diameter = 3.2;
-cln17_v3_pcb_thickness = 1;
-
 module cln17_v3_board_profile(){
   mount_offset = cln17_v3_mount_spacing/2;
   edge_slot_end = cln17_v3_board_size/2 + 1;
@@ -909,11 +1009,69 @@ module cln17_v3_usb_c(){
 }
 
 
-//translate([traverse_rod_length/2 + gear_width + GT2_belt_width + 2 + Nema17_shaft_height, -75, 0])
-translate([0, -95, -8])
-rotate([-58,0,0])
-rotate([0,-90,0])
-cln17_v3_board();
+module gt2_drive_belt(){
+  drum_pulley_outer_radius =
+    tooth_spacing(gt2_tooth_pitch, 0.254, drum_pulley_tooth_count)/2;
+  motor_pulley_outer_radius =
+    tooth_spacing(gt2_tooth_pitch, 0.254, motor_pulley_tooth_count)/2;
+
+  assert(
+    gt2_belt_loop_length > 2*PI*drum_pulley_pitch_radius,
+    "GT2 belt is too short for the selected pulleys"
+  );
+
+  color([0.12,0.12,0.12])
+  translate([gt2_belt_center_x,0,0])
+  rotate([0,-90,0])
+  linear_extrude(height=GT2_belt_width, center=true, convexity=4)
+  difference(){
+    hull(){
+      translate([0,-drum_axis_spacing])
+        circle(r=drum_pulley_outer_radius+Belt_thickness, $fn=round_fn);
+      translate([motor_axis_z,motor_axis_y])
+        circle(r=motor_pulley_outer_radius+Belt_thickness, $fn=round_fn);
+    }
+    hull(){
+      translate([0,-drum_axis_spacing])
+        circle(r=drum_pulley_outer_radius, $fn=round_fn);
+      translate([motor_axis_z,motor_axis_y])
+        circle(r=motor_pulley_outer_radius, $fn=round_fn);
+    }
+  }
+}
+
+module odometer_drive_motor_assembly(){
+  echo("GT2 belt loop length", gt2_belt_loop_length);
+  echo("GT2 pulley center distance", motor_pulley_center_distance);
+
+  gt2_drive_belt();
+
+  // Nema17() points its shaft along +Z. Turn it towards the drum (-X),
+  // retaining the clocking angle from the tentative CLN17 placement.
+  translate([motor_rear_face_x,motor_axis_y,motor_axis_z])
+    rotate([motor_clocking_angle,0,0])
+    rotate([0,-90,0])
+    Nema17();
+
+  color([0.75,0.75,0.75])
+  translate([motor_pulley_base_x,motor_axis_y,motor_axis_z])
+    rotate([motor_clocking_angle,0,0])
+    rotate([0,-90,0])
+    GT2_flanged_motor_gear(
+      motor_pulley_tooth_count,
+      2*Nema17_shaft_radius
+    );
+
+  // The magnet sits on the rear shaft and the CLN17 encoder faces it.
+  translate([magnet_base_x,motor_axis_y,motor_axis_z])
+    rotate([0,90,0])
+    magnet();
+  translate([cln17_v3_board_center_x,motor_axis_y,motor_axis_z])
+    rotate([motor_clocking_angle,0,0])
+    rotate([0,90,0])
+    cln17_v3_board();
+}
+
 module cln17_v3_board(show_components=true){
   mount_offset = cln17_v3_mount_spacing/2;
   copper_ring_outer_diameter = 6;
@@ -965,7 +1123,7 @@ module cln17_v3_board(show_components=true){
 
     // Power-stage face (-Z): encoder at the shaft center, MCU, MOSFETs,
     // inductor and the bottom-edge USB-C connector.
-    cln17_v3_chip([0,0], [3,3,0.8], side=-1);
+    cln17_v3_chip([0,0], [3,3,cln17_v3_encoder_height], side=-1);
     cln17_v3_chip([0,-7], [7,7,1], side=-1);
     cln17_v3_chip([-13,-8], [5.8,5.8,3], side=-1, chip_color="black");
     cln17_v3_chip([12,-9], [5,6,1.2], side=-1);
@@ -985,14 +1143,6 @@ odometer2();
 module odometer2(){
   translate([0, 0, high_roller_z]){
     urethane_roller2();
-    translate([-13,0,0])
-      rotate([0,90,0])
-      magnet();
-    // The power-stage face carries the shaft-centered magnetic encoder.
-    // Leave 0.2 mm between the magnet and the encoder package.
-    //translate([-14.5,0,0])
-    //  rotate([0,-90,0])
-    //  cln17_v3_board();
   }
   translate([0,low_roller_y, low_roller_z])
     urethane_roller2();
@@ -1109,7 +1259,7 @@ module hub_and_spokes() {
 module magnet(){
   // From https://www.fysetc.com/products/creapunk-cln17-v3#images-3
   color("lightgray")
-    cylinder(d=6, h=2.5);
+    cylinder(d=cln17_magnet_diameter, h=cln17_magnet_height);
 }
 
 
