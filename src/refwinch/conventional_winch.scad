@@ -827,6 +827,158 @@ low_roller_y = ydiff; // + high_roller_y
 shift_entry_corner = [0,-9];
 shift_exit_corner = [0,-6];
 
+// CLN17 V3 mechanical model.
+// The V3 KiCad files are not published yet. The 38 mm PCB outline, 31 mm
+// NEMA17 mounting pattern, 3.2 mm screw clearance and 1 mm board thickness
+// come from the released CLN17 KiCad designs. Connector/component locations
+// and envelopes follow the official orthographic V3 product render.
+cln17_v3_board_size = 38;
+cln17_v3_mount_spacing = 31;
+cln17_v3_mount_hole_diameter = 3.2;
+cln17_v3_pcb_thickness = 1;
+
+module cln17_v3_board_profile(){
+  mount_offset = cln17_v3_mount_spacing/2;
+  edge_slot_end = cln17_v3_board_size/2 + 1;
+  center_edge_relief_width = 12;
+  center_edge_relief_depth = 1.5;
+
+  difference(){
+    square(cln17_v3_board_size, center=true);
+
+    // The motor-screw holes open towards the side edges so the assembled
+    // driver can slide behind existing NEMA17 screw heads.
+    for(xsign=[-1,1], ysign=[-1,1])
+      hull(){
+        translate([xsign*mount_offset, ysign*mount_offset])
+          circle(d=cln17_v3_mount_hole_diameter, $fn=32);
+        translate([xsign*edge_slot_end, ysign*mount_offset])
+          circle(d=cln17_v3_mount_hole_diameter, $fn=32);
+      }
+
+    // Shallow edge reliefs visible above the motor pads and connectors.
+    for(ysign=[-1,1])
+      translate([
+        0,
+        ysign*(cln17_v3_board_size/2-center_edge_relief_depth/2)
+      ])
+        square([center_edge_relief_width, center_edge_relief_depth], center=true);
+  }
+}
+
+module cln17_v3_chip(position, size, rotation=0, side=1, chip_color="dimgray"){
+  translate([
+    position[0],
+    position[1],
+    side*(cln17_v3_pcb_thickness/2 + size[2]/2)
+  ])
+    rotate([0,0,rotation])
+    color(chip_color)
+    cube(size, center=true);
+}
+
+module cln17_v3_side_connector(position, rotation=0, width=8.5){
+  body_depth = 8;
+  body_height = 6.5;
+  opening_width = width - 3;
+  opening_height = 3.4;
+
+  translate([position[0], position[1], cln17_v3_pcb_thickness/2])
+    rotate([0,0,rotation])
+    color("ivory")
+    difference(){
+      translate([0,0,body_height/2])
+        cube([width, body_depth, body_height], center=true);
+      translate([0,-body_depth/2-0.1,body_height/2])
+        cube([opening_width, body_depth/2+0.2, opening_height], center=true);
+    }
+}
+
+module cln17_v3_usb_c(){
+  connector_width = 9.2;
+  connector_depth = 7.4;
+  connector_height = 3.2;
+
+  color("silver")
+  difference(){
+    translate([0,0,-connector_height/2])
+      cube([connector_width, connector_depth, connector_height], center=true);
+    translate([0,-connector_depth/2-0.1,-connector_height/2])
+      cube([6.6,connector_depth/2+0.2,1.5], center=true);
+  }
+}
+
+
+//translate([traverse_rod_length/2 + gear_width + GT2_belt_width + 2 + Nema17_shaft_height, -75, 0])
+translate([0, -95, -8])
+rotate([-58,0,0])
+rotate([0,-90,0])
+cln17_v3_board();
+module cln17_v3_board(show_components=true){
+  mount_offset = cln17_v3_mount_spacing/2;
+  copper_ring_outer_diameter = 6;
+  copper_layer_thickness = 0.04;
+
+  color([0.03,0.12,0.20])
+    linear_extrude(height=cln17_v3_pcb_thickness, center=true)
+      cln17_v3_board_profile();
+
+  // Exposed copper around the four NEMA17 mounting slots.
+  for(side=[-1,1], xsign=[-1,1], ysign=[-1,1])
+    translate([
+      xsign*mount_offset,
+      ysign*mount_offset,
+      side*(cln17_v3_pcb_thickness/2 + copper_layer_thickness/2)
+    ])
+      color("gold")
+      linear_extrude(height=copper_layer_thickness, center=true)
+      intersection(){
+        difference(){
+          circle(d=copper_ring_outer_diameter, $fn=32);
+          circle(d=cln17_v3_mount_hole_diameter+0.2, $fn=32);
+        }
+        translate([-xsign*mount_offset,-ysign*mount_offset])
+          cln17_v3_board_profile();
+      }
+
+  if(show_components){
+    // Connector/label face (+Z).
+    cln17_v3_chip([0,5.2], [7,7,1], 45);
+    cln17_v3_chip([0,-7.5], [4,4,1]);
+
+    for(x=[-1,1]){
+      cln17_v3_side_connector([x*18,4], rotation=x*90, width=8.5);
+      cln17_v3_side_connector([x*18,-8.5], rotation=x*90, width=8.5);
+      cln17_v3_chip([x*10.8,15.5], [3.2,2.5,2.2], chip_color="sienna");
+      cln17_v3_chip([x*10.8,12.3], [3.2,2.5,2.2], chip_color="sienna");
+      cln17_v3_chip([x*10.8,9.1], [3.2,2.5,2.2], chip_color="sienna");
+      cln17_v3_chip([x*10.7,-16.2], [4.2,3.2,2], chip_color="silver");
+    }
+
+    // Optional motor-output pads along the upper edge.
+    for(x=[-3.75,-1.25,1.25,3.75])
+      translate([x,16,cln17_v3_pcb_thickness/2+0.05])
+        color("gold")
+        cube([1.5,4.2,0.1], center=true);
+
+    cln17_v3_side_connector([0,-18.5], rotation=0, width=14.5);
+
+    // Power-stage face (-Z): encoder at the shaft center, MCU, MOSFETs,
+    // inductor and the bottom-edge USB-C connector.
+    cln17_v3_chip([0,0], [3,3,0.8], side=-1);
+    cln17_v3_chip([0,-7], [7,7,1], side=-1);
+    cln17_v3_chip([-13,-8], [5.8,5.8,3], side=-1, chip_color="black");
+    cln17_v3_chip([12,-9], [5,6,1.2], side=-1);
+
+    for(x=[-12.5,-7.5,-2.5,2.5,7.5,12.5])
+      cln17_v3_chip([x,10], [4.2,5,1], side=-1);
+
+    translate([0,-cln17_v3_board_size/2-1.2,-cln17_v3_pcb_thickness/2])
+      cln17_v3_usb_c();
+  }
+}
+
+
 //translate([-8,80+y_offset,-drum_z])
 translate([0,80+y_offset,-drum_z])
 odometer2();
@@ -836,6 +988,11 @@ module odometer2(){
     translate([-13,0,0])
       rotate([0,90,0])
       magnet();
+    // The power-stage face carries the shaft-centered magnetic encoder.
+    // Leave 0.2 mm between the magnet and the encoder package.
+    //translate([-14.5,0,0])
+    //  rotate([0,-90,0])
+    //  cln17_v3_board();
   }
   translate([0,low_roller_y, low_roller_z])
     urethane_roller2();
@@ -950,9 +1107,9 @@ module hub_and_spokes() {
 }
 
 module magnet(){
-  // From CLN17 V2's components list: https://hackaday.io/project/192759/components
+  // From https://www.fysetc.com/products/creapunk-cln17-v3#images-3
   color("lightgray")
-    cylinder(d=5, h=2);
+    cylinder(d=6, h=2.5);
 }
 
 
