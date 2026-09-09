@@ -39,7 +39,7 @@ The finished board is 28 × 12 mm, 1.0 mm FR-4, two copper layers. U1 remains at
 
 The 5 mm magnetic exclusion is deliberately different from a blanket copper exclusion. MPS recommends separation from potentially magnetic components; minimum necessary sensor connections remain. Other component pad edges are at least 6.19 mm away, and pours start behind the tip. The sensor EP has an isolated 1.7 mm square land without a thermal via, with four 0.7 mm square paste windows. U2 uses the MPS recommended TSOT23-5 land dimensions; J1 uses the installed JST-GH library footprint, checked against the manufacturer drawing.
 
-Lead-free HASL is specified in the order guide to avoid adding a nickel finish near the sensor. Assembly flatness/stencil suitability requires ordinary assembler DFM confirmation. Small-board panelization/rails and panel fiducials are also delegated to the fabricator's normal manufacturing process, without changing the circuit or finished board.
+Lead-free HASL is specified in the order guide to avoid adding a nickel finish near the sensor. Assembly flatness/stencil suitability requires ordinary assembler DFM confirmation. Small-board panelization/rails and panel fiducials are also delegated to the fabricator's normal manufacturing process, without changing the circuit or finished board. PCBWay's audit rejected the first Gerber ZIP because the bottom-mask layer was semantically empty: no bottom pads or openings exist in the original circuit. The refreshed native PCB adds one 0.70 mm solder-mask opening around an existing GND stitching via at (119.7, 103.5) mm. Bottom mask remains closed elsewhere; native ERC/DRC/parity and the 182 independent checks still pass.
 
 ## Findings that remain relevant
 

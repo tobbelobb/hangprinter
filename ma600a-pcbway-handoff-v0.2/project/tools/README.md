@@ -7,3 +7,5 @@ After source changes, fill copper zones and run native DRC. `export_release.py` 
 The other scripts preserve the original construction process: build_design, route_board, finish_board, tidy_silk, add_assembly_features, finalize_fiducials. They are construction utilities, not a safe incremental editor; do not run them on a manually edited board, because they regenerate or change sources. The packaged native sources are the completed result and require no script to open or manufacture.
 
 `check_native.py` runs native ERC, DRC and schematic parity with all severities, checks process status AND JSON findings, and writes the release reports. `sync_kicad10.py` synchronizes metadata and isolated NC net names from the schematic when migrating an older generated board. It is not a general schematic-to-PCB update replacement.
+
+`add_bottom_mask_witness.py` adds the deliberate bottom-mask opening around the existing GND stitching via. PCBWay's audit treats a completely empty bottom-mask Gerber as missing; this witness keeps the bottom masked everywhere else while exposing a useful GND probe. Run it before `export_release.py` when reconstructing this exact release.
