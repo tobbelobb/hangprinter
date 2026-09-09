@@ -1,0 +1,19 @@
+PROJECT TITLE
+MA600A off-axis magnetic quadrature encoder breakout
+
+SERVICE TYPE
+Schematic & PCB Layout
+
+EDA SOFTWARE
+KiCad
+
+USAGE ENVIRONMENT
+Indoor / robotics / motion-control prototype
+
+PROJECT DETAILS
+Design a small 5 V-powered MA600A magnetic encoder breakout for an odometer. It must output native A/B/Z quadrature without an MCU and use a keyed JST-GH 6-pin connector. The MA600A must sit at the tip of the PCB with a >=5 mm magnetic keepout around its sensing center. Include a 5 V -> 3.3 V low-noise regulator and compact SPI programming/test pads. The attached package contains the electrical netlist, intended BOM, placement constraints, pinout, references and first-article checklist.
+
+Requested deliverables: editable KiCad project and custom libraries, schematic PDF, Gerbers/drill, BOM, pick-and-place, assembly drawing, STEP if available, and ERC/DRC confirmation. Please quote turnkey manufacture/assembly of 5 first-article boards after design review. Do not fabricate until we approve schematic/layout/BOM. Do not substitute MA600A or JST-GH connector without approval.
+
+IMPORTANT
+Please read handoff/PCBWAY-REQUEST.md in the attached ZIP. That document is the source of truth for the requested design service.

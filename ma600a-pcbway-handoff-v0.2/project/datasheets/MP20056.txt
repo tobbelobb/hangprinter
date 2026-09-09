@@ -1,0 +1,750 @@
+                                                                                                                  MP20056
+                                                                                        Low-Noise, High-PSRR, 250mA
+                                                                                                     Linear Regulator
+The Future of Analog IC Technology
+
+DESCRIPTION                                                          FEATURES
+The MP20056 is a low-dropout linear regulator                            Up to 250mA Output Current
+that supplies up to 250mA current with a 100mV                           Low 100mV Dropout at 250mA
+dropout voltage and can operate from 2.5V to                             Low 150μA Ground Current
+5.5V input. The output voltage is preset at 1.8V,                        Low Noise: 13μVRMS typical (10Hz to 100kHz)
+2.5V or 3.3V for the two different packages. An                          63dB PSRR @1kHz
+external resistor divider can adjust the output                          Stable with Ceramic Capacitor
+voltage from 0.8V to 5V.                                                 Excellent Load/Line Transient Response
+An internal PMOS pass element allows for a low                           Current Limiting and Thermal Protection
+150μA ground current, making the MP20056                                 Fixed output voltage 1.8V and 3.3V.
+suitable for battery-powered devices. Other                              Adjustable Output Voltage from 0.8V to 5V
+features include low-power shutdown, short-                               Using an External Resistor Divider
+circuit protection, and thermal protection. The
+MP20056 is available in a 2mm×2mm 8-pin QFN                          APPLICATIONS
+and a 5-pin TSOT23-5 packages.                                           Notebook Computers
+                                                                         Cordless Phones
+                                                                         Cellular Phones
+                                                                         Wireless Communication Equipment
+                                                                         Hand-Held Instruments
+                                                                     All MPS parts are lead-free, halogen-free, and adhere to the RoHS
+                                                                     directive. For MPS green status, please visit the MPS website under
+                                                                     Quality Assurance. “MPS”, the MPS logo, and “Simple, Easy Solutions” are
+                                                                     trademarks of Monolithic Power Systems, Inc. or its subsidiaries.
+
+
+
+
+TYPICAL APPLICATION
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                                                    1
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+                                           ORDERING INFORMATION
+                          Part Number                        Package                        Top Marking
+                         MP20056GG-18*                    QFN-8(2mmx2mm)                     See Below
+                         MP20056GJ-33**                      TSOT23-5                        See Below
+                         MP20056GG-33                     QFN-8(2mmx2mm)                     See Below
+                         MP20056GJ-25                        TSOT23-5                        See Below
+                          MP20056GJ                          TSOT23-5                        See Below
+
+                                *For Tape & Reel, add suffix –Z (e.g. MP20056GG-18–Z);
+                                  **For Tape & Reel, add suffix -Z(e.g MP20056GJ-33-Z);
+
+                                      TOP MARKING (MP20056GG-18)
+
+
+
+
+                     BK: product code of MP20056GG-18;
+                     Y: year code;
+                     LLL: lot number;
+
+
+
+                                      TOP MARKING (MP20056GJ-33)
+
+
+
+
+                     AFT: product code of MP20056GJ-33;
+                     Y: year code;
+
+
+
+                                      TOP MARKING (MP20056GG-33)
+
+
+
+
+                     BV: product code of MP20056GG-33;
+                     Y: year code;
+                     LLL: lot number;
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         2
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+                                      TOP MARKING (MP20056GJ-25)
+
+
+
+
+                     ALA: product code of MP20056GJ-25;
+                     Y: year code;
+
+
+
+                                         TOP MARKING (MP20056GJ)
+
+
+
+
+                     AWZ: product code of MP20056GJ;
+                     Y: year code;
+
+
+
+
+                                             PACKAGE REFERENCE
+                                               TOP VIEW                           TOP VIEW
+                                      GND 1                 8 FB
+                                                                         IN   1                 5   OUT
+                                       EN 2                 7 NC
+                                                                                      MARKING
+
+
+
+
+                                        IN 3                6 OUT
+                                                                      GND     2
+                                        IN 4                5 OUT
+
+                                 EXPOSED PAD                            EN    3                 4   FB
+                                 ON BACKSIDE
+                              CONNECT TO GND
+
+                                      QFN8 (2 x 2mm)                              TSOT23-5
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         3
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                             MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+
+ABSOLUTE MAXIMUM RATINGS (1)                                            Thermal Resistance (5)                 θJA      θJC
+VIN, EN, FB to GND ....................... -0.3V to +6V                 QFN-8 (2mmx2mm) ................ 80 ...... 16... °C/W
+OUT to GND........................ -0.5V to (VIN + 0.5V)                TSOT23-5 ............................... 220 .... 110.. °C/W
+Continuous Power Dissipation ...... (TA=25°C) (2)                       Notes:
+QFN8 (2x2mm) ................................................1.6W       1) Exceeding these ratings may damage the device.
+                                                                        2) The maximum allowable power dissipation is a function of the
+TSOT23-5 ...................................................... 0.57W      maximum junction temperature TJ (MAX), the junction-to-
+Junction Temperature ............................... 150°C                 ambient thermal resistance θJA, and the ambient temperature
+Storage Temperature Range ...... -65°C to 150°C                            TA. The maximum allowable continuous power dissipation at
+                                                                           any ambient temperature is calculated by PD (MAX) = (TJ
+Lead Temperature (Soldering, 10sec)........... 260°C                       (MAX)-TA)/θJA. Exceeding the maximum allowable power
+                                                                           dissipation will cause excessive die temperature, and the
+                                                                           regulator will go into thermal shutdown. Internal thermal
+ESD SUSCEPTIBILITY(3)                                                      shutdown circuitry protects the device from permanent
+HBM (Human Body Mode)........................... 2kV                       damage.
+                                                                        3) Devices     are   ESD    sensitive.   Handling    precaution
+MM (Machine Mode) .................................. 200V                  recommended.
+                                                                        4) The device is not guaranteed to function outside of its
+Recommended Operating Conditions (4)                                       operating conditions.
+Supply Input Voltage ....................... 2.5V to 5.5V               5) Measured on JESD51-7, 4-layer PCB.
+Enable Input Voltage ......................... 0V to 5.5V
+Operating Junction Temp. (TJ). -40°C to +125°C
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                                              4
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                                       MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+ELECTRICAL CHARACTERISTICS
+VIN=VOUT+0.5V or VIN=2.5V, EN=VIN, VOUT =1.8V or 3.3V. Typical values are at Tj=25°C, unless
+otherwise specified.
+ Parameter                                         Condition                                           Min     Typ     Max       Units
+ Input Voltage                                                                                         2.5             5.5        V
+ Input         Under-Voltage
+                                                   VIN rising, VOUT=1.8V                               1.95             2.3       V
+ Lockout
+ Hysteresis of UVLO                                                                                            160                mV
+ FB Voltage                                        VOUT=0.8V, IOUT=1mA, Tj=25°C                        0.784   0.8     0.816      V
+
+ Output Voltage Accuracy                           IOUT=1mA, TJ=25°C                                    -2               2        %
+
+ Maximum Output Current                            Continuous                                          250                        mA
+ Short-Circuit Current Limit                       VOUT=0, VIN≥2.5V                                    350     550      850       mA
+                                                   VOUT within 4% of normal output voltage
+ In-Regulation Current Limit                                                                           300     550      800       mA
+                                                   VIN=5.5V
+                                                   IOUT=0.1mA                                                  150      250
+ Ground Current                                                                                                                   μA
+                                                   IOUT=250mA                                                  220      330
+ Dropout Voltage(6)                                IOUT=250mA, VOUT=3.3V, TJ=25°C                              100      150       mV
+                                                   VIN from VOUT+0.5V or 2.5V to 5.5V,
+ Line Regulation(7)                                                                                    -0.15           0.15      %/V
+                                                   IOUT=100mA,
+                                                   IOUT from 100mA to VOUT=1.8V, 3.3V                  -0.3             0.3
+ Load Regulation(8)                                                                                                               %
+                                                   250mA                VOUT=2.5V                      -0.4             0.4
+                                                                        VOUT=1.8V                              20
+                                                   IOUT=100mA, f ranges
+ Output-Voltage Noise(9)                                                VOUT=3.3V                              35                μVRMS
+                                                   from 10Hz to 100kHz
+                                                                        VOUT=5V                                55
+                                                                        f=100Hz                                65
+                                                   VOUT = 1.8V, 2.5V,
+                                                                        f=1kHz                                 63
+ PSRR(9)                                           3.3V                                                                           dB
+                                                                        f=10kHz                                63
+                                                   IOUT = 250mA
+                                                                        f=1MHz                                 33
+ Shutdown Supply Current                           VIN=+5.5V, TJ=25°C                                          0.1      0.3       μA
+ EN Pin Current , Enabled                          VIN=VEN=+5.5V                                               0.1      0.3       μA
+                                                   COUT=4.7μF,                       VOUT=1.8V         100              300
+ Startup Time                                      VOUT=10% to                                                                    μs
+                                                   90%VOUT(NOM)                      VOUT=3.3V, 2.5V   100              450
+                                                   EN Logic High                                        1.5
+ EN PIN Threshold                                                                                                                 V
+                                                   EN Logic Low                                                         0.4
+ Thermal Shutdown(9)                                                                                           150                °C
+ Thermal         Shutdown
+                                                                                                               20                 °C
+ Hysteresis(9)
+Notes:
+6) Dropout Voltage is defined as the input to output differential when the output voltage drops 100mV below its nominal value.
+
+                        VOUT  V            
+                                                 VOUT  V        
+7) Line Regulation=               IN(MAX )             IN(MIN) 
+                                                                          (% / V)
+                      V          VIN(MIN)   VOUT(NOM)
+                       INMAX             
+
+                       VOUT I           
+                                                 VOUT I          
+8) Load Regulation=          OUT (MAX )               OUT (MIN) 
+                                                                        (%)
+                                     VOUT NOM
+9) Design guarantee, no test in production
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                                             5
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+PIN FUNCTIONS
+   Pin #
+            Pin #
+   QFN-8                         Name       Pin Function
+          TSOT23-5
+(2mmx2mm)
+1, Exposed                                  Ground. Connect exposed pad to GND plane for optimal thermal
+                       2          GND
+     Pad                                    performance.
+
+                                            Regulator Enable Control Input. Drive EN above 1.5V to turn on the
+       2               3           EN
+                                            MP20056. Drive EN below 0.4V to turn it off. Do not float the EN pin.
+
+                                            Regulator Input. Supply voltage ranges from 2.5V to 5.5V. Bypass with a
+     3, 4              1           VIN      2.2μF capacitor. These pins must be externally connected for proper
+                                            operation even if they are internally connected.
+
+                                            Regulator Output. Bypass with a standard 4.7μF ceramic capacitor to GND.
+     5, 6              5         VOUT
+                                            Connect all the pins together externally.
+
+       7                           NC       No Connection. Leave this NC pin open.
+
+                                            Feedback Input. Connect FB to the center point of the external resistor
+       8               4           FB
+                                            divider. The feedback threshold voltage is 0.8V.
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         6
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                                MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+TYPICAL PERFORMANCE CHARACTERISTICS
+VIN=2.5V/3.7V, VOUT=1.8V/3.3V, TA=25ºC unless otherwise noted.
+
+
+      1.0                                             1.90                                               300
+      0.8
+      0.6                                             1.84                                               250
+      0.4
+                                                                                                         200
+      0.2                                             1.78
+      0.0                                                                                                150
+     -0.2                                             1.72
+     -0.4                                                                                                100
+     -0.6                                             1.66
+                                                                                                          50
+     -0.8
+     -1.0                                             1.60                                                 0
+            0    100    200        300    400   500      2.0   2.6    3.2     3.8     4.4    5.0   5.6      0     100    200        300    400   500
+
+
+
+
+     3.40                                             3.40                                               3.6
+
+                                                                                                         3.5
+                                                      3.36
+     3.35
+                                                                                                         3.4
+                                                      3.32
+     3.30                                                                                                3.3
+                                                      3.28
+                                                                                                         3.2
+     3.25
+                                                      3.24
+                                                                                                         3.1
+
+     3.20                                             3.20                                               3.0
+            0     80    160        240    320   400      3.5    3.9     4.3         4.7     5.1    5.5     -40   -10    20     50     80   110 140
+
+
+
+
+     200                                              0.90                                               700
+
+
+     180                                              0.84                                               640
+
+
+     160                                              0.78                                               580
+
+
+     140                                              0.72                                               520
+
+
+     120                                              0.66                                               460
+
+
+     100                                              0.60                                               400
+       -40      -10    20     50     80   110 140        -40   -10    20      50      80    110 140        -40   -10    20     50     80   110 140
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                                                           7
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+TYPICAL PERFORMANCE CHARACTERISTICS (continued)
+VIN=2.5V, VOUT=1.8V, TA=25ºC unless otherwise noted.
+
+
+
+
+                                                  VIN
+                                               5V/div.
+    VIN                                                                                        VIN
+ 2V/div.                                                                                    2V/div.
+                                                                                             VOUT
+                                                                                          10mV/div.
+                                                VOUT
+   VOUT                                        1V/div.
+  1V/div.
+    IOUT                                         IOUT                                          IOUT
+0.5A/div.                                    0.5A/div.                                     0.1A/div.
+
+
+
+
+    VIN                                           VIN
+ 2V/div.                                                                                        VIN
+                                               2V/div.
+                                                                                             2V/div.
+
+   VEN                                           VEN
+ 2V/div.                                       2V/div.
+                                                                                              VOUT
+                                                                                             1V/div.
+   VOUT                                         VOUT
+  2V/div.                                      2V/div.
+    IOUT                                         IOUT                                            IIN
+0.5A/div.                                    0.5A/div.                                     0.5A/div.
+
+
+
+
+                                                                                                VIN
+    VIN                                           VIN                                        2V/div.
+ 2V/div.                                       2V/div.
+
+
+                                                                                              VOUT
+  VOUT                                          VOUT                                         1V/div.
+ 1V/div.                                       1V/div.
+    IOUT                                         IOUT                                            IIN
+0.5A/div.                                    0.5A/div.                                     0.5A/div.
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         8
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+TYPICAL PERFORMANCE CHARACTERISTICS (continued)
+VIN=3.7V, VOUT=3.3V, TA=25ºC unless otherwise noted.
+
+
+
+
+                                                 VIN
+                                                                                               VIN
+                                              5V/div.
+    VIN                                                                                     2V/div.
+ 2V/div.                                                                                     VOUT
+                                                                                          20mV/div.
+
+                                               VOUT
+                                              2V/div.
+   VOUT
+  2V/div.
+    IOUT                                         IOUT                                            IIN
+0.5A/div.                                    0.5A/div.                                     0.1A/div.
+
+
+
+
+    VIN                                          VIN                                           VIN
+ 2V/div.                                      2V/div.                                       2V/div.
+   VEN                                          VEN
+ 2V/div.                                      2V/div.
+                                                                                             VOUT
+                                                                                            2V/div.
+   VOUT                                         VOUT
+  2V/div.                                      2V/div.
+    IOUT                                         IOUT
+                                             0.5A/div.                                           IIN
+0.5A/div.
+                                                                                           0.5A/div.
+
+
+
+
+    VIN                                          VIN                                           VIN
+ 2V/div.                                      2V/div.                                       2V/div.
+
+
+  VOUT                                         VOUT                                          VOUT
+ 2V/div.                                      2V/div.                                       2V/div.
+
+
+    IOUT                                         IOUT
+0.5A/div.                                    0.5A/div.                                         IOUT
+                                                                                           0.5A/div.
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         9
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+ TYPICAL PERFORMANCE CHARACTERISTICS (continued)
+TA=25ºC, unless otherwise noted.
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         10
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+FUNCTIONAL BLOCK DIAGRAM
+
+
+
+
+                                            Figure 1: Functional Block Diagram
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         11
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+OPERATION
+The MP20056 is a low-dropout linear regulator                        Current Limit
+that can supply up to 250mA current, which                           The MP20056 includes a current limit structure
+makes it suitable for very low voltage, low                          that monitors and controls the PMOS gate
+quiescent, low noise, and high PSRR                                  voltage to limit the guaranteed maximum output
+applications, such as wireless LAN transceivers,                     current to 0.4A.
+notebook computers, smartphones, and other
+                                                                     Thermal Protection
+low-power electronics.
+                                                                     Thermal protection turns off the PMOS when the
+The MP20056 uses an internal PMOS as the                             junction temperature exceeds 150°C, allowing
+pass element and includes both thermal                               the IC to cool. When the IC’s junction
+shutdown and an internal current-limiting circuit.                   temperature drops by 20°C, the PMOS will turn
+                                                                     on again. Thermal protection limits total power
+Dropout Voltage
+                                                                     dissipation in the MP20056. For reliable
+Dropout voltage is the minimum input to output
+                                                                     operation, limit the junction temperature to a
+differential voltage required for the regulator to
+                                                                     maximum of 125°C.
+maintain an output voltage within 100mV of its
+nominal value. Because the PMOS pass element                         Load-Transient Considerations
+behaves as a low-value resistor.                                     The output response of the load-transient
+                                                                     consists of a transient response and DC shift—
+Shutdown
+                                                                     the MP20056’s excellent load regulation
+The MP20056 can be switched ON or OFF by a
+                                                                     effectively limits the DC shift. The output voltage
+logic input at the EN pin: Logic high turns the
+                                                                     transient depends on the output capacitor’s value
+regulator on and logic low turns it off. Tie the EN
+                                                                     and ESR. Increasing the capacitance and
+pin to VIN if the application does not require the
+                                                                     decreasing the ESR will improve the transient
+shutdown feature. Do not float the EN pin.
+                                                                     response.
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         12
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                          MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+APPLICATION INFORMATION
+Setting the Output Voltage                                           Where (TJunction − TAmbient) is the temperature
+The output voltage of the MP20056 is preset to                       differential between the junction and the
+1.8V, 2.5V or 3.3V by internal resistor divider.                     surrounding environment, θJA is the thermal
+The output voltage also can be adjusted by using                     resistance from the junction to the ambient
+an external resistor divider (R1 and R2 in Figure                    environment. Connecting the exposed GND pad
+2).                                                                  to a large ground pad or plane helps to channel
+                                                                     away heat.
+                                 VOUT
+                                                                     Output Capacitor Selection
+                                           R1                        The MP20056 is specifically designed to work
+                                                                     with a standard ceramic output capacitor to save
+                    MP20056        FB
+                                                                     space and improve performance. Use a 4.7µF
+                                           R2                        ceramic capacitor for most applications. Larger
+                                                                     output capacitors will improve load transient
+                                  GND                                response and reduce noise at the cost of
+                                                                     increased size.
+         Figure 2: Setting the Output Voltage                        External Reverse Voltage Protection
+However, the sum of R1 and R2 should not                             In some situations, e.g. a backup battery is
+exceed 10kΩ to minimize their impact on the                          connected as MP20056 load, the output voltage
+internal resistor divider. For an accurate output-                   may be held up while the input is either pulled to
+voltage setting, use 1kΩ (±1%) for R2, and                           ground to some intermediated voltage or is
+determine R1 with:                                                   floating. Thus, the output voltage is higher than
+                                                                     input voltage. Since MP20056 internal PMOS
+                            V     VFB                             pass element has a body diode, a current will
+                 R1  R2   OUT       
+                               VFB                                 conduct from the output to input and is not
+For example, for a 1.1V output voltage, R2 is 1kΩ,                   internally limited. It’s possible that the IC will be
+and R1 is 374Ω. You can select a standard 374Ω                       damaged by this unlimited reverse current. To
+(±1%) resistor for R1.                                               avoid this, it’s recommended to place an external
+                                                                     diode at input like below.
+Power Dissipation
+The power dissipation for any package depends                                                  MP20056
+on the thermal resistance of the case and circuit
+board, the temperature differential between the
+junction and ambient air, and the rate of air flow.
+The power dissipation across the device can be
+represented by the equation:
+                   P  VIN  VOUT  IOUT
+
+The allowable power dissipation can                         be
+calculated using the following equation:
+             P(MAX)  TJunction  TAmbient  /  JA
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                           13
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+TYPICAL APPLICATION CIRCUITS
+                                                          U1
+
+
+                    VIN               2.2V - 5.5V    3                                    1.8V              VOUT
+                                                                               5
+                                                     4 IN                  OUT 6
+                                                                           OUT
+                                                       IN
+                   GND                                         MP20056-G                                    GND
+                                  R3                 7
+                                                         NC                      C3
+                                  100k
+                                                                                 470pF
+
+
+                     EN
+                                                     2 EN                    FB 8
+
+                                                                  GND
+                                                                    1
+
+
+
+
+                                    Figure 3: 1.8V Fixed Output Application (QFN-8L)
+
+                                                          U1
+
+
+                    VIN               3.7V - 5.5V    1                                    3.3V              VOUT
+                                                                                 5
+                                                         IN                OUT
+
+                   GND                                         MP20056-J                                    GND
+                                  R1
+                                                                                     C3
+                                  100k
+                                                                                     NS
+
+
+                     EN
+                                                     3 EN                    FB 4
+
+                                                                  GND
+                                                                    2
+
+
+
+
+                                 Figure 4: 3.3V Fixed Output Application (TSOT23-5L)
+
+
+
+
+                                                         MP20056
+
+
+
+
+                                 Figure 5: 2.5V Fixed Output Application (TSOT23-5L)
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                         14
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+PACKAGE INFORMATION
+                                                   QFN-8 (2mm×2mm)
+                             1.90                                           0.25           0.45             PIN 1 ID
+   PIN 1 ID                  2.10                                           0.45           0.65             SEE DETAIL A
+   MARKING
+                                                                     0.18
+                                                                                   8                       1
+                                                                     0.30
+
+                                                  1.90               0.50                                        1.05
+ PIN 1 ID                                         2.10               BSC                                         1.25
+ INDEX AREA
+
+                                                                                   5                       4
+
+
+
+
+                         TOP VIEW                                                      BOTTOM VIEW
+
+
+
+
+                                                                       PIN 1 ID OPTION A          PIN 1 ID OPTION B
+                                                       0.80            R0.20 TYP.                 R0.20 TYP.
+                                                       1.00
+     0.20 REF
+                                                0.00
+                                                0.05
+
+                        SIDE VIEW                                                       DETAIL A
+
+
+
+
+                             1.90                              NOTE:
+           0.70              0.60                               1) ALL DIMENSIONS ARE IN MILLIMETERS.
+                                                                2) EXPOSED PADDLE SIZE DOES NOT INCLUDE MOLD FLASH.
+                                                                3) LEAD COPLANARITY SHALL BE 0.10 MILLIMETER MAX.
+    0.25
+                                                                4) DRAWING CONFORMS TO JEDEC MO-229, VARIATION VCCD-3.
+                                                                5) DRAWING IS NOT TO SCALE.
+
+    0.50                                               1.20
+
+
+
+
+           RECOMMENDED LAND PATTERN
+
+
+
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                               15
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+                                         MP20056 – LOW-NOISE, HIGH-PSRR, 250mA LINEAR REGULATOR
+
+
+PACKAGE INFORMATION
+                                                           TSOT23-5
+
+
+
+
+NOTICE: The information in this document is subject to change without notice. Please contact MPS for current specifications.
+Users should warrant and guarantee that third party Intellectual Property rights are not infringed upon when integrating MPS
+products into any application. MPS will not assume any legal responsibility for any said applications.
+
+MP20056 Rev.1.12                                     www.MonolithicPower.com                                             16
+11/12/2019       MPS Proprietary Information. Patent Protected. Unauthorized Photocopy and Duplication Prohibited.
+                                                © 2019 MPS. All Rights Reserved.
+

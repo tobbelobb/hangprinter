@@ -1,0 +1,2 @@
+(version 1)
+(rule "Magnetic component clearance" (condition "A.Type == 'Footprint' && A.Reference != 'U1' && A.intersectsArea('Sensor magnetic keepout: no pours; essential traces only')") (constraint disallow footprint))

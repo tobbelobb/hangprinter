@@ -1,0 +1,942 @@
+{
+  "checks": [
+    {
+      "check": "native pin J1:1",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin J1:2",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "native pin J1:3",
+      "pass": true,
+      "detail": "A_OUT"
+    },
+    {
+      "check": "native pin J1:4",
+      "pass": true,
+      "detail": "B_OUT"
+    },
+    {
+      "check": "native pin J1:5",
+      "pass": true,
+      "detail": "Z_OUT"
+    },
+    {
+      "check": "native pin J1:6",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U1:1",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U1:2",
+      "pass": true,
+      "detail": "A_OUT"
+    },
+    {
+      "check": "native pin U1:3",
+      "pass": true,
+      "detail": "Z_OUT"
+    },
+    {
+      "check": "native pin U1:4",
+      "pass": true,
+      "detail": "SPI_COPI"
+    },
+    {
+      "check": "native pin U1:5",
+      "pass": true,
+      "detail": "SPI_CS"
+    },
+    {
+      "check": "native pin U1:6",
+      "pass": true,
+      "detail": "B_OUT"
+    },
+    {
+      "check": "native pin U1:7",
+      "pass": true,
+      "detail": "SPI_CIPO"
+    },
+    {
+      "check": "native pin U1:8",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin U1:9",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U1:10",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin U1:11",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U1:12",
+      "pass": true,
+      "detail": "SPI_SCLK"
+    },
+    {
+      "check": "native pin U1:13",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "native pin U1:14",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "native pin U1:15",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U1:16",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U1:17",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U2:1",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "native pin U2:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin U2:3",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "native pin U2:4",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "native pin U2:5",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "native pin C1:1",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "native pin C1:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin C2:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "native pin C2:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin C3:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "native pin C3:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin C4:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "native pin C4:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin TP1:1",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "native pin TP2:1",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "native pin TP3:1",
+      "pass": true,
+      "detail": "SPI_CS"
+    },
+    {
+      "check": "native pin TP4:1",
+      "pass": true,
+      "detail": "SPI_SCLK"
+    },
+    {
+      "check": "native pin TP5:1",
+      "pass": true,
+      "detail": "SPI_COPI"
+    },
+    {
+      "check": "native pin TP6:1",
+      "pass": true,
+      "detail": "SPI_CIPO"
+    },
+    {
+      "check": "native pin TP7:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "PCB pin J1:1",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin J1:2",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "PCB pin J1:3",
+      "pass": true,
+      "detail": "A_OUT"
+    },
+    {
+      "check": "PCB pin J1:4",
+      "pass": true,
+      "detail": "B_OUT"
+    },
+    {
+      "check": "PCB pin J1:5",
+      "pass": true,
+      "detail": "Z_OUT"
+    },
+    {
+      "check": "PCB pin J1:6",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U1:1",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U1:2",
+      "pass": true,
+      "detail": "A_OUT"
+    },
+    {
+      "check": "PCB pin U1:3",
+      "pass": true,
+      "detail": "Z_OUT"
+    },
+    {
+      "check": "PCB pin U1:4",
+      "pass": true,
+      "detail": "SPI_COPI"
+    },
+    {
+      "check": "PCB pin U1:5",
+      "pass": true,
+      "detail": "SPI_CS"
+    },
+    {
+      "check": "PCB pin U1:6",
+      "pass": true,
+      "detail": "B_OUT"
+    },
+    {
+      "check": "PCB pin U1:7",
+      "pass": true,
+      "detail": "SPI_CIPO"
+    },
+    {
+      "check": "PCB pin U1:8",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin U1:9",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U1:10",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin U1:11",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U1:12",
+      "pass": true,
+      "detail": "SPI_SCLK"
+    },
+    {
+      "check": "PCB pin U1:13",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "PCB pin U1:14",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "PCB pin U1:15",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U1:16",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U1:17",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U2:1",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "PCB pin U2:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin U2:3",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "PCB pin U2:4",
+      "pass": true,
+      "detail": "NC"
+    },
+    {
+      "check": "PCB pin U2:5",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "PCB pin C1:1",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "PCB pin C1:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin C2:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "PCB pin C2:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin C3:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "PCB pin C3:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin C4:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "PCB pin C4:2",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin TP1:1",
+      "pass": true,
+      "detail": "+5V_IN"
+    },
+    {
+      "check": "PCB pin TP2:1",
+      "pass": true,
+      "detail": "GND"
+    },
+    {
+      "check": "PCB pin TP3:1",
+      "pass": true,
+      "detail": "SPI_CS"
+    },
+    {
+      "check": "PCB pin TP4:1",
+      "pass": true,
+      "detail": "SPI_SCLK"
+    },
+    {
+      "check": "PCB pin TP5:1",
+      "pass": true,
+      "detail": "SPI_COPI"
+    },
+    {
+      "check": "PCB pin TP6:1",
+      "pass": true,
+      "detail": "SPI_CIPO"
+    },
+    {
+      "check": "PCB pin TP7:1",
+      "pass": true,
+      "detail": "+3V3"
+    },
+    {
+      "check": "footprint references",
+      "pass": true,
+      "detail": "['C1', 'C2', 'C3', 'C4', 'FID1', 'FID2', 'FID3', 'J1', 'TP1', 'TP2', 'TP3', 'TP4', 'TP5', 'TP6', 'TP7', 'U1', 'U2']"
+    },
+    {
+      "check": "U1 land 1",
+      "pass": true,
+      "detail": "[-1.4500000000000028, -0.75, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 2",
+      "pass": true,
+      "detail": "[-1.4500000000000028, -0.25, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 3",
+      "pass": true,
+      "detail": "[-1.4500000000000028, 0.25, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 4",
+      "pass": true,
+      "detail": "[-1.4500000000000028, 0.75, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 5",
+      "pass": true,
+      "detail": "[-0.75, 1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 6",
+      "pass": true,
+      "detail": "[-0.25, 1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 7",
+      "pass": true,
+      "detail": "[0.25, 1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 8",
+      "pass": true,
+      "detail": "[0.75, 1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 9",
+      "pass": true,
+      "detail": "[1.4500000000000028, 0.75, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 10",
+      "pass": true,
+      "detail": "[1.4500000000000028, 0.25, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 11",
+      "pass": true,
+      "detail": "[1.4500000000000028, -0.25, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 12",
+      "pass": true,
+      "detail": "[1.4500000000000028, -0.75, 0.7, 0.25]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 13",
+      "pass": true,
+      "detail": "[0.75, -1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 14",
+      "pass": true,
+      "detail": "[0.25, -1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 15",
+      "pass": true,
+      "detail": "[-0.25, -1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 16",
+      "pass": true,
+      "detail": "[-0.75, -1.4500000000000028, 0.25, 0.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U1 land 17",
+      "pass": true,
+      "detail": "[0.0, 0.0, 1.7, 1.7]; MPS MA600A p48"
+    },
+    {
+      "check": "U2 land 1",
+      "pass": true,
+      "detail": "[-1.2999999999999972, -0.9500000000000028, 1.2, 0.6]; MPS MP20056 p16 (rotated top view)"
+    },
+    {
+      "check": "U2 land 2",
+      "pass": true,
+      "detail": "[-1.2999999999999972, 0.0, 1.2, 0.6]; MPS MP20056 p16 (rotated top view)"
+    },
+    {
+      "check": "U2 land 3",
+      "pass": true,
+      "detail": "[-1.2999999999999972, 0.9500000000000028, 1.2, 0.6]; MPS MP20056 p16 (rotated top view)"
+    },
+    {
+      "check": "U2 land 4",
+      "pass": true,
+      "detail": "[1.2999999999999972, 0.9500000000000028, 1.2, 0.6]; MPS MP20056 p16 (rotated top view)"
+    },
+    {
+      "check": "U2 land 5",
+      "pass": true,
+      "detail": "[1.2999999999999972, -0.9500000000000028, 1.2, 0.6]; MPS MP20056 p16 (rotated top view)"
+    },
+    {
+      "check": "magnetic clearance U2",
+      "pass": true,
+      "detail": "8.100 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance FID1",
+      "pass": true,
+      "detail": "8.184 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance TP2",
+      "pass": true,
+      "detail": "13.583 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance TP1",
+      "pass": true,
+      "detail": "13.946 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance C1",
+      "pass": true,
+      "detail": "9.219 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance J1",
+      "pass": true,
+      "detail": "17.803 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance TP6",
+      "pass": true,
+      "detail": "15.890 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance TP5",
+      "pass": true,
+      "detail": "13.946 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance TP3",
+      "pass": true,
+      "detail": "13.500 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance TP7",
+      "pass": true,
+      "detail": "16.008 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance C3",
+      "pass": true,
+      "detail": "6.583 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance FID2",
+      "pass": true,
+      "detail": "11.687 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance C4",
+      "pass": true,
+      "detail": "6.190 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance FID3",
+      "pass": true,
+      "detail": "15.716 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance TP4",
+      "pass": true,
+      "detail": "13.583 mm nearest pad edge"
+    },
+    {
+      "check": "magnetic clearance C2",
+      "pass": true,
+      "detail": "9.188 mm nearest pad edge"
+    },
+    {
+      "check": "outline 28x12",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 742f4fee-4d78-4a16-9120-82163505d54d",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 90f7587f-3812-4867-8ee8-858f5029aefa",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via c6602a71-5cac-4995-88af-c9bf52a1108c",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via c83167eb-3415-465a-9801-71f20477a252",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 0cdf8dd3-588b-4de7-8524-3da5555ffbb0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 68d916a7-22f7-4e63-ad9a-d7accf71e4b0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 9758e740-bcd1-4a98-868e-c53560fe4690",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 0760b1d6-d4ec-48d4-ae1f-5f1bdb875d51",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 0c02dd38-0459-4300-8173-eff1b7e8b2fc",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 011f9b1a-fc10-4d69-bbf1-5cdc9216b7a9",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 01205997-4449-432b-8413-f32d554b8aa0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 22bcd0e5-aa88-414f-8645-b281c94407ae",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 251959ea-1abe-4299-ab54-df792fa1d02d",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 2940181a-38d1-4276-a04a-91ade097f20d",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 3b8491d5-b1b4-4d28-8c01-bb8e68bceffd",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 4e92bde5-4d94-4f71-bf8c-ee126f25b011",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 56a797ce-1611-4cfc-b7e8-77d4e182f308",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 64018beb-898f-43cd-9fbb-55c76c52c892",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 649f7dc9-f907-4b3b-bba1-06acd038fd01",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 65253116-5d7d-4055-b394-9beed1133380",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 7284caa8-1eaf-4a0e-b65a-5c614b419b56",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 87760a18-ce64-4c58-85b3-024d7f2f0f95",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via a45de804-a15b-425e-aa0e-14c3a00b2a91",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via bba0a0fd-8027-4a06-b6a5-5b55e58c88c1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via cde15126-121b-4a95-87f9-0f169061043d",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via dcbdd29d-1c61-4149-8f21-47304ad7f49f",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via e46a135a-cbff-4ba8-be17-70a4e087ddcc",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via f7392313-29a8-4171-905c-16f86dce7e72",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via fbc90b72-b031-456b-8f92-e22a339b2a5d",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 26cabd3a-40ab-46cd-b345-85c657fd856e",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via b99559dd-0aea-4366-ac67-2219f2909e96",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 6fd32942-547a-44e2-b349-6a23e5cf212e",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via b6d408a8-f6c3-4052-8346-0304ebec43f8",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 41ac710a-914d-4529-875d-60d082538081",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 4ec91794-d6f6-4f70-aad6-bbe7aca929e6",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via bb96800e-3459-4c9a-a657-b738a01a19ee",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via e186b3d5-5cf5-4666-8783-c7b6d564ce3b",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 515934a9-6b77-48ad-b194-80bc1795649c",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no EP via 6496bf93-7a2d-44bc-af30-67867a5ba1e0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "BOM seven installed parts",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid seven installed parts",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid C1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid C2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid C3",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid C4",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid J1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid U1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "centroid U2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MPN C1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MPN C2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MPN C3",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MPN C4",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MPN J1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MPN U1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MPN U2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "native DRC",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "passed": 182,
+  "failed": 0,
+  "nearest_component_pad_edges_mm": {
+    "U2": 8.100000000000003,
+    "FID1": 8.18413098624405,
+    "TP2": 13.583077707206124,
+    "TP1": 13.946325680981353,
+    "C1": 9.218527539688749,
+    "J1": 17.802966747146392,
+    "TP6": 15.890248582070704,
+    "TP5": 13.946325680981353,
+    "TP3": 13.5,
+    "TP7": 16.00781059358212,
+    "C3": 6.582833736317513,
+    "FID2": 11.686744627996283,
+    "C4": 6.19,
+    "FID3": 15.715597347857955,
+    "TP4": 13.583077707206124,
+    "C2": 9.18837580859642
+  },
+  "source_sha256": {
+    "MA600A-RefWinch-Encoder.kicad_sch": "397dc8273232379b6b6cfc0d2201f0630d555fa2fcd5d0162e3be76b7613b86a",
+    "MA600A-RefWinch-Encoder.kicad_prl": "838ebb704a9556ff22844985c86b2fc53a9bd252a11b5bb255fbbee9b45509a8",
+    "RefWinch.kicad_sym": "95e81f1324a4c578497da59c19d86981f02887fa38883bf1da15c50be4063b97",
+    "MA600A-RefWinch-Encoder.kicad_dru": "d63129150c0770f8c5c8e4f7d67f83ae6640fdab2ed761ce3600f30093a3a9fd",
+    "MA600A-RefWinch-Encoder.kicad_pcb": "5fb7b1aa7c5f6f5ea3d1a1744d6b36452ecd9fe08c682f053b7cc4206617952e",
+    "MA600A-RefWinch-Encoder.kicad_pro": "a135da7a99e26429c686fd3b9efd88a6f2dda09c5740f718bb8dcf7570329139"
+  }
+}

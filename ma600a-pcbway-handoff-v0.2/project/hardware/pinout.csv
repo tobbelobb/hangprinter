@@ -1,0 +1,7 @@
+connector,pin,signal,voltage,notes
+J1,1,GND,0V,Ground
+J1,2,+5V,5V nominal,Board input
+J1,3,A,3.3V logic,Quadrature A output
+J1,4,B,3.3V logic,Quadrature B output
+J1,5,Z,3.3V logic,Index output
+J1,6,RSV,,No connect in v0.1

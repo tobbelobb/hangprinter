@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "project": "MA600A-RefWinch-Encoder.kicad_pro",
+  "current": "2026-09-09_0847-2",
+  "runs": {
+    "2026-09-09_0832": {
+      "source_hashes": {
+        "MA600A-RefWinch-Encoder.kicad_sch": "sha256:ab4c79c2c34dc1371211b0bb50f49e0da86d64b06821bbe708129b4c968fb312"
+      },
+      "outputs": {
+        "schematic": "schematic.json"
+      },
+      "scripts": {
+        "schematic": "analyze_schematic.py MA600A-RefWinch-Encoder.kicad_sch"
+      },
+      "generated": "2026-09-09T08:32:43+02:00",
+      "pinned": false
+    },
+    "2026-09-09_0834": {
+      "source_hashes": {
+        "MA600A-RefWinch-Encoder.kicad_sch": "sha256:1df0e074aeadcf4acc33b2bbef59558d93ff9c7dab7fb245c8c99bab46ba60c2",
+        "MA600A-RefWinch-Encoder.kicad_pcb": "sha256:bc904ab1db2698cea2eec7782a5cd4c1af5d26fae655a3694ab878d27a3bd6fe",
+        "schematic.json": "sha256:768f1f44e52bc32c5b9b3523b14865608bcbfea58174064867092a3888576d29",
+        "pcb.json": "sha256:c59cdd3c26c38f847cb154e1e605a40d19dde053034aca646c7264cde6041ca2"
+      },
+      "outputs": {
+        "schematic": "schematic.json",
+        "pcb": "pcb.json",
+        "cross_analysis": "cross_analysis.json",
+        "thermal": "thermal.json",
+        "emc": "emc.json"
+      },
+      "scripts": {
+        "schematic": "analyze_schematic.py MA600A-RefWinch-Encoder.kicad_sch"
+      },
+      "generated": "2026-09-09T08:42:48+02:00",
+      "pinned": false
+    },
+    "2026-09-09_0847": {
+      "source_hashes": {
+        "MA600A-RefWinch-Encoder.kicad_pcb": "sha256:5fb7b1aa7c5f6f5ea3d1a1744d6b36452ecd9fe08c682f053b7cc4206617952e"
+      },
+      "outputs": {
+        "schematic": "schematic.json",
+        "pcb": "pcb.json",
+        "cross_analysis": "cross_analysis.json",
+        "thermal": "thermal.json",
+        "emc": "emc.json"
+      },
+      "scripts": {
+        "pcb": "analyze_pcb.py MA600A-RefWinch-Encoder.kicad_pcb"
+      },
+      "generated": "2026-09-09T08:47:01+02:00",
+      "pinned": false
+    },
+    "2026-09-09_0847-2": {
+      "source_hashes": {
+        "MA600A-RefWinch-Encoder.kicad_sch": "sha256:397dc8273232379b6b6cfc0d2201f0630d555fa2fcd5d0162e3be76b7613b86a",
+        "MA600A-RefWinch-Encoder.kicad_pcb": "sha256:5fb7b1aa7c5f6f5ea3d1a1744d6b36452ecd9fe08c682f053b7cc4206617952e",
+        "schematic.json": "sha256:94dd2383659c2f5b2a697d8f16174239c625ea714d4b2deccdc975af74539e29",
+        "pcb.json": "sha256:1101f00c1b1f4e5252e758c737f2d0723e0780e5464297fab23438276415d5ad"
+      },
+      "outputs": {
+        "schematic": "schematic.json",
+        "pcb": "pcb.json",
+        "cross_analysis": "cross_analysis.json",
+        "thermal": "thermal.json",
+        "emc": "emc.json",
+        "lifecycle": "lifecycle.json",
+        "gerber": "gerber.json"
+      },
+      "scripts": {
+        "schematic": "analyze_schematic.py MA600A-RefWinch-Encoder.kicad_sch"
+      },
+      "generated": "2026-09-09T09:01:03+02:00",
+      "pinned": false
+    }
+  }
+}

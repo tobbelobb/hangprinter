@@ -1,0 +1,44 @@
+ref,pin,pin_name,net,notes
+J1,1,GND,GND,Main keyed connector
+J1,2,+5V,+5V_IN,Main keyed connector
+J1,3,A,A_OUT,Quadrature A
+J1,4,B,B_OUT,Quadrature B
+J1,5,Z,Z_OUT,Index
+J1,6,RSV,NC,Reserved; no connect v0.1
+U1,1,IO1,NC,Float unused
+U1,2,IO2,A_OUT,Default A
+U1,3,IO3,Z_OUT,Default Z
+U1,4,COPI,SPI_COPI,Programming pad
+U1,5,/CS,SPI_CS,Programming pad; internal pull-up
+U1,6,IO4,B_OUT,Default B
+U1,7,CIPO,SPI_CIPO,Programming pad
+U1,8,GND,GND,Sensor ground
+U1,9,IO5,NC,Float unused
+U1,10,TEST,GND,Must connect to ground
+U1,11,CK100,NC,Float unused
+U1,12,SCLK,SPI_SCLK,Programming pad; internal pull-down
+U1,13,DVDD,+3V3,0.1uF bypass via low-impedance trace
+U1,14,AVDD,+3V3,1uF bypass via low-impedance trace
+U1,15,IO6,NC,Float unused
+U1,16,NC,NC,Do not connect
+U1,17,E-PAD,NC,Electrically floating exposed pad
+U2,1,VIN,+5V_IN,MP20056GJ-33
+U2,2,GND,GND,MP20056GJ-33
+U2,3,EN,+5V_IN,Tie to VIN
+U2,4,FB,NC,Fixed 3.3V part; no external divider
+U2,5,VOUT,+3V3,MP20056GJ-33
+C1,1,,+5V_IN,2.2uF
+C1,2,,GND,2.2uF
+C2,1,,+3V3,4.7uF
+C2,2,,GND,4.7uF
+C3,1,,+3V3,1uF AVDD bypass
+C3,2,,GND,1uF AVDD bypass
+C4,1,,+3V3,0.1uF DVDD bypass
+C4,2,,GND,0.1uF DVDD bypass
+TP1,1,5V,+5V_IN,Test/program pad
+TP2,1,GND,GND,Test/program pad
+TP3,1,CS,SPI_CS,Test/program pad
+TP4,1,SCLK,SPI_SCLK,Test/program pad
+TP5,1,COPI,SPI_COPI,Test/program pad
+TP6,1,CIPO,SPI_CIPO,Test/program pad
+TP7,1,3V3,+3V3,Power check pad
