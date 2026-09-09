@@ -2,7 +2,7 @@
 
 A small magnetic incremental encoder board for the Hangprinter RefWinch odometer.
 
-**Status:** v0.3 KiCad schematic, routed PCB and five-board first-article manufacturing package completed. Start with [ordering instructions](release/ORDER-INSTRUCTIONS.md) and [design review](release/Design-review.md). Native PCB DRC passes and 182 independent checks pass. Native schematic ERC was not run; static electrical review and remaining physical validation are documented. No order has been placed.
+**Status:** v0.3 KiCad schematic, routed PCB and five-board first-article manufacturing package completed. Start with [ordering instructions](release/ORDER-INSTRUCTIONS.md) and [design review](release/Design-review.md). KiCad 10.0.6 native ERC, DRC and schematic parity pass with zero findings; 182 independent checks pass. Physical first-article validation remains. No order has been placed.
 
 **Applicable RefWinch variants:** buildup and no-buildup. The board measures the odometer wheel, independent of collector-spool architecture.
 

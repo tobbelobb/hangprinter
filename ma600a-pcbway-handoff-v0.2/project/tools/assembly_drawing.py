@@ -33,7 +33,7 @@ for ref,x,y in pin1:
 for i in range(1,8):
  fp=fps['TP'+str(i)];x=p.ToMM(fp.GetPosition().x)-100;y=112-p.ToMM(fp.GetPosition().y)
  label=['5V','GND','CS','SCLK','COPI','CIPO','3V3'][i-1]
- text(X0+x*S+13,Y0+y*S-3,label,7)
+ text(X0+x*S-10,Y0+y*S-19,label,7) if i==5 else text(X0+x*S+13,Y0+y*S-3,label,7)
 for i in range(1,4):
  fp=fps['FID'+str(i)];x=p.ToMM(fp.GetPosition().x)-100;y=112-p.ToMM(fp.GetPosition().y);text(X0+x*S-9,Y0+y*S+10,'F'+str(i),7)
 text(X0+5,Y0+9,'5 mm magnetic keepout',8,'#94671f');text(X0+28*S+8,Y0+6*S,'CABLE',9)

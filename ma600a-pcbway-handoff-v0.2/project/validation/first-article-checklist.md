@@ -2,14 +2,15 @@
 
 ## Before ordering
 
-- [x] Capture schematic in installed KiCad 7.0.11 (editable in newer versions)
+- [x] Open and verify the project using KiCad 10.0.6
 - [x] Verify MA600A symbol pins against Rev. 1.0 datasheet
 - [x] Verify QFN land pattern against MPS recommended pattern
 - [x] Verify MP20056GJ-33 pin 4 treatment for fixed output
 - [x] Verify JST-GH footprint and pin numbering
 - [x] Add 5 mm circular magnetic keepout around U1
 - [x] Static electrical checks and 182 independent source/netlist/PCB/release checks passed
-- [ ] Native ERC: not run; installed KiCad 7 CLI lacks this command. See `release/ERC-review.md`; this coverage limit must be accepted before fabrication.
+- [x] Native KiCad 10 ERC: zero errors, warnings or exclusions; reports included
+- [x] Native KiCad 10 schematic-to-PCB parity: zero findings after synchronization
 - [x] DRC clean
 - [x] Gerber visual inspection
 - [x] BOM and centroid generated from same revision

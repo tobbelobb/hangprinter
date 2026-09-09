@@ -35,7 +35,7 @@ Analyzer scripts actually run: `analyze_schematic.py`, `analyze_pcb.py --full`, 
 
 ## Design and manufacturing decisions
 
-The finished board is 28 × 12 mm, 1.0 mm FR-4, two copper layers. U1 remains at (4,6) mm; the GH connector exits at the opposite end. The layout uses 0.20 mm signal and 0.30 mm supply traces, 0.60/0.30 mm vias and 0.15 mm minimum copper clearance. For the PCBWay quote, enter 0.20 mm minimum trace and 0.15 mm minimum spacing (or the combined 6/6 mil option). The minimum finished hole is 0.30 mm; all 39 holes are plated vias and there are no component or mounting holes. There are 358 track segments, two filled ground zones, seven test pads and three fiducials. Ground stitching was added behind the magnetic keepout.
+The finished board is 28 × 12 mm, 1.0 mm FR-4, two copper layers. U1 remains at (4,6) mm; the GH connector exits at the opposite end. The layout uses 0.20 mm signal and 0.30 mm supply traces, 0.60/0.30 mm vias and 0.15 mm minimum copper clearance. There are 358 track segments, 39 vias, two filled ground zones, seven test pads and three fiducials. Ground stitching was added behind the magnetic keepout.
 
 The 5 mm magnetic exclusion is deliberately different from a blanket copper exclusion. MPS recommends separation from potentially magnetic components; minimum necessary sensor connections remain. Other component pad edges are at least 6.19 mm away, and pours start behind the tip. The sensor EP has an isolated 1.7 mm square land without a thermal via, with four 0.7 mm square paste windows. U2 uses the MPS recommended TSOT23-5 land dimensions; J1 uses the installed JST-GH library footprint, checked against the manufacturer drawing.
 

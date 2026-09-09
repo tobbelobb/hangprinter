@@ -56,9 +56,9 @@
     "2026-09-09_0847-2": {
       "source_hashes": {
         "MA600A-RefWinch-Encoder.kicad_sch": "sha256:397dc8273232379b6b6cfc0d2201f0630d555fa2fcd5d0162e3be76b7613b86a",
-        "MA600A-RefWinch-Encoder.kicad_pcb": "sha256:5fb7b1aa7c5f6f5ea3d1a1744d6b36452ecd9fe08c682f053b7cc4206617952e",
+        "MA600A-RefWinch-Encoder.kicad_pcb": "sha256:d7c0535902e81517058f756fd61cad4fcd3a96266df5085a4c3d8db592fe7f36",
         "schematic.json": "sha256:94dd2383659c2f5b2a697d8f16174239c625ea714d4b2deccdc975af74539e29",
-        "pcb.json": "sha256:1101f00c1b1f4e5252e758c737f2d0723e0780e5464297fab23438276415d5ad"
+        "pcb.json": "sha256:b6fe4c119add398c513016b018d8a0d590305f773dc21bb81c7ad41a2e5c4550"
       },
       "outputs": {
         "schematic": "schematic.json",
@@ -72,7 +72,7 @@
       "scripts": {
         "schematic": "analyze_schematic.py MA600A-RefWinch-Encoder.kicad_sch"
       },
-      "generated": "2026-09-09T09:01:03+02:00",
+      "generated": "2026-09-09T09:43:50+02:00",
       "pinned": false
     }
   }

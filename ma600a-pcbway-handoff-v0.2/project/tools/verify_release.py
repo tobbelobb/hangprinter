@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Independent handoff -> native netlist -> PCB -> BOM/centroid comparison."""
-import os,pathlib,sys,csv,json,math,hashlib
+import os,pathlib,sys,csv,json,math,hashlib,subprocess
 for k,v in [('XDG_CONFIG_HOME','config'),('XDG_CACHE_HOME','cache'),('XDG_DATA_HOME','data')]:os.environ[k]='/tmp/ma600-kicad/'+v
 import pcbnew as p
 R=pathlib.Path(__file__).resolve().parents[1];sys.path.insert(0,str(R.parents[1]/'.agents/skills/kicad/scripts'))
@@ -21,7 +21,7 @@ for key,n in expected.items():check('native pin '+':'.join(key),actual.get(key)=
 footprints={f.GetReference():f for f in b.GetFootprints()};padmap={}
 for ref,fp in footprints.items():
  for pad in fp.Pads():
-  if pad.GetNumber():padmap[(ref,pad.GetNumber())]=pad.GetNetname() or 'NC'
+  if pad.GetNumber():padmap[(ref,pad.GetNumber())]='NC' if not pad.GetNetname() or pad.GetNetname().startswith('unconnected-') else pad.GetNetname()
 for key,n in expected.items():check('PCB pin '+':'.join(key),padmap.get(key)==n,str(padmap.get(key)))
 check('footprint references',set(footprints)=={x[0] for x in expected}|{'FID1','FID2','FID3'},str(sorted(footprints)))
 # Datasheet land pattern comparison, including pad numbering and top-view orientation.
@@ -56,7 +56,9 @@ for r in pos:
  check('centroid '+r['Ref'],abs(float(r['PosX'])-x)<1e-5 and abs(float(r['PosY'])-y)<1e-5 and abs(float(r['Rot'])-fp.GetOrientationDegrees())<1e-5 and r['Side']=='top')
 for r in bom:check('MPN '+r['Designator'],r['Manufacturer Part Number'] not in ['', 'TBD'])
 # Native DRC re-run after all final touches and zone fills.
-p.WriteDRCReport(b,str(a/'DRC.txt'),p.EDA_UNITS_MILLIMETRES,True);drc=(a/'DRC.txt').read_text();check('native DRC','Found 0 DRC violations' in drc and 'Found 0 unconnected pads' in drc)
+subprocess.run([sys.executable,str(R/'tools/check_native.py')],check=True)
+j=json.loads((rel/'DRC.json').read_text());check('native DRC and schematic parity',not any(j[k] for k in ['violations','unconnected_items','schematic_parity']))
+
 result={'checks':checks,'passed':sum(c['pass'] for c in checks),'failed':sum(not c['pass'] for c in checks),'nearest_component_pad_edges_mm':distances,'source_sha256':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in D.glob('*.kicad_*') if f.is_file()}}
 (a/'verification.json').write_text(json.dumps(result,indent=2))
 with open(rel/'Pin-verification.csv','w',newline='') as f:

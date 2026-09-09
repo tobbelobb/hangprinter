@@ -47,9 +47,7 @@ PCBWay requests Gerber, BOM and centroid data for assembly; the supplied centroi
 | Mask / legend | Green solder mask, white top legend |
 | Surface finish | Lead-free HASL; assembler to confirm suitability for 0.5 mm-pitch QFN during normal DFM |
 | Minimum design clearance | 0.15 mm copper; 0.25 mm copper to edge |
-| Minimum trace / spacing quote fields | **0.20 mm / 0.15 mm** (8 / 6 mil). If PCBWay provides one combined “Min track/spacing” choice, select **6 / 6 mil**; the board’s narrowest track is 0.20 mm and its narrowest spacing is 0.15 mm. |
 | Vias | 0.60 mm diameter / 0.30 mm finished drill; 39 plated holes |
-| Minimum hole size | **0.30 mm finished hole** (12 mil); all holes are plated vias and there are no component or mounting holes |
 | Impedance control | None |
 | Electrical test | Bare-board electrical test |
 | Panel | PCBWay to panelize for assembly, add tooling rails and panel fiducials, and deliver depanelized boards |
