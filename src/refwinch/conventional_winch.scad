@@ -599,6 +599,203 @@ module motor_mount_base(){
     motor_plate_frame() motor_plate();
 }
 
+// Motor, belt and CLN17 board preview. The odometer itself lives in
+// odometer/odometer.scad; this module keeps the conventional winch's existing
+// motor-side preview available to the assembly and motor-mount review parts.
+module magnet(){
+  color("lightgray")
+    cylinder(d=cln17_magnet_diameter, h=cln17_magnet_height);
+}
+
+module gt2_drive_belt(){
+  drum_pulley_outer_radius =
+    tooth_spacing(gt2_tooth_pitch, 0.254, drum_pulley_tooth_count)/2;
+  motor_pulley_outer_radius =
+    tooth_spacing(gt2_tooth_pitch, 0.254, motor_pulley_tooth_count)/2;
+
+  assert(
+    gt2_belt_loop_length > 2*PI*drum_pulley_pitch_radius,
+    "GT2 belt is too short for the selected pulleys"
+  );
+
+  color([0.12,0.12,0.12])
+  translate([gt2_belt_center_x,0,0])
+  rotate([0,-90,0])
+  linear_extrude(height=GT2_belt_width, center=true, convexity=4)
+  difference(){
+    hull(){
+      translate([0,-drum_axis_spacing])
+        circle(r=drum_pulley_outer_radius+Belt_thickness, $fn=round_fn);
+      translate([motor_axis_z,motor_axis_y])
+        circle(r=motor_pulley_outer_radius+Belt_thickness, $fn=round_fn);
+    }
+    hull(){
+      translate([0,-drum_axis_spacing])
+        circle(r=drum_pulley_outer_radius, $fn=round_fn);
+      translate([motor_axis_z,motor_axis_y])
+        circle(r=motor_pulley_outer_radius, $fn=round_fn);
+    }
+  }
+}
+
+module odometer_drive_motor_assembly(){
+  echo("GT2 belt loop length", gt2_belt_loop_length);
+  echo("GT2 pulley center distance (current)", motor_actual_center_distance);
+  echo("Geometric belt path length (not a belt stretch simulation)",
+    open_belt_length(motor_actual_center_distance,drum_pulley_pitch_radius,motor_pulley_pitch_radius));
+
+  gt2_drive_belt();
+
+  // Nema17() points its shaft along +Z. Turn it towards the drum (-X),
+  // the motor and rear board share the same pivot adjustment.
+  translate([motor_rear_face_x,motor_axis_y,motor_axis_z])
+    rotate([motor_clocking_angle+motor_adjustment_angle,0,0])
+    rotate([0,-90,0])
+    Nema17(screw_hole_width=motor_hole_pitch*sqrt(2));
+
+  color([0.75,0.75,0.75])
+  translate([motor_pulley_base_x,motor_axis_y,motor_axis_z])
+    rotate([motor_clocking_angle+motor_adjustment_angle,0,0])
+    rotate([0,-90,0])
+    GT2_flanged_motor_gear(
+      motor_pulley_tooth_count,
+      2*Nema17_shaft_radius
+    );
+
+  // The magnet sits on the rear shaft and the CLN17 encoder faces it.
+  translate([magnet_base_x,motor_axis_y,motor_axis_z])
+    rotate([0,90,0])
+    magnet();
+  translate([cln17_v3_board_center_x,motor_axis_y,motor_axis_z])
+    rotate([motor_clocking_angle+motor_adjustment_angle,0,0])
+    rotate([0,90,0])
+    cln17_v3_board();
+}
+
+module cln17_v3_board_profile(){
+  mount_offset = cln17_v3_mount_spacing/2;
+  edge_slot_end = cln17_v3_board_size/2 + 1;
+  center_edge_relief_width = 12;
+  center_edge_relief_depth = 1.5;
+
+  difference(){
+    square(cln17_v3_board_size, center=true);
+    for(xsign=[-1,1], ysign=[-1,1])
+      hull(){
+        translate([xsign*mount_offset, ysign*mount_offset])
+          circle(d=cln17_v3_mount_hole_diameter, $fn=32);
+        translate([xsign*edge_slot_end, ysign*mount_offset])
+          circle(d=cln17_v3_mount_hole_diameter, $fn=32);
+      }
+    for(ysign=[-1,1])
+      translate([
+        0,
+        ysign*(cln17_v3_board_size/2-center_edge_relief_depth/2)
+      ])
+        square([center_edge_relief_width, center_edge_relief_depth], center=true);
+  }
+}
+
+module cln17_v3_chip(position, size, rotation=0, side=1, chip_color="dimgray"){
+  translate([
+    position[0],
+    position[1],
+    side*(cln17_v3_pcb_thickness/2 + size[2]/2)
+  ])
+    rotate([0,0,rotation])
+    color(chip_color)
+    cube(size, center=true);
+}
+
+module cln17_v3_side_connector(position, rotation=0, width=8.5){
+  body_depth = 8;
+  body_height = 6.5;
+  opening_width = width - 3;
+  opening_height = 3.4;
+
+  translate([position[0], position[1], cln17_v3_pcb_thickness/2])
+    rotate([0,0,rotation])
+    color("ivory")
+    difference(){
+      translate([0,0,body_height/2])
+        cube([width, body_depth, body_height], center=true);
+      translate([0,-body_depth/2-0.1,body_height/2])
+        cube([opening_width, body_depth/2+0.2, opening_height], center=true);
+    }
+}
+
+module cln17_v3_usb_c(){
+  connector_width = 9.2;
+  connector_depth = 7.4;
+  connector_height = 3.2;
+
+  color("silver")
+  difference(){
+    translate([0,0,-connector_height/2])
+      cube([connector_width, connector_depth, connector_height], center=true);
+    translate([0,-connector_depth/2-0.1,-connector_height/2])
+      cube([6.6,connector_depth/2+0.2,1.5], center=true);
+  }
+}
+
+module cln17_v3_board(show_components=true){
+  mount_offset = cln17_v3_mount_spacing/2;
+  copper_ring_outer_diameter = 6;
+  copper_layer_thickness = 0.04;
+
+  color([0.03,0.12,0.20])
+    linear_extrude(height=cln17_v3_pcb_thickness, center=true)
+      cln17_v3_board_profile();
+
+  for(side=[-1,1], xsign=[-1,1], ysign=[-1,1])
+    translate([
+      xsign*mount_offset,
+      ysign*mount_offset,
+      side*(cln17_v3_pcb_thickness/2 + copper_layer_thickness/2)
+    ])
+      color("gold")
+      linear_extrude(height=copper_layer_thickness, center=true)
+      intersection(){
+        difference(){
+          circle(d=copper_ring_outer_diameter, $fn=32);
+          circle(d=cln17_v3_mount_hole_diameter+0.2, $fn=32);
+        }
+        translate([-xsign*mount_offset,-ysign*mount_offset])
+          cln17_v3_board_profile();
+      }
+
+  if(show_components){
+    cln17_v3_chip([0,5.2], [7,7,1], 45);
+    cln17_v3_chip([0,-7.5], [4,4,1]);
+
+    for(x=[-1,1]){
+      cln17_v3_side_connector([x*18,4], rotation=x*90, width=8.5);
+      cln17_v3_side_connector([x*18,-8.5], rotation=x*90, width=8.5);
+      cln17_v3_chip([x*10.8,15.5], [3.2,2.5,2.2], chip_color="sienna");
+      cln17_v3_chip([x*10.8,12.3], [3.2,2.5,2.2], chip_color="sienna");
+      cln17_v3_chip([x*10.8,9.1], [3.2,2.5,2.2], chip_color="sienna");
+      cln17_v3_chip([x*10.7,-16.2], [4.2,3.2,2], chip_color="silver");
+    }
+
+    for(x=[-3.75,-1.25,1.25,3.75])
+      translate([x,16,cln17_v3_pcb_thickness/2+0.05])
+        color("gold")
+        cube([1.5,4.2,0.1], center=true);
+
+    cln17_v3_side_connector([0,-18.5], rotation=0, width=14.5);
+    cln17_v3_chip([0,0], [3,3,cln17_v3_encoder_height], side=-1);
+    cln17_v3_chip([0,-7], [7,7,1], side=-1);
+    cln17_v3_chip([-13,-8], [5.8,5.8,3], side=-1, chip_color="black");
+    cln17_v3_chip([12,-9], [5,6,1.2], side=-1);
+
+    for(x=[-12.5,-7.5,-2.5,2.5,7.5,12.5])
+      cln17_v3_chip([x,10], [4.2,5,1], side=-1);
+
+    translate([0,-cln17_v3_board_size/2-1.2,-cln17_v3_pcb_thickness/2])
+      cln17_v3_usb_c();
+  }
+}
+
 module motor_mount_review(){
   base();
   if(motor_mount_material == "Metal") color("silver") motor_plate_frame() motor_plate();

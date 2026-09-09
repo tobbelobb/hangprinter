@@ -12,6 +12,10 @@ include <../../lib/util.scad>
 
 odometer_show_encoder_board = true;
 odometer_encoder_board_gap = 0.5;
+odometer_show_magnet = true;
+odometer_magnet_diameter = 6;
+odometer_magnet_height = 2.5;
+odometer_magnet_gap = 0.2;
 
 module ma600a_board_component(position, size, height, component_color="dimgray", board_thickness=1) {
   translate([position[0], position[1], board_thickness/2 + height/2])
@@ -82,32 +86,62 @@ module odometer_roller() {
   }
 }
 
+// Placeholder target magnet. It is shown at the upper roller shaft end so
+// the final shaft attachment can be designed around the real part later.
+module odometer_magnet(diameter=6, height=2.5) {
+  color("lightgray")
+    rotate([0,90,0])
+      cylinder(d=diameter, h=height, center=true, $fn=48);
+}
+
+module odometer_shaft_stub(diameter=3, length=5) {
+  color("dimgray")
+    rotate([0,90,0])
+      cylinder(d=diameter, h=length, center=true, $fn=32);
+}
+
 // Current two-roller odometer. The output is normalized to its own origin:
 // roller axes run along X, the upper roller is at Y=0, and Z=0 is the bottom
 // of the tower. The board is placed on the -X side with its sensor aligned
 // to the upper roller center.
-module odometer(show_encoder_board=true, encoder_board_gap=0.5){
+module odometer(show_encoder_board=true, encoder_board_gap=0.5, show_magnet=true){
   outer_diameter = 25;
   roller_thickness = 5;
   line_diameter = 2;
   roller_gap = 1;
   line_entry_z = 19;
-  high_roller_z = (outer_diameter+line_diameter)/2 - line_entry_z;
   low_roller_z = outer_diameter/2 + 1;
-  a_diff = high_roller_z - low_roller_z;
   hypot_dist = outer_diameter + roller_gap;
-  lower_roller_y = sqrt(hypot_dist^2 - a_diff^2);
-  low_roller_y = lower_roller_y;
   roller_tower_height = line_entry_z + outer_diameter;
-  roller_tower_depth = outer_diameter+lower_roller_y;
   roller_tower_thickness = 5;
   roller_tower_thickness2 = b623_width + 1;
   bearing_tower_corner_radius = 3;
   shift_entry_corner = [0,-9];
   shift_exit_corner = [0,-6];
+  // The old in-assembly model used the main bearing tower datum. Preserve
+  // that datum after normalizing the standalone frame to z=0 at its base.
+  winch_bearing_tower_height = 50;
+  winch_bearing_tower_wall_thickness = 3;
+  roller_datum_z = winch_bearing_tower_height
+                 - (b608_outer_dia + 2*winch_bearing_tower_wall_thickness)/2;
+  magnet_diameter = odometer_magnet_diameter;
+  magnet_height = odometer_magnet_height;
+  magnet_gap = odometer_magnet_gap;
+  encoder_sensor_height = 0.8;
+  frame_outer_x = roller_thickness/2 + 0.1 + roller_tower_thickness2;
+  magnet_overlap = 0.2;
+  magnet_center_x = -(frame_outer_x + magnet_height/2 - magnet_overlap);
+  shaft_stub_length = frame_outer_x + magnet_height/2
+                    - roller_thickness/2 - magnet_overlap;
   encoder_board_length = 28;
   encoder_board_thickness = 1;
   encoder_sensor_x = 4;
+
+  high_roller_z = (outer_diameter+line_diameter)/2 - line_entry_z + roller_datum_z;
+  a_diff = high_roller_z - low_roller_z;
+  lower_roller_y = sqrt(hypot_dist^2 - a_diff^2);
+  low_roller_y = lower_roller_y;
+  roller_tower_depth = outer_diameter+lower_roller_y;
 
   translate([0, 0, high_roller_z]){
     odometer_roller();
@@ -212,12 +246,24 @@ module odometer(show_encoder_board=true, encoder_board_gap=0.5){
   // face is normal to X and its connector points down, away from the magnet.
   if (show_encoder_board)
     translate([
-      -(roller_thickness/2 + encoder_board_thickness/2 + encoder_board_gap),
+      -(frame_outer_x + magnet_height + magnet_gap
+        + encoder_board_thickness/2 + encoder_sensor_height - magnet_overlap),
       0,
       high_roller_z - (encoder_board_length/2 - encoder_sensor_x)
     ])
       rotate([0, 90, 0])
         ma600a_encoder_breakout_board(show_components=true, show_keepout=true);
+
+  // The magnet is attached to the upper roller shaft end. Its outer face is
+  // separated from the sensor by magnet_gap; the attachment detail is left
+  // as a later mechanical design task.
+  if (show_magnet)
+    union() {
+      translate([-(roller_thickness/2 + shaft_stub_length/2), 0, high_roller_z])
+        odometer_shaft_stub(length=shaft_stub_length);
+      translate([magnet_center_x, 0, high_roller_z])
+        odometer_magnet(diameter=magnet_diameter, height=magnet_height);
+    }
 
 }
 
@@ -227,5 +273,6 @@ module odometer(show_encoder_board=true, encoder_board_gap=0.5){
 // the larger winch assembly.
 odometer(
   show_encoder_board=odometer_show_encoder_board,
-  encoder_board_gap=odometer_encoder_board_gap
+  encoder_board_gap=odometer_encoder_board_gap,
+  show_magnet=odometer_show_magnet
 );
