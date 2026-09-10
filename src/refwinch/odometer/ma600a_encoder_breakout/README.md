@@ -72,7 +72,7 @@ The MA600A requires 3.3 V. The board therefore uses an `MP20056GJ-33` low-noise 
 - `release/` — current v0.3 Gerber ZIP, BOM, centroid, PDFs, reports and order instructions
 - `tools/` — design-generation and release-verification utilities
 - `reference/` — retained handoff netlist used to reproduce and verify the design
-- `production-test/` — SPI/NVM bring-up and production-test notes
+- `production-test/` — Arduino SPI/NVM programmer, BCT commissioning guide and printable pogo guide
 - `docs/` — design decisions and source notes
 - `analysis/` — current machine-readable review evidence and run manifest
 

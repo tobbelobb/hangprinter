@@ -84,13 +84,13 @@ The selected finish avoids an intentional nickel finish near the magnetic sensor
 
 Supply nominal 5 V (design budget: 4.75–5.25 V) at J1 pin 2, ground at pin 1. Pins 3/4/5 are native 3.3 V A/B/Z outputs; pin 6 is unconnected. Make a cable mapping for the actual controller revision: this is not an assertion that a CLN17 cable is pin-compatible. Check its input thresholds and loading; the MA600A datasheet specifies a 2.4 V minimum high output under its 12 mA test load.
 
-TP1=5V, TP2=GND, TP3=CS, TP4=SCLK, TP5=COPI, TP6=CIPO, TP7=3V3. **TP7 is for measurement only. Never feed it from an external 3.3 V supply.** The LDO can conduct backwards when its output exceeds its input. Use a 3.3 V logic programmer, common ground, and power the board from 5 V only. Avoid driving signal pins while the board is unpowered. Start SPI testing slowly (for example 100 kHz); this is a bring-up recommendation, not a measured maximum.
+TP1=5V, TP2=GND, TP3=CS, TP4=SCLK, TP5=COPI, TP6=CIPO, TP7=3V3. **TP7 is for measurement only. Never feed it from an external 3.3 V supply.** The LDO can conduct backwards when its output exceeds its input. Use a common ground and power the board from 5 V only. Avoid driving signal pins while the board is unpowered. Start SPI testing slowly (for example 100 kHz); this is a bring-up recommendation, not a measured maximum. The [production-test guide](../production-test/README.md) provides an Arduino sketch, verified direct wiring for 3.3 V controllers and ATmega328P Uno/Nano boards, exact signal mapping and a printable pogo fixture.
 
 ## Acceptance after delivery
 
 1. Inspect orientation, connector joints and the sensor area. With power off, check for shorts between 5 V, 3V3 and ground.
 2. Apply 5.0 V with a bench current limit initially around 30 mA. Investigate a persistent current-limit condition before increasing it. Measure the 3.3 V rail and current; record temperature and operating conditions.
-3. Read the MA600A over SPI. Verify A/B phase sequence, direction and Z with a rotating magnet, and confirm the intended factory resolution before relying on edge counts.
+3. Read the MA600A over SPI using the [programmer procedure](../production-test/README.md). Verify A/B phase sequence, direction and Z with a rotating magnet, and confirm the intended factory resolution before relying on edge counts.
 4. Connect the actual controller and cable. Check input compatibility, pulse levels/ringing, missing/extra counts, maximum intended speed and rapid reversals with the motor operating.
 5. Test the actual odometer shaft/magnet and nearby steel at the intended offsets. Record field diagnostics and counts over at least 100 revolutions in both directions. The original validation checklist covers the proposed 4–12 mm orbit sweep.
 6. Increase quantity only after these tests pass. There is no demonstrated magnetic accuracy, EMC compliance, ESD robustness or production yield yet.
