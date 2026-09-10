@@ -11,11 +11,10 @@ include <../../lib/util.scad>
 /* [Odometer] */
 
 odometer_show_encoder_board = true;
-odometer_encoder_board_gap = 0.5;
 odometer_show_magnet = true;
 odometer_magnet_diameter = 6;
 odometer_magnet_height = 2.5;
-odometer_magnet_gap = 0.2;
+odometer_magnet_gap = 2; // From MPS's example in MA600A docs
 
 module ma600a_board_component(position, size, height, component_color="dimgray", board_thickness=1) {
   translate([position[0], position[1], board_thickness/2 + height/2])
@@ -104,7 +103,7 @@ module odometer_shaft_stub(diameter=3, length=5) {
 // roller axes run along X, the upper roller is at Y=0, and Z=0 is the bottom
 // of the tower. The board is placed on the -X side with its sensor aligned
 // to the upper roller center.
-module odometer(show_encoder_board=true, encoder_board_gap=0.5, show_magnet=true){
+module odometer(show_encoder_board=true, show_magnet=true){
   outer_diameter = 25;
   roller_thickness = 5;
   line_diameter = 2;
@@ -252,7 +251,7 @@ module odometer(show_encoder_board=true, encoder_board_gap=0.5, show_magnet=true
       high_roller_z - (encoder_board_length/2 - encoder_sensor_x)
     ])
       rotate([0, 90, 0])
-        ma600a_encoder_breakout_board(show_components=true, show_keepout=true);
+        ma600a_encoder_breakout_board(show_components=true);
 
   // The magnet is attached to the upper roller shaft end. Its outer face is
   // separated from the sensor by magnet_gap; the attachment detail is left
@@ -273,6 +272,5 @@ module odometer(show_encoder_board=true, encoder_board_gap=0.5, show_magnet=true
 // the larger winch assembly.
 odometer(
   show_encoder_board=odometer_show_encoder_board,
-  encoder_board_gap=odometer_encoder_board_gap,
   show_magnet=odometer_show_magnet
 );
