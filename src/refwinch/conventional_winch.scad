@@ -8,7 +8,7 @@ use <odometer/odometer.scad>
 // Open the Customizer panel to select an output part and adjust these controls.
 /* [Output] */
 
-part = "Assembly"; // [Assembly, Base, Base side, Top shell, Drum, Drum shaft, Separator disc, Traverse shaft, Follower pawl, Pawl socket, Large gear, Small gear, Motor plate, Motor plate profile, Motor mount review]
+part = "Assembly"; // [Assembly, Base, Base side, Top shell, Drum, Drum shaft, Separator disc, Traverse shaft, Follower pawl, Pawl socket, Large gear, Small gear, Motor plate, Motor plate profile, Motor mount review, Odometer magnet carrier, Odometer board cap, Odometer drive hub, Odometer review]
 
 /* [Traverse screw] */
 
@@ -51,7 +51,8 @@ printed_motor_plate_thickness = 5;
 // Rotation about the upper outer M3 screw; zero matches the nominal belt.
 motor_adjustment_angle = 0; // [-6:0.5:6]
 motor_adjustment_limit = 6; // [1:0.5:6]
-show_odometer = true;
+show_odometer = true; // Includes the joined frame in Base as well as Assembly.
+odometer_bridge_thickness = 1.6; // [1:0.1:2]
 
 /* [Fit and fabrication] */
 
@@ -802,6 +803,17 @@ module motor_mount_review(){
   odometer_drive_motor_assembly();
 }
 
+// Foot joins both odometer walls and the board cradle. This thin web overlaps
+// the main base and foot by 2 mm; no separately mounted odometer is needed.
+module integrated_odometer_base() {
+  odometer_y = 80;
+  overlap = 2;
+  assert(odometer_bridge_thickness >= 1 && odometer_bridge_thickness <= 2);
+  translate([-7.6,base_front_edge_y-overlap,-drum_z])
+    cube([15.2,odometer_y-12.5-base_front_edge_y+2*overlap,odometer_bridge_thickness]);
+  translate([0,odometer_y,-drum_z]) odometer_frame();
+}
+
 module base(){
   tower_base_z = -drum_z;
   first_rib_x = 15;
@@ -887,6 +899,7 @@ module base(){
       bearing_tower();
 
   motor_mount_base();
+  if(show_odometer) integrated_odometer_base();
 }
 
 module top_shell() {
@@ -1190,6 +1203,14 @@ module drive_train_assembly(){
 
 if (part == "Assembly") {
   drive_train_assembly();
+} else if (part == "Odometer magnet carrier") {
+  odometer_magnet_carrier();
+} else if (part == "Odometer board cap") {
+  odometer_board_cap();
+} else if (part == "Odometer drive hub") {
+  odometer_drive_hub();
+} else if (part == "Odometer review") {
+  odometer();
 } else if (part == "Motor plate") {
   motor_plate();
 } else if (part == "Motor plate profile") {
@@ -1222,5 +1243,5 @@ if (part == "Assembly") {
 
 if (part == "Assembly" && show_odometer)
   translate([0, 80, -drum_z])
-    odometer(show_encoder_board=false, show_magnet=false, show_rollers=false);
-translate([0,-135,0]) color("pink", 0.5) square([50,250]);
+    odometer(show_frame=false);
+//translate([0,-135,0]) color("pink", 0.5) square([50,250]);

@@ -12,7 +12,144 @@ include <../../lib/util.scad>
 
 odometer_magnet_diameter = 6;
 odometer_magnet_height = 2.5;
-odometer_magnet_gap = 2; // From MPS's example in MA600A docs
+odometer_magnet_gap = 2; // Magnet face to package face; validate field on hardware.
+odometer_part = "Assembly"; // [Assembly, Frame, Magnet carrier, Board cap, Drive hub, Encoder section]
+odometer_shaft_clearance = 0.08;
+odometer_magnet_clearance = 0.10;
+
+// Shared datums for frame, hardware, standalone exports and the winch import.
+function odometer_frame_outer_x() = 2.5 + 0.1 + b623_width + 1;
+function odometer_axis_z() = (25+2)/2 - 19 + 50 - (b608_outer_dia+6)/2;
+function odometer_lower_y() = sqrt(26*26-pow(odometer_axis_z()-13.5,2));
+function odometer_carrier_entry_x() = -odometer_frame_outer_x()-1;
+function odometer_shaft_end_x() = odometer_carrier_entry_x()-7.5;
+function odometer_magnet_face_x() = odometer_shaft_end_x()-1.2-odometer_magnet_height;
+function odometer_board_x() = odometer_magnet_face_x()-odometer_magnet_gap-0.8-0.5;
+function odometer_shaft_length() = odometer_frame_outer_x()+0.9-odometer_shaft_end_x();
+
+// Print shaft opening down. The 3 mm bore roof is the only small bridge.
+// A concentric blind socket sets insertion depth; the slit ends before the
+// magnet seat so tightening cannot directly squeeze the magnet pocket.
+module odometer_magnet_carrier() {
+  seat_z = 7.5+1.2;
+  h = seat_z+odometer_magnet_height-0.3;
+  assert(odometer_shaft_clearance >= 0 && odometer_shaft_clearance <= 0.2);
+  assert(odometer_magnet_clearance >= 0 && odometer_magnet_clearance <= 0.2);
+  difference() {
+    union() {
+      cylinder(d=10.6,h=h,$fn=80);
+      translate([3,-3,0]) cube([7,6,6]);
+    }
+    translate([0,0,-0.1]) cylinder(d=3+odometer_shaft_clearance,h=7.6,$fn=64);
+    translate([0,0,-0.01]) cylinder(d1=3.8,d2=3+odometer_shaft_clearance,h=0.5,$fn=64);
+    translate([0,0,seat_z])
+      cylinder(d=odometer_magnet_diameter+odometer_magnet_clearance,h=odometer_magnet_height+1,$fn=80);
+    // Adhesive reservoir below the cylindrical locating land.
+    translate([0,0,seat_z+0.25])
+      cylinder(d=odometer_magnet_diameter+0.6,h=0.5,$fn=80);
+    translate([0,-0.35,-0.1]) cube([11,0.7,7.1]);
+    translate([6.5,-4,3]) rotate([-90,0,0]) cylinder(d=2.2,h=8,$fn=32);
+    // Side-loading captive M2 nut; use brass hardware near the encoder.
+    translate([6.5,-3.01,3]) rotate([-90,0,0]) cylinder(d=4.2/cos(30),h=1.6,$fn=6);
+  }
+}
+
+// Bond this sleeve into the existing 10.5 mm roller bore, and bond its
+// close-fitting 3 mm bore to the shaft. Bearing outer races remain in frame.
+module odometer_drive_hub() {
+  difference() {
+    cylinder(d=10.4,h=5,$fn=80);
+    translate([0,0,-0.1]) cylinder(d=3+odometer_shaft_clearance,h=5.2,$fn=64);
+    for(z=[1,3.5]) translate([0,0,z]) difference() {
+      cylinder(d=10.6,h=0.5,$fn=80);
+      cylinder(d=10,h=0.5,$fn=80);
+    }
+  }
+}
+
+// Board inserts downwards with components facing +X. Rails contact only
+// the outer 0.5 mm of the long edges; connector and test pads stay accessible.
+module odometer_board_cradle() {
+  bx=odometer_board_x();
+  bottom=odometer_axis_z()-24;
+  top=odometer_axis_z()+4;
+  translate([bx-2.5,-8,0]) cube([2,16,top]);
+  for(side=[-1,1]) {
+    translate([bx-0.6,side < 0 ? -8 : 6.15,0]) cube([2.5,1.85,top]);
+    translate([bx+0.65,side < 0 ? -6.2 : 5.5,bottom]) cube([1.25,0.8,28]);
+    difference() {
+      translate([bx-2.5,side*9-2,0]) cube([4.4,4,top]);
+      translate([bx-0.3,side*9,top-8]) cylinder(d=1.7,h=9,$fn=32);
+    }
+  }
+  translate([bx-0.6,-6.2,bottom-1.5]) cube([2.5,12.4,1.5]);
+}
+
+// Two M2 x 6 brass screws into 1.7 mm pilot holes. Cap has 0.15 mm
+// clearance above PCB; the lower seat determines the sensing-center height.
+module odometer_board_cap() {
+  difference() {
+    translate([-2.5,-11,0]) cube([4.4,22,2]);
+    for(side=[-1,1]) translate([-0.3,side*9,-0.1]) cylinder(d=2.2,h=2.2,$fn=32);
+    translate([-0.65,-6.2,-0.01]) cube([1.3,12.4,0.16]);
+  }
+}
+
+module odometer_encoder_hardware(show_board=true, show_magnet=true, show_cap=true) {
+  assert(odometer_magnet_gap >= 1, "Keep a positive magnet-to-package clearance");
+  assert(odometer_carrier_entry_x() < -odometer_frame_outer_x()-0.5);
+  if(show_cap) {
+    color("orange") translate([odometer_board_x(),0,odometer_axis_z()+4]) odometer_board_cap();
+    for(side=[-1,1]) color("goldenrod")
+      translate([odometer_board_x()-0.3,side*9,odometer_axis_z()+6]) {
+        translate([0,0,-6]) cylinder(d=2,h=6,$fn=24);
+        cylinder(d=3.8,h=1.5,$fn=32);
+      }
+  }
+  if(show_board)
+    translate([odometer_board_x(),0,odometer_axis_z()-10])
+      rotate([0,90,0]) ma600a_encoder_breakout_board();
+  if(show_magnet) {
+    color("orange") translate([odometer_carrier_entry_x(),0,odometer_axis_z()])
+      rotate([0,-90,0]) odometer_magnet_carrier();
+    color("goldenrod") translate([odometer_carrier_entry_x(),0,odometer_axis_z()])
+      rotate([0,-90,0]) {
+        translate([6.5,-5,3]) rotate([-90,0,0]) cylinder(d=2,h=8,$fn=24);
+        translate([6.5,3,3]) rotate([-90,0,0]) cylinder(d=3.8,h=1.5,$fn=32);
+        translate([6.5,-3,3]) rotate([-90,0,0]) difference() {
+          cylinder(d=4/cos(30),h=1.6,$fn=6);
+          cylinder(d=2,h=1.7,$fn=24);
+        }
+      }
+    translate([odometer_magnet_face_x()+odometer_magnet_height/2,0,odometer_axis_z()])
+      odometer_magnet(diameter=odometer_magnet_diameter,height=odometer_magnet_height);
+    translate([(odometer_frame_outer_x()+0.9+odometer_shaft_end_x())/2,0,odometer_axis_z()])
+      odometer_shaft_stub(length=odometer_shaft_length());
+    color("orange") translate([-2.5,0,odometer_axis_z()]) rotate([0,90,0]) odometer_drive_hub();
+  }
+}
+
+module odometer_encoder_section() {
+  // Cut each material separately so the mating interfaces remain visible.
+  module lower_half() {
+    render(convexity=10) difference() {
+      children();
+      translate([-40,-40,odometer_axis_z()]) cube([80,80,40]);
+    }
+  }
+  color("orange") lower_half()
+    translate([odometer_carrier_entry_x(),0,odometer_axis_z()])
+      rotate([0,-90,0]) odometer_magnet_carrier();
+  color("silver") lower_half()
+    translate([odometer_magnet_face_x()+odometer_magnet_height/2,0,odometer_axis_z()])
+      odometer_magnet(diameter=odometer_magnet_diameter,height=odometer_magnet_height);
+  color("dimgray") lower_half()
+    translate([(odometer_frame_outer_x()+0.9+odometer_shaft_end_x())/2,0,odometer_axis_z()])
+      odometer_shaft_stub(length=odometer_shaft_length());
+  color("orange") lower_half()
+    translate([-2.5,0,odometer_axis_z()]) rotate([0,90,0]) odometer_drive_hub();
+  translate([odometer_board_x(),0,odometer_axis_z()-10]) rotate([0,90,0]) ma600a_encoder_breakout_board();
+}
 
 module ma600a_board_component(position, size, height, component_color="dimgray", board_thickness=1) {
   translate([position[0], position[1], board_thickness/2 + height/2])
@@ -83,8 +220,7 @@ module odometer_roller() {
   }
 }
 
-// Placeholder target magnet. It is shown at the upper roller shaft end so
-// the final shaft attachment can be designed around the real part later.
+// Diametrically magnetized target cylinder; its face points towards -X.
 module odometer_magnet(diameter=6, height=2.5) {
   color("lightgray")
     rotate([0,90,0])
@@ -101,7 +237,8 @@ module odometer_shaft_stub(diameter=3, length=5) {
 // roller axes run along X, the upper roller is at Y=0, and Z=0 is the bottom
 // of the tower. The board is placed on the -X side with its sensor aligned
 // to the upper roller center.
-module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true){
+module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true, show_frame=true, show_cap=true){
+  $fn = 64; // Round bearing seats must match the purchased races.
   outer_diameter = 25;
   roller_thickness = 5;
   line_diameter = 2;
@@ -121,19 +258,6 @@ module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true){
   winch_bearing_tower_wall_thickness = 3;
   roller_datum_z = winch_bearing_tower_height
                  - (b608_outer_dia + 2*winch_bearing_tower_wall_thickness)/2;
-  magnet_diameter = odometer_magnet_diameter;
-  magnet_height = odometer_magnet_height;
-  magnet_gap = odometer_magnet_gap;
-  encoder_sensor_height = 0.8;
-  frame_outer_x = roller_thickness/2 + 0.1 + roller_tower_thickness2;
-  magnet_overlap = 0.2;
-  magnet_center_x = -(frame_outer_x + magnet_height/2 - magnet_overlap);
-  shaft_stub_length = frame_outer_x + magnet_height/2
-                    - roller_thickness/2 - magnet_overlap;
-  encoder_board_length = 28;
-  encoder_board_thickness = 1;
-  encoder_sensor_x = 4;
-
   high_roller_z = (outer_diameter+line_diameter)/2 - line_entry_z + roller_datum_z;
   a_diff = high_roller_z - low_roller_z;
   lower_roller_y = sqrt(hypot_dist^2 - a_diff^2);
@@ -147,6 +271,15 @@ module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true){
     translate([0,low_roller_y, low_roller_z])
       odometer_roller();
   }
+  if(show_frame) union() {
+  // Coplanar with winch bottom. Open center keeps the lower roller (whose
+  // bottom is z=1) clear of this 1.6 mm floor.
+  difference() {
+    translate([odometer_board_x()-2.5,-outer_diameter/2,0])
+      cube([odometer_frame_outer_x()-odometer_board_x()+2.5,roller_tower_depth,1.6]);
+    translate([-2.6,low_roller_y-13,-0.1]) cube([5.2,26,2]);
+  }
+  odometer_board_cradle();
   for(k=[0,1]) mirror([k,0,0])
     translate([roller_thickness/2+0.1, 0, 0]) {
       difference() {
@@ -211,7 +344,7 @@ module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true){
             }
           }
 
-      for(pos = [[b623_width, 0,high_roller_z], [b623_width, low_roller_y, low_roller_z]]) translate(pos)
+      for(pos = [[b623_width+0.1, 0,high_roller_z], [b623_width+0.1, low_roller_y, low_roller_z]]) translate(pos)
         rotate([0,-90,0])
         cylinder(d=b623_outer_dia+0.1, h=roller_tower_thickness2);
     }
@@ -241,37 +374,18 @@ module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true){
       scale((outer_diameter + 4)/outer_diameter)
       odometer_roller();
   }
-  // The MA600A sensing center is aligned with the upper roller. The board
-  // face is normal to X and its connector points down, away from the magnet.
-  if (show_encoder_board)
-    translate([
-      -(frame_outer_x + magnet_height + magnet_gap
-        + encoder_board_thickness/2 + encoder_sensor_height - magnet_overlap),
-      0,
-      high_roller_z - (encoder_board_length/2 - encoder_sensor_x)
-    ])
-      rotate([0, 90, 0])
-        ma600a_encoder_breakout_board(show_components=true);
-
-  // The magnet is attached to the upper roller shaft end. Its outer face is
-  // separated from the sensor by magnet_gap; the attachment detail is left
-  // as a later mechanical design task.
-  if (show_magnet)
-    union() {
-      translate([-(roller_thickness/2 + shaft_stub_length/2), 0, high_roller_z])
-        odometer_shaft_stub(length=shaft_stub_length);
-      translate([magnet_center_x, 0, high_roller_z])
-        odometer_magnet(diameter=magnet_diameter, height=magnet_height);
-    }
-
+  } // Printable frame, foot and cradle.
+  odometer_encoder_hardware(show_encoder_board,show_magnet,show_cap);
 }
 
-// Opening this file directly displays the odometer with the reviewed board
-// envelope in its proposed sensor-facing position. conventional_winch.scad
-// imports only the modules with `use`, so this preview does not duplicate in
-// the larger winch assembly.
-odometer(
-  show_encoder_board=false,
-  show_magnet=false,
-  show_rollers=false
-);
+// Importable production outputs exclude all purchased and moving parts.
+module odometer_frame() {
+  odometer(show_encoder_board=false,show_magnet=false,show_rollers=false,show_cap=false);
+}
+
+if(odometer_part == "Assembly") odometer();
+else if(odometer_part == "Frame") odometer_frame();
+else if(odometer_part == "Magnet carrier") odometer_magnet_carrier();
+else if(odometer_part == "Board cap") odometer_board_cap();
+else if(odometer_part == "Drive hub") odometer_drive_hub();
+else if(odometer_part == "Encoder section") odometer_encoder_section();
