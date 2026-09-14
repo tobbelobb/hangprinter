@@ -7,6 +7,7 @@
 
 include <../../lib/parameters.scad>
 include <../../lib/util.scad>
+use <../../lib/encoder_LPD3806.scad>
 
 /* [Odometer] */
 
@@ -111,7 +112,8 @@ module odometer_board_cap(print_orientation=true) {
   else assembled_cap();
 }
 
-module odometer_encoder_hardware(show_board=true, show_magnet=true, show_cap=true) {
+module odometer_encoder_hardware(show_board=true, show_magnet=true, show_cap=true,
+                                 show_lpd3806=true) {
   assert(odometer_magnet_gap >= 1, "Keep a positive magnet-to-package clearance");
   assert(odometer_carrier_entry_x() > odometer_frame_outer_x()+0.5);
   if(show_cap)
@@ -139,6 +141,11 @@ module odometer_encoder_hardware(show_board=true, show_magnet=true, show_cap=tru
       odometer_shaft_stub(length=odometer_shaft_length());
     color("orange") translate([-2.5,0,odometer_axis_z()]) rotate([0,90,0]) odometer_drive_hub();
   }
+  if(show_lpd3806)
+    // The recovered encoder is shown on the +X side with its shaft pointing
+    // back toward the odometer shaft and magnet.
+    translate([odometer_board_x()+38,0,odometer_axis_z()])
+      rotate([0,-90,0]) encoder_LPD3806();
 }
 
 module odometer_encoder_section() {
@@ -249,7 +256,8 @@ module odometer_shaft_stub(diameter=3, length=5) {
 // roller axes run along X, the upper roller is at Y=0, and Z=0 is the bottom
 // of the tower. The board is placed on the +X side with its sensor aligned
 // to the upper roller center.
-module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true, show_frame=true, show_cap=true){
+module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true,
+                show_frame=true, show_cap=true, show_lpd3806=true){
   $fn = 64; // Round bearing seats must match the purchased races.
   outer_diameter = 25;
   roller_thickness = 5;
@@ -387,12 +395,13 @@ module odometer(show_encoder_board=true, show_magnet=true, show_rollers=true, sh
       odometer_roller();
   }
   } // Printable frame, foot and cradle.
-  odometer_encoder_hardware(show_encoder_board,show_magnet,show_cap);
+  odometer_encoder_hardware(show_encoder_board,show_magnet,show_cap,show_lpd3806);
 }
 
 // Importable production outputs exclude all purchased and moving parts.
 module odometer_frame() {
-  odometer(show_encoder_board=false,show_magnet=false,show_rollers=false,show_cap=false);
+  odometer(show_encoder_board=false,show_magnet=false,show_rollers=false,
+           show_cap=false,show_lpd3806=false);
 }
 
 if(odometer_part == "Assembly") odometer();
