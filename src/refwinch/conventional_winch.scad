@@ -51,7 +51,7 @@ printed_motor_plate_thickness = 5;
 // Rotation about the upper outer M3 screw; zero matches the nominal belt.
 motor_adjustment_angle = 0; // [-6:0.5:6]
 motor_adjustment_limit = 6; // [1:0.5:6]
-show_odometer = false;
+show_odometer = true;
 
 /* [Fit and fabrication] */
 
@@ -214,7 +214,7 @@ drum_shaft_left_end_x = left_bearing_tower_x + drum_shaft_left_end_clearance;
 drum_shaft_length = drum_shaft_right_end_x - drum_shaft_left_end_x;
 
 lower_shell_radial_wall = 2;
-top_shell_radial_wall = 2.5;
+top_shell_radial_wall = 2;
 shell_screw_row_radial_offset = 4.5;
 shell_screw_x_fraction = 1/5;
 shell_screw_nut_offset = 3;
@@ -803,7 +803,6 @@ module motor_mount_review(){
 }
 
 module base(){
-  motor_mount_base();
   tower_base_z = -drum_z;
   first_rib_x = 15;
   rib_interval_count = 4;
@@ -829,10 +828,10 @@ module base(){
     ])
       translate([xs,0,0])
         cube([base_rib_thickness, base_y_length, base_rib_height]);
-    translate([base_plate_x_length-base_rib_thickness,0,0])
+    translate([base_plate_x_length-base_rib_thickness,-(base_rear_edge_y-motor_nominal_y+motor_plate_width/2),0]) // motor_plate_width?
       cube([
         base_rib_thickness,
-        base_y_length-bearing_tower_depth-2*base_rib_thickness,
+        base_y_length-bearing_tower_depth-2*base_rib_thickness + (base_rear_edge_y-motor_nominal_y+motor_plate_width/2),
         base_rib_height
       ]);
   }
@@ -887,6 +886,7 @@ module base(){
     translate([xs,-bearing_tower_depth/2-drum_axis_spacing,tower_base_z])
       bearing_tower();
 
+  motor_mount_base();
 }
 
 module top_shell() {
@@ -1221,5 +1221,6 @@ if (part == "Assembly") {
 }
 
 if (part == "Assembly" && show_odometer)
-  translate([0, 120, -drum_z])
-    odometer(show_encoder_board=true);
+  translate([0, 80, -drum_z])
+    odometer(show_encoder_board=false, show_magnet=false, show_rollers=false);
+translate([0,-135,0]) color("pink", 0.5) square([50,250]);
