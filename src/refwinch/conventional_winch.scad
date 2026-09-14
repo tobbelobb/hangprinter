@@ -550,10 +550,12 @@ module motor_plate_profile(){
       square([motor_plate_width,motor_plate_height]);
     // Boss must move with the shaft, otherwise it would lock the adjustment.
     motor_arc_cut([0,0], Nema17_ring_diameter+0.8);
-    translate(motor_pivot) circle(d=3.4, $fn=32);
-    for(y=[-1,1], z=[-1,1])
-      if(!(y == -1 && z == 1))
-        motor_arc_cut([y*motor_hole_pitch/2,z*motor_hole_pitch/2], 3.4);
+    rotate([0,0,2*90]){
+      translate(motor_pivot) circle(d=3.4, $fn=32);
+      for(y=[-1,1], z=[-1,1])
+        if(!(y == -1 && z == 1))
+          motor_arc_cut([y*motor_hole_pitch/2,z*motor_hole_pitch/2], 3.4);
+    }
     if(motor_mount_material == "Metal")
       for(y=[-motor_support_y,motor_support_y], z=motor_mount_bolt_z)
         translate([y,z-motor_nominal_z]) circle(d=4.5, $fn=32);
@@ -576,7 +578,7 @@ module motor_mount_base(){
   difference(){
     union(){
       if(motor_mount_material == "Metal")
-        for(y=[-motor_support_y,motor_support_y], z=motor_mount_bolt_z)
+        for(y=[-motor_support_y,motor_support_y], z=motor_mount_bolt_z[0])
           translate([motor_front_face_x,motor_nominal_y+y,z])
             rotate([0,90,0]) cylinder(d=10,h=motor_support_depth,$fn=32);
       for(y=[-motor_support_y,motor_support_y]){
