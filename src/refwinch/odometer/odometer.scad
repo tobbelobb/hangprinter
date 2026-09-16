@@ -16,8 +16,18 @@ LPD3806_collet_d = 20;
 
 odometer_part = "Frame"; // [Assembly, Frame, Coupler]
 
+// Roller width along the shaft (X).
+odometer_roller_width = 20;
+// Clearance from the roller end face to the inner face of the wall.
+odometer_roller_wall_margin = 1;
+
+/* [Hidden] */
+
 // Shared world datums: encoder on +X, toward the winch CLN17 board.
-odometer_frame_outer_x = 2.5 + 0.1 + b623_width + 1;
+// Rollers and eyelet bores share X=0; the wall is half a roller width + margin away.
+odometer_wall_inner_x = odometer_roller_width/2 + odometer_roller_wall_margin;
+odometer_frame_outer_x = odometer_wall_inner_x + b623_width + 1;
+odometer_encoder_shift_x = odometer_wall_inner_x - (5/2 + 0.1);
 odometer_axis_z = (25+2)/2 - 19 + 50 - (b608_outer_dia+6)/2;
 
 module encoder_roller_coupler(){
@@ -37,7 +47,7 @@ module encoder_roller_coupler(){
 
 
 module odometer_encoder_hardware() {
-  translate([46.6 - LPD3806_collet_h,0,odometer_axis_z])
+  translate([46.6 - LPD3806_collet_h + odometer_encoder_shift_x,0,odometer_axis_z])
     rotate([0,-90,0])
     rotate([0,0,75])
     encoder_LPD3806();
@@ -63,7 +73,11 @@ module odometer(show_rollers=false,
   $fn = 64;
   outer_diameter = 25;
   inner_diameter = 10.5;
-  roller_thickness = 5;
+  roller_thickness = odometer_roller_width;
+  roller_wall_margin = odometer_roller_wall_margin;
+  eyelet_support_width = roller_thickness + 2*roller_wall_margin + 2;
+  assert(roller_thickness > 0, "Roller width must be positive");
+  assert(roller_wall_margin >= 0, "Roller wall margin must be nonnegative");
   line_diameter = 2;
   roller_gap = 1;
   line_entry_z = 19;
@@ -97,12 +111,13 @@ module odometer(show_rollers=false,
   // bottom is z=1) clear of this 1.6 mm floor.
   difference() {
     translate([-odometer_frame_outer_x,-outer_diameter/2+2,0])
-      cube([odometer_frame_outer_x+2.6,roller_tower_depth-2,1.6]);
-    translate([-3.0,low_roller_y-13,-0.1]) cube([5.7,26,2]);
+      cube([odometer_frame_outer_x+odometer_wall_inner_x,roller_tower_depth-2,1.6]);
+    translate([-odometer_wall_inner_x-0.4,low_roller_y-13,-0.1])
+      cube([2*odometer_wall_inner_x+0.5,26,2]);
   }
 
   //for(k=[0,1]) mirror([k,0,0])
-    translate([roller_thickness/2+0.1, 0, 0]) {
+    translate([odometer_wall_inner_x, 0, 0]) {
       difference() {
         rotate([90,0,90])
         linear_extrude(height=roller_tower_thickness2)
@@ -129,7 +144,7 @@ module odometer(show_rollers=false,
           }
           translate([0,-10.5,high_roller_z - outer_diameter/2 - 1])
           rotate([90,0,0])
-          translate([-roller_thickness/2-0.1,0,0])
+          translate([-odometer_wall_inner_x,0,0])
           cylinder(d=Eyelet_flange_diameter+1, h=30);
 
       translate([-0.5,0,0])
@@ -154,9 +169,9 @@ module odometer(show_rollers=false,
   entry_exit_tube_length_exit = 13;
   difference() {
     translate([0,low_roller_y,low_roller_z + outer_diameter/2 + line_diameter/2])
-      translate([-(roller_thickness + 2)/2, outer_diameter/2-entry_exit_tube_length_entry, -(Eyelet_diameter + 5)/2])
+      translate([-eyelet_support_width/2, outer_diameter/2-entry_exit_tube_length_entry, -(Eyelet_diameter + 5)/2])
       union(){
-        cube([roller_thickness + 2, entry_exit_tube_length_entry, Eyelet_diameter + 5]);
+        cube([eyelet_support_width, entry_exit_tube_length_entry, Eyelet_diameter + 5]);
         rotate([0,-50,0])
           translate([0,0,-10])
           cube([4, entry_exit_tube_length_entry, 10]);
@@ -166,14 +181,16 @@ module odometer(show_rollers=false,
       cylinder(d=Eyelet_diameter, h=30, center=true);
     translate([0,low_roller_y, low_roller_z])
       scale((outer_diameter + 1.5)/outer_diameter)
-      odometer_roller(outer_diameter, inner_diameter, roller_thickness+2);
+      rotate([0,90,0])
+      // Clear the shaft bore too, so the brace cannot leave a loose sliver inside it.
+      cylinder(d=outer_diameter, h=eyelet_support_width, center=true);
   }
   // Line exit
   difference() {
     translate([0, 2, high_roller_z - (outer_diameter/2 + line_diameter/2)])
-      translate([-(roller_thickness + 2)/2, -outer_diameter/2, -(Eyelet_diameter + 5)/2])
+      translate([-eyelet_support_width/2, -outer_diameter/2, -(Eyelet_diameter + 5)/2])
       union(){
-        cube([roller_thickness + 2, entry_exit_tube_length_exit, Eyelet_diameter + 5]);
+        cube([eyelet_support_width, entry_exit_tube_length_exit, Eyelet_diameter + 5]);
         rotate([0,-50,0])
           translate([0,0,-12])
           cube([5, entry_exit_tube_length_exit, 12]);
@@ -183,17 +200,18 @@ module odometer(show_rollers=false,
       cylinder(d=Eyelet_diameter, h=30, center=true);
     translate([0,0, high_roller_z])
       scale((outer_diameter + 1.5)/outer_diameter)
-      odometer_roller(outer_diameter, inner_diameter, roller_thickness+2);
+      rotate([0,90,0])
+      cylinder(d=outer_diameter, h=eyelet_support_width, center=true);
   }
   difference(){
-    translate([7,-entry_exit_tube_length_exit,0])
+    translate([7+odometer_encoder_shift_x,-entry_exit_tube_length_exit,0])
       cube([34.6,21,13.8]);
-   translate([50+7.59,0,odometer_axis_z])
+   translate([50+7.59+odometer_encoder_shift_x,0,odometer_axis_z])
      rotate([0,-90,0])
      cylinder(d=38.2+0.7,h=50);
   }
   difference(){
-    translate([2.6-1,low_roller_y,low_roller_z])
+    translate([odometer_wall_inner_x-1,low_roller_y,low_roller_z])
     rotate([0,90,0])
     difference() {
       cylinder(d1=5.7, d2=7.5, h=3);
