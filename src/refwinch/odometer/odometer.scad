@@ -17,7 +17,7 @@ LPD3806_collet_d = 20;
 odometer_part = "Frame"; // [Assembly, Frame, Coupler]
 
 // Roller width along the shaft (X).
-odometer_roller_width = 20;
+odometer_roller_width = 15;
 // Clearance from the roller end face to the inner face of the wall.
 odometer_roller_wall_margin = 1;
 
@@ -177,8 +177,6 @@ module odometer(show_rollers=false,
   exit_z = high_roller_z - (outer_diameter/2 + line_diameter/2);
   holder_height = Eyelet_diameter + 5;
   exit_support_drop = min(eyelet_support_width, exit_z-holder_height/2);
-  exit_support_toe_x = -eyelet_support_width/2 + exit_support_drop;
-  exit_support_toe_z = exit_z-holder_height/2 - exit_support_drop;
   difference() {
     // Print upright (Z=0 on the bed). The underside is a 45-degree tangent
     // above the roller clearance circle, rooted in a vertical rear wall.
@@ -208,8 +206,8 @@ module odometer(show_rollers=false,
       linear_extrude(height=entry_exit_tube_length_exit)
       polygon([
         [-eyelet_support_width/2, exit_z-holder_height/2],
-        [exit_support_toe_x, exit_support_toe_z],
-        [eyelet_support_width/2, exit_support_toe_z],
+        [-eyelet_support_width/2, 0],
+        [eyelet_support_width/2, 0],
         [eyelet_support_width/2, exit_z+holder_height/2],
         [-eyelet_support_width/2, exit_z+holder_height/2]
       ]);
