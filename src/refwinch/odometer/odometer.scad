@@ -14,7 +14,7 @@ LPD3806_collet_d = 20;
 
 /* [Odometer] */
 
-odometer_part = "Coupler"; // [Assembly, Frame, Coupler]
+odometer_part = "Frame"; // [Assembly, Frame, Coupler]
 
 // Shared world datums: encoder on +X, toward the winch CLN17 board.
 odometer_frame_outer_x = 2.5 + 0.1 + b623_width + 1;
@@ -162,7 +162,7 @@ module odometer(show_rollers=false,
       rotate([-90,0,0])
       cylinder(d=Eyelet_diameter, h=20);
     translate([0,low_roller_y, low_roller_z])
-      scale((outer_diameter + 1)/outer_diameter)
+      scale((outer_diameter + 1.5)/outer_diameter)
       odometer_roller(outer_diameter, inner_diameter, roller_thickness+2);
   }
   // Line exit
@@ -179,7 +179,7 @@ module odometer(show_rollers=false,
       rotate([90,0,0])
       cylinder(d=Eyelet_diameter, h=20);
     translate([0,0, high_roller_z])
-      scale((outer_diameter + 1)/outer_diameter)
+      scale((outer_diameter + 1.5)/outer_diameter)
       odometer_roller(outer_diameter, inner_diameter, roller_thickness+2);
   }
   difference(){
