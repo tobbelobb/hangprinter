@@ -98,6 +98,10 @@ module odometer(show_rollers=false,
   low_roller_y = lower_roller_y;
   roller_tower_depth = outer_diameter+lower_roller_y;
   extra_rot = -90+60;
+  roller_clearance_radius = (outer_diameter + 1.5)/2;
+  entry_support_wall = 2;
+  entry_support_y = low_roller_y + roller_clearance_radius;
+  entry_support_back_y = entry_support_y + entry_support_wall;
 
   if (show_rollers) {
     translate([0, 0, high_roller_z]){
@@ -111,7 +115,8 @@ module odometer(show_rollers=false,
   // bottom is z=1) clear of this 1.6 mm floor.
   difference() {
     translate([-odometer_frame_outer_x,-outer_diameter/2+2,0])
-      cube([odometer_frame_outer_x+odometer_wall_inner_x,roller_tower_depth-2,1.6]);
+      cube([odometer_frame_outer_x+odometer_wall_inner_x,
+            entry_support_back_y-(-outer_diameter/2+2),1.6]);
     translate([-odometer_wall_inner_x-0.4,low_roller_y-13,-0.1])
       cube([2*odometer_wall_inner_x+0.5,26,2]);
   }
@@ -167,37 +172,51 @@ module odometer(show_rollers=false,
   // Line entry
   entry_exit_tube_length_entry = 8;
   entry_exit_tube_length_exit = 13;
+  entry_y = low_roller_y + outer_diameter/2-entry_exit_tube_length_entry;
+  entry_z = low_roller_z + outer_diameter/2 + line_diameter/2;
+  exit_z = high_roller_z - (outer_diameter/2 + line_diameter/2);
+  holder_height = Eyelet_diameter + 5;
+  exit_support_drop = min(eyelet_support_width, exit_z-holder_height/2);
+  exit_support_toe_x = -eyelet_support_width/2 + exit_support_drop;
+  exit_support_toe_z = exit_z-holder_height/2 - exit_support_drop;
   difference() {
-    translate([0,low_roller_y,low_roller_z + outer_diameter/2 + line_diameter/2])
-      translate([-eyelet_support_width/2, outer_diameter/2-entry_exit_tube_length_entry, -(Eyelet_diameter + 5)/2])
-      union(){
-        cube([eyelet_support_width, entry_exit_tube_length_entry, Eyelet_diameter + 5]);
-        rotate([0,-50,0])
-          translate([0,0,-10])
-          cube([4, entry_exit_tube_length_entry, 10]);
-      }
-    translate([0,low_roller_y, low_roller_z + outer_diameter/2 + line_diameter/2])
+    // Print upright (Z=0 on the bed). The underside is a 45-degree tangent
+    // above the roller clearance circle, rooted in a vertical rear wall.
+    // Extrude the Y/Z profile along X to support the full holder width.
+    translate([-eyelet_support_width/2,0,0])
+      rotate([90,0,90])
+      linear_extrude(height=eyelet_support_width)
+      polygon([
+        [entry_y, low_roller_z + sqrt(2)*roller_clearance_radius - (entry_y-low_roller_y)],
+        [entry_support_y, low_roller_z + (sqrt(2)-1)*roller_clearance_radius],
+        [entry_support_y, 0],
+        [entry_support_back_y, 0],
+        [entry_support_back_y, entry_z + holder_height/2],
+        [entry_y, entry_z + holder_height/2]
+      ]);
+    translate([0,entry_y-1,entry_z])
       rotate([-90,0,0])
-      cylinder(d=Eyelet_diameter, h=30, center=true);
-    translate([0,low_roller_y, low_roller_z])
-      scale((outer_diameter + 1.5)/outer_diameter)
-      rotate([0,90,0])
-      // Clear the shaft bore too, so the brace cannot leave a loose sliver inside it.
-      cylinder(d=outer_diameter, h=eyelet_support_width, center=true);
+      rotate([0,0,180])
+      teardrop(r=Eyelet_diameter/2, h=entry_support_back_y-entry_y+2);
   }
   // Line exit
   difference() {
-    translate([0, 2, high_roller_z - (outer_diameter/2 + line_diameter/2)])
-      translate([-eyelet_support_width/2, -outer_diameter/2, -(Eyelet_diameter + 5)/2])
-      union(){
-        cube([eyelet_support_width, entry_exit_tube_length_exit, Eyelet_diameter + 5]);
-        rotate([0,-50,0])
-          translate([0,0,-12])
-          cube([5, entry_exit_tube_length_exit, 12]);
-      }
+    // A continuous 45-degree gusset reaches the floor instead of ending
+    // in mid-air. Clip its toe to Z=0 for wider rollers or larger margins.
+    translate([0,2-outer_diameter/2+entry_exit_tube_length_exit,0])
+      rotate([90,0,0])
+      linear_extrude(height=entry_exit_tube_length_exit)
+      polygon([
+        [-eyelet_support_width/2, exit_z-holder_height/2],
+        [exit_support_toe_x, exit_support_toe_z],
+        [eyelet_support_width/2, exit_support_toe_z],
+        [eyelet_support_width/2, exit_z+holder_height/2],
+        [-eyelet_support_width/2, exit_z+holder_height/2]
+      ]);
     translate([0, 0, high_roller_z - outer_diameter/2 - line_diameter/2])
       rotate([90,0,0])
-      cylinder(d=Eyelet_diameter, h=30, center=true);
+      translate([0,0,-15])
+      teardrop(r=Eyelet_diameter/2, h=30);
     translate([0,0, high_roller_z])
       scale((outer_diameter + 1.5)/outer_diameter)
       rotate([0,90,0])
@@ -226,7 +245,7 @@ module odometer(show_rollers=false,
 
 // Importable production outputs exclude all purchased and moving parts.
 module odometer_frame() {
-  odometer(show_rollers=false,
+  odometer(show_rollers=true,
            show_lpd3806=false);
 }
 
