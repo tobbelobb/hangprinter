@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OPENSCAD_APPDIR="${OPENSCAD_APPDIR:-$HOME/.local/opt/openscad-2025.08.08}"
+OPENSCAD_APPIMAGE="${OPENSCAD_APPIMAGE:-$HOME/Downloads/OpenSCAD-2025.08.08.ai26371-x86_64.AppImage}"
+
+# Preferred: already-extracted AppImage. No FUSE.
+if [[ -x "$OPENSCAD_APPDIR/AppRun" ]]; then
+    exec "$OPENSCAD_APPDIR/AppRun" "$@"
+fi
+
+# Fallback: tell the AppImage runtime to extract instead of FUSE-mounting.
+if [[ -x "$OPENSCAD_APPIMAGE" ]]; then
+    export APPIMAGE_EXTRACT_AND_RUN=1
+    exec "$OPENSCAD_APPIMAGE" "$@"
+fi
+
+echo "OpenSCAD not found." >&2
+echo "Expected extracted version at:" >&2
+echo "  $OPENSCAD_APPDIR/AppRun" >&2
+echo "or AppImage at:" >&2
+echo "  $OPENSCAD_APPIMAGE" >&2
+exit 127
