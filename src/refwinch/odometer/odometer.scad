@@ -83,7 +83,7 @@ module odometer(show_rollers=false,
   lower_roller_y = sqrt(hypot_dist^2 - a_diff^2);
   low_roller_y = lower_roller_y;
   roller_tower_depth = outer_diameter+lower_roller_y;
-  extra_rot = -90;
+  extra_rot = -90+60;
 
   if (show_rollers) {
     translate([0, 0, high_roller_z]){
@@ -112,24 +112,25 @@ module odometer(show_rollers=false,
               square([roller_tower_depth, 1]);
               translate([-outer_diameter/2+roller_tower_depth-bearing_tower_corner_radius+shift_entry_corner[0],roller_tower_height-bearing_tower_corner_radius+shift_entry_corner[1]])
                 circle(r=bearing_tower_corner_radius);
-              translate([0,high_roller_z])
-                for(ang=[0,120,240]) rotate([0,0,ang+extra_rot]) translate([15+3,0,0])
-                circle(r=bearing_tower_corner_radius);
+              translate([0,high_roller_z]){
+                rotate([0,0,extra_rot]) translate([15+4,0,0])
+                  circle(r=bearing_tower_corner_radius);
+                rotate([0,0,120+extra_rot]) translate([15+4,1,0])
+                  circle(r=bearing_tower_corner_radius);
+                rotate([0,0,240+extra_rot]) translate([15+4,-2.5,0])
+                  circle(r=bearing_tower_corner_radius);
+              }
               translate([0,high_roller_z+(LPD3806_collet_d+1)/2*sqrt(2)+1.85])
                 circle(r=bearing_tower_corner_radius);
             }
             translate([0,high_roller_z])
               for(ang=[0,120,240]) rotate([0,0,ang+extra_rot]) translate([15,0,0])
               circle(d=3.2);
-            hull() {
-              translate([-outer_diameter/2-bearing_tower_corner_radius+2,0])
-                circle(r=bearing_tower_corner_radius);
-              translate([-outer_diameter/2-bearing_tower_corner_radius+2,22])
-                circle(r=bearing_tower_corner_radius);
-              translate([-outer_diameter/2-bearing_tower_corner_radius-5.6,40])
-                circle(r=bearing_tower_corner_radius);
-            }
           }
+          translate([0,-10.5,high_roller_z - outer_diameter/2 - 1])
+          rotate([90,0,0])
+          translate([-roller_thickness/2-0.1,0,0])
+          cylinder(d=Eyelet_flange_diameter+1, h=30);
 
       translate([-0.5,0,0])
       rotate([90,0,90])
@@ -149,18 +150,20 @@ module odometer(show_rollers=false,
 
   }
   // Line entry
+  entry_exit_tube_length_entry = 8;
+  entry_exit_tube_length_exit = 13;
   difference() {
     translate([0,low_roller_y,low_roller_z + outer_diameter/2 + line_diameter/2])
-      translate([-(roller_thickness + 2)/2, outer_diameter/2-2.5, -(Eyelet_diameter + 5)/2])
+      translate([-(roller_thickness + 2)/2, outer_diameter/2-entry_exit_tube_length_entry, -(Eyelet_diameter + 5)/2])
       union(){
-        cube([roller_thickness + 2, 2.5, Eyelet_diameter + 5]);
+        cube([roller_thickness + 2, entry_exit_tube_length_entry, Eyelet_diameter + 5]);
         rotate([0,-50,0])
           translate([0,0,-10])
-          cube([4, 2.5, 10]);
+          cube([4, entry_exit_tube_length_entry, 10]);
       }
     translate([0,low_roller_y, low_roller_z + outer_diameter/2 + line_diameter/2])
       rotate([-90,0,0])
-      cylinder(d=Eyelet_diameter, h=20);
+      cylinder(d=Eyelet_diameter, h=30, center=true);
     translate([0,low_roller_y, low_roller_z])
       scale((outer_diameter + 1.5)/outer_diameter)
       odometer_roller(outer_diameter, inner_diameter, roller_thickness+2);
@@ -170,20 +173,20 @@ module odometer(show_rollers=false,
     translate([0, 2, high_roller_z - (outer_diameter/2 + line_diameter/2)])
       translate([-(roller_thickness + 2)/2, -outer_diameter/2, -(Eyelet_diameter + 5)/2])
       union(){
-        cube([roller_thickness + 2, 2.5, Eyelet_diameter + 5]);
+        cube([roller_thickness + 2, entry_exit_tube_length_exit, Eyelet_diameter + 5]);
         rotate([0,-50,0])
           translate([0,0,-12])
-          cube([5, 2.5, 12]);
+          cube([5, entry_exit_tube_length_exit, 12]);
       }
     translate([0, 0, high_roller_z - outer_diameter/2 - line_diameter/2])
       rotate([90,0,0])
-      cylinder(d=Eyelet_diameter, h=20);
+      cylinder(d=Eyelet_diameter, h=30, center=true);
     translate([0,0, high_roller_z])
       scale((outer_diameter + 1.5)/outer_diameter)
       odometer_roller(outer_diameter, inner_diameter, roller_thickness+2);
   }
   difference(){
-    translate([7,-10.5,0])
+    translate([7,-entry_exit_tube_length_exit,0])
       cube([34.6,21,13.8]);
    translate([50+7.59,0,odometer_axis_z])
      rotate([0,-90,0])
