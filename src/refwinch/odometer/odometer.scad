@@ -243,7 +243,7 @@ module odometer(show_rollers=false,
 
 // Importable production outputs exclude all purchased and moving parts.
 module odometer_frame() {
-  odometer(show_rollers=true,
+  odometer(show_rollers=false,
            show_lpd3806=false);
 }
 

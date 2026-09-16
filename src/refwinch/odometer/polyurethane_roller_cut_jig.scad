@@ -18,18 +18,18 @@ module jig(){
     rotate([0,90,0])
       difference(){
         union() {
-          td(d=30, h=40);
-          translate([5,-10,0])
+          td(d=31, h=40);
+          translate([5.5,-10,0])
             cube([10, 20, 40]);
         }
         translate([0,0,-2])
           td(d=25, h=40);
       }
-    translate([40-2-1, -30, 0])
+    translate([40-2-1-10+1, -30, 0])
       cube([60,60,30]);
-    translate([-4-7, -25, 0])
+    translate([-4-7-10-1, -20, 0])
       cube([40,40,30]);
-    translate([40-0.5-2-5, -25, -10])
+    translate([40-0.5-2-5-10, -20, -10])
       cube([1,40,40]);
   }
 }
