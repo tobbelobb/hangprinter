@@ -812,7 +812,7 @@ module integrated_odometer_base() {
   overlap = 2;
   assert(odometer_bridge_thickness >= 1 && odometer_bridge_thickness <= 2);
   translate([-7.6,base_front_edge_y-overlap,-drum_z])
-    cube([15.2,odometer_y-12.5-base_front_edge_y+2*overlap,odometer_bridge_thickness]);
+    cube([15.2,odometer_y+odometer_base_front_y()-base_front_edge_y+2*overlap,odometer_bridge_thickness]);
   translate([0,odometer_y,-drum_z]) odometer_frame();
 }
 
