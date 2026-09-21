@@ -14,7 +14,7 @@ LPD3806_collet_d = 20;
 
 /* [Odometer] */
 
-odometer_part = "Frame"; // [Assembly, Frame, Coupler]
+odometer_part = "Assembly"; // [Assembly, Frame, Coupler, Spacer]
 
 // Roller width along the shaft (X).
 odometer_roller_width = 15;
@@ -45,6 +45,19 @@ module encoder_roller_coupler(){
   }
 }
 
+module spacer_inside_roller(){
+  $fn=64;
+  inner_tol = 0.1;
+  outer_tol = 0.2;
+  difference() {
+    cylinder(d=10.5+outer_tol, h=15.7 - 2*b623_width);
+    translate([0,0,-1])
+      difference() {
+        cylinder(d=6+inner_tol, h=13);
+      }
+  }
+}
+
 
 module odometer_encoder_hardware() {
   translate([46.6 - LPD3806_collet_h + odometer_encoder_shift_x,0,odometer_axis_z])
@@ -67,9 +80,9 @@ module odometer_roller(od, id, th) {
 // roller axes run along X, the upper roller is at Y=0, and Z=0 is the bottom
 // of the tower. The board is placed on the +X side with its sensor aligned
 // to the upper roller center.
-module odometer(show_rollers=false,
+module odometer(show_rollers=true,
                 show_frame=true,
-                show_lpd3806=false){
+                show_lpd3806=true){
   $fn = 64;
   outer_diameter = 25;
   inner_diameter = 10.5;
@@ -79,7 +92,7 @@ module odometer(show_rollers=false,
   assert(roller_thickness > 0, "Roller width must be positive");
   assert(roller_wall_margin >= 0, "Roller wall margin must be nonnegative");
   line_diameter = 2;
-  roller_gap = 1;
+  roller_gap = 0.5;
   line_entry_z = 19;
   low_roller_z = outer_diameter/2 + 1;
   hypot_dist = outer_diameter + roller_gap;
@@ -221,7 +234,7 @@ module odometer(show_rollers=false,
       cylinder(d=outer_diameter, h=eyelet_support_width, center=true);
   }
   difference(){
-    translate([7+odometer_encoder_shift_x,-entry_exit_tube_length_exit,0])
+    translate([7+odometer_encoder_shift_x,-entry_exit_tube_length_exit+2.5,0])
       cube([34.6,21,13.8]);
    translate([50+7.59+odometer_encoder_shift_x,0,odometer_axis_z])
      rotate([0,-90,0])
@@ -250,3 +263,4 @@ module odometer_frame() {
 if(odometer_part == "Assembly") odometer();
 else if(odometer_part == "Frame") odometer_frame();
 else if(odometer_part == "Coupler") encoder_roller_coupler();
+else if(odometer_part == "Spacer") spacer_inside_roller();
