@@ -1,9 +1,4 @@
-// RefWinch odometer and its MA600A encoder-board placement model.
-//
-// The board model is deliberately an envelope model for mechanical planning,
-// not a replacement for the KiCad source in ma600a_encoder_breakout/kicad/.
-// Board coordinates follow the release drawing: 28 x 12 mm, with the sensor
-// center 4 mm from the short tip and 6 mm from the lower edge.
+// RefWinch two-roller odometer and LPD3806 encoder placement model.
 
 include <../../lib/parameters.scad>
 include <../../lib/util.scad>
@@ -21,6 +16,11 @@ odometer_roller_width = 15;
 // Clearance from the roller end face to the inner face of the wall.
 odometer_roller_wall_margin = 1;
 
+// Passage through the printed guide noses; eyelet sockets remain at the ends.
+odometer_guide_bore = 2.4;
+odometer_guide_wall = 0.8;
+odometer_guide_roller_clearance = 0.35;
+
 /* [Hidden] */
 
 // Shared world datums: encoder on +X, toward the winch CLN17 board.
@@ -28,7 +28,12 @@ odometer_roller_wall_margin = 1;
 odometer_wall_inner_x = odometer_roller_width/2 + odometer_roller_wall_margin;
 odometer_frame_outer_x = odometer_wall_inner_x + b623_width + 1;
 odometer_encoder_shift_x = odometer_wall_inner_x - (5/2 + 0.1);
-odometer_axis_z = (25+2)/2 - 19 + 50 - (b608_outer_dia+6)/2;
+odometer_roller_diameter = 25;
+odometer_roller_gap = 0.5;
+odometer_low_axis_z = odometer_roller_diameter/2 + 1;
+// Preserve the lower roller's position and the existing winch/base interface.
+odometer_axis_y = sqrt(25.5^2 - 17^2);
+odometer_axis_z = odometer_low_axis_z + odometer_roller_diameter + odometer_roller_gap;
 
 module encoder_roller_coupler(){
   $fn=64;
@@ -60,7 +65,7 @@ module spacer_inside_roller(){
 
 
 module odometer_encoder_hardware() {
-  translate([46.6 - LPD3806_collet_h + odometer_encoder_shift_x,0,odometer_axis_z])
+  translate([46.6 - LPD3806_collet_h + odometer_encoder_shift_x,odometer_axis_y,odometer_axis_z])
     rotate([0,-90,0])
     rotate([0,0,75])
     encoder_LPD3806();
@@ -76,48 +81,69 @@ module odometer_roller(od, id, th) {
   }
 }
 
-// Current two-roller odometer. The output is normalized to its own origin:
-// roller axes run along X, the upper roller is at Y=0, and Z=0 is the bottom
-// of the tower. The board is placed on the +X side with its sensor aligned
-// to the upper roller center.
+// Both roller axes run along X at the same Y. Z=0 remains the winch floor.
 module odometer(show_rollers=true,
                 show_frame=true,
                 show_lpd3806=true){
-  $fn = 64;
-  outer_diameter = 25;
+  $fn = 96;
+  outer_diameter = odometer_roller_diameter;
   inner_diameter = 10.5;
   roller_thickness = odometer_roller_width;
-  roller_wall_margin = odometer_roller_wall_margin;
-  eyelet_support_width = roller_thickness + 2*roller_wall_margin + 2;
+  eyelet_support_width = roller_thickness + 2*odometer_roller_wall_margin + 2;
   assert(roller_thickness > 0, "Roller width must be positive");
-  assert(roller_wall_margin >= 0, "Roller wall margin must be nonnegative");
-  line_diameter = 2;
-  roller_gap = 0.5;
-  line_entry_z = 19;
-  low_roller_z = outer_diameter/2 + 1;
-  hypot_dist = outer_diameter + roller_gap;
-  roller_tower_height = line_entry_z + outer_diameter;
+  assert(odometer_roller_wall_margin >= 0, "Roller wall margin must be nonnegative");
+  assert(odometer_guide_bore > 2, "Guide bore must clear the nominal 2 mm line");
+  assert(odometer_guide_wall >= 0.6, "Guide wall must be at least 0.6 mm");
+  assert(odometer_guide_roller_clearance > 0, "Guide must clear both rollers");
+  low_roller_z = odometer_low_axis_z;
+  high_roller_z = odometer_axis_z;
+  low_roller_y = odometer_axis_y;
+  line_z = (low_roller_z + high_roller_z)/2;
   roller_tower_thickness2 = b623_width + 1;
   bearing_tower_corner_radius = 2;
-  shift_entry_corner = [0,-10];
-  shift_exit_corner = [0,-14];
-  winch_bearing_tower_height = 50;
-  winch_bearing_tower_wall_thickness = 3;
-  roller_datum_z = winch_bearing_tower_height
-                 - (b608_outer_dia + 2*winch_bearing_tower_wall_thickness)/2;
-  high_roller_z = (outer_diameter+line_diameter)/2 - line_entry_z + roller_datum_z;
-  a_diff = high_roller_z - low_roller_z;
-  lower_roller_y = sqrt(hypot_dist^2 - a_diff^2);
-  low_roller_y = lower_roller_y;
-  roller_tower_depth = outer_diameter+lower_roller_y;
-  extra_rot = -90+60;
-  roller_clearance_radius = (outer_diameter + 1.5)/2;
-  entry_support_wall = 2;
-  entry_support_y = low_roller_y + roller_clearance_radius;
-  entry_support_back_y = entry_support_y + entry_support_wall;
+  extra_rot = -30;
+  roller_clearance_radius = outer_diameter/2 + odometer_guide_roller_clearance;
+  support_inner_y = outer_diameter/2 + 0.75;
+  support_outer_y = support_inner_y + 2;
+  holder_height = Eyelet_diameter + 5;
+  // Noses open toward each roller as they enter the squeeze zone. Stop where
+  // 1.6 mm of height remains, avoiding fragile feather edges at the nip.
+  guide_tip_half_height = 0.8;
+  guide_tip_y = sqrt(roller_clearance_radius^2
+                    - (line_z-low_roller_z-guide_tip_half_height)^2);
+  guide_outer_d = odometer_guide_bore + 2*odometer_guide_wall;
+  assert(guide_tip_y < support_inner_y, "Guide nose must reach past the support");
+
+  module line_guide(side) {
+    translate([0,odometer_axis_y,line_z])
+      mirror([0,side < 0 ? 1 : 0,0])
+      difference() {
+        union() {
+          // Full-width end post connects the guide and bearing wall to the foot.
+          translate([-eyelet_support_width/2,support_inner_y,-line_z])
+            cube([eyelet_support_width,support_outer_y-support_inner_y,
+                  line_z+holder_height/2]);
+          translate([-eyelet_support_width/2,support_inner_y-4,-holder_height/2])
+            cube([eyelet_support_width,6,holder_height]);
+          // A tubular nose continues from the eyelet socket toward the nip.
+          translate([0,guide_tip_y,0]) rotate([-90,0,0])
+            cylinder(d=guide_outer_d,h=support_inner_y-guide_tip_y+1);
+        }
+        translate([0,guide_tip_y-1,0]) rotate([-90,0,0])
+          cylinder(d=odometer_guide_bore,h=support_outer_y-guide_tip_y+2);
+        // Eyelet socket at the outer end, transitioning into the smaller bore.
+        translate([0,support_inner_y-2,0]) rotate([-90,0,0])
+          cylinder(d1=odometer_guide_bore,d2=Eyelet_diameter,h=1);
+        translate([0,support_inner_y-1,0]) rotate([-90,0,0])
+          cylinder(d=Eyelet_diameter,h=4);
+        for (z=[low_roller_z, high_roller_z])
+          translate([0,0,z-line_z]) rotate([0,90,0])
+            cylinder(r=roller_clearance_radius,h=eyelet_support_width+2,center=true);
+      }
+  }
 
   if (show_rollers) {
-    translate([0, 0, high_roller_z]){
+    translate([0, odometer_axis_y, high_roller_z]){
       odometer_roller(outer_diameter, inner_diameter, roller_thickness);
     }
     translate([0,low_roller_y, low_roller_z])
@@ -129,7 +155,7 @@ module odometer(show_rollers=true,
   difference() {
     translate([-odometer_frame_outer_x,-outer_diameter/2+2,0])
       cube([odometer_frame_outer_x+odometer_wall_inner_x,
-            entry_support_back_y-(-outer_diameter/2+2),1.6]);
+            odometer_axis_y+support_outer_y-(-outer_diameter/2+2),1.6]);
     translate([-odometer_wall_inner_x-0.4,low_roller_y-13,-0.1])
       cube([2*odometer_wall_inner_x+0.5,26,2]);
   }
@@ -142,10 +168,11 @@ module odometer(show_rollers=true,
           difference(){
             hull(){
               translate([-outer_diameter/2,0])
-              square([roller_tower_depth, 1]);
-              translate([-outer_diameter/2+roller_tower_depth-bearing_tower_corner_radius+shift_entry_corner[0],roller_tower_height-bearing_tower_corner_radius+shift_entry_corner[1]])
+                square([odometer_axis_y+support_outer_y+outer_diameter/2, 1]);
+              translate([odometer_axis_y+support_outer_y-bearing_tower_corner_radius,
+                         line_z+holder_height/2-bearing_tower_corner_radius])
                 circle(r=bearing_tower_corner_radius);
-              translate([0,high_roller_z]){
+              translate([odometer_axis_y,high_roller_z]){
                 rotate([0,0,extra_rot]) translate([15+4,0,0])
                   circle(r=bearing_tower_corner_radius);
                 rotate([0,0,120+extra_rot]) translate([15+4,1,0])
@@ -153,90 +180,35 @@ module odometer(show_rollers=true,
                 rotate([0,0,240+extra_rot]) translate([15+4,-2.5,0])
                   circle(r=bearing_tower_corner_radius);
               }
-              translate([0,high_roller_z+(LPD3806_collet_d+1)/2*sqrt(2)+1.85])
+              translate([odometer_axis_y,high_roller_z+(LPD3806_collet_d+1)/2*sqrt(2)+1.85])
                 circle(r=bearing_tower_corner_radius);
             }
-            translate([0,high_roller_z])
+            translate([odometer_axis_y,high_roller_z])
               for(ang=[0,120,240]) rotate([0,0,ang+extra_rot]) translate([15,0,0])
               circle(d=3.2);
           }
-          translate([0,-10.5,high_roller_z - outer_diameter/2 - 1])
-          rotate([90,0,0])
-          translate([-odometer_wall_inner_x,0,0])
-          cylinder(d=Eyelet_flange_diameter+1, h=30);
-
       translate([-0.5,0,0])
       rotate([90,0,90])
         linear_extrude(height=3+1)
-          translate([0,high_roller_z])
+          translate([odometer_axis_y,high_roller_z])
             for(ang=[0,120,240]) rotate([0,0,ang+extra_rot]) translate([15,0,0])
             circle(d=5.6);
 
       translate([-1, low_roller_y, low_roller_z])
         rotate([0,90,0])
         cylinder(d=3.1, h=roller_tower_thickness2+2);
-      translate([roller_tower_thickness2+1, 0,high_roller_z])
+      translate([roller_tower_thickness2+1, odometer_axis_y,high_roller_z])
         rotate([0,-90,0])
         rotate([0,0,-90])
         teardrop(r=(LPD3806_collet_d+1)/2, h=roller_tower_thickness2+2);
     }
 
   }
-  // Line entry
-  entry_exit_tube_length_entry = 8;
-  entry_exit_tube_length_exit = 13;
-  entry_y = low_roller_y + outer_diameter/2-entry_exit_tube_length_entry;
-  entry_z = low_roller_z + outer_diameter/2 + line_diameter/2;
-  exit_z = high_roller_z - (outer_diameter/2 + line_diameter/2);
-  holder_height = Eyelet_diameter + 5;
-  exit_support_drop = min(eyelet_support_width, exit_z-holder_height/2);
-  difference() {
-    // Print upright (Z=0 on the bed). The underside is a 45-degree tangent
-    // above the roller clearance circle, rooted in a vertical rear wall.
-    // Extrude the Y/Z profile along X to support the full holder width.
-    translate([-eyelet_support_width/2,0,0])
-      rotate([90,0,90])
-      linear_extrude(height=eyelet_support_width)
-      polygon([
-        [entry_y, low_roller_z + sqrt(2)*roller_clearance_radius - (entry_y-low_roller_y)],
-        [entry_support_y, low_roller_z + (sqrt(2)-1)*roller_clearance_radius],
-        [entry_support_y, 0],
-        [entry_support_back_y, 0],
-        [entry_support_back_y, entry_z + holder_height/2],
-        [entry_y, entry_z + holder_height/2]
-      ]);
-    translate([0,entry_y-1,entry_z])
-      rotate([-90,0,0])
-      rotate([0,0,180])
-      teardrop(r=Eyelet_diameter/2, h=entry_support_back_y-entry_y+2);
-  }
-  // Line exit
-  difference() {
-    // A continuous 45-degree gusset reaches the floor instead of ending
-    // in mid-air. Clip its toe to Z=0 for wider rollers or larger margins.
-    translate([0,2-outer_diameter/2+entry_exit_tube_length_exit,0])
-      rotate([90,0,0])
-      linear_extrude(height=entry_exit_tube_length_exit)
-      polygon([
-        [-eyelet_support_width/2, exit_z-holder_height/2],
-        [-eyelet_support_width/2, 0],
-        [eyelet_support_width/2, 0],
-        [eyelet_support_width/2, exit_z+holder_height/2],
-        [-eyelet_support_width/2, exit_z+holder_height/2]
-      ]);
-    translate([0, 0, high_roller_z - outer_diameter/2 - line_diameter/2])
-      rotate([90,0,0])
-      translate([0,0,-15])
-      teardrop(r=Eyelet_diameter/2, h=30);
-    translate([0,0, high_roller_z])
-      scale((outer_diameter + 1.5)/outer_diameter)
-      rotate([0,90,0])
-      cylinder(d=outer_diameter, h=eyelet_support_width, center=true);
-  }
+  for (side=[-1,1]) line_guide(side);
   difference(){
-    translate([7+odometer_encoder_shift_x,-entry_exit_tube_length_exit+2.5,0])
-      cube([34.6,21,13.8]);
-   translate([50+7.59+odometer_encoder_shift_x,0,odometer_axis_z])
+    translate([7+odometer_encoder_shift_x,odometer_axis_y-10.5,0])
+      cube([34.6,21,odometer_axis_z-16.7]);
+   translate([50+7.59+odometer_encoder_shift_x,odometer_axis_y,odometer_axis_z])
      rotate([0,-90,0])
      cylinder(d=38.2+0.7,h=50);
   }
