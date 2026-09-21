@@ -23,7 +23,7 @@ odometer_slide_clearance = 0.2;
 // Compression spring outside diameter; match the purchased springs.
 odometer_spring_diameter = 5;
 odometer_spring_radial_clearance = 0.2;
-odometer_show_springs = true;
+odometer_show_springs = false;
 odometer_show_spring_envelopes = false;
 
 // Passage through the printed guide noses; eyelet sockets remain at the ends.
@@ -57,7 +57,7 @@ odometer_slider_flange_outer = odometer_slider_flange_inner + 2.4;
 odometer_spring_free_length = 15;
 odometer_spring_preload = 1;
 odometer_slider_bottom_z = -3;
-odometer_spring_axis_x = odometer_wall_inner_x + odometer_wall_thickness/2;
+odometer_spring_axis_x = odometer_wall_inner_x + odometer_wall_thickness - odometer_spring_diameter/2;
 odometer_spring_seat_z = odometer_low_axis_max_z + odometer_slider_bottom_z
                          - (odometer_spring_free_length-odometer_spring_preload);
 odometer_spring_well_top_z = odometer_low_axis_min_z + odometer_slider_bottom_z;
@@ -136,7 +136,7 @@ module odometer_lower_slider() {
           odometer_slider_profile();
       translate([odometer_slider_flange_inner,0,0]) rotate([90,0,90])
         linear_extrude(height=odometer_slider_flange_outer-odometer_slider_flange_inner)
-          polygon([[-6,-3],[6,-3],[6,1],[0,7],[-6,1]]);
+          polygon([[-6,-3],[6,-3],[6,1],[2,5],[-2,5],[-6,1]]);
       // Contacts the lower bearing's inner race, inside the roller bore.
       translate([-wall_thickness-odometer_roller_wall_margin,0,0])
         rotate([0,90,0]) cylinder(d=5.7,h=odometer_roller_wall_margin+0.1);
