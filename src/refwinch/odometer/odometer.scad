@@ -67,9 +67,9 @@ odometer_support_outer_y = odometer_support_inner_y + 2;
 // Export the footprint datum for the conventional winch's connecting web.
 function odometer_base_front_y() = odometer_axis_y - odometer_support_outer_y;
 
-// Exact six-hole pattern from encoder_LPD3806(), oriented with a pair at the top.
-function odometer_encoder_holes() = [for (a=[0,120,240], k=[-1,1])
-  [14*sin(a) + k*3.75*cos(a), 14*cos(a) - k*3.75*sin(a)]];
+// Exact three-hole pattern from encoder_LPD3806()
+function odometer_encoder_holes() = [for (a=[0,120,240])
+  [15*sin(a), 15*cos(a)]];
 
 module encoder_roller_coupler(){
   $fn=64;
