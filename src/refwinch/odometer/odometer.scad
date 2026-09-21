@@ -20,6 +20,10 @@ odometer_roller_wall_margin = 1;
 odometer_roller_gap = 0.5; // [0:0.1:5]
 // Sliding fit per side in Y; adjust after a small fit print.
 odometer_slide_clearance = 0.2;
+// Compression spring outside diameter; match the purchased springs.
+odometer_spring_diameter = 5;
+odometer_spring_radial_clearance = 0.2;
+odometer_show_springs = true;
 odometer_show_spring_envelopes = false;
 
 // Passage through the printed guide noses; eyelet sockets remain at the ends.
@@ -33,9 +37,12 @@ odometer_guide_overhang = 45; // [45:1:55]
 
 // Shared world datums: encoder on +X, toward the winch CLN17 board.
 // Rollers and eyelet bores share X=0; the wall is half a roller width + margin away.
+odometer_wall_thickness = max(b623_width+1,
+                             odometer_spring_diameter+2*odometer_spring_radial_clearance+1.6);
 odometer_wall_inner_x = odometer_roller_width/2 + odometer_roller_wall_margin;
-odometer_frame_outer_x = odometer_wall_inner_x + b623_width + 1;
-odometer_encoder_shift_x = odometer_wall_inner_x - (5/2 + 0.1);
+odometer_frame_outer_x = odometer_wall_inner_x + odometer_wall_thickness;
+odometer_encoder_shift_x = odometer_wall_inner_x - (5/2 + 0.1)
+                           + odometer_wall_thickness-(b623_width+1);
 odometer_roller_diameter = 25;
 odometer_gap_max = 5;
 // At the widest gap the roller still clears Z=0 by 1 mm.
@@ -47,9 +54,14 @@ odometer_low_axis_z = odometer_low_axis_max_z - odometer_roller_gap;
 odometer_axis_y = sqrt(25.5^2 - 17^2);
 odometer_slider_flange_inner = 0.25;
 odometer_slider_flange_outer = odometer_slider_flange_inner + 2.4;
-odometer_spring_y = 8;
-odometer_spring_post_z = odometer_low_axis_max_z + 4.5;
-odometer_spring_plane_x = odometer_frame_outer_x + 5;
+odometer_spring_free_length = 15;
+odometer_spring_preload = 1;
+odometer_slider_bottom_z = -3;
+odometer_spring_axis_x = odometer_wall_inner_x + odometer_wall_thickness/2;
+odometer_spring_seat_z = odometer_low_axis_max_z + odometer_slider_bottom_z
+                         - (odometer_spring_free_length-odometer_spring_preload);
+odometer_spring_well_top_z = odometer_low_axis_min_z + odometer_slider_bottom_z;
+function odometer_spring_length(gap) = odometer_spring_free_length-odometer_spring_preload-gap;
 odometer_support_inner_y = odometer_roller_diameter/2 + 0.75;
 odometer_support_outer_y = odometer_support_inner_y + 2;
 // Export the footprint datum for the conventional winch's connecting web.
@@ -116,7 +128,7 @@ module odometer_slider_profile(clearance=0) {
 // proud of the wall so tightening the axle does not clamp the moving frame.
 module odometer_lower_slider() {
   $fn=64;
-  wall_thickness = b623_width+1;
+  wall_thickness = odometer_wall_thickness;
   difference() {
     union() {
       translate([-wall_thickness-0.25,0,0]) rotate([90,0,90])
@@ -124,23 +136,14 @@ module odometer_lower_slider() {
           odometer_slider_profile();
       translate([odometer_slider_flange_inner,0,0]) rotate([90,0,90])
         linear_extrude(height=odometer_slider_flange_outer-odometer_slider_flange_inner)
-          union() {
-            polygon([[-6,-4],[6,-4],[6,1],[0,7],[-6,1]]);
-            for (side=[-1,1]) hull() {
-              translate([side*4,-2]) circle(r=2);
-              for (z=[-3,-7]) translate([side*odometer_spring_y,z]) circle(r=2);
-            }
-          }
+          polygon([[-6,-3],[6,-3],[6,1],[0,7],[-6,1]]);
       // Contacts the lower bearing's inner race, inside the roller bore.
       translate([-wall_thickness-odometer_roller_wall_margin,0,0])
         rotate([0,90,0]) cylinder(d=5.7,h=odometer_roller_wall_margin+0.1);
     }
     translate([-wall_thickness-odometer_roller_wall_margin-1,0,0])
       rotate([0,90,0]) cylinder(d=3.2,h=wall_thickness+odometer_roller_wall_margin+6);
-    // Two attachment heights suit different short extension springs.
-    for (side=[-1,1], z=[-3,-7])
-      translate([-1,side*odometer_spring_y,z]) rotate([0,90,0])
-        cylinder(d=2.2,h=odometer_slider_flange_outer+2);
+
   }
 }
 
@@ -156,6 +159,22 @@ module odometer_lower_bearing_spacer() {
   difference() {
     cylinder(d=5.7,h=odometer_roller_width-2*b623_width);
     translate([0,0,-0.1]) cylinder(d=3.2,h=odometer_roller_width-2*b623_width+0.2);
+  }
+}
+
+// Illustrative coil only: wire size and turn count are not a spring rating.
+// Mechanical clearance is checked using the full outside-diameter envelope.
+module odometer_compression_spring(length) {
+  wire = 0.4;
+  turns = 7;
+  radius = (odometer_spring_diameter-wire)/2;
+  steps = 112;
+  function point(i) = [radius*cos(360*turns*i/steps),
+                       radius*sin(360*turns*i/steps),
+                       wire/2+(length-wire)*i/steps];
+  for (i=[0:steps-1]) hull() {
+    translate(point(i)) sphere(d=wire,$fn=8);
+    translate(point(i+1)) sphere(d=wire,$fn=8);
   }
 }
 
@@ -190,11 +209,15 @@ module odometer_lower_hardware(gap=odometer_roller_gap) {
   // 45 mm M3 axle/rod preview; the roller rotates on its bearings.
   color("silver") translate([0,odometer_axis_y,low_z]) rotate([0,90,0])
     cylinder(d=3,h=45,center=true,$fn=32);
-  if (odometer_show_spring_envelopes)
-    for (side=[-1,1], yside=[-1,1])
-      color([0.9,0.5,0.1,0.35])
-        translate([side*odometer_spring_plane_x,odometer_axis_y+yside*odometer_spring_y,low_z-7])
-          cylinder(d=4,h=odometer_spring_post_z-(low_z-7),$fn=32);
+  for (side=[-1,1])
+    translate([side*odometer_spring_axis_x,odometer_axis_y,odometer_spring_seat_z]) {
+      if (odometer_show_springs)
+        color("silver") odometer_compression_spring(odometer_spring_length(gap));
+      if (odometer_show_spring_envelopes)
+        color([0.9,0.5,0.1,0.35])
+          cylinder(d=odometer_spring_diameter,h=odometer_spring_length(gap),$fn=48);
+    }
+
 }
 
 // Both roller axes run along X at the same Y. Z=0 remains the winch floor.
@@ -212,7 +235,7 @@ module odometer(show_rollers=true,
   // Fixed guide height follows the nominal 0.5 mm working gap, independent
   // of the preview position. Supports clear the highest lower-roller position.
   line_z = high_z-outer_diameter/2-0.25;
-  wall_thickness = b623_width + 1;
+  wall_thickness = odometer_wall_thickness;
   clearance_r = outer_diameter/2 + odometer_guide_roller_clearance;
   inner_y = odometer_support_inner_y;
   outer_y = odometer_support_outer_y;
@@ -228,6 +251,13 @@ module odometer(show_rollers=true,
   assert(gap >= 0 && gap <= odometer_gap_max, "Roller gap must be within 0-5 mm");
   assert(odometer_slide_clearance > 0 && odometer_slide_clearance <= 0.4,
          "Slider clearance must be positive and at most 0.4 mm per side");
+  assert(odometer_spring_seat_z >= 1.2, "Spring seat needs at least 1.2 mm of floor");
+  assert(odometer_spring_diameter > 0, "Spring diameter must be positive");
+  assert(odometer_wall_thickness >= odometer_spring_diameter+2*odometer_spring_radial_clearance+1.6,
+         "Spring pockets need at least 0.8 mm cheek wall per side");
+  assert(odometer_spring_radial_clearance > 0, "Spring well needs running clearance");
+  assert(odometer_spring_length(0) == 14 && odometer_spring_length(5) == 9,
+         "Spring seats must provide 1 mm preload and 5 mm travel");
   assert(roller_thickness > 0, "Roller width must be positive");
   assert(odometer_roller_wall_margin >= 0, "Roller wall margin must be nonnegative");
   assert(odometer_guide_bore > 2, "Guide bore must clear the nominal 2 mm line");
@@ -297,19 +327,19 @@ module odometer(show_rollers=true,
           }
   }
 
-  module fixed_spring_posts() {
-    for (side=[-1,1], yside=[-1,1])
-      translate([side*odometer_frame_outer_x,odometer_axis_y+yside*odometer_spring_y,
-                 odometer_spring_post_z]) scale([side,1,1]) {
-        // A gusset supports the peg root and stays outside the slider flange.
-        translate([0,1.5,0]) rotate([90,0,0]) linear_extrude(height=3)
-          polygon([[-0.5,-4.7],[3,-1.2],[3,1.2],[-0.5,1.2]]);
-        rotate([0,90,0]) {
-          cylinder(d=2.4,h=5.6,$fn=48);
-          translate([0,0,5.6]) cylinder(d1=2.4,d2=4,h=0.8,$fn=48);
-          translate([0,0,6.4]) cylinder(d=4,h=0.6,$fn=48);
+  module spring_wells(cut=false) {
+    bore = odometer_spring_diameter+2*odometer_spring_radial_clearance;
+    for (side=[-1,1])
+      translate([side*odometer_spring_axis_x,odometer_axis_y,0])
+        if (cut) {
+          // Flat floor is the lower seat datum. The bore opens into the slider
+          // slot, so the spring can be inserted before installing the slider.
+          translate([0,0,odometer_spring_seat_z])
+            cylinder(d=bore,h=odometer_spring_well_top_z-odometer_spring_seat_z+0.1);
+        } else {
+          // Vertical cup walls print directly from the bed, without overhangs.
+          cylinder(d=bore+2,h=odometer_spring_well_top_z);
         }
-      }
   }
 
   if (show_rollers)
@@ -335,7 +365,7 @@ module odometer(show_rollers=true,
       translate([-odometer_frame_outer_x,odometer_axis_y-outer_y,0])
         cube([wall_thickness,2*outer_y,odometer_low_axis_max_z+8]);
       for (side=[-1,1]) line_guide(side);
-      fixed_spring_posts();
+      spring_wells();
       // Move the cradle rearward to leave the right slider, nut and springs
       // accessible. A bed-level web keeps the cradle part of the printed frame.
       cradle_start_x = odometer_frame_outer_x+11;
@@ -351,6 +381,7 @@ module odometer(show_rollers=true,
     }
     screw_access();
     lower_shaft_slots();
+    spring_wells(cut=true);
     translate([odometer_wall_inner_x-1,odometer_axis_y,high_z])
       rotate([90,0,90]) teardrop(r=(LPD3806_collet_d+1)/2,h=wall_thickness+2);
   }
