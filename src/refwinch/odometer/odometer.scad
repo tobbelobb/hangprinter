@@ -99,7 +99,6 @@ module spacer_inside_roller(){
   }
 }
 
-
 module odometer_encoder_hardware() {
   translate([46.6 - LPD3806_collet_h + odometer_encoder_shift_x,odometer_axis_y,odometer_axis_z])
     rotate([0,-90,0])
@@ -290,11 +289,10 @@ module odometer(show_rollers=true,
                      [inner_y+1,line_z+guide_outer_d/2],
                      [guide_tip_y,line_z+guide_outer_d/2]]);
         }
-        // Teardrop roofs keep the horizontal passage ceilings at 45° too.
         translate([0,outer_y+1,line_z]) rotate([90,0,0])
-          teardrop(r=odometer_guide_bore/2,h=outer_y-guide_tip_y+2);
+          cylinder(r=odometer_guide_bore/2,h=outer_y-guide_tip_y+2);
         translate([0,outer_y+1,line_z]) rotate([90,0,0])
-          teardrop(r=Eyelet_diameter/2,h=outer_y-inner_y+2);
+          cylinder(r=Eyelet_diameter/2,h=outer_y-inner_y+2);
         translate([0,inner_y-1,line_z]) rotate([90,0,0])
           linear_extrude(height=1,scale=odometer_guide_bore/Eyelet_diameter)
             teardrop_2d(r=Eyelet_diameter/2);
