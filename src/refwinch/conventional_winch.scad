@@ -195,6 +195,9 @@ bearing_cut_length_allowance = 10;
 bearing_teardrop_tip_diameter = 4;
 
 drum_z = bearing_tower_height - bearing_tower_depth/2;
+// Reduce the separator flange OD by 0.3 mm (0.15 mm per side) to give
+// 0.4 mm nominal radial clearance inside the lower shell.
+drum_separator_flange_diameter = drum_envelope_diameter - 0.3;
 
 base_plate_x_length = 76;
 base_front_edge_y = 15.6;
@@ -1024,7 +1027,7 @@ module pawl_socket(){
 }
 
 module separator_disc(
-  diameter=drum_envelope_diameter,
+  diameter=drum_separator_flange_diameter,
   drum_radius=drum_core_radius,
   depth=separator_disc_depth,
   tooth_width_angle=separator_tooth_width_angle,
@@ -1119,7 +1122,7 @@ module drum(){
         small_herringbone_gear();
       cylinder(d=hub_diameter, h=hub_length, $fn=round_fn);
       translate([0,0,-separator_disc_axial_offset])
-        cylinder(d=drum_envelope_diameter, h=separator_disc_height, center=true, $fn=round_fn);
+        cylinder(d=drum_separator_flange_diameter, h=separator_disc_height, center=true, $fn=round_fn);
     }
     rotate([0,90,0])
     translate([0,0,shaft_bore_center_z])
