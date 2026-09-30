@@ -3,11 +3,11 @@
 include <../../lib/parameters.scad>
 
 /* [Output] */
-rig_part = "Open assembly"; // [Assembly, Open assembly, Section, Print layout, Base, Guide pair, Baffle, Hood]
+rig_part = "Open assembly"; // [Assembly, Open assembly, Section, Print layout, Base, Guide pair, Baffle, Hood, Port shutters]
 show_hardware = true; // Review only; ignored by printable outputs.
 
 /* [Optical experiment] */
-// Change guides AND baffle together. The same hood covers all three settings.
+// Change guides AND baffle together. Sliding port shutters let the hood stay.
 led_to_line = 8; // [4,8,12]
 aperture_width = 2.0; // [0.8,1.2,2.0]
 aperture_length = 4;
@@ -34,6 +34,8 @@ pcb_edge_clearance = 0.3;
 eyelet_socket_clearance = 0.15; // Diametral; test a fit before pressing ceramic.
 eyelet_flange_recess_depth = 0.8; // Unmeasured flange thickness.
 hood_clearance = 0.3;
+support_pin_diameter = 2; // Two smooth PTFE/ceramic/polished pins, not printed.
+support_pin_seat_clearance = 0.05; // Diametral; bed them firmly against seat bottom.
 
 /* [Hidden] */
 $fn = 64;
@@ -42,11 +44,21 @@ base_thickness = 4;
 pcb_bottom = 20; // 16 mm below-PCB space for downward headers and female jumpers.
 base_size = [80,60];
 guide_x = 28;
+support_x = 5; // Close supports, 10 mm tangent-to-tangent sensing span.
+support_width = 1.6; // Across line: keep the oblique LED paths open.
+support_length = 2.8; // Along line: walls around the pin seat.
+support_pin_length = 2.4;
+guide_drop = 1.5; // Outer eyelets below sensing span: tension seats line on pins.
 guide_thickness = 4;
 guide_foot = [11,24,3];
 line_z = pcb_bottom + led_top_from_pcb_bottom + led_to_line;
 aperture_to_line = led_to_line*aperture_gap_fraction;
-guide_axis_z = line_z - base_thickness;
+guide_line_z = line_z-guide_drop;
+guide_axis_z = guide_line_z - base_thickness;
+// Pin bottoms seat in the slightly oversized cradle; the pin's actual top
+// remains the datum, rather than the cradle's nominal hole centre.
+support_pin_z = line_z-line_diameter/2-support_pin_diameter/2;
+support_seat_z = support_pin_z+support_pin_seat_clearance/2;
 baffle_bottom = pcb_bottom + sensor_package_top_from_pcb_bottom + 0.2;
 baffle_plate_thickness = 1.2;
 aperture_top = line_z-aperture_to_line;
@@ -58,6 +70,10 @@ hood_inside = [69,43];
 hood_wall = 2;
 hood_top = 54;
 hood_roof = 2.5;
+shutter_size = [1.4,9,20];
+shutter_inner_x = hood_inside[0]/2+hood_wall+0.12;
+port_diameter = 2.5;
+port_slot_bottom = pcb_bottom+led_top_from_pcb_bottom+4-guide_drop-1;
 // Lowest background rib is 49.5 above the bed (7.5 above the highest line).
 background_bottom = hood_top-hood_roof-2;
 socket_d = Eyelet_diameter+eyelet_socket_clearance;
@@ -78,6 +94,12 @@ assert(led_rectangle[0]/2*aperture_gap_fraction>tube_upper_outer[0]/2+0.1
 assert(background_bottom-line_z>=7,"Background too close to line");
 assert(socket_d<flange_d && flange_d<10-2,"Eyelet post has insufficient wall");
 assert(guide_x+guide_foot[0]/2<hood_inside[0]/2-hood_clearance);
+assert(support_x-support_length/2>footprint(aperture_length)/2+0.5,
+       "Close support intrudes into the sensor's geometric view");
+assert(support_pin_length/2>(2-line_diameter)/2+0.3,
+       "Pin too short for lateral play in the ceramic eyelets");
+assert(guide_drop>(2-line_diameter)/2+0.5,
+       "Eyelet play can lift the line off the close supports");
 assert(pcb_length/2+pcb_edge_clearance+1.2<18,"PCB hits baffle pedestals");
 // Nearest corner of the central tube stays clear of the LED holes.
 assert(norm([led_rectangle[0]/2-tube_lower_outer[0]/2,
@@ -86,6 +108,7 @@ echo("LED tip to line / die to line / aperture",led_to_line,die_to_line,
      [aperture_length,aperture_width]);
 echo("Approximate line-plane geometric view envelope",footprint(aperture_length),
      footprint(aperture_width));
+echo("Close support span / outer eyelet height",2*support_x,guide_line_z);
 
 module rectangle_at(size,z,th=eps) {
   translate([-size[0]/2,-size[1]/2,z]) cube([size[0],size[1],th]);
@@ -121,6 +144,11 @@ module base() {
     }
     for (x=[-20,20],y=[-9,9])
       translate([x,y,baffle_bottom-8]) cylinder(d=2.1,h=8+eps);
+    // Rebate accepts the hood's opaque tongue: no straight seam light path.
+    difference() {
+      rectangle_at(hood_inside+[3.4,3.4],2.4,base_thickness-2.4+eps);
+      rectangle_at(hood_inside+[0.6,0.6],2.4-eps,base_thickness-2.4+3*eps);
+    }
   }
 }
 
@@ -163,6 +191,12 @@ module baffle() {
         rectangle_at(tube_lower_outer,baffle_bottom,baffle_plate_thickness);
         rectangle_at(tube_upper_outer,aperture_top-aperture_lip,aperture_lip);
       }
+      // Narrow cradles grow out of the baffle. Their tops stay below the line;
+      // unlike a full ceramic ring here, they do not surround the light path.
+      for (s=[-1,1]) translate([s*support_x-support_length/2,
+                               -support_width/2,baffle_bottom])
+        cube([support_length,support_width,
+              support_seat_z+0.35-baffle_bottom]);
     }
     hull() {
       rectangle_at(tube_lower_inner,baffle_bottom-eps);
@@ -170,6 +204,9 @@ module baffle() {
     }
     rectangle_at([aperture_length,aperture_width],aperture_top-aperture_lip-eps,
                  aperture_lip+2*eps);
+    for (s=[-1,1]) translate([s*support_x,-support_width/2-eps,support_seat_z])
+      rotate([-90,0,0]) cylinder(d=support_pin_diameter+support_pin_seat_clearance,
+                                h=support_width+2*eps);
     for (x=[-1,1],y=[-1,1])
       translate([x*led_rectangle[0]/2,y*led_rectangle[1]/2,baffle_bottom-eps])
         cylinder(d=7,h=baffle_plate_thickness+2*eps);
@@ -199,15 +236,30 @@ module hood() {
       for (y=[-9:3:9]) translate([-12,y,background_bottom]) rotate([0,90,0])
         linear_extrude(height=24)
           polygon([[0,0],[-2.02,-1.5],[-2.02,1.5]]);
+      difference() {
+        rectangle_at(hood_inside+[3,3],2.5,1.5+eps);
+        rectangle_at(hood_inside+[1,1],2.5-eps,1.5+3*eps);
+      }
     }
-    // Common hood serves all guide heights. Tape/foam-mask unused height
-    // around the line after threading; otherwise ambient leaks in here.
+    // Adjustable opaque shutters cover these slots; only their round bores
+    // are open in use. Two overlapping surfaces exclude a direct seam path.
     for (s=[-1,1]) translate([s*(hood_inside[0]/2+hood_wall/2)-2,-1.5,
-                            pcb_bottom+led_top_from_pcb_bottom+3])
+                            port_slot_bottom])
       cube([4,3,10]);
     // Jumpers leave below the light path. An outer cover makes a dogleg.
     translate([-9,-hood_inside[1]/2-hood_wall-eps,base_thickness-eps])
       cube([18,hood_wall+2*eps,6]);
+  }
+  // External rails retain the shutter plates. Slide in from above; tape the
+  // rims after aligning the bore with the ceramic eyelet for a light seal.
+  for (s=[-1,1]) scale([s,1,1]) {
+    for (y=[-1,1]) {
+      translate([hood_inside[0]/2+hood_wall-eps,y>0 ? 4.7 : -6.5,22])
+        cube([2.9+eps,1.8,29.5]);
+      translate([shutter_inner_x+shutter_size[0]+0.18,y>0 ? 3.7 : -6.5,22])
+        cube([1.2,2.8,29.5]);
+    }
+    translate([hood_inside[0]/2+hood_wall-eps,-6.5,21]) cube([2.9+eps,13,1]);
   }
   // Cable port cover: wires descend to the base before exiting sideways.
   difference() {
@@ -216,6 +268,24 @@ module hood() {
     for (x=[-1,1]) translate([x*11-1.5,-hood_inside[1]/2-hood_wall-4,
                               base_thickness-eps]) cube([3,4,3.5]);
   }
+}
+
+// Local X is plate thickness; Z=0 is the line bore centre.
+module port_shutter() {
+  difference() {
+    translate([0,-shutter_size[1]/2,-shutter_size[2]/2]) cube(shutter_size);
+    translate([-eps,0,0]) rotate([0,90,0])
+      cylinder(d=port_diameter,h=shutter_size[0]+2*eps);
+  }
+}
+
+module port_shutters() {
+  for (s=[-1,1]) scale([s,1,1])
+    translate([shutter_inner_x,0,guide_line_z]) port_shutter();
+}
+
+module line_segment(a,b) {
+  hull() for (p=[a,b]) translate(p) sphere(d=line_diameter,$fn=16);
 }
 
 module hardware() {
@@ -235,16 +305,28 @@ module hardware() {
     color([0.55,0.15,0.65,0.2])
       translate([x-2,-6,pcb_bottom-15]) cube([4,12,15]);
   }
-  // Ceramic guides are deliberately omitted; their sockets are the datum.
-  color("orange") translate([-42,0,line_z]) rotate([0,90,0])
-    cylinder(d=line_diameter,h=84);
+  // Smooth replaceable contact pins: no bare FDM surface touches the braid.
+  for (s=[-1,1]) color("ivory")
+    translate([s*support_x,-support_pin_length/2,support_pin_z]) rotate([-90,0,0])
+      cylinder(d=support_pin_diameter,h=support_pin_length);
+  // Ceramic guides deliberately omitted. Show the seated path and break angle.
+  color("orange") {
+    line_segment([-support_x,0,line_z],[support_x,0,line_z]);
+    for (s=[-1,1]) {
+      line_segment([s*support_x,0,line_z],[s*guide_x,0,guide_line_z]);
+      line_segment([s*guide_x,0,guide_line_z],[s*44,0,guide_line_z]);
+    }
+  }
 }
 
 module assembly(covered=true) {
   color([0.22,0.22,0.24]) base();
   color([0.3,0.3,0.32]) guides();
   color([0.42,0.42,0.44]) baffle();
-  if (covered) color([0.18,0.18,0.2]) hood();
+  if (covered) {
+    color([0.18,0.18,0.2]) hood();
+    color([0.35,0.35,0.37]) port_shutters();
+  }
   if (show_hardware) hardware();
 }
 
@@ -253,6 +335,7 @@ module print_layout() {
   translate([0,61,hood_top]) rotate([180,0,0]) hood();
   translate([65,-15,-baffle_bottom]) baffle();
   for (y=[18,47]) translate([65,y,0]) guide();
+  for (y=[68,82]) translate([65,y,0]) rotate([0,-90,0]) port_shutter();
 }
 
 if (rig_part=="Assembly") assembly();
@@ -266,4 +349,6 @@ else if (rig_part=="Base") base();
 else if (rig_part=="Guide pair") for (y=[-15,15]) translate([0,y,0]) guide();
 else if (rig_part=="Baffle") translate([0,0,-baffle_bottom]) baffle();
 else if (rig_part=="Hood") translate([0,0,hood_top]) rotate([180,0,0]) hood();
+else if (rig_part=="Port shutters")
+  for (y=[-7,7]) translate([0,y,0]) rotate([0,-90,0]) port_shutter();
 else assert(false,"Unknown rig_part");
