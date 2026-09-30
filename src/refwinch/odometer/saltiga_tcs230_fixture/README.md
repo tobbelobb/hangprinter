@@ -18,7 +18,9 @@ This is a designed and digitally checked prototype. Optical performance, PCB fit
 | Aperture exit → nearest line surface | 1.2 mm; centre separation 1.475 mm |
 | Aperture membrane / minimum tip wall | 0.6 / 0.6 mm |
 | Hood top → package window | Assumed 0.5 mm |
-| Printed V guide centres | 46 mm apart; optical span has no contact |
+| Ceramic-eyelet seating holes | Two Ø4 mm through-holes, 4.5 mm axial depth, along line |
+| Default unsupported gap / socket centre spacing | 9.2 mm between inner faces / 13.7 mm centre-to-centre |
+| Eyelet holder outer diameter | 6 mm; line/bore axes at y=0, z=16 mm |
 | Background | Deep sloping black cavity; floor 12 mm below line at centre |
 
 The aperture is close to the line to restrict the field of view. It is **not a focusing lens**, and its dimensions are not exactly the observed spot size: allowing for the finite detector, the default geometric footprint is roughly 1.4 × 1.0 mm at the line plane. The line occupies only part of it, so background subtraction matters. The hood isolates the detector from LED bodies and bright surroundings; it has no broad flange near the line that would shade the target. LED light travels outside the hood and illuminates the line from four diagonal directions.
@@ -29,9 +31,11 @@ The aperture gap is slightly larger than a very close 0.5 mm slit because the ho
 
 Use opaque black PLA or PETG, preferably matte. Start with a 0.4 mm nozzle, 0.15–0.20 mm layers, three walls, 25–35% infill and no supports. Inspect thin-wall handling in the slicer; the hood tip has 0.6 mm walls. At 0.20 mm layers the membrane is three layers. Print the hood with its long arms flat on the bed and narrow tip pointing up, as supplied. A brim on the arms is useful if adhesion is poor. The tiny slit must remain open; clear strings gently without enlarging it. The M3 nut pockets have a short bridge; clean any sag before seating nuts.
 
-The two V grooves intentionally support and lightly contact the line. Polish them and remove layer burrs. Apply light tension for a slow hand-pull test. Do not use rough printed guides as high-speed production bearings. For later running tests, place polished ceramic guides or rollers outside the head and align the line at z=16 mm, y=0. The line must stay within roughly ±0.1 mm laterally for repeatable readings through the narrow slit.
+Insert your ceramic eyelets from the outer faces into the two horizontal Ø4 mm bores, each 4.5 mm long, so their flanges remain outside the central gap. The default seating faces are x=±4.6 mm, giving a 9.2 mm clear gap; socket centres are x=±6.85 mm. This replaces the previous 46 mm V-guide spacing. The rounded Ø6 mm holders are mounted on pedestals below the line and leave the centre background cavity open. No printed plastic contacts the line. Thread the line through the ceramic bores and use light tension. The short span reduces sag; it cannot guarantee zero sag without tension. The ceramic bore diameter and where the soft line sits inside it determine the exact running height, so check that against the 1.2 mm aperture gap. Lateral movement should remain roughly within ±0.1 mm for repeatable readings.
 
-Black plastic can still reflect LED light. If the empty-fixture reading is high, use a thin matte-black coating inside the hood and background cavity, keeping it off the slit and line guides. If light is visible through the walls, the filament is not sufficiently opaque. Keep the fixture closed during readings and cover excess jumper/line-port openings with black tape. Leave clearance so the line cannot touch tape adhesive.
+The socket positions were checked against the finite 5 mm LED emitting-face envelopes, all four diagonal light paths and the full upper surface of the 0.55 mm line over x=−1.4..+1.4 mm. The 9.2 mm default gap is rounded up from the shortest gap meeting a 0.25 mm radial clearance margin in that model. Supports remain outside the detector field at the line plane. This check assumes eyelet flanges fit within the Ø6 mm holder envelope and do not protrude inward into the clear gap. Larger flanges or protruding ceramic lips require moving the sockets outward and repeating the clearance check. You can bond inserts in place; keep glue clear of the line path. Printed horizontal bores can shrink or sag, so clean or carefully ream them to 4 mm before insertion rather than forcing the ceramics.
+
+Black plastic can still reflect LED light. If the empty-fixture reading is high, use a thin matte-black coating inside the hood and background cavity, keeping it off the slit and ceramic eyelets. If light is visible through the walls, the filament is not sufficiently opaque. Keep the fixture closed during readings and cover excess jumper/line-port openings with black tape. Leave clearance so the line cannot touch tape adhesive.
 
 Hardware: four M3 × 40 mm bolts, four M3 nuts and washers for the default head; two M2 × 6 mm self-tapping screws for the hood arms; two small strips of compressible foam for the lid to hold the PCB down. M3 nuts are nominally 5.5 mm across flats; pockets allow 5.7 mm. Trial-fit screws and nuts gently. The 14 mm head can use 35–40 mm bolts; the 22 mm head needs 45 mm bolts. Longer bolts can protrude below the base, so support it clear of your bench or use suitable washers.
 
@@ -40,7 +44,7 @@ Hardware: four M3 × 40 mm bolts, four M3 nuts and washers for the default head;
 1. Inspect the board and locate its optical window. The model assumes it is centred on the PCB. Check the underside-to-window height too; 3 mm is an assumption, not a supplied measurement. If necessary, edit `sensor_x`, `sensor_y` and `sensor_window_depth`, then re-export. Small x/y offsets tilt the hood towards the detector while keeping the slit centred over the line. Offsets of 1 mm or more require a clearance review, enforced by the model.
 2. Seat four M3 nuts in the bottom pockets. Put the carrier on the base with its four holes aligned; its bottom is assembly z=14 mm.
 3. Lower the hood arms into the two carrier slots. The narrow aperture points down; the slot floors set its height. Secure the arms with the M2 screws. The hood should not touch the sensor package when the board is fitted.
-4. Lay the line in both V grooves, keeping it gently taut through the centre. You can remove the carrier to load it, or thread it through the assembled ports. The narrow optical aperture never contacts the line.
+4. Fit the ceramic eyelets in the two Ø4 × 4.5 mm sockets on the base, with their inner faces flush and their bores aligned. Thread the line through both ceramics and the enclosure ports, keeping it gently taut through the centre. The optical aperture never contacts the line.
 5. Seat the board on its edge ledges, components down. Route jumpers through the generous slots at the short ends. Check your actual header locations and connector height before closing; standard module layouts vary. If they need more room, enlarge the exits or change the lid/foam clearance in the source and re-export. Never force the lid against pins or solder joints.
 6. Place small foam strips over the PCB's clear edge areas, over the ledges, to fill the 2 mm space to the lid. Keep foam away from headers and sharp solder points. Fit the lid and tighten the M3 bolts lightly. The board should stay seated without bending.
 
@@ -90,13 +94,13 @@ If readings barely exceed empty: confirm aperture alignment, inspect the slit fo
 
 ## Included variants and choosing a geometry
 
-| Match these parts | Underside → centre | LED tip → centre | Window → centre, assumed | Aperture surface gap |
+| Match these parts | Underside → centre | LED tip → centre | Aperture surface gap | Eyelet clear gap |
 |---|---:|---:|---:|---:|
-| carrier_14mm + hood_14mm_1p2x0p8 | 14 mm | 4 mm | 11 mm | 1.20 mm |
-| carrier_18mm + hood_18mm_1p2x0p8 | 18 mm | 8 mm | 15 mm | 1.20 mm |
-| carrier_22mm + hood_22mm_1p2x0p8 | 22 mm | 12 mm | 19 mm | 1.82 mm |
+| base_14mm + carrier_14mm + hood_14mm_1p2x0p8 | 14 mm | 4 mm | 1.20 mm | 11.4 mm |
+| base + carrier_18mm + hood_18mm_1p2x0p8 | 18 mm | 8 mm | 1.20 mm | 9.2 mm |
+| base_22mm + carrier_22mm + hood_22mm_1p2x0p8 | 22 mm | 12 mm | 1.82 mm | 7.6 mm |
 
-Always match the carrier and hood distance; the base and lid are common. At 18 mm also try `hood_18mm_0p8x0p8.stl` for finer along-line resolution, or `hood_18mm_2p0x1p0.stl` for more light. The latter automatically uses a 1.32 mm surface gap to clear illumination. Apertures are specified along × across the line.
+Match the base, carrier and hood distance; only the lid is common. The taller heads allow the LEDs to shine over closer eyelet sockets. Use the 18 mm base for all three 18 mm aperture variants. At 18 mm also try `hood_18mm_0p8x0p8.stl` for finer along-line resolution, or `hood_18mm_2p0x1p0.stl` for more light. The latter automatically uses a 1.32 mm surface gap to clear illumination. Apertures are specified along × across the line.
 
 For each geometry recalibrate empty, hold each coloured section stationary and capture at least 20 rows per colour. Compare the separation of mean r/g/b ratios with their repeat-to-repeat variation and the net brightness above empty. Select the **smallest aperture and shortest gate that still separate your colours reliably**, then increase hand-pull speed. The narrower aperture is useful only if its lower light level remains sufficient. The longer viewing distance may help LED coverage but reduces collected line light. None of these alternatives is claimed to be experimentally optimal.
 
@@ -107,11 +111,11 @@ openscad -o carrier_custom.stl -D 'part="carrier"' -D 'pcb_to_line=18' saltiga_f
 openscad -o hood_custom.stl -D 'part="hood"' -D 'pcb_to_line=18' -D 'slit_x=1.2' -D 'slit_y=0.8' saltiga_fixture.scad
 ```
 
-Use the same PCB/window/offset parameters for both. `part="assembly"` previews the geometry and `part="exploded"` separates the lid and upper assembly. Preview board and line objects are illustrative; do not export the assembly as a printable STL.
+Export the base with the same `pcb_to_line` value too. Use the same PCB/window/offset parameters for all parts. Eyelet spacing is validated for centred optics; changing sensor offsets needs an optical clearance review. `part="assembly"` previews the geometry and `part="exploded"` separates the lid and upper assembly. Preview board and line objects are illustrative; do not export the assembly as a printable STL.
 
 ## Verification and sources
 
-All ten supplied part STLs were exported from this OpenSCAD source. Each was checked for a single connected component, closed edges, consistent winding and positive volume. Digital collision checks cover the modelled PCB, package and LED envelopes; the unknown headers and actual module parts require the fit check above. The sketch compiled for Uno R3: 6,444 bytes flash and 244 bytes static RAM. No physical module or print has been tested here.
+All twelve supplied part STLs were exported from this OpenSCAD source. Each was checked for a single connected component, closed edges, consistent winding and positive volume. Digital collision checks cover the printed assembly, the modelled PCB, package and LED envelopes; numerical light-path checks also cover the eyelet-holder clearances; the unknown headers and actual module parts require the fit check above. The sketch compiled for Uno R3: 6,444 bytes flash and 244 bytes static RAM. No physical module or print has been tested here.
 
 Primary references: [ams OSRAM TCS3200 datasheet](https://look.ams-osram.com/m/664723bdb31f55db/original/TCS3200-DS000107.pdf), especially selection tables, supply requirements, switching response and frequency measurement; [Microchip ATmega328P datasheet](https://ww1.microchip.com/downloads/en/devicedoc/atmel-7810-automotive-microcontrollers-atmega328p_datasheet.pdf), external T1 clock and Timer1; [Arduino Uno R3 documentation](https://docs.arduino.cc/hardware/uno-rev3/). TCS230-labelled boards commonly use the same control convention; check the actual chip marking and module labelling before applying power. This package assumes the supplied board uses that convention.
 
