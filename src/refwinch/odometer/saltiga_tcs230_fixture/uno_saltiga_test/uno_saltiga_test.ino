@@ -8,9 +8,9 @@
    s slow: pulse counting, 100 ms/channel, 200 ms minimum display interval.
    [/] slower/faster reporting (0..5000 ms); 0 means every complete scan.
    +/- double/halve acquisition window (fast 0.1..100 ms; slow 2..100 ms).
-   Fast window changes keep calibration; count-mode changes clear it.
+   Fast/slow switches and window changes keep calibration.
    Default slow (roughly 2.5 scans/s); fast/slow mode survives reset.
-   Calibration always uses 100 ms/channel, even in fast mode; allow 4 s.
+   Calibration always uses pulse timing at 100 ms/channel; allow 4 s.
    Plot RGB ratios 0..1 in IDE 2; reference lines Min:0 Max:1.
    Brightness appears after successful w: net clear / white net clear.
    Empty fixture = 0, white reference = 1; brighter readings may exceed 1.
@@ -147,7 +147,8 @@ Reading measure(uint8_t channel) {
     TCCR1B=0; TCNT1=0; wraps=0; TIFR1=_BV(TOV1);
     start=micros(); TCCR1B=_BV(CS12)|_BV(CS11)|_BV(CS10);
   }
-  if(reciprocalMode) {
+  if(reciprocalMode || calibrating) {
+    // Calibration uses the same long-window estimator in both modes.
     // Time actual output periods, rather than rounding to an integer number
     // of pulses inside a short fixed gate. D5 wiring is unchanged. Poll the
     // hardware counter; multiple edges between polls remain accounted for.
@@ -188,11 +189,10 @@ void clearCalibration() {
 void setGate(uint32_t us) {
   if(us==gateUs) return;
   gateUs=us;
-  // Reciprocal calibration always uses 100 ms, independent of the live window.
-  if(!reciprocalMode) clearCalibration();
+  // Saved references are Hz measured with a fixed 100 ms calibration window.
+  // Live window changes affect precision, not the reference units.
   saveCalibration();
-  status(reciprocalMode?F("# fast window changed; calibration kept"):
-                        F("# gate changed; calibrations cleared; repeat e then w"));
+  status(F("# acquisition window changed; calibration kept"));
 }
 void applyScale(uint8_t pct) {
   scalePct=pct;
@@ -207,10 +207,10 @@ void setAcquisition(bool fast) {
   const uint32_t target=fast?2000UL:100000UL;
   bool changed=reciprocalMode!=fast || gateUs!=target;
   reciprocalMode=fast;gateUs=target;displayIntervalMs=fast?0:200;
-  if(changed) {clearCalibration();saveCalibration();}
+  if(changed) saveCalibration();
   havePreviousScan=false;
-  status(fast?F("# fast mode; repeat e then w; calibration takes about 4 s each"):
-              F("# slow mode; repeat e then w"));
+  status(fast?F("# fast mode; calibration kept"):
+              F("# slow mode; calibration kept"));
 }
 void calibration(bool white) {
   // Place stationary white line/reference BEFORE issuing w; no line for e.
