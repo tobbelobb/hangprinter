@@ -6,7 +6,9 @@
    p RGB Serial Plotter (default); v diagnostic CSV;
    [/] slower/faster display (100..5000 ms); default 200 ms (5 updates/s).
    +/- double/halve measurement gate (2..100 ms). Default 20 ms, 100%.
-   Plot lines: R:0..1 G:0..1 B:0..1 Min:0 Max:1. Keep anchors enabled.
+   Plot ratios 0..1 in IDE 2; reference lines Min:0 Max:1.
+   Set LEGACY_PLOT_SCALE=true for IDE 1: maps ratios to -5..+5.
+   CSV ratios remain 0..1 in either mode.
    Frequency is proportional to light; larger Hz = brighter.
    RGB channels are sequential. This is a slow hand-pull bench test.
    Timer1 reserved: no Servo library / PWM on D9 or D10.
@@ -18,6 +20,7 @@
 #error "Select Arduino Uno R3 (ATmega328P); this uses its Timer1 registers."
 #endif
 const uint8_t S0_PIN=8, S1_PIN=9, S2_PIN=10, S3_PIN=11, OUT_PIN=5;
+const bool LEGACY_PLOT_SCALE=false;
 volatile uint16_t wraps=0;
 ISR(TIMER1_OVF_vect) { ++wraps; }
 uint32_t gateUs=20000;
@@ -30,7 +33,7 @@ struct Reading {float hz; uint32_t count; bool settled;};
 Reading measure(uint8_t channel); // Keep Arduino's generated prototypes after type.
 
 void status(const __FlashStringHelper *message) {
-  // Text and raw Hz would spoil the plot's labels and 0..1 scale.
+  // Text and raw Hz would spoil the plot's labels and display scale.
   // Switch to v before calibration if you need its status messages.
   if(!plotMode) Serial.println(message);
 }
@@ -146,9 +149,10 @@ void loop() {
     for(uint8_t i=0;i<3;++i) {
       if(i) Serial.print('\t');
       Serial.print(labels[i]);Serial.print(':');
-      Serial.print(total>0?v[i]/total:0,4);
+      float ratio=total>0?v[i]/total:0;
+      Serial.print(LEGACY_PLOT_SCALE?10.0f*ratio-5.0f:ratio,4);
     }
-    Serial.println(F("\tMin:0\tMax:1"));
+    Serial.println(LEGACY_PLOT_SCALE?F("\tMin:-5\tMax:5"):F("\tMin:0\tMax:1"));
   } else {
     Serial.print(t);
     for(uint8_t i=0;i<4;++i) {Serial.print(',');Serial.print(a[i].hz,1);}
