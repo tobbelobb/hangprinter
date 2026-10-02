@@ -3,12 +3,16 @@
    S0=D8, S1=D9, S2=D10, S3=D11. Read printed module labels.
    Serial 115200. Commands: e empty-fixture baseline; w white reference;
    x reset calibration; c clear-only; r RGB+clear; 1/2/3 scaling 100/20/2%;
-   p RGB Serial Plotter (default); v diagnostic CSV;
-   [/] slower/faster display (100..5000 ms); default 200 ms (5 updates/s).
-   +/- double/halve measurement gate (2..100 ms). Default 20 ms, 100%.
-   Plot ratios 0..1 in IDE 2; reference lines Min:0 Max:1.
-   Set LEGACY_PLOT_SCALE=true for IDE 1: maps ratios to -5..+5.
-   CSV ratios remain 0..1 in either mode.
+   p RGB + brightness Serial Plotter (default); v diagnostic CSV;
+   [/] slower/faster display (100..5000 ms); minimum interval 200 ms.
+   Four 100 ms gates give roughly 2.5 complete scans/s.
+   +/- double/halve measurement gate (2..100 ms). Default 100 ms, 100%. Changing gate clears calibration.
+   Plot RGB ratios 0..1 in IDE 2; reference lines Min:0 Max:1.
+   Brightness appears after successful w: net clear / white net clear.
+   Empty fixture = 0, white reference = 1; brighter readings may exceed 1.
+   Set gate first, then e with no line, then w with stationary white line.
+   Set LEGACY_PLOT_SCALE=true for IDE 1: maps plot values to -5..+5.
+   CSV ratios remain 0..1; brightness=-1 means no white calibration.
    Frequency is proportional to light; larger Hz = brighter.
    RGB channels are sequential. This is a slow hand-pull bench test.
    Timer1 reserved: no Servo library / PWM on D9 or D10.
@@ -23,12 +27,13 @@ const uint8_t S0_PIN=8, S1_PIN=9, S2_PIN=10, S3_PIN=11, OUT_PIN=5;
 const bool LEGACY_PLOT_SCALE=false;
 volatile uint16_t wraps=0;
 ISR(TIMER1_OVF_vect) { ++wraps; }
-uint32_t gateUs=20000;
+uint32_t gateUs=100000;
 uint8_t scalePct=100;
 bool clearOnly=false, haveEmpty=false, haveWhite=false;
 bool plotMode=true;
 uint32_t displayIntervalMs=200;
 float emptyHz[4]={0,0,0,0}, gain[3]={1,1,1};
+float whiteClearHz=0;
 struct Reading {float hz; uint32_t count; bool settled;};
 Reading measure(uint8_t channel); // Keep Arduino's generated prototypes after type.
 
@@ -38,7 +43,7 @@ void status(const __FlashStringHelper *message) {
   if(!plotMode) Serial.println(message);
 }
 void csvHeader() {
-  Serial.println(F("t_ms,R_Hz,G_Hz,B_Hz,C_Hz,r,g,b,signal_Hz,min_count,settled,scale_pct,gate_us"));
+  Serial.println(F("t_ms,R_Hz,G_Hz,B_Hz,C_Hz,r,g,b,signal_Hz,min_count,settled,scale_pct,gate_us,brightness"));
 }
 
 Reading measure(uint8_t channel) {
@@ -70,12 +75,20 @@ Reading measure(uint8_t channel) {
   Reading out={count*1000000.0f/elapsed,count,settled};
   return out;
 }
+void clearCalibration() {
+  haveEmpty=haveWhite=false; whiteClearHz=0;
+  for(uint8_t i=0;i<3;++i) gain[i]=1;
+}
+void setGate(uint32_t us) {
+  if(us==gateUs) return;
+  gateUs=us; clearCalibration();
+  status(F("# gate changed; calibrations cleared; repeat e then w"));
+}
 void setScale(uint8_t pct) {
   scalePct=pct;
   digitalWrite(S0_PIN,pct==2?LOW:HIGH);
   digitalWrite(S1_PIN,pct==20?LOW:HIGH);
-  haveEmpty=false; haveWhite=false;
-  for(uint8_t i=0;i<3;++i) gain[i]=1;
+  clearCalibration();
   status(F("# scale changed; calibrations cleared"));
 }
 void calibration(bool white) {
@@ -86,7 +99,7 @@ void calibration(bool white) {
   }
   if(!white) {
     for(uint8_t i=0;i<4;++i) emptyHz[i]=sum[i];
-    haveEmpty=true; haveWhite=false;
+    haveEmpty=true; haveWhite=false; whiteClearHz=0;
     for(uint8_t i=0;i<3;++i) gain[i]=1;
     status(F("# empty baseline saved in RAM"));
   } else {
@@ -95,9 +108,12 @@ void calibration(bool white) {
       corrected[i]=sum[i]-(haveEmpty?emptyHz[i]:0); mean+=corrected[i]/3;
       if(corrected[i]<=1000000.0f/gateUs*5) stable=false;
     }
+    float correctedClear=sum[3]-(haveEmpty?emptyHz[3]:0);
+    if(correctedClear<=1000000.0f/gateUs*5) stable=false;
     if(!stable) {status(F("# white calibration rejected: low signal; improve light"));return;}
     for(uint8_t i=0;i<3;++i) gain[i]=mean/corrected[i];
-    haveWhite=true; status(F("# white gains saved in RAM"));
+    whiteClearHz=correctedClear; haveWhite=true;
+    status(F("# white gains and brightness reference saved in RAM"));
   }
   if(!stable) status(F("# warning: at least one channel failed settling"));
 }
@@ -113,7 +129,7 @@ void handleCommands() {
     char c=Serial.read();
     if(c=='e') calibration(false);
     else if(c=='w') calibration(true);
-    else if(c=='x') {haveEmpty=haveWhite=false;for(uint8_t i=0;i<3;++i) gain[i]=1;}
+    else if(c=='x') clearCalibration();
     else if(c=='c') {plotMode=false;clearOnly=true;csvHeader();}
     else if(c=='r') clearOnly=false;
     else if(c=='p') {plotMode=true;clearOnly=false;}
@@ -121,8 +137,8 @@ void handleCommands() {
     else if(c=='1') setScale(100);
     else if(c=='2') setScale(20);
     else if(c=='3') setScale(2);
-    else if(c=='+') gateUs=min(100000UL,gateUs*2);
-    else if(c=='-') gateUs=max(2000UL,gateUs/2);
+    else if(c=='+') setGate(min(100000UL,gateUs*2));
+    else if(c=='-') setGate(max(2000UL,gateUs/2));
     else if(c=='[') displayIntervalMs=min(5000UL,displayIntervalMs*2);
     else if(c==']') displayIntervalMs=max(100UL,displayIntervalMs/2);
   }
@@ -139,6 +155,11 @@ void loop() {
     float raw=a[i].hz-(haveEmpty?emptyHz[i]:0);
     v[i]=(raw>0?raw:0)*gain[i];total+=v[i];
   }
+  // Clear is independent of RGB fractions: a tiny blue residual can give
+  // b=1 while this brightness remains near zero. This is reflected signal
+  // relative to the paper reference, not photometric luminance.
+  float clearSignal=a[3].hz-(haveEmpty?emptyHz[3]:0);
+  float brightness=haveWhite?max(0.0f,clearSignal)/whiteClearHz:-1.0f;
   uint32_t minimum=0xFFFFFFFFUL;bool settled=true;
   for(uint8_t i=(clearOnly?3:0);i<4;++i) {
     if(a[i].count<minimum) minimum=a[i].count;
@@ -152,14 +173,22 @@ void loop() {
       float ratio=total>0?v[i]/total:0;
       Serial.print(LEGACY_PLOT_SCALE?10.0f*ratio-5.0f:ratio,4);
     }
-    Serial.println(LEGACY_PLOT_SCALE?F("\tMin:-5\tMax:5"):F("\tMin:0\tMax:1"));
+    Serial.print(LEGACY_PLOT_SCALE?F("\tMin:-5\tMax:5"):F("\tMin:0\tMax:1"));
+    // Append after existing traces so their plotter colours stay unchanged.
+    // Omit until calibrated rather than showing a false zero brightness.
+    if(haveWhite) {
+      Serial.print(F("\tBrightness:"));
+      Serial.print(LEGACY_PLOT_SCALE?10.0f*brightness-5.0f:brightness,4);
+    }
+    Serial.println();
   } else {
     Serial.print(t);
     for(uint8_t i=0;i<4;++i) {Serial.print(',');Serial.print(a[i].hz,1);}
     for(uint8_t i=0;i<3;++i) {Serial.print(',');Serial.print(total>0?v[i]/total:0,4);}
     Serial.print(',');Serial.print(total,1);Serial.print(',');Serial.print(minimum);
     Serial.print(',');Serial.print(settled?1:0);Serial.print(',');Serial.print(scalePct);
-    Serial.print(',');Serial.println(gateUs);
+    Serial.print(',');Serial.print(gateUs);
+    Serial.print(',');Serial.println(brightness,4);
   }
   // Display pacing is independent of the measurement gate: no averaging or
   // smoothing, and commands remain responsive between complete scans.
