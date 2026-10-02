@@ -4,19 +4,25 @@
    Serial 115200. Commands: e empty-fixture baseline; w white reference;
    x erase saved calibration; c clear-only; r RGB+clear; 1/2/3 scaling 100/20/2%;
    p RGB + brightness Serial Plotter (default); v diagnostic CSV;
-   [/] slower/faster display (100..5000 ms); minimum interval 200 ms.
-   Four 100 ms gates give roughly 2.5 complete scans/s.
-   +/- double/halve measurement gate (2..100 ms). Default 100 ms, 100%. Changing gate clears calibration.
+   f fast: reciprocal pulse timing, 2 ms/channel target, no display delay;
+   s slow: pulse counting, 100 ms/channel, 200 ms minimum display interval.
+   [/] slower/faster reporting (0..5000 ms); 0 means every complete scan.
+   +/- double/halve acquisition window (fast 0.1..100 ms; slow 2..100 ms).
+   Fast window changes keep calibration; count-mode changes clear it.
+   Default slow (roughly 2.5 scans/s); fast/slow mode survives reset.
+   Calibration always uses 100 ms/channel, even in fast mode; allow 4 s.
    Plot RGB ratios 0..1 in IDE 2; reference lines Min:0 Max:1.
    Brightness appears after successful w: net clear / white net clear.
    Empty fixture = 0, white reference = 1; brighter readings may exceed 1.
    Set gate first, then e with no line, then w with stationary white line.
-   Calibration, gate and scale survive resets/monitor changes in EEPROM.
+   Calibration, acquisition mode/window and scale survive resets in EEPROM.
    Recalibrate after changing the fixture, lighting or reference.
    Set LEGACY_PLOT_SCALE=true for IDE 1: maps plot values to -5..+5.
    CSV ratios remain 0..1; brightness=-1 means no white calibration.
    Frequency is proportional to light; larger Hz = brighter.
-   RGB channels are sequential. This is a slow hand-pull bench test.
+   RGB/clear are sequential: moving boundaries can mix colours in one row.
+   CSV includes scan_us, row_us and reciprocal (1=fast) for timing checks.
+   scan_us excludes serial output; row_us is time between scan starts.
    Timer1 reserved: no Servo library / PWM on D9 or D10.
 */
 #include <Arduino.h>
@@ -36,6 +42,9 @@ uint32_t gateUs=100000;
 uint8_t scalePct=100;
 bool clearOnly=false, haveEmpty=false, haveWhite=false;
 bool plotMode=true;
+bool reciprocalMode=false, calibrating=false;
+uint32_t previousScanUs=0;
+bool havePreviousScan=false;
 uint32_t displayIntervalMs=200;
 float emptyHz[4]={0,0,0,0}, gain[3]={1,1,1};
 float whiteClearHz=0;
@@ -50,7 +59,7 @@ struct SavedCalibration {
   float empty[4], gains[3], whiteClear;
   uint16_t checksum;
 };
-const uint32_t CALIBRATION_TAG=0x534C5401UL; // SLT, format version 1
+const uint32_t CALIBRATION_TAG=0x534C5402UL; // SLT, format version 2; same record layout as v1
 uint16_t calibrationChecksum(const SavedCalibration &saved);
 void applyScale(uint8_t pct);
 
@@ -66,7 +75,7 @@ uint16_t calibrationChecksum(const SavedCalibration &saved) {
 void saveCalibration() {
   SavedCalibration saved={};
   saved.tag=CALIBRATION_TAG; saved.gate=gateUs; saved.scale=scalePct;
-  saved.flags=(haveEmpty?1:0)|(haveWhite?2:0);
+  saved.flags=(haveEmpty?1:0)|(haveWhite?2:0)|(reciprocalMode?4:0);
   for(uint8_t i=0;i<4;++i) saved.empty[i]=emptyHz[i];
   for(uint8_t i=0;i<3;++i) saved.gains[i]=gain[i];
   saved.whiteClear=whiteClearHz;
@@ -76,8 +85,10 @@ void saveCalibration() {
 bool restoreCalibration() {
   SavedCalibration saved;
   EEPROM.get(0,saved);
-  if(saved.tag!=CALIBRATION_TAG || saved.checksum!=calibrationChecksum(saved)) return false;
-  if(saved.gate<2000 || saved.gate>100000 || saved.flags>3) return false;
+  if((saved.tag!=CALIBRATION_TAG && saved.tag!=0x534C5401UL) ||
+     saved.checksum!=calibrationChecksum(saved)) return false;
+  if(saved.flags>7 || saved.gate<((saved.flags&4)?100UL:2000UL) ||
+     saved.gate>100000) return false;
   if(saved.scale!=2 && saved.scale!=20 && saved.scale!=100) return false;
   for(uint8_t i=0;i<4;++i)
     if(!isfinite(saved.empty[i]) || saved.empty[i]<0) return false;
@@ -85,6 +96,8 @@ bool restoreCalibration() {
     if(!isfinite(saved.gains[i]) || saved.gains[i]<=0) return false;
   if(!isfinite(saved.whiteClear) || saved.whiteClear<0 ||
      ((saved.flags&2) && saved.whiteClear<=0)) return false;
+  reciprocalMode=saved.flags&4;
+  displayIntervalMs=reciprocalMode?0:200;
   gateUs=saved.gate; applyScale(saved.scale);
   haveEmpty=saved.flags&1; haveWhite=saved.flags&2;
   for(uint8_t i=0;i<4;++i) emptyHz[i]=saved.empty[i];
@@ -99,15 +112,29 @@ void status(const __FlashStringHelper *message) {
   if(!plotMode) Serial.println(message);
 }
 void csvHeader() {
-  Serial.println(F("t_ms,R_Hz,G_Hz,B_Hz,C_Hz,r,g,b,signal_Hz,min_count,settled,scale_pct,gate_us,brightness"));
+  Serial.println(F("t_ms,R_Hz,G_Hz,B_Hz,C_Hz,r,g,b,signal_Hz,min_count,settled,scale_pct,gate_us,brightness,scan_us,row_us,reciprocal"));
 }
 
+// Atomically read the extended external-pulse counter without stopping it.
+uint32_t pulseCount() {
+  uint32_t count;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    uint16_t low=TCNT1, high=wraps;
+    if(TIFR1&_BV(TOV1)) {
+      ++high; TIFR1=_BV(TOV1); wraps=high;
+      low=TCNT1;
+    }
+    count=((uint32_t)high<<16)|low;
+  }
+  return count;
+}
 Reading measure(uint8_t channel) {
   const uint8_t s2[4]={LOW,HIGH,LOW,HIGH}; // R G B clear
   const uint8_t s3[4]={LOW,HIGH,HIGH,LOW};
+  const uint32_t windowUs=calibrating?100000UL:gateUs;
   digitalWrite(S2_PIN,s2[channel]); digitalWrite(S3_PIN,s3[channel]);
-  // Hardware counts fast pulses even when digitalRead cannot follow them.
-  // Settle by counting edges in hardware as well, no polling pulse aliasing.
+  // Discard two edges after switching filters. The device needs one new
+  // output period to respond; dark channels can make settling take longer.
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     TCCR1B=0; TCNT1=0; wraps=0; TIFR1=_BV(TOV1);
     TCCR1B=_BV(CS12)|_BV(CS11)|_BV(CS10);
@@ -120,14 +147,36 @@ Reading measure(uint8_t channel) {
     TCCR1B=0; TCNT1=0; wraps=0; TIFR1=_BV(TOV1);
     start=micros(); TCCR1B=_BV(CS12)|_BV(CS11)|_BV(CS10);
   }
-  while((uint32_t)(micros()-start)<gateUs) {}
-  uint32_t elapsed, count;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    TCCR1B=0; elapsed=micros()-start;
-    uint16_t low=TCNT1, high=wraps;
-    if(TIFR1&_BV(TOV1)) {++high; TIFR1=_BV(TOV1);}
-    count=((uint32_t)high<<16)|low;
+  if(reciprocalMode) {
+    // Time actual output periods, rather than rounding to an integer number
+    // of pulses inside a short fixed gate. D5 wiring is unchanged. Poll the
+    // hardware counter; multiple edges between polls remain accounted for.
+    // Uno micros() has 4 us ticks, plus polling jitter: not a precision
+    // hardware-capture timestamp. Endpoint error matters for very short runs.
+    uint32_t firstCount=0, firstTime=0, lastCount=0, lastTime=0;
+    bool haveFirst=false, complete=false;
+    const uint32_t timeoutUs=windowUs+50000UL;
+    while((uint32_t)(micros()-start)<timeoutUs) {
+      uint32_t count=pulseCount();
+      if(count!=lastCount) {
+        uint32_t now=micros();
+        if(!haveFirst) {firstCount=count;firstTime=now;haveFirst=true;}
+        lastCount=count;lastTime=now;
+        if(count>firstCount && (uint32_t)(now-firstTime)>=windowUs) {
+          complete=true;break;
+        }
+      }
+    }
+    TCCR1B=0;
+    uint32_t periods=lastCount-firstCount;
+    uint32_t elapsed=lastTime-firstTime;
+    Reading out={periods && elapsed?periods*1000000.0f/elapsed:0,
+                 periods,settled && complete};
+    return out;
   }
+  while((uint32_t)(micros()-start)<windowUs) {}
+  TCCR1B=0;
+  uint32_t elapsed=micros()-start, count=pulseCount();
   Reading out={count*1000000.0f/elapsed,count,settled};
   return out;
 }
@@ -138,8 +187,12 @@ void clearCalibration() {
 }
 void setGate(uint32_t us) {
   if(us==gateUs) return;
-  gateUs=us; clearCalibration(); saveCalibration();
-  status(F("# gate changed; calibrations cleared; repeat e then w"));
+  gateUs=us;
+  // Reciprocal calibration always uses 100 ms, independent of the live window.
+  if(!reciprocalMode) clearCalibration();
+  saveCalibration();
+  status(reciprocalMode?F("# fast window changed; calibration kept"):
+                        F("# gate changed; calibrations cleared; repeat e then w"));
 }
 void applyScale(uint8_t pct) {
   scalePct=pct;
@@ -150,12 +203,23 @@ void setScale(uint8_t pct) {
   applyScale(pct); clearCalibration(); saveCalibration();
   status(F("# scale changed; calibrations cleared"));
 }
+void setAcquisition(bool fast) {
+  const uint32_t target=fast?2000UL:100000UL;
+  bool changed=reciprocalMode!=fast || gateUs!=target;
+  reciprocalMode=fast;gateUs=target;displayIntervalMs=fast?0:200;
+  if(changed) {clearCalibration();saveCalibration();}
+  havePreviousScan=false;
+  status(fast?F("# fast mode; repeat e then w; calibration takes about 4 s each"):
+              F("# slow mode; repeat e then w"));
+}
 void calibration(bool white) {
   // Place stationary white line/reference BEFORE issuing w; no line for e.
   float sum[4]={0,0,0,0}; bool stable=true;
+  calibrating=true;
   for(uint8_t n=0;n<8;++n) for(uint8_t i=0;i<4;++i) {
     Reading a=measure(i); sum[i]+=a.hz/8; stable &= a.settled;
   }
+  calibrating=false;havePreviousScan=false;
   if(!white) {
     for(uint8_t i=0;i<4;++i) emptyHz[i]=sum[i];
     haveEmpty=true; haveWhite=false; whiteClearHz=0;
@@ -166,10 +230,10 @@ void calibration(bool white) {
     float corrected[3], mean=0;
     for(uint8_t i=0;i<3;++i) {
       corrected[i]=sum[i]-(haveEmpty?emptyHz[i]:0); mean+=corrected[i]/3;
-      if(corrected[i]<=1000000.0f/gateUs*5) stable=false;
+      if(corrected[i]<=50.0f) stable=false;
     }
     float correctedClear=sum[3]-(haveEmpty?emptyHz[3]:0);
-    if(correctedClear<=1000000.0f/gateUs*5) stable=false;
+    if(correctedClear<=50.0f) stable=false;
     if(!stable) {status(F("# white calibration rejected: low signal; improve light"));return;}
     for(uint8_t i=0;i<3;++i) gain[i]=mean/corrected[i];
     whiteClearHz=correctedClear; haveWhite=true;
@@ -196,22 +260,27 @@ void handleCommands() {
     else if(c=='r') clearOnly=false;
     else if(c=='p') {plotMode=true;clearOnly=false;}
     else if(c=='v') {plotMode=false;csvHeader();}
+    else if(c=='f') setAcquisition(true);
+    else if(c=='s') setAcquisition(false);
     else if(c=='1') setScale(100);
     else if(c=='2') setScale(20);
     else if(c=='3') setScale(2);
     else if(c=='+') setGate(min(100000UL,gateUs*2));
-    else if(c=='-') setGate(max(2000UL,gateUs/2));
-    else if(c=='[') displayIntervalMs=min(5000UL,displayIntervalMs*2);
-    else if(c==']') displayIntervalMs=max(100UL,displayIntervalMs/2);
+    else if(c=='-') setGate(max(reciprocalMode?100UL:2000UL,gateUs/2));
+    else if(c=='[') displayIntervalMs=displayIntervalMs?min(5000UL,displayIntervalMs*2):20;
+    else if(c==']') displayIntervalMs=displayIntervalMs<=20?0:displayIntervalMs/2;
   }
 }
 void loop() {
   handleCommands();
-  uint32_t t=millis();Reading a[4];
+  uint32_t t=millis(), scanStart=micros();Reading a[4];
+  uint32_t rowUs=havePreviousScan?scanStart-previousScanUs:0;
+  previousScanUs=scanStart;havePreviousScan=true;
   for(uint8_t i=0;i<4;++i) {
     if(clearOnly && i<3) {a[i]={0,0,true};continue;}
     a[i]=measure(i);
   }
+  uint32_t scanUs=micros()-scanStart;
   float v[3],total=0;
   for(uint8_t i=0;i<3;++i) {
     float raw=a[i].hz-(haveEmpty?emptyHz[i]:0);
@@ -250,7 +319,9 @@ void loop() {
     Serial.print(',');Serial.print(total,1);Serial.print(',');Serial.print(minimum);
     Serial.print(',');Serial.print(settled?1:0);Serial.print(',');Serial.print(scalePct);
     Serial.print(',');Serial.print(gateUs);
-    Serial.print(',');Serial.println(brightness,4);
+    Serial.print(',');Serial.print(brightness,4);
+    Serial.print(',');Serial.print(scanUs);Serial.print(',');Serial.print(rowUs);
+    Serial.print(',');Serial.println(reciprocalMode?1:0);
   }
   // Display pacing is independent of the measurement gate: no averaging or
   // smoothing, and commands remain responsive between complete scans.
