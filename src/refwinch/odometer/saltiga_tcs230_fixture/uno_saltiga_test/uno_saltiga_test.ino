@@ -2,7 +2,7 @@
    VCC=5V, GND=GND, OE=GND, OUT=D5 (hardware T1 clock),
    S0=D8, S1=D9, S2=D10, S3=D11. Read printed module labels.
    Serial 115200. Commands: e empty-fixture baseline; w white reference;
-   x reset calibration; c clear-only; r RGB+clear; 1/2/3 scaling 100/20/2%;
+   x erase saved calibration; c clear-only; r RGB+clear; 1/2/3 scaling 100/20/2%;
    p RGB + brightness Serial Plotter (default); v diagnostic CSV;
    [/] slower/faster display (100..5000 ms); minimum interval 200 ms.
    Four 100 ms gates give roughly 2.5 complete scans/s.
@@ -11,6 +11,8 @@
    Brightness appears after successful w: net clear / white net clear.
    Empty fixture = 0, white reference = 1; brighter readings may exceed 1.
    Set gate first, then e with no line, then w with stationary white line.
+   Calibration, gate and scale survive resets/monitor changes in EEPROM.
+   Recalibrate after changing the fixture, lighting or reference.
    Set LEGACY_PLOT_SCALE=true for IDE 1: maps plot values to -5..+5.
    CSV ratios remain 0..1; brightness=-1 means no white calibration.
    Frequency is proportional to light; larger Hz = brighter.
@@ -18,6 +20,9 @@
    Timer1 reserved: no Servo library / PWM on D9 or D10.
 */
 #include <Arduino.h>
+#include <EEPROM.h>
+#include <math.h>
+#include <stddef.h>
 #include <avr/interrupt.h>
 #include <util/atomic.h>
 #if !defined(__AVR_ATmega328P__)
@@ -36,6 +41,57 @@ float emptyHz[4]={0,0,0,0}, gain[3]={1,1,1};
 float whiteClearHz=0;
 struct Reading {float hz; uint32_t count; bool settled;};
 Reading measure(uint8_t channel); // Keep Arduino's generated prototypes after type.
+
+// Versioned record at EEPROM address 0. Writes happen only on calibration or
+// settings commands, never on each scan. EEPROM.put updates changed bytes.
+struct SavedCalibration {
+  uint32_t tag, gate;
+  uint8_t scale, flags;
+  float empty[4], gains[3], whiteClear;
+  uint16_t checksum;
+};
+const uint32_t CALIBRATION_TAG=0x534C5401UL; // SLT, format version 1
+uint16_t calibrationChecksum(const SavedCalibration &saved);
+void applyScale(uint8_t pct);
+
+uint16_t calibrationChecksum(const SavedCalibration &saved) {
+  const uint8_t *bytes=(const uint8_t *)&saved;
+  uint16_t crc=0xFFFF;
+  for(uint8_t i=0;i<offsetof(SavedCalibration,checksum);++i) {
+    crc ^= bytes[i];
+    for(uint8_t bit=0;bit<8;++bit) crc=(crc&1)?(crc>>1)^0xA001:crc>>1;
+  }
+  return crc;
+}
+void saveCalibration() {
+  SavedCalibration saved={};
+  saved.tag=CALIBRATION_TAG; saved.gate=gateUs; saved.scale=scalePct;
+  saved.flags=(haveEmpty?1:0)|(haveWhite?2:0);
+  for(uint8_t i=0;i<4;++i) saved.empty[i]=emptyHz[i];
+  for(uint8_t i=0;i<3;++i) saved.gains[i]=gain[i];
+  saved.whiteClear=whiteClearHz;
+  saved.checksum=calibrationChecksum(saved);
+  EEPROM.put(0,saved);
+}
+bool restoreCalibration() {
+  SavedCalibration saved;
+  EEPROM.get(0,saved);
+  if(saved.tag!=CALIBRATION_TAG || saved.checksum!=calibrationChecksum(saved)) return false;
+  if(saved.gate<2000 || saved.gate>100000 || saved.flags>3) return false;
+  if(saved.scale!=2 && saved.scale!=20 && saved.scale!=100) return false;
+  for(uint8_t i=0;i<4;++i)
+    if(!isfinite(saved.empty[i]) || saved.empty[i]<0) return false;
+  for(uint8_t i=0;i<3;++i)
+    if(!isfinite(saved.gains[i]) || saved.gains[i]<=0) return false;
+  if(!isfinite(saved.whiteClear) || saved.whiteClear<0 ||
+     ((saved.flags&2) && saved.whiteClear<=0)) return false;
+  gateUs=saved.gate; applyScale(saved.scale);
+  haveEmpty=saved.flags&1; haveWhite=saved.flags&2;
+  for(uint8_t i=0;i<4;++i) emptyHz[i]=saved.empty[i];
+  for(uint8_t i=0;i<3;++i) gain[i]=saved.gains[i];
+  whiteClearHz=saved.whiteClear;
+  return true;
+}
 
 void status(const __FlashStringHelper *message) {
   // Text and raw Hz would spoil the plot's labels and display scale.
@@ -78,17 +134,20 @@ Reading measure(uint8_t channel) {
 void clearCalibration() {
   haveEmpty=haveWhite=false; whiteClearHz=0;
   for(uint8_t i=0;i<3;++i) gain[i]=1;
+  for(uint8_t i=0;i<4;++i) emptyHz[i]=0;
 }
 void setGate(uint32_t us) {
   if(us==gateUs) return;
-  gateUs=us; clearCalibration();
+  gateUs=us; clearCalibration(); saveCalibration();
   status(F("# gate changed; calibrations cleared; repeat e then w"));
 }
-void setScale(uint8_t pct) {
+void applyScale(uint8_t pct) {
   scalePct=pct;
   digitalWrite(S0_PIN,pct==2?LOW:HIGH);
   digitalWrite(S1_PIN,pct==20?LOW:HIGH);
-  clearCalibration();
+}
+void setScale(uint8_t pct) {
+  applyScale(pct); clearCalibration(); saveCalibration();
   status(F("# scale changed; calibrations cleared"));
 }
 void calibration(bool white) {
@@ -101,7 +160,8 @@ void calibration(bool white) {
     for(uint8_t i=0;i<4;++i) emptyHz[i]=sum[i];
     haveEmpty=true; haveWhite=false; whiteClearHz=0;
     for(uint8_t i=0;i<3;++i) gain[i]=1;
-    status(F("# empty baseline saved in RAM"));
+    saveCalibration();
+    status(F("# empty baseline saved in EEPROM"));
   } else {
     float corrected[3], mean=0;
     for(uint8_t i=0;i<3;++i) {
@@ -113,7 +173,8 @@ void calibration(bool white) {
     if(!stable) {status(F("# white calibration rejected: low signal; improve light"));return;}
     for(uint8_t i=0;i<3;++i) gain[i]=mean/corrected[i];
     whiteClearHz=correctedClear; haveWhite=true;
-    status(F("# white gains and brightness reference saved in RAM"));
+    saveCalibration();
+    status(F("# white gains and brightness reference saved in EEPROM"));
   }
   if(!stable) status(F("# warning: at least one channel failed settling"));
 }
@@ -121,7 +182,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(S0_PIN,OUTPUT);pinMode(S1_PIN,OUTPUT);
   pinMode(S2_PIN,OUTPUT);pinMode(S3_PIN,OUTPUT);pinMode(OUT_PIN,INPUT);
-  TCCR1A=0;TCCR1B=0;TIMSK1=_BV(TOIE1);setScale(100);
+  TCCR1A=0;TCCR1B=0;TIMSK1=_BV(TOIE1);applyScale(100);
+  restoreCalibration(); // Read only at boot; never overwrite saved calibration here.
   if(!plotMode) csvHeader();
 }
 void handleCommands() {
@@ -129,7 +191,7 @@ void handleCommands() {
     char c=Serial.read();
     if(c=='e') calibration(false);
     else if(c=='w') calibration(true);
-    else if(c=='x') clearCalibration();
+    else if(c=='x') {clearCalibration();saveCalibration();status(F("# saved calibration cleared"));}
     else if(c=='c') {plotMode=false;clearOnly=true;csvHeader();}
     else if(c=='r') clearOnly=false;
     else if(c=='p') {plotMode=true;clearOnly=false;}
