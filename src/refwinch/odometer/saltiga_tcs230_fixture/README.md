@@ -69,9 +69,24 @@ Power the Uno from USB for this test. Use the module's existing LED resistors; i
 
 The sketch uses Timer1 as a hardware pulse counter, so it does not need an interrupt for every sensor pulse. D5 is essential; moving OUT to D2 will not work with this sketch. Timer1 is reserved: do not use Servo or PWM on D9/D10 at the same time. S1/S2 can still use those pins as ordinary digital outputs.
 
+## Readable RGB graph
+
+The sketch now starts in **Serial Plotter mode**, with labelled `R`, `G`, and `B` curves. Each is a fraction from **0 to 1**, using the existing baseline subtraction and optional white calibration. The `Min` and `Max` reference lines are always 0 and 1; leave them enabled to keep the graph scale steady. Raw frequencies and status text are omitted in graph mode.
+
+1. Re-upload `uno_saltiga_test/uno_saltiga_test.ino` from this repo folder.
+2. Close Serial Monitor and open **Tools → Serial Plotter**, on the same Uno port at **115200 baud**.
+3. Watch the curves while moving coloured sections slowly under the aperture. They normally sum to 1 when there is a signal; all three are 0 when the baseline-subtracted total is zero.
+4. The display updates at most **five times per second** (one scan every 200 ms). To slow it down, send `[` in the plotter's message field: once gives 400 ms, twice gives 800 ms. Send `]` to speed it up. Supported display intervals are 100–5000 ms. You can also change the `displayIntervalMs` starting value in the sketch.
+
+Display pacing does not change the 20 ms per-channel measurement gate and does not smooth or average away transitions. Very low light or a longer measurement gate can make updates slower than the selected interval. The horizontal axis is sample index rather than a precise time axis. These normalised detector fractions are not independent white-normalised intensities or sRGB values.
+
+Send `p` to select graph mode and RGB measurement. Send `v` to restore the full diagnostic CSV at the same slower display rate; use Serial Monitor for it. Calibration commands `e` and `w` still work in graph mode and briefly pause the graph, but their status messages are suppressed to keep the graph clean. Use CSV mode when checking calibration acceptance or low-signal warnings. Calibration stays in RAM only and is lost if opening a viewer resets the Uno; send calibration commands from the plotter after opening it when you need to retain them for that graph session.
+
+See [Arduino's Serial Plotter guide](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-serial-plotter/) for the viewer controls.
+
 ## First test and calibration
 
-1. Open the sketch in Arduino IDE, select **Arduino Uno**, upload, then open Serial Monitor at **115200 baud**. No libraries need installing. The output is CSV; lines starting with `#` are status messages.
+1. Open the sketch in Arduino IDE, select **Arduino Uno**, upload, then open Serial Monitor at **115200 baud**. No libraries need installing. The default output is graph-friendly RGB. Send `v` for the diagnostic CSV used in the steps below; lines starting with `#` are status messages. Send `p` afterwards to return to the graph.
 2. Without line in the optical span, close the lid and send `e`. This averages eight readings of each channel and stores the illuminated **empty fixture** baseline in RAM. Keep illumination and enclosure unchanged afterwards. This is not a true lights-off detector dark calibration.
 3. Insert a stationary coloured Saltiga section, close the fixture, and observe `R_Hz, G_Hz, B_Hz, C_Hz`. More Hz means more light. Confirm a repeatable increase above the empty fixture. Repeat for each colour before pulling the line.
 4. Optional: put an undyed white piece of braid of similar diameter in the same position and send `w`. This equalises channel gains after baseline subtraction. A large white card is only a rough gain reference because it fills a different field of view. If no white line is available, use `e` alone and compare the uncalibrated ratios across the actual colours.
@@ -82,13 +97,15 @@ The sketch uses Timer1 as a hardware pulse counter, so it does not need an inter
 | `e` | Empty-fixture baseline; clears white gains |
 | `w` | Optional stationary white reference; rejected when signal is too low |
 | `x` | Clear baseline and gain calibration |
-| `c` / `r` | Clear-only / sequential RGB + clear mode |
+| `p` / `v` | RGB graph (default) / full diagnostic CSV |
+| `[` / `]` | Slower / faster display; 100–5000 ms, default 200 ms |
+| `c` / `r` | Clear-only CSV / sequential RGB + clear; `p` also enables RGB |
 | `1` / `2` / `3` | 100% / 20% / 2% output scaling; clears calibrations |
 | `+` / `-` | Double / halve gate time; bounded to 2–100 ms |
 
-Defaults are **100% scaling and a 20 ms measurement gate per channel**. The small aperture reduces light substantially, so keeping the full pulse rate helps resolution. Filter changes wait for two output edges, up to 50 ms; `settled=0` flags a timeout. `min_count` is the smallest count in the measured channels: below 20, quantisation alone can be several percent; aim for 100 or more counts when comparing subtle differences. Empty subtraction can make a weak net signal much noisier than the raw count suggests.
+Defaults are **RGB graph mode, 200 ms display interval, 100% scaling and a 20 ms measurement gate per channel**. The small aperture reduces light substantially, so keeping the full pulse rate helps resolution. Filter changes wait for two output edges, up to 50 ms; `settled=0` flags a timeout. `min_count` is the smallest count in the measured channels: below 20, quantisation alone can be several percent; aim for 100 or more counts when comparing subtle differences. Empty subtraction can make a weak net signal much noisier than the raw count suggests.
 
-RGB and clear are sampled sequentially. A complete row takes at least about 80 ms, plus settling, computation and serial output. `t_ms` timestamps the start of the scan; it is not a simultaneous RGB timestamp. At 5 mm/s an 80 ms scan spans 0.4 mm; at 1 m/s it spans 80 mm. Do not interpret these rows as high-speed boundary positions. Use clear-only to inspect intensity edges at a higher rate; colour identification still needs RGB. For Serial Plotter, use numeric columns of interest from the captured CSV; raw Hz and fractions have very different scales.
+RGB and clear are sampled sequentially. Acquiring a complete row takes at least about 80 ms, plus settling, computation and serial output; display pacing then waits as needed before the next scan. `t_ms` timestamps the start of the scan; it is not a simultaneous RGB timestamp. At 5 mm/s an 80 ms scan spans 0.4 mm; at 1 m/s it spans 80 mm. Do not interpret these rows as high-speed boundary positions. Use clear-only to inspect intensity edges at a higher rate; colour identification still needs RGB. Use `p` for the Serial Plotter so raw Hz, timestamps and counts do not stretch its vertical scale.
 
 If readings barely exceed empty: confirm aperture alignment, inspect the slit for blockage, increase gate time, and compare the larger aperture. If a white braid still gives little extra signal, the module LEDs may not illuminate the line adequately at this distance. Compare the shorter head; if necessary, add a diffused white source aimed at the line from outside the detector hood. More counting time cannot cure poor optical contrast. If direct sunlight saturates the sensor, close light leaks; lowering output scaling does not remove internal detector saturation.
 
@@ -115,8 +132,8 @@ Export the base with the same `pcb_to_line` value too. Use the same PCB/window/o
 
 ## Verification and sources
 
-All twelve supplied part STLs were exported from this OpenSCAD source. Each was checked for a single connected component, closed edges, consistent winding and positive volume. Digital collision checks cover the printed assembly, the modelled PCB, package and LED envelopes; numerical light-path checks also cover the eyelet-holder clearances; the unknown headers and actual module parts require the fit check above. The sketch compiled for Uno R3: 6,444 bytes flash and 244 bytes static RAM. No physical module or print has been tested here.
+All twelve supplied part STLs were exported from this OpenSCAD source. Each was checked for a single connected component, closed edges, consistent winding and positive volume. Digital collision checks cover the printed assembly, the modelled PCB, package and LED envelopes; numerical light-path checks also cover the eyelet-holder clearances; the unknown headers and actual module parts require the fit check above. The sketch compiled for Uno R3: 6,854 bytes flash and 252 bytes static RAM. No physical module or print has been tested here.
 
 Primary references: [ams OSRAM TCS3200 datasheet](https://look.ams-osram.com/m/664723bdb31f55db/original/TCS3200-DS000107.pdf), especially selection tables, supply requirements, switching response and frequency measurement; [Microchip ATmega328P datasheet](https://ww1.microchip.com/downloads/en/devicedoc/atmel-7810-automotive-microcontrollers-atmega328p_datasheet.pdf), external T1 clock and Timer1; [Arduino Uno R3 documentation](https://docs.arduino.cc/hardware/uno-rev3/). TCS230-labelled boards commonly use the same control convention; check the actual chip marking and module labelling before applying power. This package assumes the supplied board uses that convention.
 
-All deliverables are confined to this chat's outputs directory. No files under `/home/torbjorn/repos/hangprinter` were edited.
+This folder in the hangprinter repo is now the active source. Edit the sketch here rather than older copies in the chat outputs folder.

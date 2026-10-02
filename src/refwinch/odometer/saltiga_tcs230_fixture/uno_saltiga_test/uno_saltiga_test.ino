@@ -3,7 +3,10 @@
    S0=D8, S1=D9, S2=D10, S3=D11. Read printed module labels.
    Serial 115200. Commands: e empty-fixture baseline; w white reference;
    x reset calibration; c clear-only; r RGB+clear; 1/2/3 scaling 100/20/2%;
+   p RGB Serial Plotter (default); v diagnostic CSV;
+   [/] slower/faster display (100..5000 ms); default 200 ms (5 updates/s).
    +/- double/halve measurement gate (2..100 ms). Default 20 ms, 100%.
+   Plot lines: R:0..1 G:0..1 B:0..1 Min:0 Max:1. Keep anchors enabled.
    Frequency is proportional to light; larger Hz = brighter.
    RGB channels are sequential. This is a slow hand-pull bench test.
    Timer1 reserved: no Servo library / PWM on D9 or D10.
@@ -20,9 +23,20 @@ ISR(TIMER1_OVF_vect) { ++wraps; }
 uint32_t gateUs=20000;
 uint8_t scalePct=100;
 bool clearOnly=false, haveEmpty=false, haveWhite=false;
+bool plotMode=true;
+uint32_t displayIntervalMs=200;
 float emptyHz[4]={0,0,0,0}, gain[3]={1,1,1};
 struct Reading {float hz; uint32_t count; bool settled;};
 Reading measure(uint8_t channel); // Keep Arduino's generated prototypes after type.
+
+void status(const __FlashStringHelper *message) {
+  // Text and raw Hz would spoil the plot's labels and 0..1 scale.
+  // Switch to v before calibration if you need its status messages.
+  if(!plotMode) Serial.println(message);
+}
+void csvHeader() {
+  Serial.println(F("t_ms,R_Hz,G_Hz,B_Hz,C_Hz,r,g,b,signal_Hz,min_count,settled,scale_pct,gate_us"));
+}
 
 Reading measure(uint8_t channel) {
   const uint8_t s2[4]={LOW,HIGH,LOW,HIGH}; // R G B clear
@@ -59,7 +73,7 @@ void setScale(uint8_t pct) {
   digitalWrite(S1_PIN,pct==20?LOW:HIGH);
   haveEmpty=false; haveWhite=false;
   for(uint8_t i=0;i<3;++i) gain[i]=1;
-  Serial.println(F("# scale changed; calibrations cleared"));
+  status(F("# scale changed; calibrations cleared"));
 }
 void calibration(bool white) {
   // Place stationary white line/reference BEFORE issuing w; no line for e.
@@ -71,41 +85,47 @@ void calibration(bool white) {
     for(uint8_t i=0;i<4;++i) emptyHz[i]=sum[i];
     haveEmpty=true; haveWhite=false;
     for(uint8_t i=0;i<3;++i) gain[i]=1;
-    Serial.println(F("# empty baseline saved in RAM"));
+    status(F("# empty baseline saved in RAM"));
   } else {
     float corrected[3], mean=0;
     for(uint8_t i=0;i<3;++i) {
       corrected[i]=sum[i]-(haveEmpty?emptyHz[i]:0); mean+=corrected[i]/3;
       if(corrected[i]<=1000000.0f/gateUs*5) stable=false;
     }
-    if(!stable) {Serial.println(F("# white calibration rejected: low signal; improve light"));return;}
+    if(!stable) {status(F("# white calibration rejected: low signal; improve light"));return;}
     for(uint8_t i=0;i<3;++i) gain[i]=mean/corrected[i];
-    haveWhite=true; Serial.println(F("# white gains saved in RAM"));
+    haveWhite=true; status(F("# white gains saved in RAM"));
   }
-  if(!stable) Serial.println(F("# warning: at least one channel failed settling"));
+  if(!stable) status(F("# warning: at least one channel failed settling"));
 }
 void setup() {
   Serial.begin(115200);
   pinMode(S0_PIN,OUTPUT);pinMode(S1_PIN,OUTPUT);
   pinMode(S2_PIN,OUTPUT);pinMode(S3_PIN,OUTPUT);pinMode(OUT_PIN,INPUT);
   TCCR1A=0;TCCR1B=0;TIMSK1=_BV(TOIE1);setScale(100);
-  Serial.println(F("# e=empty w=white x=reset c=clear r=rgb 1/2/3=scale +/-=gate"));
-  Serial.println(F("t_ms,R_Hz,G_Hz,B_Hz,C_Hz,r,g,b,signal_Hz,min_count,settled,scale_pct,gate_us"));
+  if(!plotMode) csvHeader();
 }
-void loop() {
+void handleCommands() {
   while(Serial.available()) {
     char c=Serial.read();
     if(c=='e') calibration(false);
     else if(c=='w') calibration(true);
     else if(c=='x') {haveEmpty=haveWhite=false;for(uint8_t i=0;i<3;++i) gain[i]=1;}
-    else if(c=='c') clearOnly=true;
+    else if(c=='c') {plotMode=false;clearOnly=true;csvHeader();}
     else if(c=='r') clearOnly=false;
+    else if(c=='p') {plotMode=true;clearOnly=false;}
+    else if(c=='v') {plotMode=false;csvHeader();}
     else if(c=='1') setScale(100);
     else if(c=='2') setScale(20);
     else if(c=='3') setScale(2);
     else if(c=='+') gateUs=min(100000UL,gateUs*2);
     else if(c=='-') gateUs=max(2000UL,gateUs/2);
+    else if(c=='[') displayIntervalMs=min(5000UL,displayIntervalMs*2);
+    else if(c==']') displayIntervalMs=max(100UL,displayIntervalMs/2);
   }
+}
+void loop() {
+  handleCommands();
   uint32_t t=millis();Reading a[4];
   for(uint8_t i=0;i<4;++i) {
     if(clearOnly && i<3) {a[i]={0,0,true};continue;}
@@ -121,10 +141,26 @@ void loop() {
     if(a[i].count<minimum) minimum=a[i].count;
     settled &= a[i].settled;
   }
-  Serial.print(t);
-  for(uint8_t i=0;i<4;++i) {Serial.print(',');Serial.print(a[i].hz,1);}
-  for(uint8_t i=0;i<3;++i) {Serial.print(',');Serial.print(total>0?v[i]/total:0,4);}
-  Serial.print(',');Serial.print(total,1);Serial.print(',');Serial.print(minimum);
-  Serial.print(',');Serial.print(settled?1:0);Serial.print(',');Serial.print(scalePct);
-  Serial.print(',');Serial.println(gateUs);
+  if(plotMode) {
+    const char labels[3]={'R','G','B'};
+    for(uint8_t i=0;i<3;++i) {
+      if(i) Serial.print('\t');
+      Serial.print(labels[i]);Serial.print(':');
+      Serial.print(total>0?v[i]/total:0,4);
+    }
+    Serial.println(F("\tMin:0\tMax:1"));
+  } else {
+    Serial.print(t);
+    for(uint8_t i=0;i<4;++i) {Serial.print(',');Serial.print(a[i].hz,1);}
+    for(uint8_t i=0;i<3;++i) {Serial.print(',');Serial.print(total>0?v[i]/total:0,4);}
+    Serial.print(',');Serial.print(total,1);Serial.print(',');Serial.print(minimum);
+    Serial.print(',');Serial.print(settled?1:0);Serial.print(',');Serial.print(scalePct);
+    Serial.print(',');Serial.println(gateUs);
+  }
+  // Display pacing is independent of the measurement gate: no averaging or
+  // smoothing, and commands remain responsive between complete scans.
+  while((uint32_t)(millis()-t)<displayIntervalMs) {
+    handleCommands();
+    delay(1);
+  }
 }
