@@ -42,6 +42,66 @@ a low-clear observation alone cannot identify which occurred. Capture actual
 fault conditions before choosing a threshold that must also tolerate black.
 `h` makes the raw health measurement visible without stretching the RGB plot.
 
+## Live colour feedback window
+
+Close the IDE Serial Monitor and Plotter, then run from this directory:
+
+```sh
+python3 live_colour_feedback.py
+```
+
+This opens a separate desktop window using the existing sketch's `a` stream;
+no sketch upload or IDE source change is needed. Python requires tkinter and
+pyserial, plus the same experiment helper dependencies. The default model is
+`data/palette_2026-10-06_analysis/palette_model.json`. It must match the palette
+saved on the Uno; mismatched normalization or centroid distances stop the
+connection with an explanation. Use `--model PATH` and `--port DEVICE` when
+needed. Connect/Disconnect controls release the port; disconnect returns the
+Uno to `d` category output so the IDE Plotter can be reopened.
+
+The large area shows the confirmed colour; the smaller swatch shows each
+instantaneous accepted reading. Confirmation needs **at least four consecutive
+accepted readings over at least 100 ms**, each with at least **15% separation**
+from its second-nearest centroid. A rejected, invalid or ambiguous reading
+interrupts that streak. Each confirmed transition flashes the swatch border
+and adds a timestamped entry to the change history. The initial lock is
+reported separately and does not increment the change count.
+
+Separation is `(second_distance² - best_distance²) / second_distance²`.
+Recent agreement is the share of the last eight readings accepting the current
+instantaneous colour, including rejected readings in the denominator. The
+training-distance ratio is best distance² divided by the class's acceptance
+radius². **None is a probability or a statistical confidence interval.** The
+correlated recordings and observed classification errors do not justify a
+calibrated probability of correctness.
+
+The display goes neutral when the last confirmed colour has not been supported
+for 300 ms, and marks missing serial data as unavailable after one second.
+A gap over 250 ms interrupts confirmation; a backwards Uno timestamp clears
+the filter after reset. Use the current fast acquisition profile (`f`, 2 ms per
+channel) for this view. The viewer preserves the existing acquisition settings
+and EEPROM calibration.
+
+Checks for this view: ten host tests passed, including time/sample confirmation,
+blip rejection, interruption by unknown/invalid/ambiguous rows, reset/gap handling,
+recent agreement, and mismatched-model rejection. A UI replay of recorded
+Blue → Yellow → Orange readings produced two confirmed changes with no callback
+errors. A live connection confirmed Green and displayed separate clear and
+acquisition measurements. These checks verify the display behaviour, not the
+physical truth of live colour changes.
+
+The filter removes brief isolated flips; sustained misclassification can still
+confirm the wrong colour. This is **display filtering**, not validated detection
+of physical line transitions and not a Hangprinter feedback signal. Its 100 ms
+hold would correspond to 200 mm of travel at 2 m/s. Change the display behaviour
+with `--hold-ms 100 --samples 4 --min-margin 0.15`; these options do not alter the
+Uno's instantaneous classifications or sensor timing.
+
+For an explicitly labelled offline preview, use
+`--replay data/palette_2026-10-06.csv`. The preview computes predictions from
+recorded raw readings, never from their labels, plays at 30 ms per row, and
+stops at EOF. Preview timing is not a boundary-timing measurement.
+
 ## Collection
 
 Close the IDE Serial Monitor and Plotter to release the port. Run commands from

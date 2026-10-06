@@ -4,7 +4,7 @@ Print **base.stl, carrier_18mm.stl, hood_18mm_1p2x0p8.stl and lid.stl** first. O
 
 This is a designed and digitally checked prototype. Optical performance, PCB fit and printer tolerances still need a bench test. There is no defensible universal “optimal distance” without measuring this particular board's LED beam, window position and the line's reflectance. The adjustable geometry makes that comparison straightforward.
 
-For labelled RGBC sample collection, cluster plots and the on-Uno nearest-centroid classifier, see [PALETTE.md](PALETTE.md). Its acquisition commands describe the current sketch.
+For labelled RGBC sample collection, cluster plots and the on-Uno nearest-centroid classifier, see [PALETTE.md](PALETTE.md). Its acquisition commands describe the current sketch. For a large live colour swatch, uncertainty scores and confirmed-change feedback, close the IDE Monitor/Plotter and run `python3 live_colour_feedback.py`; details are in PALETTE.md.
 
 ## Starting geometry
 
