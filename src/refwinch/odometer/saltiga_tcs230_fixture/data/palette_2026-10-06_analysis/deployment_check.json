@@ -1,0 +1,34 @@
+{
+  "model_normalization": "rgb",
+  "clear_weight": 0.0,
+  "boot_1_category": {
+    "Blue": 1.0
+  },
+  "boot_1_numeric": {
+    "rows": 25,
+    "accepted_labels": {
+      "Blue": 25
+    },
+    "maximum_feature_difference": 1.7392318015230224e-06,
+    "maximum_clear_difference_Hz": 0.0,
+    "maximum_distance_difference": 0.0006545434146293938,
+    "median_scan_us": 18452.0,
+    "median_row_us": 28748.0
+  },
+  "boot_1_clear100_Hz": 3824.09,
+  "boot_2_category": {
+    "Blue": 1.0
+  },
+  "boot_2_numeric": {
+    "rows": 25,
+    "accepted_labels": {
+      "Blue": 25
+    },
+    "maximum_feature_difference": 1.8485158014835967e-06,
+    "maximum_clear_difference_Hz": 0.0,
+    "maximum_distance_difference": 0.0006635991676590125,
+    "median_scan_us": 18508.0,
+    "median_row_us": 28828.0
+  },
+  "boot_2_clear100_Hz": 3802.28
+}

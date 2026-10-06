@@ -1,0 +1,276 @@
+{
+  "normalization": "rgb",
+  "clear_weight": 0.0,
+  "feature_comparison": {
+    "clear_normalization_clear_weight_0": {
+      "correct": 19399,
+      "total": 21000,
+      "accuracy": 0.9237619047619048
+    },
+    "clear_normalization_clear_weight_1": {
+      "correct": 19249,
+      "total": 21000,
+      "accuracy": 0.9166190476190477
+    },
+    "rgb_normalization_clear_weight_0": {
+      "correct": 19918,
+      "total": 21000,
+      "accuracy": 0.9484761904761905
+    },
+    "rgb_normalization_clear_weight_1": {
+      "correct": 19778,
+      "total": 21000,
+      "accuracy": 0.9418095238095238
+    }
+  },
+  "palette_requested": [
+    "Orange",
+    "Black",
+    "Yellow",
+    "Blue",
+    "Green",
+    "Red",
+    "Purple"
+  ],
+  "samples_per_batch": {
+    "Orange": {
+      "1": 1000,
+      "2": 1000,
+      "3": 1000
+    },
+    "Black": {
+      "1": 1000,
+      "2": 1000,
+      "3": 1000
+    },
+    "Yellow": {
+      "1": 1000,
+      "2": 1000,
+      "3": 1000
+    },
+    "Blue": {
+      "1": 1000,
+      "2": 1000,
+      "3": 1000
+    },
+    "Green": {
+      "1": 1000,
+      "2": 1000,
+      "3": 1000
+    },
+    "Red": {
+      "1": 1000,
+      "2": 1000,
+      "3": 1000
+    },
+    "Purple": {
+      "1": 1000,
+      "2": 1000,
+      "3": 1000
+    }
+  },
+  "invalid_rows": 0,
+  "palette_ready": true,
+  "held_out_batch_folds": 3,
+  "evaluated_samples": 21000,
+  "fold_results": [
+    {
+      "batch": "1",
+      "test_samples_per_colour": {
+        "Orange": 1000,
+        "Black": 1000,
+        "Yellow": 1000,
+        "Blue": 1000,
+        "Green": 1000,
+        "Red": 1000,
+        "Purple": 1000
+      },
+      "nearest_accuracy": 0.9192857142857143,
+      "acceptance_coverage": 0.9448571428571428,
+      "accepted_accuracy": 0.9293921983671001
+    },
+    {
+      "batch": "2",
+      "test_samples_per_colour": {
+        "Orange": 1000,
+        "Black": 1000,
+        "Yellow": 1000,
+        "Blue": 1000,
+        "Green": 1000,
+        "Red": 1000,
+        "Purple": 1000
+      },
+      "nearest_accuracy": 0.9811428571428571,
+      "acceptance_coverage": 0.9824285714285714,
+      "accepted_accuracy": 0.983568416460666
+    },
+    {
+      "batch": "3",
+      "test_samples_per_colour": {
+        "Orange": 1000,
+        "Black": 1000,
+        "Yellow": 1000,
+        "Blue": 1000,
+        "Green": 1000,
+        "Red": 1000,
+        "Purple": 1000
+      },
+      "nearest_accuracy": 0.945,
+      "acceptance_coverage": 0.996,
+      "accepted_accuracy": 0.9460699942627654
+    }
+  ],
+  "nearest_centroid_accuracy": 0.9484761904761905,
+  "accepted_samples": 20463,
+  "acceptance_coverage": 0.9744285714285714,
+  "accepted_accuracy": 0.9532815325221131,
+  "accepted_confusion": [
+    [
+      2969,
+      3,
+      8,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      2,
+      2837,
+      1,
+      0,
+      107,
+      4,
+      41
+    ],
+    [
+      86,
+      0,
+      2781,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      2441,
+      154,
+      0,
+      144
+    ],
+    [
+      3,
+      236,
+      10,
+      22,
+      2667,
+      4,
+      43
+    ],
+    [
+      0,
+      2,
+      0,
+      0,
+      0,
+      2910,
+      0
+    ],
+    [
+      0,
+      53,
+      0,
+      3,
+      28,
+      0,
+      2902
+    ]
+  ],
+  "confusion_labels": [
+    "Orange",
+    "Black",
+    "Yellow",
+    "Blue",
+    "Green",
+    "Red",
+    "Purple"
+  ],
+  "confusion": [
+    [
+      2986,
+      3,
+      9,
+      0,
+      1,
+      1,
+      0
+    ],
+    [
+      2,
+      2839,
+      1,
+      0,
+      107,
+      6,
+      45
+    ],
+    [
+      87,
+      4,
+      2908,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      2604,
+      154,
+      0,
+      242
+    ],
+    [
+      3,
+      239,
+      14,
+      26,
+      2667,
+      7,
+      44
+    ],
+    [
+      0,
+      2,
+      0,
+      0,
+      0,
+      2998,
+      0
+    ],
+    [
+      0,
+      53,
+      0,
+      3,
+      28,
+      0,
+      2916
+    ]
+  ],
+  "rejected_per_true_class": [
+    19,
+    8,
+    132,
+    261,
+    15,
+    88,
+    14
+  ],
+  "note": "Stationary grouped validation, not boundary timing or clog validation."
+}
