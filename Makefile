@@ -1,6 +1,9 @@
 .SUFFIXES:
 .SUFFIXES: .scad .stl
 
+# Keep the existing default when adding setup/check targets above the build rules.
+.DEFAULT_GOAL := layout_letter.pdf
+
 STL_DIR = ./stl
 SRC_DIR = ./src
 OS := $(shell uname)
@@ -11,6 +14,31 @@ ifeq ($(OS),Darwin)
 else
   OPENSCAD_BIN = openscad
 endif
+
+.PHONY: setup check-deps check-layout-deps
+setup:
+	git submodule update --init --recursive
+	@echo "BOSL2 is ready. Open a model in OpenSCAD, or run make check-deps before building."
+
+# PDF/all builds should find missing PDF tools before rendering any models.
+CHECK_MODE = $(if $(filter all layout_letter.pdf layout_a4.pdf,$(or $(MAKECMDGOALS),$(.DEFAULT_GOAL))),layout,cad)
+check-deps:
+	@sh tools/check-deps $(CHECK_MODE) "$(OPENSCAD_BIN)"
+
+check-layout-deps:
+	@sh tools/check-deps layout "$(OPENSCAD_BIN)"
+
+# Order-only checks run even for existing outputs, without forcing a rebuild.
+STL_TARGETS = $(patsubst $(SRC_DIR)/%.scad,$(STL_DIR)/%.stl,$(wildcard $(SRC_DIR)/*.scad)) \
+	$(STL_DIR)/lib/spool_core.stl $(STL_DIR)/for_render/ram_1000_3dpotter.stl
+$(STL_TARGETS): | check-deps $(STL_DIR)
+layout.dxf: | check-deps
+layout_letter.pdf layout_a4.pdf all: | check-layout-deps
+
+# Also allow exports for models in subdirectories, such as src/refwinch/.
+$(STL_DIR)/%.stl: $(SRC_DIR)/%.scad | check-deps
+	mkdir -p $(dir $@)
+	$(OPENSCAD_BIN) -o $@ $<
 
 # Tell Openscad to output some custom sized svgs
 # Edit some of their parameters with sed
