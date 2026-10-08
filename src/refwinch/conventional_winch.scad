@@ -153,17 +153,15 @@ motor_pulley_center_distance = solve_open_belt_center_distance(
   drum_pulley_pitch_radius,
   motor_pulley_pitch_radius
 );
-motor_nominal_y = -drum_axis_spacing
-               - motor_pulley_center_distance*cos(motor_belt_direction_angle);
-motor_nominal_z = -motor_pulley_center_distance*sin(motor_belt_direction_angle);
+motor_unlifted_z = -motor_pulley_center_distance*sin(motor_belt_direction_angle);
 // Coordinates on the plate are [world Y, world Z], relative to nominal shaft.
 motor_hole_pitch = 31;
 motor_pivot = [-motor_hole_pitch/2, motor_hole_pitch/2];
 function motor_rotate(p, a) = [p[0]*cos(a)-p[1]*sin(a), p[0]*sin(a)+p[1]*cos(a)];
 function motor_sweep(p, a) = motor_pivot + motor_rotate(p-motor_pivot, a);
-motor_center_offset = motor_sweep([0,0], motor_adjustment_angle);
-motor_axis_y = motor_nominal_y + motor_center_offset[0];
-motor_axis_z = motor_nominal_z + motor_center_offset[1];
+// Vertical extent of the chamfered end caps used by Nema17().
+function motor_body_half_extent(a) = Nema17_cube_width/2*cos(a)
+  + (Nema17_cube_width/2-6.4/sqrt(2))*abs(sin(a));
 
 drum_pulley_axial_start =
   (traverse_stroke+2*drum_body_end_margin)/2 + drum_end_disc_thickness;
@@ -268,6 +266,20 @@ round_fn = 64;
 shell_round_fn = 128;
 separator_inner_fn = 100;
 
+// Lift the shared motor/plate datum to leave 1 mm above the ribs at every
+// adjustment position. Keep the nominal pulley distance for the selected belt.
+motor_lowest_unlifted_z = min([
+  for(a=[-motor_adjustment_limit:0.5:motor_adjustment_limit])
+    motor_unlifted_z+motor_sweep([0,0],a)[1]-motor_body_half_extent(a)
+]);
+motor_height_lift = max(0, -drum_z+base_rib_height+1-motor_lowest_unlifted_z);
+motor_nominal_z = motor_unlifted_z+motor_height_lift;
+motor_nominal_y = -drum_axis_spacing
+  - sqrt(pow(motor_pulley_center_distance,2)-pow(motor_nominal_z,2));
+motor_center_offset = motor_sweep([0,0], motor_adjustment_angle);
+motor_axis_y = motor_nominal_y + motor_center_offset[0];
+motor_axis_z = motor_nominal_z + motor_center_offset[1];
+
 motor_plate_thickness = motor_mount_material == "Printed"
   ? printed_motor_plate_thickness : metal_motor_plate_thickness;
 motor_plate_width = 80;
@@ -287,11 +299,7 @@ assert(motor_adjustment_limit > 0 && motor_adjustment_limit <= 6, "Validated slo
 // Check the whole permitted sweep, not only the currently displayed position.
 for(a=[-motor_adjustment_limit:0.5:motor_adjustment_limit]) {
   offset = motor_sweep([0,0],a);
-  // Bound the chamfered end caps used by Nema17(), rather than a solid square.
-  body_half_extent = Nema17_cube_width/2*cos(a)
-    + (Nema17_cube_width/2-6.4/sqrt(2))*abs(sin(a));
-  //assert(motor_nominal_z+offset[1]-body_half_extent >= motor_plate_bottom+2,
-  //  "Motor sweep needs at least 1 mm clearance above the base ribs; shorten the belt or raise the motor");
+  body_half_extent = motor_body_half_extent(a);
   assert(abs(offset[0])+body_half_extent+1 < motor_support_y-motor_support_width/2,
     "Motor sweep intersects support rails");
 }
@@ -537,7 +545,7 @@ module shell_fastener_holes(){
 // to the end stop. The belt preview follows the geometry and does not model slack.
 // Metal stock example: https://www.aluminiumexperte.de/alu-flachstange-80-x-3-mm.html
 // For a one-piece prototype: motor_mount_material="Printed", part="Base".
-// Move the motor behind the drum without changing the 6-degree belt run.
+// Mirror the motor behind the drum across the unchanged belt plane.
 module motor_axial_mirror(){
   translate([2*gt2_belt_center_x,0,0]) mirror([1,0,0]) children();
 }
@@ -599,7 +607,7 @@ module motor_mount_base_unmirrored(){
   // Low edge ribs carry the rail loads back into the original bottom plate.
   for(x=[26,motor_front_face_x+motor_support_depth-3])
     translate([x,motor_nominal_y-motor_plate_width/2,-drum_z])
-      cube([3,base_rear_edge_y-motor_nominal_y+motor_plate_width/2+4,4]);
+      cube([3,base_rear_edge_y-motor_nominal_y+motor_plate_width/2+4,base_rib_height]);
   difference(){
     union(){
       if(motor_mount_material == "Metal")
@@ -665,6 +673,7 @@ module gt2_drive_belt(){
 
 module drive_motor_assembly(){
   echo("GT2 belt loop length", gt2_belt_loop_length);
+  echo("Automatic motor height lift", motor_height_lift);
   echo("GT2 pulley center distance (current)", motor_actual_center_distance);
   echo("Geometric belt path length (not a belt stretch simulation)",
     open_belt_length(motor_actual_center_distance,drum_pulley_pitch_radius,motor_pulley_pitch_radius));
