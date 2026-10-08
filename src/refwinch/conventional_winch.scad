@@ -78,7 +78,7 @@ separator_disc_axial_offset = traverse_stroke/2 + separator_disc_end_margin;
 gt2_tooth_pitch = 2;
 drum_pulley_tooth_count = 62;
 motor_pulley_tooth_count = 20;
-motor_belt_direction_angle = 6;
+motor_belt_direction_angle = 90; // Motor shaft directly below the drum shaft.
 motor_clocking_angle = -90; // Square to the base for body clearance during adjustment.
 drum_end_disc_thickness = 1.3;
 drum_pulley_width_allowance = 2;
@@ -272,25 +272,51 @@ motor_plate_thickness = motor_mount_material == "Printed"
 motor_plate_width = 80;
 motor_plate_height = 60;
 motor_actual_center_distance = norm([motor_axis_y+drum_axis_spacing,motor_axis_z]);
-motor_plate_bottom = -drum_z + base_thickness;
+motor_plate_bottom = motor_nominal_z - motor_plate_height/2;
+motor_mount_foot_z = motor_plate_bottom - base_thickness;
+// Bridge above the removable plate, so its recess cannot split the frame.
+motor_mount_deck_z = max(-drum_z, motor_plate_bottom+motor_plate_height+0.4);
+motor_support_top = motor_mount_deck_z + base_thickness;
+motor_mount_deck_start_x = max(
+  drum_width/2+1,
+  pawl_axis_x+(pawl_cylinder_diameter+2*pawl_socket_wall_thickness)/2+1
+);
 motor_plate_front_x = motor_front_face_x - motor_plate_thickness;
 motor_support_depth = 16;
 motor_support_width = 10;
 motor_support_y = 34;
 motor_mount_bolt_z = [motor_plate_bottom+10, motor_plate_bottom+45];
+motor_frame_clearance = 1;
+// Bound the complete pivot travel for belt and motor keep-outs.
+motor_sweep_radius = 2*norm(motor_pivot)*sin(motor_adjustment_limit/2);
+motor_body_keepout_half_extent = Nema17_cube_width/2
+  *(cos(motor_adjustment_limit)+sin(motor_adjustment_limit))
+  + motor_sweep_radius + motor_frame_clearance;
 assert(abs(motor_adjustment_angle) <= motor_adjustment_limit, "Motor angle exceeds slots");
 assert(motor_mount_material == "Metal" || motor_mount_material == "Printed", "Unknown mount material");
 assert(motor_plate_thickness >= 3, "Motor plate must be at least 3 mm thick");
 assert(motor_adjustment_limit > 0 && motor_adjustment_limit <= 6, "Validated slot range is up to +/-6 degrees");
+assert(motor_nominal_z+motor_body_keepout_half_extent < -bearing_tower_depth/2,
+  "Belt is too short to place the motor below the drum-bearing supports");
+assert(motor_mount_deck_z > motor_nominal_z+motor_body_keepout_half_extent,
+  "Motor sweep intersects the connecting deck");
 
 // Check the whole permitted sweep, not only the currently displayed position.
 for(a=[-motor_adjustment_limit:0.5:motor_adjustment_limit]) {
   offset = motor_sweep([0,0],a);
   body_half_extent = Nema17_cube_width/2*(cos(a)+abs(sin(a)));
   assert(motor_nominal_z+offset[1]-body_half_extent >= motor_plate_bottom+2,
-    "Motor sweep needs at least 1 mm clearance above the base ribs; shorten the belt or raise the motor");
+    "Motor sweep needs at least 1 mm clearance above the lower foot ribs");
+  assert(motor_nominal_z+offset[1]+body_half_extent+motor_frame_clearance
+         < motor_plate_bottom+motor_plate_height,
+    "Motor sweep exceeds the top of the motor plate");
   assert(abs(offset[0])+body_half_extent+1 < motor_support_y-motor_support_width/2,
     "Motor sweep intersects support rails");
+  assert(norm([
+    max(0,abs(motor_nominal_y+offset[0])-body_half_extent),
+    max(0,abs(motor_nominal_z+offset[1])-body_half_extent)
+  ]) > gear_module*(large_gear_tooth_count+2)/2+motor_frame_clearance,
+    "Motor sweep intersects the traverse gear");
 }
 
 echo("traverse_rod_length", traverse_rod_length);
@@ -525,6 +551,7 @@ module shell_fastener_holes(){
 
 // Flat metal blank: 80 x 60 x 3 mm, cut from standard 80 x 3 flat bar.
 // Export Motor plate profile as DXF for machining; the slots are custom.
+// The upper front corner is relieved for the traverse gear in this layout.
 // Four M4x25 through bolts, washers and rear nuts attach it to the printed rails.
 // Fit M3 washers on all four motor screws. Select screw length for the plate
 // thickness + washer + the motor manufacturer's permitted thread engagement.
@@ -553,12 +580,12 @@ module motor_plate_profile(){
       square([motor_plate_width,motor_plate_height]);
     // Boss must move with the shaft, otherwise it would lock the adjustment.
     motor_arc_cut([0,0], Nema17_ring_diameter+0.8);
-    rotate([0,0,2*90]){
-      translate(motor_pivot) circle(d=3.4, $fn=32);
-      for(y=[-1,1], z=[-1,1])
-        if(!(y == -1 && z == 1))
-          motor_arc_cut([y*motor_hole_pitch/2,z*motor_hole_pitch/2], 3.4);
-    }
+    translate([-motor_nominal_y,-motor_nominal_z])
+      circle(d=gear_module*(large_gear_tooth_count+2)+2*motor_frame_clearance, $fn=round_fn);
+    translate(motor_pivot) circle(d=3.4, $fn=32);
+    for(y=[-1,1], z=[-1,1])
+      if(!(y == -1 && z == 1))
+        motor_arc_cut([y*motor_hole_pitch/2,z*motor_hole_pitch/2], 3.4);
     if(motor_mount_material == "Metal")
       for(y=[-motor_support_y,motor_support_y], z=motor_mount_bolt_z)
         translate([y,z-motor_nominal_z]) circle(d=4.5, $fn=32);
@@ -570,14 +597,21 @@ module motor_plate(){
 }
 
 module motor_mount_base(){
-  // Continuous foot overlaps the existing bottom plate and both support rails.
-  translate([26,motor_nominal_y-motor_plate_width/2,-drum_z])
+  // Lower foot ties both rails together underneath the suspended motor.
+  translate([26,motor_nominal_y-motor_plate_width/2,motor_mount_foot_z])
     cube([motor_front_face_x+motor_support_depth-26,
-          base_rear_edge_y-motor_nominal_y+motor_plate_width/2+4,base_thickness]);
-  // Low edge ribs carry the rail loads back into the original bottom plate.
+          motor_plate_width,base_thickness]);
+  // Raised deck joins the rails and right drum-bearing tower to the winch base
+  // above the motor/plate sweep. The belt passes through its clearance opening.
+  difference(){
+    translate([motor_mount_deck_start_x,motor_nominal_y-motor_plate_width/2,motor_mount_deck_z])
+      cube([motor_front_face_x+motor_support_depth-motor_mount_deck_start_x,
+            motor_plate_width,base_thickness]);
+    guide_rods();
+  }
   for(x=[26,motor_front_face_x+motor_support_depth-3])
-    translate([x,motor_nominal_y-motor_plate_width/2,-drum_z])
-      cube([3,base_rear_edge_y-motor_nominal_y+motor_plate_width/2+4,4]);
+    translate([x,motor_nominal_y-motor_plate_width/2,motor_mount_foot_z])
+      cube([3,motor_plate_width,4]);
   difference(){
     union(){
       if(motor_mount_material == "Metal")
@@ -586,12 +620,12 @@ module motor_mount_base(){
             rotate([0,90,0]) cylinder(d=10,h=motor_support_depth,$fn=32);
       for(y=[-motor_support_y,motor_support_y]){
         translate([motor_front_face_x,motor_nominal_y+y-motor_support_width/2,motor_plate_bottom-0.1])
-          cube([8,motor_support_width,motor_plate_height+0.1]);
+          cube([8,motor_support_width,motor_support_top-motor_plate_bottom+0.1]);
         // Rear gussets stay outside the rotating motor body and screw heads.
         hull(){
           translate([motor_front_face_x,motor_nominal_y+y-motor_support_width/2,motor_plate_bottom-0.1])
             cube([motor_support_depth,motor_support_width,2]);
-          translate([motor_front_face_x,motor_nominal_y+y-motor_support_width/2,motor_plate_bottom+motor_plate_height-2])
+          translate([motor_front_face_x,motor_nominal_y+y-motor_support_width/2,motor_support_top-2])
             cube([2,motor_support_width,2]);
         }
       }
@@ -603,6 +637,39 @@ module motor_mount_base(){
   }
   if(motor_mount_material == "Printed")
     motor_plate_frame() motor_plate();
+}
+
+// Remove a conservative envelope from the frame, including all belt positions
+// and the rotating motor body, so the upper deck cannot foul the new drive.
+module motor_drive_keepout(){
+  // The raised deck and rail tops must also clear the traverse gear.
+  translate([-large_gear_center_z,0,0])
+    rotate([0,90,0])
+    cylinder(d=gear_module*(large_gear_tooth_count+2)+2*motor_frame_clearance,
+             h=gear_width+2*motor_frame_clearance, center=true, $fn=round_fn);
+  // The removable plate recess stops at the rail faces, leaving flush contact.
+  // In the printed variant the plate deliberately remains joined to the base.
+  if(motor_mount_material == "Metal")
+    motor_plate_frame(x=motor_plate_front_x-0.2)
+      linear_extrude(height=motor_plate_thickness+0.2)
+      translate([-motor_plate_width/2,motor_plate_bottom-motor_nominal_z-0.2])
+        square([motor_plate_width,motor_plate_height+0.4]);
+  translate([gt2_belt_center_x,0,0])
+    rotate([0,-90,0])
+    linear_extrude(height=GT2_belt_width+2*motor_frame_clearance, center=true)
+    hull(){
+      translate([0,-drum_axis_spacing])
+        circle(r=drum_pulley_pitch_radius+Belt_thickness+motor_frame_clearance, $fn=round_fn);
+      translate([motor_nominal_z,motor_nominal_y])
+        circle(r=motor_pulley_pitch_radius+Belt_thickness+motor_frame_clearance+motor_sweep_radius, $fn=round_fn);
+    }
+  // A corner-radius envelope would needlessly cut away the support rails.
+  // This square bounds the body and its center shift for the entire sweep.
+  translate([motor_front_face_x,
+             motor_nominal_y-motor_body_keepout_half_extent,
+             motor_nominal_z-motor_body_keepout_half_extent])
+    cube([motor_rear_face_x-motor_front_face_x+motor_frame_clearance,
+          2*motor_body_keepout_half_extent,2*motor_body_keepout_half_extent]);
 }
 
 // Motor, belt and CLN17 board preview. The odometer itself lives in
@@ -820,6 +887,17 @@ module integrated_odometer_base() {
 }
 
 module base(){
+  difference(){
+    union(){
+      winch_base();
+      motor_mount_base();
+      if(show_odometer) integrated_odometer_base();
+    }
+    motor_drive_keepout();
+  }
+}
+
+module winch_base(){
   tower_base_z = -drum_z;
   first_rib_x = 15;
   rib_interval_count = 4;
@@ -845,12 +923,6 @@ module base(){
     ])
       translate([xs,0,0])
         cube([base_rib_thickness, base_y_length, base_rib_height]);
-    translate([base_plate_x_length-base_rib_thickness,-(base_rear_edge_y-motor_nominal_y+motor_plate_width/2),0]) // motor_plate_width?
-      cube([
-        base_rib_thickness,
-        base_y_length-bearing_tower_depth-2*base_rib_thickness + (base_rear_edge_y-motor_nominal_y+motor_plate_width/2),
-        base_rib_height
-      ]);
   }
   translate([0,-drum_axis_spacing,0])
     rotate([0,90,0])
@@ -903,8 +975,6 @@ module base(){
     translate([xs,-bearing_tower_depth/2-drum_axis_spacing,tower_base_z])
       bearing_tower();
 
-  motor_mount_base();
-  if(show_odometer) integrated_odometer_base();
 }
 
 module top_shell() {
