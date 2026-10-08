@@ -1,0 +1,43 @@
+#!/bin/sh
+# Check the checkout and the programs needed by the requested build.
+set -eu
+
+mode=${1:-cad}
+openscad_bin=${2:-openscad}
+case "$mode" in
+    cad|layout) ;;
+    *) echo "Usage: sh tools/check-deps [cad|layout] [openscad-executable]" >&2; exit 2 ;;
+esac
+
+repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+missing=0
+
+if [ ! -f "$repo_dir/src/lib/BOSL2/std.scad" ]; then
+    echo "BOSL2 is missing at src/lib/BOSL2/." >&2
+    echo "From the repository root, run: git submodule update --init --recursive" >&2
+    echo "Or run: make setup" >&2
+    echo "Source ZIP downloads omit this library; see README.md for cloning instructions." >&2
+    missing=1
+fi
+
+if ! command -v "$openscad_bin" >/dev/null 2>&1; then
+    echo "OpenSCAD executable not found: $openscad_bin" >&2
+    echo "Install OpenSCAD 2021.01 or later, or pass OPENSCAD_BIN=/path/to/openscad to make." >&2
+    missing=1
+fi
+
+if [ "$mode" = layout ]; then
+    for program in cairosvg sed gs; do
+        if ! command -v "$program" >/dev/null 2>&1; then
+            case "$program" in
+                cairosvg) package=CairoSVG ;;
+                sed) package=sed ;;
+                gs) package=Ghostscript ;;
+            esac
+            echo "Layout PDFs need $package (missing command: $program)." >&2
+            missing=1
+        fi
+    done
+fi
+
+exit "$missing"

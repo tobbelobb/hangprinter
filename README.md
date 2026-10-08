@@ -12,6 +12,59 @@ Documentation
 ----------------
 Start here: [hangprinter.org/doc/v4](https://hangprinter.org/doc/v4/).
 
+Getting the source files
+-----------------------
+Install Git, then clone with submodules so the BOSL2 OpenSCAD library is included:
+
+```sh
+git clone --recurse-submodules https://gitlab.com/tobben/hangprinter.git
+cd hangprinter
+```
+
+If you already cloned without `--recurse-submodules`, run this inside the repository:
+
+```sh
+git submodule update --init --recursive
+```
+
+`make setup` runs the same command. It downloads the library version recorded in
+this repository and needs an internet connection the first time. After pulling
+updates or switching branches, run it again to keep the library in sync.
+
+GitLab/GitHub source ZIP downloads omit submodules. Use the Git clone above for
+editing CAD. The models expect BOSL2 at `src/lib/BOSL2/`; installing it only in
+OpenSCAD's global library directory won't fill that path.
+
+Opening and building CAD
+------------------------
+Install OpenSCAD 2021.01 or later. Open a `.scad` file from `src/` in OpenSCAD,
+preview it, then render and export it as STL. The RefWinch models live in
+`src/refwinch/`, including `conventional_winch.scad`.
+
+For command-line builds, install GNU Make and put `openscad` on your PATH.
+On macOS, the Makefile uses `/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD`.
+Run these commands from the repository root:
+
+```sh
+make check-deps
+make spool.stl
+```
+
+The STL is written to `stl/spool.stl`. To use another OpenSCAD installation,
+pass its executable path, for example:
+
+```sh
+make check-deps OPENSCAD_BIN=/path/to/openscad
+make spool.stl OPENSCAD_BIN=/path/to/openscad
+```
+
+Models in subdirectories use the matching output path, for example
+`make stl/refwinch/conventional_winch.stl`.
+
+If OpenSCAD says it can't open `BOSL2/std.scad`, or reports unknown BOSL2
+functions or modules, run `git submodule update --init --recursive` and preview
+the model again. `make` checks for the library and required programs before building.
+
 
 Using letter sized paper for the layout?
 -------------------------
@@ -20,8 +73,9 @@ You can specify that in a make-call:
 make layout_letter.pdf
 ```
 
-The `make` call will require Cairosvg, sed, and Ghostscript to work.
-Already installed on many standard GNU/Linux systems.
+Layout PDFs also require CairoSVG (the `cairosvg` command), sed, and Ghostscript
+(the `gs` command). Check them with `make check-layout-deps`.
+`make all` builds both the STLs and the A4 layout PDF, so it needs these programs too.
 
 Contributing Improvements
 -------------------------
